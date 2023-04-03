@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LOGINAD</title>
+    <link rel="shortcut icon" type="image/jpg" href="./images/dtgo-favicon.png" />
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="bundle.min.js"></script>
+    <!-- <script src="ajQjsLib.js"></script> -->
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #tophead {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .container {
+            top: 0;
+            left: 0;
+            width: 100%
+        }
+
+        #toolbar {
+            background-color: rgba(191, 191, 191, .15);
+            font-size: 16px;
+            padding: 5px 10px;
+            width: 100%;
+        }
+
+        .dx-button {
+            background-color: rgba(191, 191, 191, -0.15);
+            font-size: 16px;
+            border: 2px;
+        }
+
+        .dx-toolbar-button>.dx-toolbar-item-content {
+            margin-left: 0px;
+        }
+
+        .dx-treeview {
+            font-size: 16px;
+        }
+
+        .left-content {
+            display: inline-block;
+            width: 180px;
+            padding: 0 10px 10px;
+            background-color: rgba(191, 191, 191, 0.15);
+            box-shadow: -5px 0px 14px -8px rgba(0, 0, 0, 0.25) inset;
+        }
+
+        .logostyle {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 20px;
+            width: 180px;
+        }
+
+        .logobarblack {
+            background-color: white;
+            /* For browsers that do not support gradients */
+            background-image: linear-gradient(to right, black, white 50%, black 80%);
+            width: 100%;
+        }
+
+        .logobarwhite {
+            background-color: white;
+            /* For browsers that do not support gradients */
+            background-image: linear-gradient(to right, grey, black 50%, grey 80%);
+            width: 100%;
+        }
+
+        .headtitleleft {
+            color: white;
+            font-size: 12px;
+            margin-left: 20px;
+        }
+
+        .title {
+            padding: 20px 15px 15px 20px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .title .tright {
+            float: right;
+        }
+
+        .title .tleft {
+            float: left;
+        }
+
+        .form-avatar {
+            height: 23px;
+            width: 23px;
+            margin-right: 10px;
+            border: 1px solid #d2d3d5;
+            border-radius: 50%;
+            background-image: url('images/user.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+
+    <script>
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+        function unloadAllJS() {
+            var jsArray = new Array();
+            jsArray = document.getElementsByTagName('script');
+            for (i = 0; i < jsArray.length; i++) {
+                if (jsArray[i].id) {
+                    unloadJS(jsArray[i].id)
+                } else {
+                    jsArray[i].parentNode.removeChild(jsArray[i]);
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            localStorage.clear();
+            localStorage.clear();
+            var aDXTheme = "generic.carmine";
+            DevExpress.ui.themes.current(aDXTheme);
+            //document.getElementById("aUsrName").innerHTML = "User Name";
+        });
+
+        const aGoTo = function (newW) {
+            window.location.assign(newW);
+        };
+
+        // function disableBack() { window.history.forward(); }
+        // setTimeout("disableBack()", 0);
+        // window.onunload = function () { null };
+
+        //disableBack();
+
+        var aaPFDMI = isLocalHost();
+        var aMainPrj = "main.html"
+        $(function () {
+            getAzureUN()
+
+            function getAzureUN() {
+                var aAzureUN = getCookie("fusrn")
+                localStorage.setItem("aaPFDMI", aaPFDMI);
+                var aaXTGO = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Guest
+                var aaTBXX = "A9525EA3-666E-4E93-B37F-3F95F44532E5"; //Table
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/json");
+                var raw = JSON.stringify({
+                    "@": "email='" + aAzureUN + "'"
+                });
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: raw,
+                    redirect: 'follow'
+                };
+
+                let aURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + aaXTGO + "/" + aaTBXX + "/all"; // + aUname;
+
+                fetch(aURL, requestOptions)
+                    .then(response => response.json())
+
+                    .then(aData => {
+                        var aal = btoa(aData[0].Gright); //1
+                        var aat = btoa(aData[0].Tkey); //2
+                        var apict = aData[0].PictureLoc; //3
+                        var aThemeSL = aData[0].Kright;// 4 
+                        var aftname = aData[0].Nickname; // 5 THA Name
+                        var aLGName = aData[0].LGName; //6 ENG Name
+                        var aStaffID = aData[0].Scopebase; // 7
+                        var aDeptn = aData[0].Department;// 8
+                        var aDivn = aData[0].Division;// 9
+                        var aemail = aData[0].email;// 10
+                        var aUname = aData[0].IDUsr;// 11 Username
+                        var aotpx = aData[0].otp; // no                                  
+                        var aAct = aData[0].Active; // no
+
+                        localStorage.setItem("aaXrXg", aal);//1
+                        localStorage.setItem("aaXXoX", aat);//2
+                        localStorage.setItem("aaXpXt", apict);//3
+                        localStorage.setItem("aaDXtm", aThemeSL);//4
+                        localStorage.setItem("asFTNAME", aftname);//5 THA Name
+                        localStorage.setItem("asFENAME", aLGName);//6 ENG Name
+                        localStorage.setItem("asSTFID", aStaffID);//7
+                        localStorage.setItem("asDEPT", aDeptn);//8
+                        localStorage.setItem("asDIV", aDivn);//9
+                        localStorage.setItem("asEMAIL", aemail);//10
+                        localStorage.setItem("aaXXuX", aUname);// 11 Username
+
+                        //aGoTo("index04.html");
+                        aGoTo(aMainPrj); 
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        location.replace(aaPFDMI+"/XOL/login.html")
+                    });
+            }
+        });
+    </script>
+</head>
+
+<body class="dx-viewport">
+    <div class="container">
+        <!--<div class="logobarwhite" style="height:150px" id="logobarid">
+            <img src=".\images\locktonlogo70mmwhite.png" class="logostyle" id="mainlogo">
+            <div class="title">
+                <span class="tleft"> CLAIM Online System </span>
+                <span class="tright" id="aUsrName"></span>
+                <span class="tright form-avatar"></span>
+            </div>
+        </div> -->
+        <div id="popupContainer"></div>
+    </div>
+    <script>
+        unloadAllJS();
+    </script>
+</body>
+
+</html>

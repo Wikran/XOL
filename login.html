@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Claim Online</title>
+<!--   <script src="https://alcdn.msftauth.net/lib/1.2.1/js/msal.js"></script> -->
+<script src="vendor/msal/msal.js"></script>
+<script src="bundle.min.js"></script>
+<!-- <script src="ajQjsLib.js"></script> --> 
+</head>
+<body>
+ 
+<script>
+var aaPFDMI = isLocalHost();
+var aRedf = aaPFDMI+"/XOL/index77.html"  
+const msalConfig = {
+    auth: {
+      clientId: "938d3b43-340d-4b66-b937-75a63396b009",
+      authority:"https://login.microsoftonline.com/f2066202-08c0-4832-a4b4-7fa0855bb8ed", 
+      redirectUri: aRedf,
+      //postLogoutRedirectUri: "https://cbsdev2.locktonwattana.com/CLM/index.html"
+    },
+
+    cache: {
+      cacheLocation: "sessionStorage", // This configures where your cache will be stored
+      storeAuthStateInCookie: true, // Set this to "true" if you are having issues on IE11 or Edge
+    }
+  };
+
+const myMSALObj = new Msal.UserAgentApplication(msalConfig);
+const loginRequest = {
+    scopes: ["User.Read"],
+    prompt: "select_account"
+
+};
+
+myMSALObj.loginPopup(loginRequest)  // for popup only without redirect
+    .then((loginResponse) => {
+    //Login Success callback code here
+    //console.log(myMSALObj.getAccount().userName) // return from azure
+    //let aRtuser= (myMSALObj.getAccount().userName) //aRtuser
+    //document.cookie = "fusrn=" + myMSALObj.getAccount().userName ; // set cookie here
+    let aRUsr = myMSALObj.getAccount().userName
+    //alert(aRUsr.toLowerCase())
+    createCookie("fusrn",aRUsr.toLowerCase(), 1);
+    //localStorage.setItem("aaFusrn", aRtuser);
+    location.replace(aRedf)
+}).catch(function (error) {
+    console.log(error);
+});
+
+function createCookie(name, value, days) {
+	if (days) {
+		var date = new Date();
+		date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+		var expires = "; expires=" + date.toGMTString();
+	}
+	else var expires = "";
+	document.cookie = name + "=" + value + expires + "; path=/";
+};
+</script> 
+</body>

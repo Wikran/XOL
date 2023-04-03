@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- <meta http-equiv="refresh" content="0; url='https://locktonapc.sharepoint.com/sites/renewalonweb-southeast/SitePages/ProjectHome.aspx'" />
+       and (min-width: 1400px) -->
+  <style>
+    .viewPDF {
+      zoom: 132%;
+    }
+  </style>
+</head>
+
+<body>
+    <object  id="viewPDF" type="application/pdf" width="1300" height="780" zoom="132%"></object>
+    <script>
+        function aRolesDesc(aRoles){
+          /* 1ReadOnly  2CRU 3CRUD  4Disable   5Import   6Export   7Import and Export  8Printable    9Export2PDF    A	Export2Excel    BReport Full Rights */
+          let aRolesM = ["00","ReadOnly","CRU","CRUD","Disable","Import","Export","Import and Export","Printable","Export2PDF","Export2Excel","Report Full Rights"];
+          let aFR = ["Data:","Excel:","PDF:","REPORT:"];
+          let aPass = "";
+          let aF1 = aRoles.substring(0,1);
+          let i = 0;
+              while (i < 4) {
+                  if (aRoles.substring(i,i+1) === "A"){
+                      aCC = 10;
+                  }   else if (aRoles.substring(i,i+1) === "B"){
+                      aCC = 11;   
+                  } else {
+                      aCC = Number(aRoles.substring(i,i+1));
+                  }
+                  aPass = aPass + aFR[i] + " " + aRolesM[aCC] + ",";
+                  i++;
+              }
+          return aPass;
+      }   
+    
+        //
+        //All Slide-Training Expense Reimbursement System.pdf
+        var PDFHelpFile;
+        var aDXMenuTitle = localStorage["aDXMenuTitle"];
+        var aMMaMx = localStorage["MMaMx"];
+        console.log(aMMaMx);
+        var aRRgRs = aMMaMx.split('0');
+        var aDDeDx = aRRgRs[0];
+        var aRrgSx = aRRgRs[1];
+    
+        if ( typeof aRrgSx === "undefined"){
+            aRrgSx = "377B";
+        }
+        var aRText = aRolesDesc(aRrgSx);
+        console.log(aRText);
+
+        if (aRText === "admin"){
+            PDFHelpFile = "./images/All Slide-Training Expense Reimbursement System.pdf#view=FitH"
+        } else {
+            PDFHelpFile = "./images/Emp-Training Expense Reimbursement System.pdf#view=FitH"
+        }
+        const viewPDF = document.getElementById("viewPDF"); //data= PDFHelpFile 
+        viewPDF.setAttribute("data", PDFHelpFile);
+
+      </script>
+      
+</body>
+
+</html>

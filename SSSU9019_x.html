@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>USERS</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<meta http-equiv="Content-Language" content="th">
+<meta http-equiv="content-Type" content="text/html; charset=window-874">
+<meta http-equiv="content-Type" content="text/html; charset=tis-620">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+<script src="vendor/jquery/3.5.1/jquery.min.js"></script> 
+<script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+<!-- Icon -->
+<link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+<link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+<link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+<link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+<link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+<link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+<link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"  data-active="true">
+<link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.darkviolet.compact" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css"  data-active="false">
+<link rel="dx-theme" data-theme="material.blue.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.blue.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.teal.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.purple.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.teal.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.lime.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+<!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+	<!-- Export Excel -->
+	<!-- Export to PDF -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+<!-- Export to PDF -->	
+<!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->	
+<script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+<script src="aaTMain.js"></script>
+<script src="ajQjsLib.js"></script>
+<script>
+$(document).ready(function () {
+    var aDXTheme = localStorage["aDXTheme"]
+    DevExpress.ui.themes.current(aDXTheme);
+});
+window.jsPDF = window.jspdf.jsPDF;
+applyPlugin(window.jsPDF);
+//console.clear();
+var aaXToX = localStorage["aaXXoX"]; 
+var aaXNoX = localStorage["aaXXuX"];
+var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; //Master Page
+var aaPXXI = localStorage["aPXIXD"];
+
+var jqxhr = $.post( aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/'+ aaXTXB + '/'+ aaPXXI, function(e) {
+    //console.log( "success" );
+    aObjMPage = e;
+    aaKeyField = aObjMPage[0].PrimaryKey;
+    aaTBKey = aObjMPage[0].TBKey;
+    localStorage.setItem("aaXKFX", aaKeyField);
+    localStorage.setItem("aaXTBX", aaTBKey);
+})
+.done(function(e) {
+    console.log( "second success" );
+    aObjMPage = e;
+    aaKeyField = aObjMPage[0].PrimaryKey; 
+    aaTBKey = aObjMPage[0].TBKey;
+    localStorage.setItem("aaXKFX", aaKeyField);
+    localStorage.setItem("aaXTBX", aaTBKey);
+})
+.fail(function() {
+    console.log( "error" );
+})
+.always(function() {
+    console.log( "complete" );
+});	
+        
+// Function for Load Master Data for dropdown and others 
+// "https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress","aaOBJDT"
+
+function aGetDataAPI(aDMZServer,aFullTableName,aFieldSelected,aOBJsName){  
+    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+    let aLocalNonQueryToken	= "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+    /* 
+    var aDMZServer = "https://cbsdev2.locktonwattana.com";
+    var aOBJsName = "aaOBJDT"
+    var aSQLServerName ="[lockthbnk-ap14]"
+    var aSQLDatabaseName = ".ExtraOnLine.dbo."
+    var aSQLTableName = "XOLStaff"
+    var aFullTableName = aSQLServerName + aSQLDatabaseName + aSQLTableName ;
+    var aFieldSelected = "EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" ;
+    var aWhereCause = "Where " 
+    */
+    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName ;
+                
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json"); 
+    var raw = JSON.stringify({
+        "@": aFullBody  
+    });
+    
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+    
+    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB +"/" + aLocalSQLToken ; 
+    
+    fetch( aURL , requestOptions)
+    .then(response => response.json())
+    //
+    .then(aData => {               
+        //var aal = btoa(aData[0].Gright); 
+        //Console.log(aData) // works
+        //aaObjData = aData;
+        localStorage.setItem(aOBJsName, JSON.stringify(aData));                    
+        })                
+   // .catch(error => {
+   //     console.error('Error:', error);
+   //     DevExpress.ui.dialog.alert({
+   //     showTitle: false,
+   //     messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"});
+   // }); 
+
+    //return 1
+    }
+
+</script>
+
+</head>
+
+<body class="dx-viewport">
+    <div class="container">
+    <div id="gridContainer"></div>
+</div>
+
+<script>
+var aaPXIXD = localStorage["aPXIXD"];
+var aaEnt = aaPXIXD.includes("X");
+var aaKeyField = localStorage["aaXKFX"];
+var aaTBKey = localStorage["aaXTBX"];
+var aaUsrN = localStorage["aaXXuX"];
+
+$(function(){
+// Load Data for [Employee] DropDown Selection    
+aGetDataAPI("https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,Dept,DivCode,EmailAddress","aaOBJEmp")
+aGetDataAPI("https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,Dept,DivCode,EmailAddress","aaOBJEmp")
+aGetDataAPI("https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,Dept,DivCode,EmailAddress","aaOBJEmp")
+var aaEmployee = JSON.parse(localStorage.getItem("aaOBJEmp")); //JSON.parse(localStorage.getItem("names"))
+
+var aMMaMx = localStorage["MMaMx"];
+var aRRgRs = aMMaMx.split('0');
+var aDDeDx = aRRgRs[0];
+var aRrgSx = aRRgRs[1]; 
+if ( jQuery.type(aRrgSx) === "undefined"){
+    aRrgSx = "377B";
+}
+let nDataPos = 1;
+let nExcelPos = 2;
+let nPDFPos = 3;
+let nRPTPos = 4;
+var arDataC = aRolesAction(aRrgSx,nDataPos,1);
+var arDataU = aRolesAction(aRrgSx,nDataPos,2);
+if (arDataU === 1){
+   var aUpdateText = "Update";
+   var aSaveVisible = 1;
+   var aCancelText = "Cancel";
+   var aCancelicon = "close"; 
+   var aCancelType = "danger"; 
+} else {
+   var aUpdateText = "xxx";
+   var aSaveVisible = 0;
+   var aCancelText = "EXIT";
+   var aCancelicon = "fas fa-sign-out-alt";   
+   var aCancelType = "success"; 
+}
+var arDataD = aRolesAction(aRrgSx,nDataPos,3);
+var arExcelEx = aRolesAction(aRrgSx,nExcelPos,2);
+var arPDFEx = aRolesAction(aRrgSx,nPDFPos,2);
+
+function logEvent(eventName) {
+    var logList = $("#events ul"),
+    newItem = $("<li>", { text: eventName });
+    logList.prepend(newItem);
+}
+
+$("#gridContainer").dxDataGrid({
+
+dataSource: new DevExpress.data.CustomStore({
+    key: "IDUsr",
+    loadMode: "omit", 
+    load: function() {
+    return $.post(aaPFDMI + '/DMQ/XOL/'+ atob(aaXToX) +'/' + aaTBKey + '/all')
+    .fail(function() { throw "Data loading error" });
+},
+insert: function(values) {
+    if (aaEnt) {
+    var ObjKeyData = {EntryBy: aaUsrN , EntryDate: new Date()};
+    var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+    }
+    else {
+    var ObjRowData = JSON.stringify(values);
+    }
+    sendRequestNew("Insert",ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
+},	
+update: function (key, values) {
+    //console.log( aaKeyField );
+    var ObjKeyData = {"IDUsr": $.trim(key)};   //[aaKeyField] key.trim
+    var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+    sendRequestNew(aUpdateText,ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
+},
+remove: function(key) {
+    var ObjKeyData = {"IDUsr": $.trim(key)};   //[aaKeyField] key.trim
+    var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+    sendRequestNew("Delete",ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
+}
+}),
+
+allowColumnReordering: true,
+allowColumnResizing: true,
+columnMinWidth: 100,
+columnChooser: {
+enabled: true
+},		
+showBorders: true,
+sorting: {
+mode: "multiple"
+},
+selection: {
+mode: 'multiple'
+},
+groupPanel: {
+visible: true
+},
+filterRow: {
+visible: true,
+applyFilter: "auto"
+},
+headerFilter: {
+visible: true
+},
+grouping: {
+autoExpandAll: true,
+},
+searchPanel: {
+visible: true
+},
+paging: {
+pageSize: 10
+},
+pager: {
+showPageSizeSelector: true,
+allowedPageSizes: [5, 10, 20, 50],
+showInfo: true
+},	
+showBorders: true,			
+groupPaging: true,		
+showColumnLines: true,
+showRowLines: true,
+rowAlternationEnabled: true,
+				
+// Export to Excel 		
+export: {
+enabled: arExcelEx,
+allowExportSelectedData: true
+},
+onExporting: function(e) {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('DATA');
+    DevExpress.excelExporter.exportDataGrid({
+    worksheet: worksheet,
+    component: e.component
+}).then(function() {
+    workbook.xlsx.writeBuffer().then(function(buffer) {
+    saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'MainUsrs' + '.xlsx');
+    });
+});
+    e.cancel = true;
+},
+onEditorPreparing: function (e) {
+    if(e.parentType === "dataRow" && arDataU === 0){  
+        e.editorOptions.disabled = true;
+    } else {     
+        if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate")) {
+        e.editorOptions.disabled = true;
+        }
+    }
+},			
+//
+//
+// Editing
+editing: {
+       mode: "popup",
+       useIcons: true,
+       allowUpdating: true,
+       allowDeleting: arDataD,
+       allowAdding: arDataC,
+       popup: {
+           title: "Main User Info" ,
+           fullScreen: false,
+           showTitle: true,
+           width: 1000,
+           height: 525,
+           position: {
+                my: "top",
+                at: "top",
+                of: "window"
+            },
+        onContentReady:function(e){
+            e.component.option('toolbarItems[0].visible', aSaveVisible);
+            e.component.option('toolbarItems[0].options.icon', 'save');
+            e.component.option('toolbarItems[0].options.type', 'success');
+            e.component.option('toolbarItems[1].options.text', aCancelText);
+            e.component.option('toolbarItems[1].options.icon', aCancelicon);
+            e.component.option('toolbarItems[1].options.type', aCancelType);
+          }
+       }
+  },
+// column list
+ columns: [
+{  dataField: "Scopebase",
+   caption:"Staff ID",
+   lookup: {
+            dataSource: aaEmployee, //EMPCode,FullNameThai
+            valueExpr: "EMPCode",
+            displayExpr: "EMPCode",
+            //disabled: [!arDataU],
+        },
+    editCellTemplate: dropDownBoxEMP,        
+    setCellValue: function(newData, value, currentRowData) {
+              if(arDataU === 1){
+                let aResult = aSearchjson(aaEmployee,value);
+                newData.Scopebase = value;
+                newData.Department = aResult[0].Dept; 
+                newData.Division = aResult[0].DivCode;
+                newData.email = aResult[0].EmailAddress;      
+                newData.Nickname = aResult[0].FullNameThai;
+                newData.LGName = aResult[0].FullNameEng;
+                newData.PictureLoc = "./images/userss.png"
+              }
+            }, 
+    editorOptions: {visible: false,width: 150},         
+    validationRules: [{type: 'required',message: 'Staff ID is required' }],                   
+    visible: false,
+},
+{  dataField: "LGName",
+   caption:"Name",
+},
+/*{
+    itemType: "empty",
+    visible: false,
+}, */
+{  dataField: "Nickname",
+   caption:"Thai Name",
+},
+
+
+{  dataField: "Department",
+   caption:"Department",
+   sortOrder:"asc", 
+   allowHiding: false,
+   validationRules: [{type: 'required',message: 'Department is required' }],
+   groupIndex: 0,   
+   //visible: false,
+},  
+{  dataField: "Kright",
+   caption:"Key Rights",
+   visible: false,
+},
+{  dataField: "Tkey",
+   caption:"Token Key",
+   visible: false,
+},
+
+{  dataField: "Gright",
+   caption:"Group Rights",
+   width: 100,
+   visible: false,
+},
+
+{  dataField: "Division",
+   caption:"Division",
+   width: 100,
+   //visible: false,
+},
+{  dataField: "IDUsr",
+   caption:"Username",
+   sortOrder:"asc",
+   validationRules: [{type: 'required',message: 'User ID(Username) is required' }],
+   width: 200,
+},
+{  dataField: "Pword",
+   caption:"Password",
+   visible: false,
+},
+{  dataField: "email",
+   caption:"Email",
+   //visible: false,
+},
+
+{  dataField: "telephone",
+   caption:"Telephone",
+   //visible: false,
+},
+{  dataField: "Description",
+   caption:"Description",
+   visible: false,
+},
+{  dataField: "PictureLoc",
+   caption:"Picture Location",
+   width: 80,
+  /*  allowFiltering: false,
+    allowSorting: false,
+    cellTemplate: function (container, options) {
+        $("<div>")
+            .append($("<img>", { "src": options.value }))
+            .appendTo(container);
+    } */  
+    visible: false
+},
+{  dataField: "Active",
+   caption:"Active",
+   width: 50,
+   editorType:"dxSwitch",
+   editorOptions: {width:50},
+   visible: false,
+},
+{  dataField: "otp",
+   caption:"OTP",
+   visible: false,
+},
+{  type: "buttons",
+   width: 110,
+   buttons: ["edit", "delete"]
+}
+],
+// Tool Bar
+onToolbarPreparing: function(e) {
+var dataGrid = e.component;
+e.toolbarOptions.items.unshift(
+{
+    location: "after",
+    widget: "dxButton",
+    type: "success",
+    options: {
+        icon: 'collapse',
+        text: 'Collapse All',
+        width: 140,
+        onClick: function(e) {
+            var expanding = e.component.option("text") === "Expand All";
+            dataGrid.option("grouping.autoExpandAll", expanding);
+            e.component.option("text", expanding ? "Collapse All" : "Expand All");
+            e.component.option("icon", expanding ? "collapse" : "expand");
+            }
+        }
+},			
+{
+    location: "after",
+    widget: "dxButton",
+    visible: arPDFEx,
+    options: {
+        icon: "exportpdf",
+        text: "Export to PDF",
+        onClick: function() {
+        const doc = new jsPDF();
+        //doc.addFont("font/ANGSA.ttf", "angsana", "normal"); //Pridi-Regular.ttf
+        doc.addFont("font/Pridi-Regular.ttf", "Pridi", "normal");    
+        //doc.addFont("font/Prompt-ExtraLight.ttf", "Prompt", "normal"); // load thai font (in font location Google Font)
+        doc.setFont("Prompt", "normal"); // set to thai font
+        DevExpress.pdfExporter.exportDataGrid({
+            jsPDFDocument: doc,
+            component: dataGrid,
+            customizeCell: function(options) {
+                    const { gridCell, pdfCell } = options;
+ 
+                    //if(gridCell.rowType === 'data') {
+                        //set font and font size
+                        pdfCell.styles = {
+                            font: 'Pridi', //Prompt
+                            fontSize: 10
+                        }
+                    //}
+                }            
+        }).then(function() {
+            doc.save( 'MainUser' + '.pdf');
+        });
+        }
+    }
+},
+{
+    location: "after",
+    widget: "dxButton",
+    options: {
+        icon: "refresh",
+        onClick: function() {
+        dataGrid.refresh();
+        }
+    }
+}				
+);
+}
+}).dxDataGrid("instance");
+
+function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+    let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+    console.log('Goal...Repuest Web API : ' + Data);
+    var settings = {"url": Url,"method": "POST","timeout": 0,"headers": {"Content-Type": "application/json"},"data":Data,};
+    $.ajax(settings).done(function (response) {console.log(response);});
+}
+
+function aSearchjson(aObjArr,asID) {  
+  return aObjArr.filter( //aaEmployee
+    function(data) {
+      return data.EMPCode == asID
+    }
+  );
+}
+
+// DataGrid > Editing > Custome Editor
+function dropDownBoxEMP(cellElement, cellInfo) {
+        return $("<div>").dxDropDownBox({
+            dropDownOptions: { width: 600 },
+            dataSource: aaEmployee,
+            value: [cellInfo.value],
+            valueExpr: "EMPCode",
+            displayExpr: "EMPCode",
+            contentTemplate: function(e) {
+                    return $("<div>").dxDataGrid({             
+                    dataSource: aaEmployee,
+                    //remoteOperations: true, // EMPCode,FullNameThai
+                    columns: [{ dataField: "FullNameThai", caption: "Name", width: 400}, { dataField: "Dept", caption:"Dept.", width: 100}], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                    hoverStateEnabled: true,
+                    searchPanel: {visible: true},
+                    headerFilter: {visible: true},
+                    paging: { enabled: true, pageSize: 15 },
+                    filterRow: { visible: true },
+                    showBorders: true,
+                    scrolling: { mode: "virtual" },
+                    selection: { mode: "single" },                    
+                    height: 250,
+                    selectedRowKeys: [cellInfo.value],
+                    //selectedRowKeys: [value],
+                    //focusedRowEnabled: true,
+                    focusedRowKey: cellInfo.value,
+                    onSelectionChanged: function(sArgs) {
+                        //console.log(sArgs.selectedRowKeys[0].EMPCode)
+                        e.component.option("value",sArgs.selectedRowKeys[0].EMPCode); // Works but Error Need to correct next time !!!
+                        cellInfo.setValue(sArgs.selectedRowKeys[0].EMPCode);
+                        if(sArgs.selectedRowKeys.length > 0) {
+                            e.component.close();
+                        }                       
+                    }
+                });
+            },
+        });
+    } 
+
+});
+
+</script>	
+</body>
+</html>

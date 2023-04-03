@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LWT > Online System</title>
+    <link rel="shortcut icon" type="image/jpg" href="./images/lockton-favicon.png" />
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="ajQjsLib.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+        }
+
+        #tophead {
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .container {
+            top: 0;
+            left: 0;
+            width: 100%
+        }
+
+        #toolbar {
+            background-color: rgba(191, 191, 191, .15);
+            font-size: 16px;
+            padding: 5px 10px;
+            width: 100%;
+        }
+
+        .dx-button {
+            background-color: rgba(191, 191, 191, -0.15);
+            font-size: 16px;
+            border: 2px;
+        }
+
+        .dx-toolbar-button>.dx-toolbar-item-content {
+            margin-left: 0px;
+        }
+
+        .dx-treeview {
+            font-size: 16px;
+        }
+
+        .left-content {
+            display: inline-block;
+            width: 180px;
+            padding: 0 10px 10px;
+            background-color: rgba(191, 191, 191, 0.15);
+            box-shadow: -5px 0px 14px -8px rgba(0, 0, 0, 0.25) inset;
+        }
+
+        .logostyle {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            padding-top: 20px;
+            width: 180px;
+        }
+
+        .logobarblack {
+            background-color: white;
+            /* For browsers that do not support gradients */
+            background-image: linear-gradient(to right, black, white 50%, black 80%);
+            width: 100%;
+        }
+
+        .logobarwhite {
+            background-color: white;
+            /* For browsers that do not support gradients */
+            background-image: linear-gradient(to right, grey, black 50%, grey 80%);
+            width: 100%;
+        }
+
+        .headtitleleft {
+            color: white;
+            font-size: 12px;
+            margin-left: 20px;
+        }
+
+        .title {
+            padding: 20px 15px 15px 20px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .title .tright {
+            float: right;
+        }
+
+        .title .tleft {
+            float: left;
+        }
+
+        .form-avatar {
+            height: 23px;
+            width: 23px;
+            margin-right: 10px;
+            border: 1px solid #d2d3d5;
+            border-radius: 50%;
+            background-image: url('images/user.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+
+    <script>
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+        function unloadAllJS() {
+            var jsArray = new Array();
+            jsArray = document.getElementsByTagName('script');
+            for (i = 0; i < jsArray.length; i++) {
+                if (jsArray[i].id) {
+                    unloadJS(jsArray[i].id)
+                } else {
+                    jsArray[i].parentNode.removeChild(jsArray[i]);
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            localStorage.clear();
+            localStorage.clear();
+            localStorage.clear();
+            var aDXTheme = "generic.carmine";
+            DevExpress.ui.themes.current(aDXTheme);
+            document.getElementById("aUsrName").innerHTML = "User Name";
+        });
+
+        const aGoTo = function (newW) {
+            window.location.assign(newW);
+        };
+
+        // function disableBack() { window.history.forward(); }
+        // setTimeout("disableBack()", 0);
+        // window.onunload = function () { null };
+
+        //disableBack();
+
+        var aaPFDMI = isLocalHost();
+
+        function aSendMailDMZ(aRecipient, aRCPeMail, aSendereMail, aCCeMail, aBcceMail, aSubject, aMessage) {
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                "toname": aRecipient,
+                "toemail": aRCPeMail,
+                "fromemail": aSendereMail,
+                "ccemail": aCCeMail,
+                "bccemail": aBcceMail,
+                "subject": aSubject,
+                "message": aMessage
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("https://cbsdev2.locktonwattana.com/send-email/false", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        }
+
+        function generateOTP() {
+            var digits = '0123456789';
+            let OTP = '';
+            let aG = 0;
+            for (let i = 0; i < 6; i++) {
+                aG = Math.floor(Math.random() * 10);
+                OTP += digits[Math.floor(Math.random() * 10)];
+            }
+            return OTP;
+        };
+
+        $(function () {
+            var apwds = "";
+            var ausrs = "";
+            var aOTP = "";
+            var aaPFDMI = isLocalHost();
+            var aOTPm = generateOTP();
+            var aii = 0;
+
+            const popup = $("#popupContainer").dxPopup({
+                height: '250px',
+                width: '400px',
+                position: { offset: "0 -150" },
+                visible: true,
+                fullScreen: false,
+                showCloseButton: false,
+                showTitle: true,
+                dragEnabled: true,
+                closeOnOutsideClick: false,
+                shadingColor: "rgb(190,190,190,0.9)",
+                toolbarItems: [
+                    { toolbar: "top", html: "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>" }],
+                contentTemplate: function () {
+                    return $("<div />").append(
+                        $("<p><center><div id='username'></div></center></p>"),
+                        $("<p><center><div id='password'></div></center></p>"),
+                        $("<p><center><div id='OTP'></div></center></p>"),
+                        $("<p <div id='popover1'>Please get OTP from your register e-Mail, put here and then press [LOGIN] </div></p>"), //" + aOTPm + "
+                        $("<p><center><span id='icon-done'></span></span></center></p>")
+                    );
+                },
+                onContentReady: function () {
+                    aOTP = "";
+                    $("#OTP").hide();
+                }
+            }).dxPopup("instance");
+
+            $("#username").dxTextBox({
+                mode: "text",
+                placeholder: "Enter username",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    const previousValue = e.previousValue;
+                    ausrs = e.value;
+                },
+                width: "250px",
+                value: ""
+            }).dxTextBox("instance");
+
+            $("#password").dxTextBox({
+                mode: "password",
+                placeholder: "Enter password",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    const previousValue = e.previousValue;
+                    apwds = e.value;
+                },
+                width: "250px",
+                value: ""
+            }).dxTextBox("instance");
+
+            $("#OTP").dxTextBox({
+                mode: "text",
+                placeholder: "put OTP and press LOGIN",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    //const previousValue = e.previousValue;
+                    aOTP = e.value;
+                },
+                width: "250px",
+                value: ""
+            }).dxTextBox("instance");
+
+            $("#popover1").dxPopover({
+                target: "#OTP",
+                showEvent: "mouseenter",
+                hideEvent: "mouseleave",
+                position: "top",
+                width: 300
+            });
+
+
+            $("#icon-done").dxButton({
+                icon: "fas fa-key",
+                type: "success",
+                text: "LOGIN",
+                width: "120px",
+                visible: true,
+                onClick: function (e) {
+                    console.clear();
+                    if (jQuery.type(ausrs) === "undefined") {
+                        var aUname = ""
+                    } else {
+                        var aUname = ausrs
+                    };
+                    if (jQuery.type(apwds) === "undefined") {
+                        var aPswd = ""
+                    } else {
+                        var aPswd = apwds;
+                    };
+                    if (aUname === "" || aPswd === "") {
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            messageHtml: "<center style='color:Red;'>Username and Password can not be blank !!</center>"
+                        });
+                    }
+                    else {
+                        localStorage.setItem("aaPFDMI", aaPFDMI);
+                        localStorage.setItem("aaXXuX", aUname);
+                        var aaXTGO = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Guest
+                        var aaTBXX = "01f518c9-c818-4e9f-85cb-6245ee1a2637";
+                        //var aaTBXX = "A9525EA3-666E-4E93-B37F-3F95F44532E5";
+
+                        var aLtext = "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+
+                        var myHeaders = new Headers();
+                        myHeaders.append("Content-Type", "application/json");
+                        var raw = JSON.stringify({
+                            "@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                        });
+
+                        var requestOptions = {
+                            method: 'POST',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                        };
+
+                        let aURL = aaPFDMI + "/DMQ/XOL/" + aaXTGO + "/" + aaTBXX + "/all"; // + aUname;
+
+                        fetch(aURL, requestOptions)
+                            .then(response => response.json())
+
+                            .then(aData => {
+
+                                if (aPswd === aData[0].Pword) {
+                                    var aal = btoa(aData[0].Gright);
+                                    var aat = btoa(aData[0].Tkey);
+                                    var aLGName = aData[0].LGName;
+                                    var aemail = aData[0].email;
+                                    var aotpx = aData[0].otp;
+                                    var aftname = aData[0].Nickname;
+                                    var aDeptn = aData[0].Department;
+                                    var aDivn = aData[0].Division;
+                                    var aStaffID = aData[0].Scopebase;
+                                    var aAct = aData[0].Active;
+                                    var aThemeSL = aData[0].Kright;
+                                    //alert(aAct)
+                                    if (aotpx === "YES" || aotpx === "" || jQuery.type(aotpx) === "undefined") {
+                                        var aWOTP = 1;
+                                    } else {
+                                        var aWOTP = 0;
+                                    }
+                                    var apict = aData[0].PictureLoc;
+                                    localStorage.setItem("aaXrXg", aal);
+                                    localStorage.setItem("aaXXoX", aat);
+                                    localStorage.setItem("aaXpXt", apict);
+                                    localStorage.setItem("aaDXtm", aThemeSL);
+
+                                    localStorage.setItem("asFTNAME", aftname);
+                                    localStorage.setItem("asSTFID", aStaffID);
+                                    localStorage.setItem("asDEPT", aDeptn);
+                                    localStorage.setItem("asDIV", aDivn);
+                                    localStorage.setItem("asEMAIL", aemail);
+
+                                    if (aOTP === aOTPm || aWOTP === 0) {
+                                        //if (aAct === false) {
+                                        //    aGoTo("CPWD.html");
+                                        //} else {
+                                        aGoTo("index04.html");
+                                        //}
+                                    } else {
+                                        aii++;
+                                        $("#username").hide();
+                                        $("#password").hide();
+                                        aOTP = "";
+                                        $("#OTP").show(20);
+                                        if (aii <= 1) {
+                                            var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
+                                            // 
+                                            //                                       aRecipient, aRCPeMail               ,aSendereMail        , aCCeMail, aBcceMail,aSubject,aMessage "Dear Wikran <br/><br/>&nbsp;&nbsp; OTP = <br/><br/><br/>Regards,<br />SBL Admin."
+                                            var lSentM = aSendMailDMZ("Khun " + aLGName, aemail, "auto-reply@locktonwattana.srv", "", "", "OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aLGName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>Auto replay service<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+
+                                            DevExpress.ui.dialog.alert({
+                                                showTitle: false,
+                                                messageHtml: "<center style='color:ForestGreen;'> Send OTP to your e-Mail, please check </center>"
+                                            });
+                                        } else {
+                                            DevExpress.ui.dialog.alert({
+                                                showTitle: false,
+                                                messageHtml: "<center style='color:Red;'> Please check OTP from your e-Mail again !!" + aii + "</center>"
+                                            });
+                                        }
+                                    }
+
+                                } else {
+
+                                    DevExpress.ui.dialog.alert({
+                                        showTitle: false,
+                                        messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
+                                    });
+                                }
+
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                DevExpress.ui.dialog.alert({
+                                    showTitle: false,
+                                    messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
+                                });
+                            });
+
+                    }
+                }
+            });
+
+
+            function aaLoginGet(aaPFDMI, aUname, aPswd) {
+                var aReturnVal = [];
+                let aURL = aaPFDMI + "/pythonL/" + aUname + "/" + aPswd + "/true";
+                var settings = {
+                    "url": aURL,
+                    "method": "GET",
+                    "timeout": 0,
+                };
+                $.ajax(settings).done(function (response) {
+                    localStorage.setItem("aaXXoX", response.TokenKey);
+                    aReturnVal = response;
+                });
+                return aReturnVal;
+            }
+
+            function aaGetjson4Api(aaPFDMI, aaXTGO, aaTBXX, aSearch) {
+                var aReturnVal1 = [];
+                let aURL = aaPFDMI + "/pythonLT/" + aaXTGO + "/" + aaTBXX + "/" + aSearch;
+                var settings = {
+                    "url": aURL,
+                    "method": "GET",
+                    "timeout": 0,
+                };
+                $.ajax(settings).done(function (response) {
+                    var aal = btoa(response[0].Gright);
+                    localStorage.setItem("aaXrXgU", aal);
+                    localStorage.setItem("aaXrXgT", response[0].Gright);
+                    eraseCookie("aaCrCg")
+                    setCookie("aaCrCg", aal, 1);
+                    aReturnVal1 = response;
+                });
+                return aReturnVal1;
+            }
+
+            $("#icon-cancel").dxButton({
+                icon: "fas fa-door-open",
+                type: "danger",
+                text: "EXIT",
+                width: "150px",
+                onClick: function (e) {
+                    DevExpress.ui.notify("The Cancel button was clicked");
+                    localStorage.clear();
+                    window.close();
+                }
+            });
+
+        });
+
+    </script>
+</head>
+
+<body class="dx-viewport">
+    <div class="container">
+        <div class="logobarwhite" style="height:150px" id="logobarid">
+            <img src=".\images\locktonlogo70mmwhite.png" class="logostyle" id="mainlogo">
+            <div class="title">
+                <span class="tleft"> SIBIS Online System </span>
+                <span class="tright" id="aUsrName"></span>
+                <span class="tright form-avatar"></span>
+            </div>
+        </div>
+        <div id="popupContainer"></div>
+    </div>
+    <script>
+        unloadAllJS();
+    </script>
+</body>
+
+</html>

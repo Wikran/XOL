@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Update Value</title>
+    <script>
+        // update.js
+
+        //const fs = require('fs');
+
+        function updateValue() {
+            const data = require('./bundles.min.js');
+            const newVal = document.getElementById('newVal').value;
+            data.Val = newVal;
+            fs.writeFileSync('./bundles.min.js', `const aSetVal = ${data.Val};`);
+        }
+        function updateVal() {
+            const newVal = document.getElementById('newVal').value;
+            //alert(newVal)
+
+            fetch('./bundles.min.js')
+                .then(response => response.text())
+                .then(text => {
+                    // Modify the script
+                    const modifiedText = text.replace(/aSetVal\s*=\s*1/, 'aSetVal = ' + newVal);
+
+                    // Create a new script element with the modified script
+                    const script = document.createElement('script');
+                    script.textContent = modifiedText;
+
+                    // Replace the old script with the new one
+                    const oldScript = document.querySelector('script[src="./bundles.min.js"]');
+                    if (oldScript) {
+                        oldScript.parentNode.replaceChild(script, oldScript);
+                    } else {
+                        document.body.appendChild(script);
+                    }
+                });
+
+        }
+    </script>
+</head>
+
+<body>
+    <label>Enter new value:</label>
+    <input type="number" id="newVal" />
+    <button onclick="updateVal()">Update</button>
+    <!-- <script src="./update.js"></script> -->
+</body>
+
+</html>

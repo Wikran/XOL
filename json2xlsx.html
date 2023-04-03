@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Export to Excel with xlsx CDN</title>
+	<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="MasterData.js"></script>
+</head>
+<body>
+	<button onclick="exportToExcel()">Export to Excel</button>
+	<script>
+		function exportToExcel() {
+			const aaJsonArray = aaSubGroup4;
+
+			// Create a new workbook and worksheet
+			const wb = XLSX.utils.book_new();
+			const ws = XLSX.utils.json_to_sheet(aaJsonArray);
+
+			// Add the worksheet to the workbook
+			XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+			// Convert the workbook to an array buffer
+			const buf = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+
+			// Save the file
+			//saveAs(new Blob([buf]), "aaJsonArray.xlsx");
+            const blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+            window.saveAs(blob, "aaJsonArray400.xlsx");
+
+		}
+/*
+const wb = XLSX.utils.book_new();
+const ws = XLSX.utils.json_to_sheet(aaJsonArray);
+XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+const buf = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+const blob = new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+window.saveAs(blob, "aaJsonArray.xlsx");
+
+const aaJsonArray = [ 
+    { ExpSubGroup: "Gift/Other given to customer", ACCCode: "5505200002"},
+    { ExpSubGroup: "Entertainment", ACCCode: "5105100001"},
+    { ExpSubGroup: "Taxi", ACCCode: "5101150004"},
+    { ExpSubGroup: "Local Travel", ACCCode: "5101150003"},
+    { ExpSubGroup: "Expressway", ACCCode: "5102300001" },
+    { ExpSubGroup: "Accom. Overseas Trav", ACCCode: "5101130001" },
+    { ExpSubGroup: "Breakfast/Lunch/Dinner-Overseas Trip", ACCCode: "5101150001" },
+    { ExpSubGroup: "Overseas Expense -Misc", ACCCode: "5101150001" },
+    { ExpSubGroup: "Per diem", ACCCode: "5204100004" },
+    { ExpSubGroup: "Ticket Overseas Trav", ACCCode: "5101110001" },
+    { ExpSubGroup: "Stationery-Paper", ACCCode: "5401100004" },
+    { ExpSubGroup: "Advertising-Sponsorship", ACCCode: "5106400001" },
+    { ExpSubGroup: "Expenses - no receipt", ACCCode: "5101140001" },
+    { ExpSubGroup: "Input VAT - VAT Only", ACCCode: "5504400001" },
+    { ExpSubGroup: "Bad Debt Exp-Write Off Non IBA", ACCCode: "5109100001" },
+    { ExpSubGroup: "Local Travel Airfares", ACCCode: "5101110002" },
+    { ExpSubGroup: "Employee Advances", ACCCode: "1102100002" },		
+];
+*/
+
+	</script>
+</body>
+</html>

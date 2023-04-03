@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HOD Approver with Amount Range</title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export Excel -->
+    <!-- Export to PDF -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <!-- Export to PDF -->
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="aaTMain.js"></script>
+    <script src="bundle.min.js"></script>
+    <!-- <script src="ajQjsLib.js"></script> -->
+    <style>
+        #aIndicator {
+            margin: 0px 0;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border-top: 1px solid lightgray;
+            border-bottom: 1px solid lightgray;
+        }
+
+        .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: #e8f1fae5 !important;
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-total-footer {
+            border-top: 2px solid #b9defc;
+            border-bottom: 4px solid #b9defc;
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-headers {
+            border-top: 4px solid #b9defc;
+            border-bottom: 2px solid #b9defc;
+        }
+
+        .dx-datagrid-table {
+            border-left: 1px solid #b9defc;
+            border-right: 1px solid #b9defc;
+        }
+
+        .dx-datagrid-total-footer {
+            background-color: #e8f1fae5 !important;
+        }
+
+        .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(189, 223, 255)
+        }
+
+        /*#gridContainer*/
+    </style>
+    <script>
+        window.onload = function() {
+			setTimeout(function() {
+				location.reload();
+			}, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
+		}         
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        window.jsPDF = window.jspdf.jsPDF;
+        applyPlugin(window.jsPDF);
+        console.clear();
+        var aaXToX = localStorage["aaXXoX"];
+        var aaXNoX = localStorage["aaXXuX"];
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // MasterPage
+        var aaPXXI = localStorage["aPXIXD"];
+
+        const aGetDataAPI = (aDMZServer, aFullTableName, aFieldSelected, aOBJsName) => {
+            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+            let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify({
+                "@": aFullBody
+            });
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
+            fetch(aURL, requestOptions)
+                .then(response => response.json())
+                //
+                .then(aData => {
+                    aaObjData = aData;
+                    localStorage.setItem(aOBJsName, JSON.stringify(aaObjData));
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            return 1
+        }
+
+        const aGetData4Model = (aServerURL, aPUBToken, aTBToken, aSearchFor, aOBJName) => {   // with Search string (for Index Key in Modelctl.json file) example "WIK06749"
+            let jqOTHs = $.post(aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/' + aSearchFor, function (e) {
+                //aaExpLU = e;
+                localStorage.setItem(aOBJName, JSON.stringify(e));
+            })
+                .done(function (e) {
+                    localStorage.setItem(aOBJName, JSON.stringify(e));
+                })
+                .fail(function () {
+                    console.log("error EXP");
+                })
+                .always(function () {
+                });
+            return 1
+        }
+
+        const aGet4DataModel = (aServerURL, aPUBToken, aTBToken, aSearchFor, aOBJName) => {     // SearchFor = sql statement example "code = 'xxxx' and ID = 1111"
+            var jqOTHs = $.post(aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/all', { "@": aSearchFor }, function (e) {
+                aaExpLU = e;
+                localStorage.setItem(aOBJName, JSON.stringify(aaExpLU));
+            })
+                .done(function (e) {
+                })
+                .fail(function () {
+                    console.log("error EXP");
+                })
+                .always(function () {
+                });
+            return 1
+        }
+
+        const aGetD2V = (aDMZServer, aFullTableName, aFieldSelected, aOBJsName) => {
+            //if (localStorage.getItem(aOBJsName) === null) {
+            //console.log(`Email address not exists`);
+            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+
+            let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName; //alert(aFullBody)
+            //alert(aFullBody)
+            let myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            let raw = JSON.stringify({
+                "@": "Select " + aFieldSelected + " From " + aFullTableName
+            });
+
+            let requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
+
+            fetch(aURL, requestOptions)
+                .then(response => response.json())
+                //
+                .then(aData => {
+                    //aaObjData = aData;
+                    //aReturnArr = aData;
+                    //console.log(aData)
+                    //localStorage.setItem(aOBJsName, "");
+                    localStorage.setItem(aOBJsName, JSON.stringify(aData));
+                })
+
+        }
+
+        const aGetDateRefE = (aERSuf, aMSuf, nFtoL) => {
+            let aNowDatev = new Date()
+            let aYear2 = String(aNowDatev.getFullYear()).substring(2, 4);
+            let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
+            let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
+            let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
+            let aDateNow2 = aYear2 + aMonth2 + aDate2 + aMSuf + String(Date.now()).substring(5, nFtoL) // 5,16
+            //let aERCode = "5102300001"
+            //let aERSuf = "F"
+            //axRunRun = "ER" + aDateNow2
+            return aERSuf + aDateNow2 //+ aYear2 + aMonth2 + aDate2 + aHour2;
+        }
+        console.log(aGetDateRefE("","", 12)) // 5 to 11 = 11-5 = 6
+
+        const arAPTYPE = [{ CODE: "HOD" }, { CODE: "HR" }, { CODE: "FA" }];
+        //class="dx-viewport" <div class="container">   </div><div class="loadpanel"></div>
+    </script>
+</head>
+
+<body class="dx-viewport">
+
+    <div id="gridContainer"></div>
+
+
+    <script>
+
+        var aaPXIXD = localStorage["aPXIXD"];
+        var aaEnt = aaPXIXD.includes("X");
+        var aaUsrN = localStorage["aaXXuX"];
+        var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
+        var aaPFDMZz = "https://webspace.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+
+        var afqrFull = "pageID='" + aaPXIXD + "' "
+        var afURL = aaPFDMZz + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
+        var afsettings = {
+            "url": afURL,
+            "method": "POST",
+            "timeout": 0,
+            "headers": { "Content-Type": "application/json" },
+            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+        };
+        // var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/' + aaPXXI, function (e) {
+        var jqxhr = $.post(afsettings, function (e) { })
+            .done(function (e) {
+                console.log("set aaTBKey");
+                aObjMPage = e;
+                var aaKeyField = aObjMPage[0].PrimaryKey;
+                var aaTBKey = aObjMPage[0].TBKey;
+                console.log(aaTBKey)
+                //$(function () { TOP PRG
+                $(() => {
+                    var aaDMZSn = "https://webspace.locktonwattana.com";
+                    var aaPFDMI = isLocalHost(); //"https://cbsdev3.locktonwattana.com";//= isLocalHost();
+                    var aaXToX = localStorage["aaXXoX"];
+                    var aDBServerName;
+                    var aDBEMPServerName;
+                    var aEMPPDFI = aaPFDMI;
+                    if (aaPFDMI === "https://webspace.locktonwattana.com" ){
+                        aDBServerName = "[lockthbnk-db02]"
+                        aDBEMPServerName = aDBServerName;
+                    } else if (aaPFDMI === "https://cbsdev3.locktonwattana.com") {    
+                        aDBServerName = "[lockthbnk-db02]"
+                        aDBEMPServerName = aDBServerName;                        
+                    } else if (aaPFDMI === "https://cbsdev2.locktonwattana.com") {
+                        aDBServerName = "[lockthbnk-ap14]"
+                        aDBEMPServerName = aDBServerName;
+                    } else {
+                        aDBServerName = "[WIKRAN-W10]"
+                        aDBEMPServerName = "[lockthbnk-ap14]"
+                        aEMPPDFI = "https://cbsdev2.locktonwattana.com";
+                    }  
+
+                    // Employee           
+                    let aqrFull = "Where Status != 'Resigned' "
+                    //setInterval(aGetD2V(aaDMZSn, "[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff " + aqrFull, "EMPCode,FullNameThai,FullNameEng,Dept,DivCode,Position,EmailAddress", "aaOBJEmp"), 10)
+
+                    let aFieldSelected = "EMPCode,FullNameThai,FullNameEng,Dept,DivCode,Position,EmailAddress,AccDeptCode,AccDivCode"
+                    let aFullBody = "Select " + aFieldSelected + " From ExtraOnLine.dbo.XOLStaffs " + aqrFull; //alert(aFullBody)   " + aDBEMPServerName + ".                                        
+                    //aaDMZSn
+                    fetch(aEMPPDFI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody }), redirect: "follow" })
+                        .then(response => response.json())
+                        //
+                        .then(aData => {
+                            var aaEmployee = aData;
+                            // Division  
+                            //let aqrFull2 = "Where Status != 'Resigned' "
+                            let aFieldSelected2 = "AccDivCode"
+                            let aFullBody2 = "Select " + aFieldSelected2 + " From ExtraOnLine.dbo.XOLDivision ORDER BY AccDivCode" //+ aqrFull2; //alert(aFullBody)   " + aDBServerName + ".           
+                            //setInterval(aGetData4Model(aaDMZSn, atob(aaXToX), "c2dee741-7ecd-498c-b761-56e7db248b89", "all", "aaOBJDiv"), 10)
+                            //aaDMZSn
+                            fetch(aEMPPDFI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody2 }), redirect: "follow" })
+                                .then(response => response.json())
+                                //
+                                .then(aData => {
+                                    var aaDivision = aData;
+                                    // Define an empty array
+                                    // Add data to the array using push() method
+                                    let newAaDivision = { AccDivCode: "1194-09" };
+                                    aaDivision.push(newAaDivision);
+                                    
+                                    // Print the array to the console
+                                    console.log(aaDivision);
+                                    console.log(aData);
+                                    /*
+                                    // Approver Next IDNO " + aDBServerName + ".
+                                    let aFieldSelected3 = "NextNO"
+                                    let aFullBody3 = "Select " + aFieldSelected3 + " From ExtraOnLine.dbo.ApproverNextNoView " //+ aqrFull2; //alert(aFullBody) 
+                                    //aaDMZSn
+                                    fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody3 }), redirect: "follow" })
+                                        .then(response => response.json())
+                                        //
+                                        .then(aData => {
+                                            var aaNextNOn = aData;
+
+                                            //setInterval(aGetD2V(aaPFDMI, "ExtraOnLine.dbo.ApproverNextNoView ", "NextNO", "asOBJNext"), 10) //ApproverNextNoView
+                                            //let aaNextNOn = JSON.parse(localStorage.getItem("asOBJNext"));
+                                            //var aaDivision = JSON.parse(localStorage.getItem("aaOBJDiv"));
+                                            //var aaEmployee = JSON.parse(localStorage.getItem("aaOBJEmp"));
+                                            aaNextNOp = String(aaNextNOn[0].NextNO).padStart(5, '0')
+                                    */        
+                                            var aMMaMx = localStorage["MMaMx"];
+                                            var aRRgRs = aMMaMx.split('0');
+                                            var aDDeDx = aRRgRs[0];
+                                            var aRrgSx = aRRgRs[1];
+                                            if (jQuery.type(aRrgSx) === "undefined") {
+                                                aRrgSx = "377B";
+                                            }
+                                            let nDataPos = 1;
+                                            let nExcelPos = 2;
+                                            let nPDFPos = 3;
+                                            let nRPTPos = 4;
+                                            var arDataC = aRolesAction(aRrgSx, nDataPos, 1);
+                                            var arDataU = aRolesAction(aRrgSx, nDataPos, 2);
+                                            if (arDataU === 1) {
+                                                var aUpdateText = "Update";
+                                                var aSaveVisible = 1;
+                                                var aCancelText = "Cancel";
+                                                var aCancelicon = "close";
+                                                var aCancelType = "danger";
+                                            } else {
+                                                var aUpdateText = "xxx";
+                                                var aSaveVisible = 0;
+                                                var aCancelText = "EXIT";
+                                                var aCancelicon = "fas fa-sign-out-alt";
+                                                var aCancelType = "success";
+                                            }
+                                            var arDataD = aRolesAction(aRrgSx, nDataPos, 3);
+                                            var arExcelEx = aRolesAction(aRrgSx, nExcelPos, 2);
+                                            var arPDFEx = aRolesAction(aRrgSx, nPDFPos, 2);
+                                            var aqrFull = "IDNO != '' " //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%"
+                                            var aurl = aaPFDMI  + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all' //aaPFDMZz  aaPFDMI
+
+                                            var settings = {
+                                                "url": aurl,
+                                                "method": "POST",
+                                                "timeout": 0,
+                                                "headers": {
+                                                    "Content-Type": "application/json"
+                                                },
+                                                "data": JSON.stringify({
+                                                    "@": aqrFull //" Status!='Resigned' "
+                                                }),
+                                            };
+
+
+                                            $("#gridContainer").dxDataGrid({
+
+                                                dataSource: new DevExpress.data.CustomStore({
+                                                    key: "IDNO",
+                                                    loadMode: "omit",
+                                                    load: function () { //$.post(settings).done(function (response) { console.log(response); }); fetch(aurl,requestOptions).then(response => response.json()).then(data => {console.log(data)} );
+                                                        return $.post(settings).done(function (response) { console.log(response); }); //$.post(aaPFDMZz + '/DMQ/XOL/'+ atob(aaXToX) +'/' + aaTBKey + '/all') //,{ "@": aqrFull  }
+                                                        //.fail(function() { throw "Data loading error" });
+                                                    },                                                    
+                                                    insert: function (values) {
+                                                        if (aaEnt) {
+                                                            var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date() };
+                                                            var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                        }
+                                                        else {
+                                                            var ObjRowData = JSON.stringify(values);
+                                                        }
+                                                        sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                    },
+                                                    update: function (key, values) {
+                                                        var ObjKeyData = { "IDNO": $.trim(key) };
+                                                        var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                        sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                    },
+                                                    remove: function (key) {
+                                                        var ObjKeyData = { "IDNO": $.trim(key) };
+                                                        var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                                                        sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                    }
+                                                }),
+
+                                                allowColumnReordering: true,
+                                                allowColumnResizing: true,
+                                                columnMinWidth: 100,
+                                                columnChooser: {
+                                                    enabled: true
+                                                },
+                                                showBorders: true,
+                                                sorting: {
+                                                    mode: "multiple"
+                                                },
+                                                selection: {
+                                                    mode: 'single'//'multiple'
+                                                },
+                                                groupPanel: {
+                                                    visible: true
+                                                },
+                                                filterRow: {
+                                                    visible: true,
+                                                    applyFilter: "auto"
+                                                },
+                                                headerFilter: {
+                                                    visible: true,
+                                                    allowSearch: true,
+                                                },
+                                                grouping: {
+                                                    autoExpandAll: true,
+                                                },
+                                                searchPanel: {
+                                                    visible: true
+                                                },
+                                                paging: {
+                                                    pageSize: 10
+                                                },
+                                                pager: {
+                                                    showPageSizeSelector: true,
+                                                    allowedPageSizes: [10, 20, 50],
+                                                    showInfo: true
+                                                },
+                                                showBorders: true,
+                                                groupPaging: true,
+                                                showColumnLines: true,
+                                                showRowLines: true,
+                                                //rowAlternationEnabled: true,
+
+                                                // Export to Excel 		
+                                                export: {
+                                                    enabled: arExcelEx,
+                                                    allowExportSelectedData: true
+                                                },
+                                                onExporting: function (e) {
+                                                    const workbook = new ExcelJS.Workbook();
+                                                    const worksheet = workbook.addWorksheet('DATA');
+                                                    DevExpress.excelExporter.exportDataGrid({
+                                                        worksheet: worksheet,
+                                                        component: e.component
+                                                    }).then(function () {
+                                                        workbook.xlsx.writeBuffer().then(function (buffer) {
+                                                            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'Approver' + '.xlsx');
+                                                        });
+                                                    });
+                                                    e.cancel = true;
+                                                },
+                                                onInitNewRow: function (e) {
+                                                    e.data.IDNO = aGetDateRefE("","", 12) //aaNextNOp 5-10 = 10-5 = 5
+                                                },
+                                                onCellHoverChanged: function (e) {
+                                                    if (e.column.dataField == "AppOrder") {
+                                                        popup.option("contentTemplate",
+                                                            function (contentElement) {
+                                                                $("<div/>")
+                                                                    .append(e.text)
+                                                                    .appendTo(contentElement);
+                                                            });
+                                                        popup.option("target", e.cellElement);
+                                                        popup.show();
+                                                    }
+                                                },
+                                                onEditorPreparing: function (e) {
+                                                    if (e.parentType === "dataRow" && arDataU === 0) {
+                                                        e.editorOptions.disabled = true;
+                                                    } else {
+                                                        if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "IDNO")) {
+                                                            e.editorOptions.disabled = true;
+                                                        }
+                                                    }
+                                                },
+                                                //
+                                                //
+                                                // Editing
+                                                editing: {
+                                                    mode: "popup", //cell row form popup
+                                                    useIcons: true,
+                                                    allowUpdating: true,
+                                                    allowDeleting: arDataD,
+                                                    allowAdding: arDataC,
+                                                    form: {
+                                                        labelLocation: 'left',
+                                                        showColonAfterLabel: false,
+                                                        colCount: 2,
+                                                    },
+                                                    popup: {
+                                                        title: "Approver Information",
+                                                        fullScreen: false,
+                                                        showTitle: true,
+                                                        width: 1200,
+                                                        height: 725,
+                                                        position: { offset: "0 -100" },
+                                                        /*position: {
+                                                            my: "top",
+                                                            at: "top",
+                                                            of: "window"
+                                                        },*/
+                                                        onContentReady: function (e) {
+                                                            e.component.option('toolbarItems[0].visible', aSaveVisible);
+                                                            e.component.option('toolbarItems[0].options.icon', 'save');
+                                                            e.component.option('toolbarItems[0].options.type', 'success');
+                                                            e.component.option('toolbarItems[1].options.text', aCancelText);
+                                                            e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                                                            e.component.option('toolbarItems[1].options.type', aCancelType);
+                                                        }
+                                                    }
+                                                },
+                                                // column list
+                                                columns: [
+                                                    {
+                                                        type: "buttons",
+                                                        width: 110,
+                                                        buttons: ["edit", "delete"]
+                                                    },
+
+                                                    {
+                                                        dataField: "ApproverCode",
+                                                        caption: "Type",
+                                                        dataType: "string",
+                                                        //groupIndex: 0,
+                                                        //editorType: "dxTextBox",
+                                                        editorOptions: { width: 100 },
+                                                        sortOrder: "asc",
+                                                        lookup: {
+                                                            dataSource: arAPTYPE,
+                                                            valueExpr: "CODE",
+                                                            displayExpr: "CODE",
+                                                        },
+                                                        width: 100,
+                                                    },
+                                                    {
+                                                        dataField: "ApproveToDivision",
+                                                        caption: "Approve For",
+                                                        sortOrder: "asc",
+                                                        dataType: "string",
+                                                        editorOptions: { width: 140 },
+                                                        showClearButton: true,
+                                                        lookup: {
+                                                            dataSource: aaDivision, //JSON.parse(localStorage.getItem("aaOBJDiv")), //aaDivision,
+                                                            valueExpr: "AccDivCode",
+                                                            displayExpr: "AccDivCode",
+                                                        },
+                                                        //setCellValue: function(newData, value, currentRowData) {   
+                                                        //    newData.ApproveToDivision = value;
+                                                        //},         
+                                                        //validationRules: [{ type: "required" }],
+                                                        width: 140,
+                                                    },
+                                                    {
+                                                        dataField: "AppOrder",
+                                                        caption: "Order",
+                                                        dataType: "number",
+                                                        //format:{ type:"fixedPoint", precision: 2 },
+                                                        editorType: "dxNumberBox",
+                                                        editorOptions: {
+                                                            format: "###",
+                                                            width: 100,
+                                                            value: 0,
+                                                            min: 0,
+                                                            max: 9,
+                                                            showSpinButtons: true,
+                                                        },
+                                                        width: 120,
+                                                        visible: false,
+                                                    },
+                                                    {
+                                                        dataField: "AppDefault",
+                                                        caption: "Default",
+                                                        dataType: "boolean",
+                                                        editorType: "dxSwitch",
+                                                        editorOptions: { switchedOffText: "NO", switchedOnText: "YES" },
+                                                        width: 120,
+                                                    },
+                                                    {
+                                                        dataField: "LRange01",
+                                                        caption: "Limit From",
+                                                        dataType: "number",
+                                                        format: { type: "fixedPoint", precision: 2 },
+                                                        editorType: "dxNumberBox",
+                                                        editorOptions: {
+                                                            format: "#,##0.00",
+                                                            width: 120,
+                                                            value: 0,
+                                                            step: 5000,
+                                                            min: 0,
+                                                            max: 9999999,
+                                                            showSpinButtons: true,
+                                                            //rtlEnabled: true 
+                                                        },
+                                                        width: 120,
+                                                        visible: true,
+                                                    },
+                                                    {
+                                                        dataField: "LRange02",
+                                                        caption: "Limit To",
+                                                        dataType: "number",
+                                                        format: { type: "fixedPoint", precision: 2 },
+                                                        editorType: "dxNumberBox",
+                                                        editorOptions: {
+                                                            format: "#,##0.00",
+                                                            width: 120,
+                                                            value: 0,
+                                                            step: 5000,
+                                                            min: 15000,
+                                                            max: 9999999,
+                                                            showSpinButtons: true,
+                                                            //rtlEnabled: true 
+                                                        },
+                                                        width: 120,
+                                                        visible: true,
+                                                    },
+                                                    {
+                                                        caption: "[ APPROVER INFORMATION ]",
+                                                        editorOptions: { width: 0 },
+                                                        visible: false,
+                                                    },
+                                                    {
+                                                        caption: " ",
+                                                        editorOptions: { width: 0 },
+                                                        visible: false,
+                                                    },
+                                                    {
+                                                        caption: 'APPROVER',
+                                                        columns: [
+                                                            {
+                                                                dataField: "ApproverEmpID",
+                                                                caption: "Approver ID",
+                                                                dataType: "string",
+                                                                /*lookup: {
+                                                                    dataSource: aaEmployee, //JSON.parse(localStorage.getItem("aaOBJEmp")), //aaEmployee, //EMPCode,FullNameThai
+                                                                    valueExpr: "EMPCode",
+                                                                    displayExpr: "EMPCode",
+                                                                },*/
+                                                                editCellTemplate: dropDownBoxEMP,
+                                                                setCellValue: function (newData, value, currentRowData) {
+                                                                    if (arDataU === 1) {
+                                                                        let aResult = aSearchEMP(aaEmployee, value);
+                                                                        newData.ApproverEmpID = value;
+                                                                        newData.ApproverDept = aResult[0].AccDeptCode;
+                                                                        newData.ApproverDiv = aResult[0].AccDivCode;
+                                                                        newData.ApproverEmail = aResult[0].EmailAddress;
+                                                                        newData.ApproverName = aResult[0].FullNameThai;
+                                                                        newData.ApproverPos = aResult[0].Position;
+                                                                    }
+                                                                },
+                                                                editorOptions: { width: 100 },
+                                                                width: 100,
+                                                                visible: false,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverName",
+                                                                caption: "Approver Name",
+                                                                dataType: "string",
+                                                                editorOptions: { width: 220 },
+                                                                width: 200,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverPos",
+                                                                caption: "Position",
+                                                                dataType: "string",
+                                                                editorOptions: { width: 220 },
+                                                                width: 200,
+                                                                visible: false,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverEmail",
+                                                                caption: "Approver Email",
+                                                                dataType: "string",
+                                                                editorOptions: { width: 220 },
+                                                                width: 200,
+                                                                visible: true,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverDept",
+                                                                caption: "Department",
+                                                                editorOptions: { width: 100 },
+                                                                width: 100,
+                                                                visible: false,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverDiv",
+                                                                caption: "Division",
+                                                                editorOptions: { width: 100 },
+                                                                width: 100,
+                                                                visible: false,
+                                                            },
+                                                        ],
+                                                    },
+                                                    {
+                                                        dataField: "IDNO",
+                                                        caption: "IDNO",
+                                                        sortOrder: "asc",
+                                                        allowHiding: false,
+                                                        editorOptions: { width: 80 },
+                                                        visible: false,
+                                                        width: 80,
+                                                    },
+                                                    {
+                                                        dataField: "ApperverDesc",
+                                                        caption: "Apperver Desc",
+                                                        width: 200,
+                                                        editorOptions: { width: 200 },
+                                                        visible: false,
+                                                    },
+                                                    {
+                                                        dataField: "Note",
+                                                        caption: "Note",
+                                                        editorType: "dxTextArea",
+                                                        editorOptions: { width: 950 },
+                                                        width: 950,
+                                                        colSpan: 1,
+                                                        visible: false,
+                                                    },
+
+                                                ],
+                                                // summary
+                                                summary: {
+                                                    recalculateWhileEditing: true,
+                                                    skipEmptyValues: false,
+                                                    totalItems: [
+                                                        {
+                                                            column: "ApproverCode",
+                                                            summaryType: "count",
+                                                            displayFormat: "{0} Items",
+                                                        },
+                                                    ],
+                                                    groupItems: [
+                                                        {
+                                                            column: "ApperverDesc",
+                                                            summaryType: "count",
+                                                            displayFormat: "{0} Items",
+                                                        },
+                                                    ],
+                                                },
+                                                // Tool Bar
+                                                onToolbarPreparing: function (e) {
+                                                    var dataGrid = e.component;
+                                                    e.toolbarOptions.items.unshift(
+                                                        {
+                                                            location: "after",
+                                                            widget: "dxButton",
+                                                            type: "success",
+                                                            options: {
+                                                                icon: 'collapse',
+                                                                text: 'Collapse All',
+                                                                width: 140,
+                                                                onClick: function (e) {
+                                                                    var expanding = e.component.option("text") === "Expand All";
+                                                                    dataGrid.option("grouping.autoExpandAll", expanding);
+                                                                    e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                                                                    e.component.option("icon", expanding ? "collapse" : "expand");
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            location: "after",
+                                                            widget: "dxButton",
+                                                            visible: arPDFEx,
+                                                            options: {
+                                                                icon: "exportpdf",
+                                                                text: "Export to PDF",
+                                                                onClick: function () {
+                                                                    const doc = new jsPDF();
+                                                                    DevExpress.pdfExporter.exportDataGrid({
+                                                                        jsPDFDocument: doc,
+                                                                        component: dataGrid
+                                                                    }).then(function () {
+                                                                        doc.save('Approver' + '.pdf');
+                                                                    });
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            location: "after",
+                                                            widget: "dxButton",
+                                                            options: {
+                                                                icon: "refresh",
+                                                                onClick: function () {
+                                                                    dataGrid.refresh();
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                }
+                                            }).dxDataGrid("instance");
+
+                                            function aSearchjson(aObjArr, asID) {
+                                                return aObjArr.filter( //aaDivision
+                                                    function (data) {
+                                                        return data.DivCode == asID
+                                                    }
+                                                );
+                                            }
+
+                                            /*
+                                            function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+                                                let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+                                                console.log('Goal...Repuest Web API : ' + Data);
+                                                var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
+                                                $.ajax(settings).done(function (response) { console.log(response); });
+                                            }
+                                            */
+                                            function aSearchEMP(aObjArr, asID) {
+                                                return aObjArr.filter( //aaEmployee
+                                                    function (data) {
+                                                        return data.EMPCode == asID
+                                                    }
+                                                );
+                                            }
+                                            // DataGrid > Editing > Custome Editor
+                                            function dropDownBoxEMP(cellElement, cellInfo) {
+                                                return $("<div>").dxDropDownBox({
+                                                    dropDownOptions: { width: 650 },
+                                                    dataSource: aaEmployee,
+                                                    value: [cellInfo.value],
+                                                    valueExpr: "EMPCode",
+                                                    displayExpr: "EMPCode",
+                                                    contentTemplate: function (e) {
+                                                        return $("<div>").dxDataGrid({
+                                                            dataSource: aaEmployee,
+                                                            //remoteOperations: true, // EMPCode,FullNameThai
+                                                            columns: [{ dataField: "FullNameThai", caption: "Name", width: 300 }, { dataField: "Position", caption: "Position", width: 200 }, { dataField: "AccDeptCode", caption: "Department", width: 100 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                                                            hoverStateEnabled: true,
+                                                            searchPanel: { visible: false },
+                                                            headerFilter: { visible: true },
+                                                            paging: { enabled: true, pageSize: 15 },
+                                                            filterRow: { visible: true },
+                                                            showBorders: true,
+                                                            scrolling: { mode: "virtual" },
+                                                            selection: { mode: "single" },
+                                                            height: 350,
+                                                            selectedRowKeys: [cellInfo.value],
+                                                            //selectedRowKeys: [value],
+                                                            //focusedRowEnabled: true,
+                                                            focusedRowKey: cellInfo.value,
+                                                            onSelectionChanged: function (sArgs) {
+                                                                //console.log(sArgs.selectedRowKeys[0].EMPCode)
+                                                                e.component.option("value", sArgs.selectedRowKeys[0].EMPCode); // Works but Error Need to correct next time !!!
+                                                                cellInfo.setValue(sArgs.selectedRowKeys[0].EMPCode);
+                                                                if (sArgs.selectedRowKeys.length > 0) {
+                                                                    e.component.close();
+                                                                }
+                                                            }
+                                                        });
+                                                    },
+                                                });
+                                            }
+
+                                        }) //Employee List
+                                }) //Division
+                        //}) //Next No
+
+
+                });
+                // TOP PRG
+            });  // ajax        
+    </script>
+</body>
+
+</html>

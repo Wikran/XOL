@@ -1,0 +1,17 @@
+SELECT        HeadRefNo, 'Dr' AS DR, ExpensesCode, EAccDesc, Division, DRAMT,
+                             (SELECT        TOP (1) CR
+                               FROM            dbo.ACCVIEW_CR300
+                               WHERE        (CHKECODE = dbo.ACCVIEW_300.ExpensesCode) AND (HeadRefNo = dbo.ACCVIEW_300.HeadRefNo)) AS CR,
+                             (SELECT        TOP (1) ExpensesCode
+                               FROM            dbo.ACCVIEW_CR300 AS ACCVIEW_CR300_3
+                               WHERE        (CHKECODE = dbo.ACCVIEW_300.ExpensesCode) AND (HeadRefNo = dbo.ACCVIEW_300.HeadRefNo)) AS CRCODE,
+                             (SELECT        TOP (1) EAccDesc
+                               FROM            dbo.ACCVIEW_CR300 AS ACCVIEW_CR300_2
+                               WHERE        (CHKECODE = dbo.ACCVIEW_300.ExpensesCode) AND (HeadRefNo = dbo.ACCVIEW_300.HeadRefNo)) AS CRName,
+                             (SELECT        TOP (1) Division
+                               FROM            dbo.ACCVIEW_CR300 AS ACCVIEW_CR300_4
+                               WHERE        (CHKECODE = dbo.ACCVIEW_300.ExpensesCode) AND (HeadRefNo = dbo.ACCVIEW_300.HeadRefNo)) AS CRDivision,
+                             (SELECT        TOP (1) CRAMT
+                               FROM            dbo.ACCVIEW_CR300 AS ACCVIEW_CR300_1
+                               WHERE        (CHKECODE = dbo.ACCVIEW_300.ExpensesCode) AND (HeadRefNo = dbo.ACCVIEW_300.HeadRefNo)) AS CRAMT
+FROM            dbo.ACCVIEW_300   

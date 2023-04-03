@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>BLANK PAGE</title>
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+	<script src="vendor/jquery/jquery.min.js"></script>-->
+    <!-- <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>-->
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <!-- <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <!-- DevExtreme Theme -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!--<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.4/css/dx.common.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.4/css/dx.greenmist.css" /> -->
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export Excel -->
+    <script src="//static.filestackapi.com/filestack-js/3.x.x/filestack.min.js"></script>
+
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <!--<script src="data.js"></script> -->
+    <style>
+        .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(224, 252, 224)
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        function aRolesDesc(aRoles) {
+            /* 1ReadOnly  2CRU 3CRUD  4Disable   5Import   6Export   7Import and Export  8Printable    9Export2PDF    A	Export2Excel    BReport Full Rights */
+            let aRolesM = ["00", "ReadOnly", "CRU", "CRUD", "Disable", "Import", "Export", "Import and Export", "Printable", "Export2PDF", "Export2Excel", "Report Full Rights"];
+            let aFR = ["Data:", "Excel:", "PDF:", "REPORT:"];
+            let aPass = "";
+            let aF1 = aRoles.substring(0, 1);
+            let i = 0;
+            while (i < 4) {
+                if (aRoles.substring(i, i + 1) === "A") {
+                    aCC = 10;
+                } else if (aRoles.substring(i, i + 1) === "B") {
+                    aCC = 11;
+                } else {
+                    aCC = Number(aRoles.substring(i, i + 1));
+                }
+                aPass = aPass + aFR[i] + " " + aRolesM[aCC] + ",";
+                i++;
+            }
+            return aPass;
+        }
+    </script>
+
+</head>
+
+<body>
+    <!--<div id="changeTemplateButton"></div>-->
+    <div id="popupContainer">
+        <!--< <div data-options="dxTemplate: { name: 'template1' }">
+	    <h1>Maintenance</h1>
+        <p>Develop by DevExtreme, DevExpress, jQuery, javascript, node.js, indexedDB</p>
+	</div>-->
+
+    </div>
+    <script>
+
+                const client = filestack.init("APj2imS2S0yNKUYuvMMRPz");
+                const options = {
+                fromSources: ["local_file_system","instagram","facebook"],
+                };
+
+                client.picker(options).open();
+
+        var fileUploader = new DevExpress.ui.dxFileUploader(document.getElementById("file-uploader"), {
+            multiple: false,
+            accept: "*",
+            onValueChanged: function (e) {
+                handleUpload(e.value[0]);
+            }
+        });
+
+        function handleUpload(file) {
+
+            var API_URL = "https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE" //"https://localhost:7067/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE"
+            var formData = new FormData();
+            formData.append("file", file);
+
+            var requestOptions = {
+                method: 'POST',
+                headers: {
+                    "ref": "44095B6C-CC17-47FD-895B-649E0EAA2BAE",
+                    "Content-Type": "multipart/form-data;boundary=<calculated when request is sent>",
+                    "Access-Control-Allow-Origin": "*"
+                },
+                body: formData,
+                redirect: 'follow',
+                mode: 'no-cors'
+            };
+
+            fetch(API_URL, requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+            /*
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                console.log(data);
+            });
+            */
+        }
+
+        var aDXMenuTitle = localStorage["aDXMenuTitle"];
+        var aMMaMx = localStorage["MMaMx"];
+        //var aMMaMx = atob(localStorage["aaXrXg"])
+        var aRRgRs = aMMaMx.split('0');
+        var aDDeDx = aRRgRs[0];
+        var aRrgSx = aRRgRs[1];
+
+        if (jQuery.type(aRrgSx) === "undefined") {
+            aRrgSx = "377B";
+        }
+        var aRText = aRolesDesc(aRrgSx);
+
+
+        $(function () {
+            const popup = $("#popupContainer").dxPopup({
+                title: aDXMenuTitle + " Maintenance (XOL)",
+                height: '30%',
+                position: { offset: "40 -300" }, //{my:"top", at:"top", of:window},
+                visible: true,
+                showCloseButton: true,
+                //contentTemplate: "<h1><i class='fas fa-clock'></i>" + " " + "IN PROGRESS</h1><p>Develop by DevExtreme, DevExpress, jQuery, javascript, fontawesome, uicon </br> Program Access Rights : " + aDDeDx + "</br>Usage Roles : " + aRrgSx + " [" + aRText + "]</p>"
+                contentTemplate: () => {
+                    return $("<div />").append(
+                        // $("<div style = 'margin-left: 10px'>รายละเอียด - DESCRIPTIONS</div>"),
+                        // $("<p><div style = 'margin-left: 10px' id='first-name'></div></p>"),
+                        $("<p><div style = 'margin-left: 10px' id='changeTemplateButton'></div></p>"),
+
+                    );
+                }
+            }).dxPopup("instance");
+
+            //    $("#changeTemplateButton").dxButton({
+            //        text: "Change the Template", 
+            //        onClick: function (e) {
+            //            const currentTemplate = popup.option("contentTemplate");
+            //            popup.option("contentTemplate", currentTemplate == "template1" ? "template2" : "template1");
+            //            popup.show();
+            //        } 
+            //   });
+            $("#changeTemplateButton").dxButton({
+                text: "Change the Template", 
+                onClick: function (e) {
+                const client = filestack.init("APj2imS2S0yNKUYuvMMRPz");
+                const options = {
+                fromSources: ["local_file_system","instagram","facebook"],
+                };
+
+                client.picker(options).open();
+            } 
+        });
+
+            $("#fileUploader").dxFileUploader({
+                multiple: false,
+                accept: "*",
+                onValueChanged: function (e) {
+                    handleUpload(e.value[0]);
+                }
+            });
+
+            $("#fileUploaderXX").dxFileUploader({
+                multiple: false,
+                accept: 'image/*',
+                //allowedFileExtensions: [".jpg", ".jpeg", ".png"],
+                maxFileSize: 4000000, // 4 MB
+                uploadUrl: "https://cbsdev3.locktonwattana.com/wwwroot/Uploads",
+                onValueChanged: function (e) {
+                    var files = e.value;
+                    if (files.length > 0) {
+                        var file = files[0];
+                        var formData = new FormData();
+                        formData.append("file", file);
+                        //formdata.append("FilePath", "test");
+                        /*
+                        $.ajax({
+                            url: "https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx", //"http://wikran-w10:8081/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx",
+                            type: "POST",
+                            timeout: 0,
+                            headers: { "ref": "44095B6C-CC17-47FD-895B-649E0EAA2BAE", "Content-Type": "multipart/form-data;boundary=<calculated when request is sent>", "Access-Control-Allow-Origin": "*" }, //"Content-Type", "multipart/form-data;boundary=<calculated when request is sent>" //"multipart/form-data"
+                            mimeType: "multipart/form-data",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (response) {
+                                console.log("File uploaded successfully!");
+                            },
+                            error: function (error) {
+                                console.log("Error uploading file: " + error);
+                            }
+                        });
+                        */
+                    }
+                }
+            });
+
+        });
+        /*
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "multipart/form-data;boundary=<calculated when request is sent>");
+        myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
+        var formdata = new FormData();
+        var fileInput = document.querySelector('#file');
+        formdata.append("file", fileInput.files[0], "/D:/OneDrive/OneDrive - Lockton/Desktop/Image/logo.png");
+        formdata.append("FilePath", "test")
+        var requestOptions = {
+            method: 'POST',
+            headers: {
+                "ref": "44095B6C-CC17-47FD-895B-649E0EAA2BAE",
+                "Content-Type": "multipart/form-data;boundary=<calculated when request is sent>",
+                "Access-Control-Allow-Origin": "*"
+            },
+            body: formdata,
+            redirect: 'follow',
+            mode: 'no-cors'
+        };
+        fetch("https://localhost:7067/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error));
+        */
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>DevExtreme Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.common.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.light.css" />
+    <script src="https://unpkg.com/devextreme-quill@1.5.18/dist/dx-quill.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/22.1.6/js/dx.all.js"></script>
+
+    <style> 
+.dx-htmleditor-content img {
+  vertical-align: middle;
+  padding-right: 10px;
+}
+
+.dx-htmleditor-content table {
+  width: 50%;
+}
+
+.options {
+  padding: 20px;
+  background-color: rgba(191, 191, 191, 0.15);
+  margin-top: 20px;
+}
+
+.caption {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.option {
+  margin-top: 10px;
+  display: inline-block;
+  margin-right: 40px;
+}
+
+.option > .dx-selectbox,
+.option > .label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.option > .label {
+  margin-right: 10px;
+}
+    
+    
+    </style>
+    <script> 
+
+ const tabs = [{ name: 'From This Device', value: ['file'] }, { name: 'From the Web', value: ['url'] }, { name: 'Both', value: ['file', 'url'] }];
+
+const markup = `
+    <h2>
+        <img src="images/widgets/HtmlEditor.svg" alt="HtmlEditor">
+        Formatted Text Editor (HTML Editor)
+    </h2>
+    <br>
+    <p>DevExtreme JavaScript HTML Editor is a client-side WYSIWYG text editor that allows its users to format textual and visual content and store it as HTML or Markdown.</p>
+    <p>Supported features:</p>
+    <ul>
+        <li>Inline formats:
+            <ul>
+                <li><strong>Bold</strong>, <em>italic</em>, <s>strikethrough</s> text formatting</li>
+                <li>Font, size, color changes (HTML only)</li>
+            </ul>
+        </li>
+        <li>Block formats:
+            <ul>
+                <li>Headers</li>
+                <li>Text alignment</li>
+                <li>Lists (ordered and unordered)</li>
+                <li>Code blocks</li>
+                <li>Quotes</li>
+            </ul>
+        </li>
+        <li>Custom formats</li>
+        <li>HTML and Markdown support</li>
+        <li>Mail-merge placeholders (for example, %username%)</li>
+        <li>Adaptive toolbar for working images, links, and color formats</li>
+        <li>Image upload: drag-and-drop images onto the form, select files from the file system, or specify a URL.</li>
+        <li>Copy-paste rich content (unsupported formats are removed)</li>
+        <li>Tables support</li>
+    </ul>
+    <br>
+    <p>Supported frameworks and libraries</p>
+    <table>
+        <tr>
+            <td><strong>jQuery</strong></td>
+            <td style="text-align: right;">v2.1 - v2.2 and v3.x</td>
+        </tr>
+        <tr>
+            <td><strong>Angular</strong></td>
+            <td style="text-align: right;">v7.0.x - v10.0.x</td>
+        </tr>
+        <tr>
+            <td><strong>React</strong></td>
+            <td style="text-align: right;">v16.2+</td>
+        </tr>
+        <tr>
+            <td><strong>Vue</strong></td>
+            <td style="text-align: right;">v2.6.3+</td>
+        </tr>
+    </table>
+`;   
+    </script>
+</head>
+
+<body class="dx-viewport">
+    <div class="demo-container">
+        <div class="html-editor"></div>
+        <div id="popup">
+            <div class="value-content"></div>
+        </div>        
+        <div class="options">
+            <div class="caption">Options</div>
+            <div class="option">
+                <div id="multiline"></div>
+            </div>
+            <div class="option">
+                <div class="label">Image upload tabs:</div>
+                <div id="image-uploader-tabs"></div>
+            </div>
+        </div>
+    </div>
+<script>    
+$(() => {
+  const editor = $('.html-editor').dxHtmlEditor({
+    height: 725,
+    width: 800,
+    value: markup,
+    imageUpload: {
+      tabs: ['file', 'url'],
+      fileUploadMode: 'base64',
+    },
+    toolbar: {
+      items: [
+        'undo', 'redo', 'separator',
+        {
+          name: 'size',
+          acceptedValues: ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt'],
+        },
+        {
+          name: 'font',
+          acceptedValues: ['Arial', 'Courier New', 'Georgia', 'Impact', 'Lucida Console', 'Tahoma', 'Times New Roman', 'Verdana'],
+        },
+        'separator', 'bold', 'italic', 'strike', 'underline', 'separator',
+        'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'separator',
+        'orderedList', 'bulletList', 'separator',
+        {
+          name: 'header',
+          acceptedValues: [false, 1, 2, 3, 4, 5],
+        }, 'separator',
+        'color', 'background', 'separator',
+        'link', 'image', 'separator',
+        'clear', 'codeBlock', 'blockquote', 'separator',
+        'insertTable', 'deleteTable',
+        'insertRowAbove', 'insertRowBelow', 'deleteRow',
+        'insertColumnLeft', 'insertColumnRight', 'deleteColumn',
+        {
+          widget: 'dxButton',
+          options: {
+            text: 'Show markup',
+            stylingMode: 'text',
+            onClick() {
+              popupInstance.show();
+            },
+          },
+        },      
+      ],
+    },
+    mediaResizing: {
+      enabled: true,
+    },
+  }).dxHtmlEditor('instance');
+
+  $('#multiline').dxCheckBox({
+    text: 'Multiline toolbar',
+    value: true,
+    onValueChanged(e) {
+      editor.option('toolbar.multiline', e.value);
+    },
+  });
+
+  $('#image-uploader-tabs').dxSelectBox({
+    items: tabs,
+    value: tabs[2].value,
+    valueExpr: 'value',
+    displayExpr: 'name',
+    onValueChanged: (e) => {
+      editor.option('imageUpload.tabs', e.value);
+    },
+  });
+
+  popupInstance = $('#popup').dxPopup({
+    showTitle: true,
+    title: 'Markup',
+    onShowing() {
+      $('.value-content').text(editor.option('value'));
+    },
+  }).dxPopup('instance');
+
+
+
+});
+
+
+
+
+</script>
+
+
+</body>
+
+</html>

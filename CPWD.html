@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Change Password</title>
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+	<script src="vendor/jquery/jquery.min.js"></script>-->
+    <!-- <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>-->
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <!-- <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>-->
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <!-- DevExtreme Theme -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+
+    <!--<link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.4/css/dx.common.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/20.2.4/css/dx.greenmist.css" /> -->
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export Excel -->
+
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <!--<script src="vandor/jst/jstorage.js"></script>-->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="aaTMain.js"></script>
+    <script src="ajQjsLib.js"></script>
+    <!--<script src="data.js"></script> -->
+    <script>
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        //window.jsPDF = window.jspdf.jsPDF;
+        //applyPlugin(window.jsPDF);
+        console.clear();
+        var aaPFDMI = isLocalHost();
+
+        function aaLOGOUT() {
+            window.location.assign("index.html");
+        }
+        function aRolesDesc(aRoles) {
+            /* 1ReadOnly  2CRU 3CRUD  4Disable   5Import   6Export   7Import and Export  8Printable    9Export2PDF    A	Export2Excel    BReport Full Rights */
+            let aRolesM = ["00", "ReadOnly", "CRU", "CRUD", "Disable", "Import", "Export", "Import and Export", "Printable", "Export2PDF", "Export2Excel", "Report Full Rights"];
+            let aFR = ["Data:", "Excel:", "PDF:", "REPORT:"];
+            let aPass = "";
+            let aF1 = aRoles.substring(0, 1);
+            let i = 0;
+            while (i < 4) {
+                if (aRoles.substring(i, i + 1) === "A") {
+                    aCC = 10;
+                } else if (aRoles.substring(i, i + 1) === "B") {
+                    aCC = 11;
+                } else {
+                    aCC = Number(aRoles.substring(i, i + 1));
+                }
+                aPass = aPass + aFR[i] + " " + aRolesM[aCC] + ",";
+                i++;
+            }
+            return aPass;
+        }
+
+        function aGetDataModel(aServerURL, aPUBToken, aTBToken, aKey, aWhere) { //var aWhere = "ExpGroupCode LIKE '%" + aaERTYPE + "%' and " + "PayToCode = '"
+            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930";
+            let aURL = aServerURL + '/DMQ/' + acProjectCode + '/' + aaXPUB + '/' + aTBToken + '/all';
+            //let aaFul = { "@": aFullBody }  
+            let aStore01 = new DevExpress.data.CustomStore({
+                key: aKey,
+                loadMode: "raw",
+                load: function () {
+                    return $.post(aURL, { "@": aWhere }) //aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "dca3e8a0-8533-45a4-96ce-28aeddefab72" + '/all'
+                        .fail(function () { throw "Data loading error" });
+                },
+            })
+            /*
+                var dataSource = new DevExpress.data.DataSource({
+                    store: {
+                        type: "array",
+                        key: "id",
+                        data: [
+                            { id: 1, value: "Item 1" }
+                        ]
+                    }
+                });    
+            */
+
+            //console.log(jQuery.type(aStore01))
+            //console.log(aStore01)
+            return aStore01
+        }
+
+        function aGet4DataModel(aServerURL, aPUBToken, aTBToken, aSearchFor, aOBJName) {     // SearchFor = sql statement example "code = 'xxxx' and ID = 1111"
+            //console.log(aSearchFor)
+            var jqOTHs = $.post(aServerURL + '/DMQ/' + acProjectCode + '/' + aPUBToken + '/' + aTBToken + '/all', { "@": aSearchFor }, function (e) { // { "@": aSearchFor },
+                //sessionStorage.setItem(aOBJName, JSON.stringify(e));
+            })
+                .done(function (e) {
+                    //console.log(e)
+                    //$.jStorage.set("TestSt",JSON.stringify(e));
+                    sessionStorage.setItem(aOBJName, JSON.stringify(e));
+                    //console.log(JSON.parse(sessionStorage.getItem(aOBJName)))
+                    //sessionStorage.setItem(aOBJName, JSON.stringify(e));
+                })
+                .fail(function () {
+                    console.log("error EXP");
+                })
+                .always(function () {
+                });
+            //return 1
+        }
+
+        function aSendMailDMZ(aRecipient, aRCPeMail, aSendereMail, aCCeMail, aBcceMail, aSubject, aMessage) {
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                "toname": aRecipient,
+                "toemail": aRCPeMail,
+                "fromemail": aSendereMail,
+                "ccemail": aCCeMail,
+                "bccemail": aBcceMail,
+                "subject": aSubject,
+                "message": aMessage
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            //alert("pass mail")
+            fetch("https://cbsdev2.locktonwattana.com/send-email/false", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        }
+
+        function generateOTP() {
+            var digits = '0123456789';
+            let OTP = '';
+            let aG = 0;
+            for (let i = 0; i < 6; i++) {
+                aG = Math.floor(Math.random() * 10);
+                OTP += digits[Math.floor(Math.random() * 10)];
+            }
+            return OTP;
+        };
+
+    </script>
+
+</head>
+
+<body>
+
+    <div id="popupContainer"></div>
+
+    <script>
+        var aDXMenuTitle = localStorage["aDXMenuTitle"];
+        var aMMaMx = localStorage["MMaMx"];
+        var aRRgRs = aMMaMx.split('0');
+        var aDDeDx = aRRgRs[0];
+        var aRrgSx = aRRgRs[1];
+
+        if (jQuery.type(aRrgSx) === "undefined") {
+            aRrgSx = "377B";
+        }
+
+        var aRText = aRolesDesc(aRrgSx);
+        var aaXToX = localStorage["aaXXoX"];
+        var aaXNoX = localStorage["aaXXuX"];
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // MasterPage
+        var aaPXXI = localStorage["aPXIXD"];
+        var aaPFDMI = localStorage["aaPFDMI"];
+        var asFullName = localStorage["asFTNAME"];
+        var asStaffID = $.trim(localStorage["asSTFID"]);
+        var asDepartment = localStorage["asDEPT"];
+        var asDivision = localStorage["asDIV"];
+        var asStaffEmail = localStorage["asEMAIL"];
+        //var asXMD = atob(localStorage["aaXpXd"]);
+
+
+        var aSearchW = "IDUsr = '" + aaXNoX + "'"  //IDUsr,LGName,Pword,Description,Kright,Tkey,Active,Gright,Scopebase,Department,Division,Nickname,PictureLoc,email,telephone,otp
+        aGet4DataModel(aaPFDMI, atob(aaXToX), "01f518c9-c818-4e9f-85cb-6245ee1a2637", aSearchW, "aaStaffa") //01f518c9-c818-4e9f-85cb-6245ee1a2637 //A9525EA3-666E-4E93-B37F-3F95F44532E5
+        var aaUserData = JSON.parse(sessionStorage.getItem("aaStaffa"))
+        $(function () {
+            // ...
+            var aOTPm = generateOTP();
+            var lastpwd = aaUserData[0].Pword //asXMD 
+            var apwds = ""
+            var cfpwd = ""
+            var chkpass = false
+            var gbxRateV = 1;
+            //console.log(aOTPm)
+            //console.log(asStaffEmail)
+            //console.log(asFullName)
+            const popup = $("#popupContainer").dxPopup({
+                title: "",
+                width: '550px',
+                height: '320px',
+                position: { offset: "0 -300" }, //{offset: "0 -180"},
+                //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                visible: true,
+                fullScreen: false,
+                showCloseButton: false,
+                showTitle: true,
+                dragEnabled: true,
+                closeOnOutsideClick: false,
+                //shadingColor:"rgb(190,190,190,0.9)",
+                resizeEnabled: true,
+                contentTemplate: function () {
+                    return $("<div />").append(
+                        //$("<p><div id='pwdcform'></div></p>"),
+                        $('<div class="dx-field"><div class="dx-field-label" id="Label01">Old Password</div><div class="dx-field-value"><div id="opwd-validation"></div></div></div>'),
+                        $("<div id='opwd-validation'></div>"),  //opwd-validation                        
+                        $('<div class="dx-field"><div class="dx-field-label" id="Label02">Password</div><div class="dx-field-value"><div id="password-validation"></div></div></div>'),
+                        $("<div id='password-validation'></div>"), //password-validation
+                        $('<div class="dx-field"><div class="dx-field-label" id="Label03">Confirm Password</div><div class="dx-field-value"><div id="confirm-password-validation"></div></div></div>'),
+                        $('<div class="dx-field"><div class="dx-field-label" id="OTPL">OTP</div><div class="dx-field-value"><div id="OTP"></div></div></div>'),
+                        $("<div id='OTP'></div>"),
+                        $("<span id='cnfbutt'</span>"),
+                        $("<span id='asave'></span>"),//style='margin:5px',                        $("<span id='asave'></span>"),//style='margin:5px',
+
+                    );
+                },
+                onContentReady: function () {
+                    $("#OTP").hide();
+                    $("#OTPL").hide();
+                    $("#asave").hide();
+                },
+
+                toolbarItems: [
+                    {
+                        toolbar: "top",
+                        locateInMenu: 'always',
+                        //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>" <i class='fas fa-key'></i>
+                        html: "<div>&#128271;&nbsp;Change Password</div>"
+                    },
+                ]
+
+            }).dxPopup("instance");
+
+
+            $("#popupexit").dxButton({
+                icon: "fas fa-times",
+                type: "danger",
+                //text: "EXIT",
+                //width: "120px",
+                visible: true,
+                onClick: function () {
+                    popup.hide();
+                }
+            });
+
+            $("#asave").dxButton({
+                icon: "save",
+                text: "SAVE",
+                type: "success",
+                //visible: chkpass,
+                onClick: function (e) {
+                    //console.log(apwds)
+                    //console.log(aaUserData[0])
+                    if (apwds !== '' && chkpass && apwds !== lastpwd) {
+                        if (aOTPm === aOTP) {
+                            //console.log(aaUserData[0].Pword)
+                            //alert(apwds)
+                            let ObjKeyData = { "IDUsr": aaXNoX, "Pword": apwds }
+                            let ObjRowD = JSON.stringify($.extend({}, aaUserData[0], ObjKeyData)); //JSON.stringify(aaUserData[0]) //JSON.stringify($.extend({}, ObjKeyData, values));
+                            //alert(ObjRowD)
+                            sendRequestNew("Update", ObjRowD, "01f518c9-c818-4e9f-85cb-6245ee1a2637", aaPFDMI, atob(aaXToX)); //01f518c9-c818-4e9f-85cb-6245ee1a2637 //A9525EA3-666E-4E93-B37F-3F95F44532E5
+                            /// refresh before close popup ?
+                            //alert("Confirm Save!!")
+                            DevExpress.ui.dialog.alert({
+                                showTitle: false,
+                                position: { offset: "0 -320" },
+                                messageHtml: "<center style='color:Blue;'>Password has changed to New Password, please LOGOUT and LOGIN again !! <br> Password ได้เปลี่ยนเป็น Password ใหม่เรียบร้อยแล้ว, กรุณา LOGOUT และ LOGIN ใหม่อีกครั้ง !!</center>"
+                            });
+                            popup.hide();
+                            //aaLOGOUT();
+                        } else {
+                            DevExpress.ui.dialog.alert({
+                                showTitle: false,
+                                position: { offset: "0 -320" },
+                                messageHtml: "<center style='color:Red;'>Invalid OTP, please try again !!<br> OTP ไม่ถูกต้อง, กรุณาลองใหม่</center>"
+                            });
+                        }
+                    } else {
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            position: { offset: "0 -320" },
+                            messageHtml: "<center style='color:Red;'>Please completed your Password Change and then Press Confirm button !!<br> กรุณาเปลี่ยน พาสเวิร์ด ให้เรียบร้อย จากนั้นกดปุ่ม Confirm </center>"
+                        });
+                    }
+                }
+            });
+
+            var aaOldPdw = $("#opwd-validation").dxTextBox({
+                mode: "password",
+                //placeholder: "Enter password",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    //const previousValue = e.previousValue;
+                    allpwd = e.value;
+                    if (allpwd !== lastpwd) {
+                        chkpass = false
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            position: { offset: "0 -320" },
+                            messageHtml: "<center style='color:Red;'>Please Check the Old Password !!</center>"
+                        });
+                        allpwd = ""
+                        //e.valle = ""
+                        //aaOldPwd.option("value", e.value.replace(""))
+                    }
+                },
+                //value: "",
+                width: 250
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: "Old Password is required"
+                }]
+            });
+
+            $("#password-validation").dxTextBox({
+                mode: "password",
+                //placeholder: "Enter password",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    //const previousValue = e.previousValue;
+                    apwds = e.value;
+                    //alert(apwds === lastpwd)
+                    //alert(lastpwd)
+                    //console.log(apwds)
+                    if (apwds === lastpwd) {
+                        chkpass = false
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            position: { offset: "0 -320" },
+                            messageHtml: "<center style='color:Red;'>Please Change the Password !!</center>"
+                        });
+                        apwds = ""
+                    }
+                },
+                value: "",
+                width: 250
+            }).dxValidator({
+                validationRules: [{
+                    type: "required",
+                    message: "Password is required"
+                }, {
+                    type: "stringLength",
+                    min: 10,
+                    message: "Password must have at least 10 Characters"
+                }]
+            });
+
+            $("#confirm-password-validation").dxTextBox({
+                mode: "password",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    //const previousValue = e.previousValue;
+                    cfpwd = e.value;
+                },
+                width: 250
+            }).dxValidator({
+                validationRules: [{
+                    type: "compare",
+                    comparisonTarget: function () {
+                        var password = $("#password-validation").dxTextBox("instance");
+                        if (password) {
+                            return password.option("value");
+                            chkpass = true;
+                        }
+                    },
+                    message: "'Password' and 'Confirm Password' do not match."
+                },
+                {
+                    type: "required",
+                    message: "Confirm Password is required"
+                }]
+            });
+
+            $("#sendMailONL").dxButton({
+                icon: "fas fa-paper-plane", //<i class="fas fa-paper-plane"></i>
+                text: "Send Mail",
+                type: "danger",
+                onClick: function (e) {
+                    var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
+                    aSendMailDMZ("Khun " + asFullName, asStaffEmail, "auto-reply@locktonwattana.srv", "", "", "OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + asFullName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>Auto reply service<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+                    DevExpress.ui.dialog.alert({
+                        showTitle: false,
+                        position: { offset: "0 -320" },
+                        messageHtml: "<center style='color:ForestGreen;'> Sendind OTP to your e-Mail, please check </center>"
+                    });
+                    $("#OTP").show(20);
+                    $("#OTPL").show(20);
+                }
+            });
+
+            $("#cnfbutt").dxButton({
+                icon: "fas fa-check",
+                text: "Confirm",
+                type: "default",
+                useSubmitBehavior: true,
+                onClick: function () {
+                    if (apwds !== "" && allpwd === lastpwd && apwds !== lastpwd && apwds === cfpwd) {
+                        chkpass = true
+                        var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
+                        var lSentM = aSendMailDMZ("Khun " + asFullName, asStaffEmail, "auto-reply@locktonwattana.srv", "", "", "OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + asFullName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>Auto reply service<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            position: { offset: "0 -320" },
+                            messageHtml: "<center style='color:ForestGreen;'>Send OTP to your e-Mail, please check <br> ส่ง OTP ไปที่ e-Mail ของคุณแล้ว, กรุณาตรวจสอบ</center>"
+                        });
+                        $("#OTP").show(20);
+                        $("#OTPL").show(20);
+                        $("#cnfbutt").hide(); //password-validation //confirm-password-validation //id="Label01" $("#textBoxContainer").dxTextBox("option", "text");
+                        $("#asave").show(20);
+
+                    } else if (allpwd !== lastpwd) {
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            position: { offset: "0 -320" },
+                            messageHtml: "<center style='color:ForestGreen;'>Old Password is not correct, please check <br>  Password เก่าไม่ถูกต้อง, กรุณาตรวจสอบ</center>" + lastpwd + " " + allpwd
+                        });
+                    } else {
+                        DevExpress.ui.dialog.alert({
+                            showTitle: false,
+                            position: { offset: "0 -320" },
+                            messageHtml: "<center style='color:ForestGreen;'>Change Password not completed, please check <br> การแก้ไข Password ไม่สมบูรณ์, กรุณาตรวจสอบ</center>"
+                        });
+                    }
+                }
+            });
+
+            $("#OTP").dxTextBox({
+                mode: "text",
+                placeholder: "put OTP and press SAVE",
+                showClearButton: true,
+                onValueChanged: function (e) {
+                    const previousValue = e.previousValue;
+                    aOTP = e.value;
+                },
+                width: "250px",
+                value: ""
+            }).dxTextBox("instance");
+
+            /*
+            const aform = $("#pwdcform").dxForm({
+                formData: aaUserData[0],                  ////IDUsr,LGName,Pword,Description,Kright,Tkey,Active,Gright,Scopebase,Department,Division,Nickname,PictureLoc,email,telephone,otp
+                //dataSource: new DevExpress.data.CustomStore({
+                //    key: "IDUsr",
+                //    loadMode: "omit",
+               //     load: function () {
+                //        return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' +  "01f518c9-c818-4e9f-85cb-6245ee1a2637" + '/all', { "@": aSearchW })
+                //            .fail(function () { throw "Data loading error" });
+                //    }
+                }),
+                showColonAfterLabel: false,
+                labelLocation: "left",
+                //colCount: 2,
+                items: [ ]
+
+            }).dxForm("instance");*/
+
+        });
+        // }
+        function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+            let Url = domain + '/DMP/' + acProjectCode + '/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+            console.log('Goal...Repuest Web API : ' + Data);
+            var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
+            $.ajax(settings).done(function (response) { console.log(response); });
+        }
+    </script>
+</body>
+
+</html>

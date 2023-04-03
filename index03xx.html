@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Expenses Reimbursement Online</title>
+    <link rel="shortcut icon" type="image/jpg" href="./images/lockton-favicon.png" />
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <!-- DevExtreme Theme -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="aaTMain.js"></script>
+    <script src="ajQjsLib.js"></script>
+    <style>
+        #list,
+        .demo-container {
+            height: 100%;
+        }
+
+        #aButton,
+        .demo-container {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            /*background-image: url("./images/xmas01.jpg");*/
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 25%;
+        }
+
+        #tophead {
+            /*dposition: fixed;*/
+            width: 100%;
+            top: 10;
+            left: 0;
+        }
+        .dx-popup-title {
+            color: rgb(255, 223, 243);
+            background-color: rgb(143, 1, 1)
+        }
+        .container {
+            top: 0;
+            left: 0;
+            width: 100%
+        }
+
+        .border-bottom {
+            box-shadow: inset 0 -3px 0 0 rgb(190, 189, 189);
+        }
+
+        #aUsrName {
+            color: rgb(185, 185, 185);
+            /*rgb(102, 43, 0);*/
+            font-weight: blod;
+            /*900;*/
+        }
+
+        #aTitle {
+            color: rgb(185, 185, 185);
+            /*rgb(102, 43, 0);*/
+            font-weight: blod;
+            /*font-size:12px;*/
+            /*900;*/
+        }
+
+        #workinglabel {
+            color: white;
+        }
+
+        #toolbar {
+            /*background-color:   rgb(0, 46, 83,0.94);/*rgba(191, 191, 191, 0.65); /*rgb(238,232,170, .65);
+            background-image: linear-gradient(to right, rgb(0, 46, 83, 0.35) 1%, rgb(0, 46, 83, 0.95) 35%, rgb(0, 46, 83, 0.95) 80%, rgb(0, 46, 83, 0.2) 100%);*/
+            /*background-image: url("./images/flower-5.png");*/
+            background-color: black;
+            /* rgb(165, 173, 182); rgb(91, 103, 112);
+            /*rgb(0, 174, 239);*/
+            /*rgb(0, 46, 83);*/
+            /*rgba(2, 33, 73, 0.822);*/
+            border-top: 0.5px solid rgb(102, 102, 102);
+            font-size: 16px;
+            width: 100%;
+            padding: 0.5px 10px;
+            /*box-shadow: inset 0 -1px 0 0 rgba(190, 189, 189, 0.145);
+            height: 50px;
+            text-align: center;
+            box-shadow: 0 8px 6px -7px black;*/
+        }
+
+        .xmenu .dx-button-content .dx-icon {
+            font-size: 16px;
+            color: white;
+        }
+
+        .toolsmenu {
+            /*padding-top: 9px;  
+            font-weight: bold; */
+            font-size: 14px;
+        }
+
+        .toolsmenu .dx-menu-item {
+            color: whitesmoke;
+            background-color: black;
+            /*rgb(91, 103, 112);*/
+            /*border-color: black;*/
+            /*rgb(1, 1, 75);  rgb(91, 103, 112) rgb(0, 46, 83);*/
+            /*background: yellow;  */
+        }
+
+        .buttonONE .dx-button.dx-button-normal.dx-button-mode-contained.dx-widget.dx-button-has-icon.dx-button-has-text {
+            background-color: #c2de50;
+            border-color: #ea5b5b;
+        }
+
+        .warning {
+            background-color: yellow;
+        }
+
+        .dx-button-text {
+            color: red;
+        }
+
+        .dx-button {
+            background-color: rgba(247, 247, 247, 0.15);
+            font-size: 12px;
+            border: 1px;
+        }
+
+        .dx-toolbar-button>.dx-toolbar-item-content {
+            margin-left: 0px;
+        }
+
+        .dx-icon {
+            font-size: 100% ; /*.dx-theme-accent-as-text-color*/
+        }
+
+        .dx-treeview {
+            font-size: 16px;
+        }
+        /*treeview left icon setup to blank*/
+        .dx-treeview .dx-treeview-toggle-item-visibility:before {
+            content: "";
+            /*"\f00e";*/
+        }
+
+        .dx-treeview .dx-treeview-toggle-item-visibility.dx-treeview-toggle-item-visibility-opened:before {
+            content: "";
+            /*"\f015";*/
+        }
+
+        .left-content  {
+            display: inline-block;
+            width: 250px;
+            padding: 0 0px 20px 0px;
+            /* 0 10 10 top right bottom left*/
+            color: rgb(145, 70, 17);
+            /*margin-left: -8px;
+            /*rgb(153,101,21);*/
+            background-color: rgba(228, 228, 228, 0.15);
+            /*rgba(252, 252, 252, 0.753)*/
+            /*rgba(252, 252, 252, 0.95);*/
+            /*rgb(238,232,170, .95);*/
+            box-shadow: -5px 0px 14px -8px rgba(168, 168, 168, 0.25) inset;
+        }
+
+        .logostyle {
+            display: block;
+            /*inline-block;*/
+            margin-left: auto;
+            /*54px;*/
+            margin-right: auto;
+            padding-top: 18px;
+            width: 140px;
+        }
+
+        .logobarblack {
+            background-color: black;
+            /* For browsers that do not support gradients
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 5%, rgba(146, 146, 146, 0.8) 100%);
+            box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.0) inset; */
+            width: 100%;
+        }
+
+        .logobarwhite {
+            /*background-image: url(".\images\flower-2.png"); */
+            background-color: white;
+            /* For browsers that do not support gradients 
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 5%, rgba(146, 146, 146, 0.8) 100%);
+            box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.25) inset;*/
+            width: 100%;
+        }
+
+        .headtitleleft {
+            color: black;
+            font-size: 12px;
+            margin-left: 20px;
+        }
+
+        .flower1 {
+            display: inline-block;
+            margin: -30px 60px 30px 20px;
+            color: black;
+            font-size: 16px;
+            width: 30%;
+        }
+
+        .flower1 .tright {
+            float: right;
+        }
+
+        .flower1 .tleft {
+            float: left;
+        }
+
+        .title {
+            /*display: block;
+            font-size: 16px;
+            color: #000000;
+            border-top: 0px; solid #969696;*
+            margin-bottom: 0px;
+            height: 40px;
+            line-height: 1px;/
+            /*clear: both;
+            line-height: 20px; 
+            background-color: black;
+            display: block;
+            height: 60px;
+            padding-top: 1%;
+            padding: 20px 15px 15px 20px;*/
+            margin: -10px 65px 30px 20px;
+
+            color: black;
+            font-size: 16px;
+        }
+
+        .title .tright {
+            float: right;
+
+        }
+
+        .title .tleft {
+            float: left;
+
+        }
+
+        .form-avatar {
+            height: 23px;
+            width: 23px;
+            margin-right: 10px;
+            border: 1px solid #d2d3d5;
+            border-radius: 50%;
+            /*background-image: url('images/user.png'); */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .avatar {
+            vertical-align: middle;
+            padding: 3px;
+            position: relative;
+            top: -15px;
+            height: 30px;
+            width: 30px;
+            margin-right: 10px;
+            /*border: 1px solid ;#808080
+                #d2d3d5
+                rgba(76, 175, 80, 0.3);
+                rgba(192,192,192,0.3)
+            */
+            border: 2px solid #808080;
+            background-color: white;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            border-radius: 50%;
+        }
+
+        /*TreeView*/
+        .dx-treeview-select-all-item,
+        .dx-item-content.dx-treeview-item-content {
+            font-size: 14px !important;
+        }
+
+        /*ListBox*/
+        .dx-list-select-all,
+        .dx-item-content.dx-list-item-content {
+            font-size: 14px !important;
+        }
+
+        #popupSelect .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(145, 253, 226)
+        }
+
+        span.bb {
+            display: inline-block;
+            /*width: 75px;
+            height: 20px;
+            object-fit: cover; scale-down; /*cover;*/
+            /*height: 100px;
+            padding: 5px;
+            border: 1px solid blue;    
+            background-color: yellow; */
+        }
+
+        #clip {
+            position: absolute;
+            clip: rect(0, 700px, 100px, 0px);
+            filter: contrast(3);
+            filter: brightness(0.2);
+            /*transform: rotate(10deg);*/
+            /* clip: shape(top, right, bottom, left); NB 'rect' is the only available option */
+        }
+
+        .hero-image {
+            /* background-image: url("./images/banner-magnolias.jpg");
+            /*background-color: #cccccc;
+            height: 500px;*/
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+
+        .flower-image {
+            background-image: url("./images/flower-5.png");
+            /*background-color: #cccccc;
+                size: 5%;*/
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+        }
+    </style>
+    <script>
+        history.pushState(null, null, location.href);
+        window.onpopstate = function () {
+            history.go(1);
+        };
+
+        window.addEventListener('load', function (e) {
+            localStorage.removeItem("aDXTheme");
+            aDXTheme = localStorage["aaDXtm"]; //'generic.light'; //aaDXtm
+            localStorage["aDXTheme"] = aDXTheme;
+        });
+
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"] // Parameters
+            var aUXTheme = localStorage["aaDXtm"]; // User Theme
+            if (aUXTheme === undefined || aUXTheme === "") {
+                aUXTheme = 'generic.light'
+            }
+            aDXTheme = aUXTheme;
+            if (aDXTheme === undefined || aDXTheme === "") {
+                window.location.reload();
+                aDXTheme = aUXTheme //localStorage["aaDXtm"]; //'generic.light'; //aaDXtm
+                //localStorage["aDXTheme"] = aDXTheme;
+            };
+            localStorage["aDXTheme"] = aDXTheme;
+            DevExpress.ui.themes.current(aDXTheme); //'generic.light'
+            $(".dx-icon").addClass("dx-theme-accent-as-text-color");
+            let aUserNamea = localStorage["aaXXuX"];
+            document.getElementById("aUsrName").innerHTML = aUserNamea;
+            //let aaIMGaa = "/images/" + aUserNamea + ".png";
+            let aaIMGaa = localStorage["aaXpXt"];
+            //alert(aaIMGaa)
+            if (jQuery.type(aaIMGaa) === "undefined" || aaIMGaa === "") {
+                let aaIMGaa = "/images/userss.png"
+            }
+            //alert( aaIMGaa)
+            document.getElementById("avatar").src = aaIMGaa;
+        });
+        //$(".dx-icon").addClass("dx-theme-accent-as-text-color");
+        //const aGoTo = function (newW) {
+        const aGoTo = (newW) => {
+            //window.open('','_self').close();
+            window.location.assign(newW);
+        };
+
+        function aaGOTO(newSite) {
+            window.location.assign(newSite);
+        }
+
+        const aaLOGOUT=() =>{
+            window.location.assign("index.html");
+        }
+
+        var aaPFDMI = isLocalHost();
+
+
+        var actionSheetItems = [
+            { ID: "01", text: "GEN OTP (TEXT & NUM)  ", type: "normal", icon: "fi fi-sr-rocket", visible: false, onClick: function () { var xxOTPxx = generateLOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } }, //aMessageAlert("ERROR","red"); 
+            { ID: "02", text: "GEN OTP (NUM ONLY)    ", type: "normal", icon: "fi fi-br-rocket", visible: false, onClick: function () { var xxOTPxx = generateOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } },
+            { ID: "03", text: "LOGIN (OTP)           ", type: "normal", icon: "fas fa-lock", visible: false, onClick: function () { aRunLogin(1) } },
+            { ID: "04", text: "LOGIN (Other user)    ", type: "normal", icon: "fas fa-key", visible: true, onClick: function () { aRunLogin() } },
+            { ID: "05", text: "LOGOUT                ", type: "danger", icon: "fas fa-sign-out-alt", visible: true, onClick: function () { aaLOGOUT() } },
+            { ID: "06", text: "THEMES                ", type: "normal", icon: "fas fa-palette", visible: true, onClick: ()=> { aThemeSelect() } }
+            //var xxOTPxx = generateOTP(); aRunJQ(); aSendMailDMZ('Wikran', 'wikran@hotmail.com','wikran@asia.lockton.com','','','OTP =' + xxOTPxx ,'<div><b>OTP = </b><i>'+ xxOTPxx +'</i></div>'); aMessageAlert('Mail send OTP =' + xxOTPxx,'Teal')
+        ];
+
+        var aOptionMenu = [{
+            id: "01",
+            icon: "fas fa-cog",
+            text: "",
+            items: [
+                { ID: "101", text: "GEN OTP (TEXT & NUM)  ", type: "normal", icon: "fi fi-sr-rocket", visible: false, onClick: function () { var xxOTPxx = generateLOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } }, //aMessageAlert("ERROR","red"); 
+                { ID: "102", text: "GEN OTP (NUM ONLY)    ", type: "normal", icon: "fi fi-br-rocket", visible: false, onClick: function () { var xxOTPxx = generateOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } },
+                { ID: "103", text: "LOGIN (OTP)           ", type: "normal", icon: "fas fa-lock", visible: false, onClick: function () { aRunLogin(1) } },
+                { ID: "104", text: "New Login             ", type: "normal", icon: "fas fa-key", visible: false, onClick: function () { aRunLogin() } },
+                { ID: "105", text: "Help                  ", type: "danger", icon: "help", visible: true, onClick: ()=> { aRuniFrame("./Help.html","Help") } },                
+                { ID: "105", text: "Logout                ", type: "danger", icon: "fas fa-sign-out-alt", visible: true, onClick: ()=> { aaGOTO('index.html') } },
+                { ID: "106", text: "Themes                ", type: "normal", badge: "12", icon: "fas fa-palette", visible: true, onClick: ()=> { aThemeSelect() } }
+            ]
+        }];
+
+        const aRuniFrame = (aPageUrl, aTMessage) =>{
+            $("#tframe").attr("src", aPageUrl);
+            $("#workinglabel").text(aTMessage);
+        }
+
+        const achkdate = new Date();
+        var adayx = achkdate.getDate();
+        var amonthx  = achkdate.getMonth();
+        console.log(adayx)
+        console.log(amonthx)
+        if (adayx <= 15 && amonthx === 0) {
+           var aimages = ['xmas01.jpg', 'xmas02.jpg', 'xmas03.jpg', 'xmas04.jpg', 'xmas05.jpg', 'chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg'];
+        } else if ((adayx > 16 && amonthx === 0) || amonthx >= 1) {
+           var aimages = ['chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg']; 
+        } else { var aimages = [];}
+
+        //var aRgsValue = localStorage["aDXTheme"];
+        var aThemeList = [
+            { thid: "generic.light", text: "light", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+            { thid: "generic.dark", text: "dark", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+            { thid: "generic.softblue", text: "Soft blue", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+            { thid: "generic.darkmoon", text: "Darkmoon", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+            { thid: "generic.darkviolet", text: "Darkviolet", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+            { thid: "generic.carmine", text: "Carmine", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+            { thid: "generic.carmine.compact", text: "Carmine Compact", icon: "fas fa-paint-roller", Category: "Generic Compact", visible: false },
+            { thid: "generic.darkmoon.compact", text: "Darkmoon Compact", icon: "fas fa-paint-roller", Category: "Generic Compact", visible: false },
+            { thid: "generic.darkviolet.compact", text: "Darkviolet Compact", icon: "fas fa-paint-roller", Category: "Generic Compact", visible: false },
+            { thid: "material.blue.dark.compact", text: "Blue dark", icon: "fas fa-palette", Category: "Material Compact", visible: false },
+            { thid: "material.blue.light.compact", text: "Blue light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+            { thid: "material.teal.dark.compact", text: "Teal dark compact", icon: "fas fa-palette", Category: "Material Compact", visible: false },
+            { thid: "material.orange.light.compact", text: "Orange Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+            { thid: "material.purple.light.compact", text: "Purple Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+            { thid: "material.teal.light.compact", text: "Teal Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+            { thid: "material.lime.light.compact", text: "Lime Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true }
+        ];
+        var aThemeListGroup = new DevExpress.data.DataSource({
+            store: aThemeList,
+            key: "thid",
+            group: "Category"
+        });
+
+        var aaXrgX = localStorage["aaXrXg"]; // getCookie("aaCrCg") //
+        if (jQuery.type(aaXrgX) === "undefined") {
+            aRunLogin();     //parent.history.back();    //alert("aaXrgX = undefined");
+        }
+        var aaXXrgX = atob(aaXrgX); //console.log( aaXXrgX );
+        var aRGarray = aaXXrgX.split(',');
+
+        const aaProgramName = "Expenses Reimbursement"
+        
+        //$(function () { TOP PRG
+        $(() => {
+            var aPwdNoChange =  localStorage["asAct"] 
+            console.log(aPwdNoChange, "PWD NO CHG")
+            console.log(jQuery.type(aPwdNoChange))
+            if (aPwdNoChange === "false") {
+                aaCnfBody = "<div style = 'color: red; font-size: 17px;'>Please change your default password to new password <br> กรุณาเปลี่ยน รหัสผ่านมาตราฐาน เป็นรหัสผ่านใหม่ <br> To change password select MENU [ <i class='fas fa-user-edit'></i> User Information ] <br><div style = 'background: #fff0ff;'><hr> IF YOU NOT CHANGE THE PASSWORD <br> THIS MESSAGE WILL SHOW EVERYTIMES AFTER LOGIN <br> ถ้ายังไม่มีการเปลี่ยน รหัสผ่าน, ข้อความนี้จะแสดงหลังการ LOGIN ทุกครั้ง <hr></div><center><video width='320' height='240' controls><source src='./images/ChangePassword.mp4' type='video/mp4'></video><p style = 'font-size: 13px;'>How To Change Password ?</p></center>"
+                DevExpress.ui.dialog.alert({
+                    position: { offset: "0 -5" },
+                    title:  "PLEASE CHANGE DEFAULT PASSWORD !!", 
+                    messageHtml: aaCnfBody});
+
+            }             
+            //alert(aimages[Math.floor(Math.random() * aimages.length)])
+            if (amonthx <= 1) {
+                $('body').css({ 'background-image': 'url(./images/' + aimages[Math.floor(Math.random() * aimages.length)] + ')' }); // random background Image
+            }
+            var aUserNamex = localStorage["aaXXuX"];
+            var aaIMGax = "/images/" + aUserNamex + ".png";
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify({
+                // "@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                //body: raw,
+                redirect: 'follow'
+            };
+
+            let aURL = aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aaXTBM + "/all" //let aURL = aaPFDMI + "/DMQ/XOL/" + aaXTGO +"/" + aaTBXX + "/all"; // + aUname;
+            fetch(aURL, requestOptions)
+                .then(response => response.json())
+                .then(e => {
+                    //console.log('fetch Success'); //, e
+                    //console.log(e);
+                    aObjMenuV = e;
+                    $.each(aObjMenuV, function (i) {
+                        if (!e[i].categoryid) {
+                            delete aObjMenuV[i].categoryid;
+                        };
+                    });
+
+                    $.each(aObjMenuV, function (i) {
+                        var aaMenuS = e[i].rightsgroup;
+                        //console.log(aaMenuS);
+                        var aaMenuAr = aaMenuS.split(',');
+                        //console.log(jQuery.type(aaMenuAr));   
+                        var aPassRg = aArrayCompare(aaMenuAr, aRGarray);
+                        if (!aPassRg && aaMenuS != "") {
+                            var ObjVSData = { visible: false };
+                            $.extend(aObjMenuV[i], ObjVSData);
+                            //delete aObjMenuV[i];
+                            //console.log(aObjMenuV[i].ID);
+                            //console.log(aObjMenuV[i].visible);
+                        }
+
+                    });
+
+                    aObjMenuV.sort(function (a, b) {
+                        var a1 = a.ID, b1 = b.ID;
+                        if (a1 == b1) return 0;
+                        return a1 > b1 ? 1 : -1;
+                    });
+                    //console.log(aObjMenuV);
+                    //console.log(aaProgramName)
+                    
+                    var drawer = $("#drawer").dxDrawer({
+                        opened: true, //false,
+                        height: 1000,
+                        closeOnOutsideClick: true,
+                        template: function () {
+                            var $list = $("<div class = 'left-content'>")//.addClass("dx-theme-accent-as-text-color");//.width(250).addClass("dx-icon"); //id='leftbar' .addClass("dx-theme-accent-as-text-color").addClass("dx-icon")
+                                //$(".dx-icon").addClass("dx-theme-accent-as-text-color");
+                            return $list.dxTreeView({
+                                items: aObjMenuV,
+                                //items: aTreeViewMenus,
+                                keyExpr: "ID",
+                                parentIdExpr: "categoryid",
+                                dataStructure: "plain",
+                                searchEnabled: false,
+                                expandEvent: "click",
+                                displayExpr: "name",
+                                focusStateEnabled: false, 
+                                //rootValue: -1,
+                                //expandedRowKeys: [1],
+                                //columns: ["name"],         
+                                //width: 220,
+                                height: 1000,
+                                onItemClick: function (e) {
+                                    $(".dx-icon").addClass("dx-theme-accent-as-text-color");
+                                    var item = e.itemData;
+                                    //alert( jQuery.type(item))
+                                    localStorage["aDXMenuTitle"] = item.name; // Parameters for Blankpage
+                                    localStorage["aPXIXD"] = item.PageID;     // Parameters
+                                    var aaMnuSa = item.rightsgroup;
+                                    var aaMArr = aaMnuSa.split(',');
+                                    var aaMTg = aArrayMatch(aaMArr, aRGarray);
+                                    localStorage["MMaMx"] = aaMTg;
+                                    if (item.url) {
+                                        var aiU = item.url;
+                                        var aFchk = aiU.substring(0, 2);
+                                        if (aFchk === "./") {
+                                            $("#tframe").attr("src", item.url);
+                                            $("#workinglabel").text(item.alabel); //"<i class=<'" + item.icon + "'></i>" + " " +
+                                        } else {
+                                            //item.url;
+                                            //alert(jQuery.type(e.itemData.url))
+                                            eval(item.url);
+                                        }
+                                    } else {
+                                        $("#tframe").attr("src", "");
+                                        $("#workinglabel").text(item.alabel); //""
+                                    }
+
+                                }
+                            });
+
+                        }
+                    }).dxDrawer("instance");
+
+                    $("#toolbar").dxToolbar({  //elementAttr: { class: "dx-theme-text-color" },
+                        
+                        items: [{
+                            widget: "dxButton",
+                            location: "before",
+                            options: {
+                                icon: "menu",
+                                stylingMode: "text", //"outlined",
+                                elementAttr: { class: "xmenu" },
+                                onClick: function () {
+                                    drawer.toggle();
+                                }
+                            }
+                        }, {
+                            widget: "dxMenu", //"dxDropDownBox", //dxSelectBox", .dxDropDownButton, dxMenu
+                            location: 'after',
+                            options: {
+                                dataSource: aOptionMenu, //actionSheetItems,
+                                hideSubmenuOnMouseLeave: true,
+                                cssClass: "toolsmenu",
+                                showFirstSubmenuMode: {
+                                    delay: { hide: 300, show: 50 },
+                                    name: "onHover"
+                                },
+                                displayExpr: "text",
+                                valueExpr: "ID",
+                                //placeholder:"OPTIONS",
+                                showTitle: true, //true,
+                                stylingMode: "text", //"filled",
+                                //value: null,
+                                width: 50,
+                                onItemClick: function (value) {
+                                    //var str = value.itemData.text;
+                                    //var res = str.substring(0, 1);
+                                    var aResult = value.itemData.onClick;
+                                }
+                            }
+                            /*locateInMenu: 'never',
+                            template: function() {
+                                aSetupList();
+                            } */
+                        },
+                        {
+                            location: 'before',
+                            locateInMenu: 'never',
+                            template: function () {
+                                return $("<div id='workinglabel' class='toolbar-label'></div>").text(aaProgramName);
+                            }
+                        }
+
+                        ]
+                    });
+
+                }) //load MENU
+                .catch(error => {
+                    console.error('Error:', error);
+                    //DevExpress.ui.dialog.alert({
+                    //showTitle: false,
+                    //messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"});
+                }); 
+
+
+        });
+        // TOP PRG
+
+/* All Functions */        
+        function aSendMailDMZ(aRecipient, aRCPeMail, aSendereMail, aCCeMail, aBcceMail, aSubject, aMessage) {
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify({
+                "toname": aRecipient,
+                "toemail": aRCPeMail,
+                "fromemail": aSendereMail,
+                "ccemail": aCCeMail,
+                "bccemail": aBcceMail,
+                "subject": aSubject,
+                "message": aMessage //"Dear Wachiraphan <br/><br/>&nbsp;&nbsp;Test send Email from web API.<br/><br/><br/>Thanks and Regards,<br />Wachiraphan."
+            });
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            fetch("https://cbsdev2.locktonwattana.com/send-email/false", requestOptions)
+                .then(response => response.text())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        }
+
+        function aArrayCompare(a, b) {
+            let aPass = false;
+            $.each(b, function (i, val) {  // each(a,function(i,val)
+                let aValArr = val.split('0');
+                let aval2s = aValArr[0];
+                if (jQuery.type(aval2s) === "undefined") {
+                    aval2s = val;
+                }
+                var result = $.inArray(aval2s, a); //var result=$.inArray(val,b);
+
+                if (result != -1) {
+                    //console.log('Exit');
+                    aPass = true;
+                    return false;
+                } else {
+                    aPass = false;
+                }
+            })
+            return aPass;
+        };
+
+        function aArrayMatch(a, b) {
+            let aPass = "";
+            $.each(b, function (i, val) {
+
+                let aValArr = val.split('0');
+                let aval2s = aValArr[0];
+                if (jQuery.type(aval2s) === "undefined") {
+                    aval2s = val;
+                }
+                var result = $.inArray(aval2s, a);
+                if (result != -1) {
+                    //console.log('Exit');       
+                    aPass = val;
+                    //alert(aPass)
+                    return false;
+                } else {
+                    aPass = "";
+                }
+            })
+            return aPass;
+        };
+
+        const aThemeSelect = () => {
+            var aTItemNo = 2;
+            var aRgsValue = localStorage["aDXTheme"];
+            jQuery(function ($) {
+                $("#popupSelect").dxPopup({
+                    title: "THEMES",
+                    height: '140px',
+                    width: '250px',
+                    position: { offset: "0 -250" }, //{offset: "0 -180"},
+                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                    visible: true,
+                    contentTemplate: function () {
+                        return $("<div />").append(
+                            $("<p><center><div id='tselect'></div></center></p>"),
+                        );
+                    },
+                }).dxPopup("instance");
+
+                $("#tselect").dxSelectBox({
+                    width: 200,
+                    //grouped: true,					
+                    //items: aThemeList, //
+                    dataSource: aThemeListGroup,
+                    //group: "Category",
+                    valueExpr: "thid",
+                    displayExpr: "text",
+                    grouped: true,
+                    value: aRgsValue, // aThemeList[aTItemNo].thid, //
+                    onValueChanged: function (args) {
+                        //DevExpress.ui.themes.current('generic.light');
+                        DevExpress.ui.themes.current(args.value);
+                        localStorage["aDXTheme"] = args.value;
+                        var str = args.value;
+                        //var ano = args.key;
+                        //alert( ano)
+                        if (str.includes("dark")) {
+                            $("#mainlogo").attr("src", "./images/locktonlogo70mmwhite.png");
+                            $("#logobarid").removeClass("logobarwhite").addClass("logobarblack");
+                            $("#leftbar").removeClass("left-content").addClass("dx-theme-accent-as-background-color");
+                            /*                            
+                            $("#mainlogo").attr("src", "./images/locktonlogo70mmblack.png"); 
+                            $("#logobarid").removeClass("logobarblack").addClass("logobarwhite");
+                            $("#leftbar").removeClass("left-content").addClass("dx-theme-accent-as-background-color");
+                            $("#leftbar").removeClass("dx-theme-accent-as-background-color").addClass("left-content");
+                            */
+                        } else {
+                            $("#mainlogo").attr("src", "./images/locktonlogo70mmwhite.png");
+                            $("#logobarid").removeClass("logobarwhite").addClass("logobarblack");
+                            $(".dx-icon").addClass("dx-theme-accent-as-text-color");
+                            //$(".fas").addClass("dx-theme-accent-as-text-color");
+                            //$("#leftbar").removeClass("dx-theme-accent-as-background-color").addClass("left-content");
+                            //$("#leftbar").removeClass("left-content").addClass("dx-theme-accent-as-background-color");
+                        }
+                        $("#tframe").attr("src", $("#tframe").attr("src"));  // refresh iFrame
+                        $("#popupSelect").dxPopup("hide");
+                    }
+                }).dxSelectBox("instance");
+
+
+            });
+        }
+
+        function aRunLogin(aWithOTP) {
+            if (aWithOTP === undefined) {
+                var aWOTP = 0;
+            } else {
+                var aWOTP = 1;
+            }
+            var apwds = "";
+            var ausrs = "";
+            var aOTP = "";
+            var aaPFDMI = isLocalHost();
+            var aOTPm = generateOTP();
+            var aii = 0;
+            var astr = localStorage["aDXTheme"]
+            if (astr.includes("dark")) {
+                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmwhite.png' width='88'></center></div>"
+            } else {
+                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"
+            }
+            // define the $ as jQuery for multiple uses
+            jQuery(function ($) {
+                // ...
+                $("#popupContainer").dxPopup({
+                    //title:  "PLEASE LOGIN",
+                    height: '250px',
+                    width: '400px',
+                    position: { offset: "0 -150" }, //{offset: "0 -180"},
+                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                    visible: true,
+                    fullScreen: false,
+                    showCloseButton: true,
+                    showTitle: true,
+                    dragEnabled: true,
+                    closeOnOutsideClick: false,
+                    shadingColor: "rgb(190,190,190,0.9)",
+                    toolbarItems: [{ toolbar: "top", html: alImg }],
+                    contentTemplate: function () {
+                        return $("<div />").append(
+                            $("<p><center><div id='username'></div></center></p>"),
+                            $("<p><center><div id='password'></div></center></p>"),
+                            $("<p><center><div id='OTP'></div></center></p>"),
+                            $("<p <div id='popover1'>Please get OTP from your register e-Mail, put here and then press [LOGIN]</div></p>"),
+                            $("<p><center><span id='icon-done'></span></span></center></p>")
+                        );
+                    },
+                    onContentReady: function () {
+                        $("#OTP").hide();
+                    }
+                }).dxPopup("instance");
+
+                $("#username").dxTextBox({
+                    mode: "text",
+                    placeholder: "Enter username",
+                    showClearButton: true,
+                    onValueChanged: function (e) {
+                        const previousValue = e.previousValue;
+                        ausrs = e.value;
+                        // Event handling commands go here
+                        // DevExpress.ui.notify(newValue);
+                    },
+                    width: "250px",
+                    value: ""
+                }).dxTextBox("instance");
+
+                $("#password").dxTextBox({
+                    mode: "password",
+                    placeholder: "Enter password",
+                    showClearButton: true,
+                    onValueChanged: function (e) {
+                        const previousValue = e.previousValue;
+                        apwds = e.value;
+                        // Event handling commands go here
+                        // DevExpress.ui.notify(newValue);
+                    },
+                    width: "250px",
+                    value: ""
+                }).dxTextBox("instance");
+
+                $("#OTP").dxTextBox({
+                    mode: "text",
+                    placeholder: "put OTP and press LOGIN",
+                    showClearButton: true,
+                    onValueChanged: function (e) {
+                        const previousValue = e.previousValue;
+                        aOTP = e.value;
+                        // Event handling commands go here
+                        // DevExpress.ui.notify(newValue);
+                    },
+                    width: "250px",
+                    value: ""
+                }).dxTextBox("instance");
+
+                $("#popover1").dxPopover({
+                    target: "#OTP",
+                    showEvent: "mouseenter",
+                    hideEvent: "mouseleave",
+                    position: "top",
+                    width: 300
+                });
+
+                $("#icon-done").dxButton({
+                    icon: "fas fa-key",
+                    type: "success",
+                    text: "LOGIN",
+                    width: "120px",
+                    visible: true,
+                    onClick: function (e) {
+                        //console.clear();	
+                        //var aUname = document.getElementById("uname").value;
+                        //var aPswd = document.getElementById("pswd").value; 			
+                        if (jQuery.type(ausrs) === "undefined") {
+                            var aUname = ""
+                        } else {
+                            var aUname = ausrs
+                        };
+                        if (jQuery.type(apwds) === "undefined") {
+                            var aPswd = ""
+                        } else {
+                            var aPswd = apwds;
+                        };
+                        if (aUname === "" || aPswd === "") {
+                            DevExpress.ui.dialog.alert({
+                                showTitle: false,
+                                messageHtml: "<center style='color:Red;'>Username and Password can not be blank !!</center>"
+                            });
+                        }
+                        else {
+                            localStorage.setItem("aaPFDMI", aaPFDMI);
+                            localStorage.setItem("aaXXuX", aUname);
+                            var aaXTGO = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Guest
+                            var aaTBXX = "01f518c9-c818-4e9f-85cb-6245ee1a2637";
+                            //var aaLng = aaLoginGet(aaPFDMI,aUname, aPswd); //aaLoginaa(aUname,aPswd);
+                            //alert(aUname);
+                            var aLtext = "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                            //alert(aLtext);
+                            //"@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                            var myHeaders = new Headers();
+                            myHeaders.append("Content-Type", "application/json");
+                            var raw = JSON.stringify({
+                                "@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                            });
+
+                            var requestOptions = {
+                                method: 'POST',
+                                headers: myHeaders,
+                                body: raw,
+                                redirect: 'follow'
+                            };
+
+                            let aURL = aaPFDMI + "/DMQ/XOL/" + aaXTGO + "/" + aaTBXX + "/all"; // + aUname;
+
+                            fetch(aURL, requestOptions)
+                                .then(response => response.json())
+                                //  .then(data => {console.log(data)});
+                                .then(aData => {
+                                    //console.log('Success:', aData);
+                                    //console.log(aData[0].IDUsr);
+                                    //console.log(aData[0].Gright);
+                                    //console.log(aData[0].Pword);
+                                    //console.log(result);
+                                    //localStorage.setItem("aaXXoX", aData[0].TKey); 
+                                    //localStorage.setItem("aaXrXg", response.KeyRights);                        
+                                    if (aPswd === aData[0].Pword) {
+                                        var aal = btoa(aData[0].Gright);
+                                        var aat = btoa(aData[0].Tkey);
+                                        var aLGName = aData[0].LGName;
+                                        var aemail = aData[0].email;
+                                        var aotpx = aData[0].otp;
+                                        var apict = aData[0].PictureLoc;
+                                        //console.log(aLGName)
+                                        //console.log(aemail)
+                                        //console.log(aotpx)
+                                        //alert(aal);
+                                        //alert(aData[0].Pword);
+                                        //alert(aPswd === aData[0].Pword);
+                                        localStorage.setItem("aaXrXg", aal);
+                                        localStorage.setItem("aaXXoX", aat);
+                                        localStorage.setItem("aaXpXt", apict);
+
+                                        if (aOTP === aOTPm || aWOTP === 0) {
+                                            //aGoTo("index02.html");
+                                            aGoTo("index03.html");
+                                        } else {
+                                            aii++;
+                                            $("#username").hide();
+                                            $("#password").hide();
+                                            $("#OTP").show(20);
+                                            if (aii <= 1) {
+                                                var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
+                                                // 
+                                                //                                       aRecipient, aRCPeMail               ,aSendereMail        , aCCeMail, aBcceMail,aSubject,aMessage "Dear Wikran <br/><br/>&nbsp;&nbsp; OTP = <br/><br/><br/>Regards,<br />XOL Admin."
+                                                var lSentM = aSendMailDMZ("Khun " + aLGName, aemail, "XOL-admin@lockton.com", "wikran@hotmail.com", "", "OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aLGName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+
+                                                DevExpress.ui.dialog.alert({
+                                                    showTitle: false,
+                                                    messageHtml: "<center style='color:ForestGreen;'> Sendind OTP to your e-Mail, please check </center>"
+                                                });
+                                            } else {
+                                                DevExpress.ui.dialog.alert({
+                                                    showTitle: false,
+                                                    messageHtml: "<center style='color:Red;'> Please check OTP from your e-Mail again !!" + aii + "</center>"
+                                                });
+                                            }
+                                        }
+
+                                    } else {
+
+                                        DevExpress.ui.dialog.alert({
+                                            showTitle: false,
+                                            messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
+                                        });
+                                    }
+
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    DevExpress.ui.dialog.alert({
+                                        showTitle: false,
+                                        messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
+                                    });
+                                });
+
+                        }
+                    }
+                });
+
+            });
+        }
+
+        //$(function(){
+        function aSetupList() {
+            //const processClick = function (name) {
+            //      DevExpress.ui.notify(name + " clicked", "success", 3000);
+            //};  
+
+            jQuery(function ($) {
+                var actionSheet = $("#action-sheet").dxActionSheet({
+                    dataSource: actionSheetItems,
+                    title: "Options",
+                    showTitle: true,
+                    usePopover: true,
+                    cancelText: "Cancel",
+                    width: 300,
+                    showCancelButton: true,
+                    //target: "#aButton",
+                    onItemClick: function (value) {
+                        //if (value.itemData.text === 'Theme'){
+                        //processClick(value.itemData.text);
+                        //var aOTP = generateLOTP(); 
+                        //alert( aOTP);
+                        var str = value.itemData.text;
+                        var res = str.substring(0, 1);
+                        //alert(res);
+                        //if (res === "1" || res === "2") {
+                        var aResult = value.itemData.onClick;
+                        //aMessageAlert("OTP =" + aOTP, "green");
+                        //} else if (res === "3" ) {
+                        //    var aOTP = value.itemData.onClick;
+                        //var aOTP = generateOTP();
+                        //aMessageAlert("SEND MAIL with OTP =" + aOTP , "blue");
+                        //} else {
+                        //    aMessageAlert("ERROR","red");    
+                        //}        
+                        //    var aOTP = "";
+                        //} else {
+                        //    DevExpress.ui.notify("The \"" + value.itemData.text + "\" button is clicked.");
+                        //}
+                    }
+                }).dxActionSheet("instance");
+
+                $("#aButton").dxButton({
+                    //stylingMode: "Options",
+                    stylingMode: "text",
+                    //text: "Outlined",
+                    icon: "fi fi-sr-settings",
+                    type: "success",
+                    width: 60,
+                    onClick: function (e) {
+                        //actionSheet.option("target", e.itemElement);
+                        actionSheet.option("visible", true);
+                    }
+                });
+
+            });
+        };
+
+    </script>
+
+
+
+</head>
+
+<body class="dx-viewport">
+
+    <div class="container"></div>
+    <!--<span class="bb" id="clip" ><img src=".\images\sks-1.png" width="70%"> </span> -->
+    <div class="logobarblack" style="height:100px" id="logobarid">
+        <img src=".\images\locktonlogo70mmwhite.png" class="logostyle" id="mainlogo">
+
+        <div class="title">
+            <!--<span class="tleft"  id="aTitle">Expenses Reimbursement</span> 
+                 <span class="tright" id="auserdropdown"></span>
+                 <span class="tright form-avatar" id="form-avatar" style="background-image: url('images/user.png');" width="20px"></span>     -->
+
+            <span class="tright" id="aUsrName"></span>
+            <span class="tright avatar"><img id="avatar" src="images/user.png" width="23px"
+                    style="vertical-align:middle; margin:0px 3px"></span>
+
+        </div>
+    </div>
+
+    <div id="toolbar"></div> <!-- <div class="demo-container"> -->
+    <div id="aButton"></div>
+    <div id="popupContainer"></div>
+    <div id="popupSelect"></div>
+    <div id="action-sheet"></div>
+
+    <div id="drawer" class="hero-image">
+        <!--<iframe id="tframe" sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="./paper-tabs.html" onload="this.before((this.contentDocument.body||this.contentDocument).children[0]);this.remove()" width="100%" height="100%" style="border:none;"></iframe>-->
+        <iframe id="tframe" src="" width="100%" height="100%" style="border:none;"></iframe>
+    </div>
+
+</body>
+
+</html>

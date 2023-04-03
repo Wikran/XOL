@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>GPT-3 Q&A Example</title>
+</head>
+
+<body>
+    <h1>GPT-3 Q&A Example</h1>
+    <form>
+        <label for="question">Question:</label>
+        <input type="text" id="question" name="question">
+        <br>
+        <label for="context">Context:</label>
+        <input type="text" id="context" name="context">
+        <br>
+        <button type="button" onclick="getAnswer()">Get Answer</button>
+    </form>
+    <br>
+    <div id="answer"></div>
+    <script>
+        const apiKey = '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';
+
+        function getAnswer() {
+            const question = document.getElementById("question").value;
+            const context = document.getElementById("context").value;
+            const data = {
+                "model": "text-davinci-edit-001",
+                "input": "Q: What is the Expenses Reimbursement program\nA: It is an Expenses Reimbursement management for your refunding.\nA:\n\nQ: What is the Expenses Reimbursement program\nA: It is an Expenses Reimbursement management for your refunding.\nA:\n\nQ: What is the Expenses Reimbursement program\n\nA: It is an Expenses Reimbursement management for your refunding.",
+                "instruction": "",
+                "temperature": 0,
+                "top_p": 1
+            }
+
+            const headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            headers.append('Authorization', `Bearer ${'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'}`);
+
+            const requestOptions = {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
+            };
+
+            fetch('https://api.openai.com/v1/engines/davinci-codex/completions', requestOptions)
+                .then(response => response.json())
+                .then(response => {
+                    document.getElementById("answer").innerHTML = response.choices[0].text;
+                })
+                .catch(error => console.log(error));
+        }
+    </script>
+</body>
+
+</html>

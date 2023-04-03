@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DiseaseList</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Expires" CONTENT="-1">
+<meta http-equiv="Content-Language" content="th">
+<meta http-equiv="content-Type" content="text/html; charset=window-874">
+<meta http-equiv="content-Type" content="text/html; charset=tis-620">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+<script src="vendor/jquery/3.5.1/jquery.min.js"></script> 
+<script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+<!-- Icon -->
+<link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+<link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+<link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+<link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+<link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+<link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+<link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"  data-active="true">
+<link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css"  data-active="false">
+<link rel="dx-theme" data-theme="generic.darkviolet.compact" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css"  data-active="false">
+<link rel="dx-theme" data-theme="material.blue.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.blue.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.teal.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.orange.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false"> 
+<link rel="dx-theme" data-theme="material.purple.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.teal.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+<link rel="dx-theme" data-theme="material.lime.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+<!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+	<!-- Export Excel -->
+	<!-- Export to PDF -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+<!-- Export to PDF -->	
+<!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->	
+<script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+<script src="aaTMain.js"></script>
+<script src="ajQjsLib.js"></script>
+<script>
+$(document).ready(function () {
+var aDXTheme = localStorage["aDXTheme"]
+DevExpress.ui.themes.current(aDXTheme);
+});
+      window.jsPDF = window.jspdf.jsPDF;
+      applyPlugin(window.jsPDF);
+      console.clear();
+      var aaXToX = localStorage["aaXXoX"]; 
+      var aaXNoX = localStorage["aaXXuX"];
+      var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // MasterPage
+      var aaPXXI = localStorage["aPXIXD"];
+      var jqxhr = $.post( aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/'+ aaXTXB + '/'+ aaPXXI, function(e) {
+console.log( "success" );
+aObjMPage = e;
+aaKeyField = aObjMPage[0].PrimaryKey;
+aaTBKey = aObjMPage[0].TBKey;
+localStorage.setItem("aaXKFX", aaKeyField);
+localStorage.setItem("aaXTBX", aaTBKey);
+})
+.done(function(e) {
+console.log( "second success" );
+aObjMPage = e;
+aaKeyField = aObjMPage[0].PrimaryKey; 
+aaTBKey = aObjMPage[0].TBKey;
+localStorage.setItem("aaXKFX", aaKeyField);
+localStorage.setItem("aaXTBX", aaTBKey);
+})
+.fail(function() {
+          console.log( "error" );
+})
+.always(function() {
+console.log( "complete" );
+});	
+</script>
+</head>
+<body class="dx-viewport">
+<div class="container">
+<div id="gridContainer"></div>
+</div>
+<script>
+var aaPXIXD = localStorage["aPXIXD"];
+var aaEnt = aaPXIXD.includes("X");
+var aaKeyField = localStorage["aaXKFX"];
+var aaTBKey = localStorage["aaXTBX"];
+var aaUsrN = localStorage["aaXXuX"];
+
+$(function(){
+var aMMaMx = localStorage["MMaMx"];
+var aRRgRs = aMMaMx.split('0');
+var aDDeDx = aRRgRs[0];
+var aRrgSx = aRRgRs[1]; 
+if ( jQuery.type(aRrgSx) === "undefined"){
+    aRrgSx = "377B";
+}
+let nDataPos = 1;
+let nExcelPos = 2;
+let nPDFPos = 3;
+let nRPTPos = 4;
+var arDataC = aRolesAction(aRrgSx,nDataPos,1);
+var arDataU = aRolesAction(aRrgSx,nDataPos,2);
+if (arDataU === 1){
+   var aUpdateText = "Update";
+   var aSaveVisible = 1;
+   var aCancelText = "Cancel";
+   var aCancelicon = "close"; 
+var aCancelType = "danger"; 
+} else {
+   var aUpdateText = "xxx";
+   var aSaveVisible = 0;
+   var aCancelText = "EXIT";
+   var aCancelicon = "fas fa-sign-out-alt";   
+var aCancelType = "success"; 
+}
+var arDataD = aRolesAction(aRrgSx,nDataPos,3);
+var arExcelEx = aRolesAction(aRrgSx,nExcelPos,2);
+var arPDFEx = aRolesAction(aRrgSx,nPDFPos,2);
+
+	 function logEvent(eventName) {
+var logList = $("#events ul"),
+newItem = $("<li>", { text: eventName });
+logList.prepend(newItem);
+}
+
+$("#gridContainer").dxDataGrid({
+
+dataSource: new DevExpress.data.CustomStore({
+key: "ID",
+loadMode: "omit", 
+load: function() {
+return $.post(aaPFDMI + '/DMQ/XOL/'+ atob(aaXToX) +'/' + aaTBKey + '/all')
+.fail(function() { throw "Data loading error" });
+},
+insert: function(values) {
+
+if (aaEnt) {
+var ObjKeyData = {EntryBy: aaUsrN , EntryDate: new Date()};
+var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+}
+else {
+ var ObjRowData = JSON.stringify(values);
+}
+sendRequestNew("Insert",ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
+},	
+update: function (key, values) {
+//console.log( aaKeyField );
+var ObjKeyData = {"ID": $.trim(key)};   //[aaKeyField] key.trim
+var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+sendRequestNew(aUpdateText,ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
+},
+remove: function(key) {
+var ObjKeyData = {"ID": $.trim(key)};   //[aaKeyField] key.trim
+var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+sendRequestNew("Delete",ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
+}
+}),
+
+allowColumnReordering: true,
+allowColumnResizing: true,
+columnMinWidth: 100,
+columnChooser: {
+enabled: true
+},		
+showBorders: true,
+sorting: {
+mode: "multiple"
+},
+selection: {
+mode: 'multiple'
+},
+groupPanel: {
+visible: true
+},
+filterRow: {
+visible: true,
+applyFilter: "auto"
+},
+headerFilter: {
+visible: true
+},
+grouping: {
+autoExpandAll: true,
+},
+searchPanel: {
+visible: true
+},
+paging: {
+pageSize: 10
+},
+pager: {
+showPageSizeSelector: true,
+allowedPageSizes: [5, 10, 20, 50],
+showInfo: true
+},	
+showBorders: true,			
+groupPaging: true,		
+showColumnLines: true,
+showRowLines: true,
+rowAlternationEnabled: true,
+				
+// Export to Excel 		
+export: {
+enabled: arExcelEx,
+allowExportSelectedData: true
+},
+onExporting: function(e) {
+const workbook = new ExcelJS.Workbook();
+const worksheet = workbook.addWorksheet('DATA');
+DevExpress.excelExporter.exportDataGrid({
+worksheet: worksheet,
+component: e.component
+}).then(function() {
+workbook.xlsx.writeBuffer().then(function(buffer) {
+saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DiseaseList' + '.xlsx');
+});
+});
+e.cancel = true;
+},
+onEditorPreparing: function (e) {
+    if(e.parentType === "dataRow" && arDataU === 0){  
+        e.editorOptions.disabled = true;
+    } else {     
+        if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate")) {
+        e.editorOptions.disabled = true;
+        }
+    }
+},			
+//
+//
+// Editing
+editing: {
+       mode: "popup",
+       useIcons: true,
+       allowUpdating: true,
+       allowDeleting: arDataD,
+       allowAdding: arDataC,
+       form: {
+       labelLocation: 'left',
+       showColonAfterLabel: false,
+       colCount:2,
+       },
+       popup: {
+           title: "Disease List Info" ,
+           fullScreen: false,
+           showTitle: true,
+           width: 1000,
+           height: 525,
+                    position: {
+                   my: "top",
+                   at: "top",
+                   of: "window"
+          },
+          onContentReady:function(e){
+                    e.component.option('toolbarItems[0].visible', aSaveVisible);
+                    e.component.option('toolbarItems[0].options.icon', 'save');
+                    e.component.option('toolbarItems[0].options.type', 'success');
+                    e.component.option('toolbarItems[1].options.text', aCancelText);
+                    e.component.option('toolbarItems[1].options.icon', aCancelicon);
+           e.component.option('toolbarItems[1].options.type', aCancelType);
+          }
+       }
+  },
+// column list
+ columns: [
+{  dataField: "ID",
+   caption:"ID",
+   sortOrder:"asc",
+   allowHiding: false,
+},
+{  dataField: "Disease",
+   caption:"Disease",
+},
+{  dataField: "Type",
+   caption:"Type",
+},
+{  dataField: "Note",
+   caption:"Note",
+},
+ { type: "buttons",
+     width: 110,
+     buttons: ["edit", "delete"]
+ }
+],
+// summary
+  summary: {
+      recalculateWhileEditing: true,
+      skipEmptyValues: false,
+      totalItems: [
+         { column: "ID",
+            summaryType: "count",
+            displayFormat: "{0} Items",
+         },
+      ],
+      groupItems: [
+         { column: "Disease",
+            summaryType: "count",
+            displayFormat: "{0} Items",
+         },
+      ],
+  }, 
+// Tool Bar
+onToolbarPreparing: function(e) {
+var dataGrid = e.component;
+e.toolbarOptions.items.unshift(
+{
+location: "after",
+widget: "dxButton",
+type: "success",
+options: {
+icon: 'collapse',
+text: 'Collapse All',
+width: 140,
+onClick: function(e) {
+var expanding = e.component.option("text") === "Expand All";
+dataGrid.option("grouping.autoExpandAll", expanding);
+e.component.option("text", expanding ? "Collapse All" : "Expand All");
+e.component.option("icon", expanding ? "collapse" : "expand");
+}
+}
+},			
+{
+location: "after",
+widget: "dxButton",
+visible: arPDFEx,
+options: {
+icon: "exportpdf",
+text: "Export to PDF",
+onClick: function() {
+const doc = new jsPDF();
+DevExpress.pdfExporter.exportDataGrid({
+jsPDFDocument: doc,
+component: dataGrid
+}).then(function() {
+doc.save( 'DiseaseList' + '.pdf');
+});
+}
+}
+},
+{
+location: "after",
+widget: "dxButton",
+options: {
+icon: "refresh",
+onClick: function() {
+dataGrid.refresh();
+}
+}
+			}				
+);
+}
+}).dxDataGrid("instance");
+
+	function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+console.log('Goal...Repuest Web API : ' + Data);
+var settings = {"url": Url,"method": "POST","timeout": 0,"headers": {"Content-Type": "application/json"},"data":Data,};
+$.ajax(settings).done(function (response) {console.log(response);});
+}
+});
+
+</script>	
+</body>
+</html>

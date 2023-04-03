@@ -1,0 +1,4 @@
+const aIndexAlert4UnP01 = "Please Try Again!! กรุณาลองอีกครั้ง \n\nUsername หรือ Password ไม่ถูกต้อง \nกรุณาตรวจทาน ทั้งชื่อ และ รหัสผ่าน อย่างละเอียด "; //\nรหัสผ่านที่คุณคีย์ไปคือ ==>
+const aIndexAlert4UnP02 = "Please check OTP from your e-Mail again !!\nกรุณาตรวจสอบ OTP จากอีเมลของคุณอีกครั้ง!!";
+const aIndexAlert4UnP03 = "Sending FORGOTTEN PASSWORD - OTP to your e-Mail , please check /n/nส่ง OTP สำหรับการลืมรหัสผ่านไปที่อีเมลของคุณ, กรุณาตรวจสอบ"
+const aIndexAlert4UnP11 = "\n\nForgot your password, Please click at 'Forgot password' \nคุณน่าจะลืมรหัสผ่าน กรุณากดที่ 'Forgot password' \nเพื่อส่ง OTP สำหรับเข้าใช้งานไปที่อีเมลของคุณ"

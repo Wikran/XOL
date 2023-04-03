@@ -1,0 +1,33 @@
+SELECT        HeadRefNo, PayToCode,
+                             (SELECT        TOP (1) FleetLimit 
+                               FROM            dbo.Limitation
+                               WHERE        (EmpID = dbo.EXPREIM.PayToCode)) AS LimitedAmount, SUM(LocalAmount) AS TotalLAmount, SUM(RefundedAmount) AS TotalRefundAmt,
+
+							   CASE WHEN 
+							   (SELECT TOP (1) FleetLimit FROM dbo.Limitation AS Limitation_1 WHERE (EmpID = dbo.EXPREIM.PayToCode)) - (SUM(LocalAmount) - SUM(RefundedAmount)) >= 0 THEN
+						        'Dr' ELSE 'Cr' END AS DC01,'2202600008' AS AC01,'เงินสำรองจ่าย - ค่าน้ำมัน' AS AN01,
+							   CASE WHEN 
+							   (SELECT TOP (1) FleetLimit FROM dbo.Limitation AS Limitation_1 WHERE (EmpID = dbo.EXPREIM.PayToCode)) - (SUM(LocalAmount) - SUM(RefundedAmount)) >= 0 THEN
+						        ABS((SELECT TOP (1) FleetLimit FROM dbo.Limitation AS Limitation_1 WHERE (EmpID = dbo.EXPREIM.PayToCode)) - (SUM(LocalAmount) - SUM(RefundedAmount))) ELSE 0.00 END AS AT01	,
+								CASE WHEN
+							   (SELECT TOP (1) FleetLimit FROM dbo.Limitation AS Limitation_1 WHERE (EmpID = dbo.EXPREIM.PayToCode)) - (SUM(LocalAmount) - SUM(RefundedAmount)) >= 0 THEN
+						       0.00 ELSE  ABS((SELECT TOP (1) FleetLimit FROM dbo.Limitation AS Limitation_1 WHERE (EmpID = dbo.EXPREIM.PayToCode)) - (SUM(LocalAmount) - SUM(RefundedAmount))) END AS CT01	,								    
+      		   
+							   CASE WHEN
+                             ((SELECT        TOP (1) FleetLimit
+                                 FROM            dbo.Limitation
+                                 WHERE        (EmpID = dbo.EXPREIM.PayToCode)) - SUM(LocalAmount)) >= 0 THEN 'Cr' ELSE 'Dr' END AS DC02, '5102300001' AS AC02, 'ยานพาหนะ - ค่าน้ำมัน' AS AN02, CASE WHEN
+                             ((SELECT        TOP (1) FleetLimit
+                                 FROM            dbo.Limitation
+                                 WHERE        (EmpID = dbo.EXPREIM.PayToCode)) - SUM(LocalAmount)) >= 0 THEN 0.00 ELSE ABS(MAX(LimitedAmount) - SUM(LocalAmount)) END AS AT02, CASE WHEN
+                             ((SELECT        TOP (1) FleetLimit
+                                 FROM            dbo.Limitation
+                                 WHERE        (EmpID = dbo.EXPREIM.PayToCode)) - SUM(LocalAmount)) >= 0 THEN ABS
+                             ((SELECT        TOP (1) FleetLimit
+                                 FROM            dbo.Limitation
+                                 WHERE        (EmpID = dbo.EXPREIM.PayToCode)) - SUM(LocalAmount)) ELSE 0.00 END AS CT02, 'Cr' AS DC03, '2202600004' AS AC03, 'ค่าใช้จ่ายค้างจ่าย - อื่นๆ' AS AN03, 0.00 AS AT03, SUM(RefundedAmount) AS CT03, 
+                         'Dr' AS DC04, '2202600008' AS AC04, 'เงินสำรองจ่าย - ค่าน้ำมัน' AS AN04, SUM(RefundedAmount) AS AT04, 0.00 AS CT04, 'Cr' AS DC05, '1000502001' AS AC05, 'เงินฝากออมทรัพย์ธ.ซิตี้แบงก์ - บาท - 5116258023' AS AN05, 0.00 AS AT05, 
+                         SUM(RefundedAmount) AS CT05, '1130' AS DP01, Department AS DP02, '1130' AS DP03, '1130' AS DP04, '1130' AS DP05
+FROM            dbo.EXPREIM
+WHERE        (ExpGroupCode = '200')
+GROUP BY HeadRefNo, PayToCode, Department
