@@ -260,6 +260,13 @@
                             });
                             e.cancel = true;
                         },
+                        onInitNewRow: function (e) {
+                                    //e.component.__addingStart = true; 
+                                    //gridContainer.option("editing.popup.title", "Adding Expenses Reimbursement");
+                                    //IDNO,EmpID,EmpName,EmpDept,EmpPosition,ExpGroupCode,ExpGroupDesc,ExpCode,ExpDesc,RefNo01,RefNo02,RefNo03,RefNo04,RefDesc,LimitedPerTime,MonthlyLimited,TotalLimited,ApproverID,ApproverName,ApproverEmail,HRApproverID,HRApproverName,HRApproverEmail,FAApproverID,FAApproverName,FAApproverEmail,Note
+                                    let newIDNo = aGetDateRef("L")
+                                    e.data.IDNO = newIDNo;
+                                },
                         onEditorPreparing: function (e) {
                             if (e.parentType === "dataRow" && arDataU === 0) {
                                 e.editorOptions.disabled = true;
@@ -322,13 +329,13 @@
                                 dataField: "TDESC",
                                 caption: "Description (THA)",
                                 editorType: "dxTextArea",
-                                width: 400,
+                                width: 350,
                             },
                             {
                                 dataField: "EDESC",
                                 caption: "Description (ENG)",
                                 editorType: "dxTextArea",
-                                width: 400,
+                                width: 350,
                             },
                             {
                                 dataField: "ALTERACC",
@@ -365,6 +372,11 @@
                                 caption: "Used",
                                 width: 80,
                             },
+                            {
+                                dataField: "IDNO",
+                                caption: "IDNO",
+                                width: 180,
+                            },                            
 
                         ],
                         // summary

@@ -1571,7 +1571,6 @@
                                                                                 value: 1,
                                                                                 visible: false,
                                                                             },
-
                                                                             {
                                                                                 dataField: "Amount",
                                                                                 caption: "Actual Amount",
@@ -2617,7 +2616,6 @@
                                                                                                 newData.EROCheck02 = true;
                                                                                             } else if ($.trim(value) === "Maternity") { //Maternity Check
 
-
                                                                                                 let aaTotalmat = aaMMAmt2 //Total Amount 
                                                                                                 let aaRemainm = aaMMRm2  //Total Remaining 
                                                                                                 let aaTotalUsemat = aaMMUsed2 // Total Reimbursement
@@ -2721,7 +2719,7 @@
                                                                                             } else if ( currentRowData.ERORefNo3 === "Dental (SSO)") {
                                                                                                 newData.RefundedAmount = 0;
                                                                                             } else if ( currentRowData.ERORefNo3 === "Maternity") {
-                                                                                                newData.RefundedAmount = currentRowData.LocalAmount;
+                                                                                                newData.RefundedAmount = aaMaternity //currentRowData.LocalAmount;
                                                                                             }                                                                                          
                                                                                         },
                                                                                         width: 120,

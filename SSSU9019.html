@@ -282,6 +282,20 @@
                         })
                 }
         */
+        var aAUserStandard;
+        fetch('UserStd.json')
+            .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(aAUserStandard =>  {
+                console.log("UserStd: ", aAUserStandard);
+            })
+            .catch(function (error) {
+                console.log('There was a problem with the fetch operation:', error.message);
+            });
     </script>
 
 </head>

@@ -104,10 +104,23 @@
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
         console.clear();
-
+        /**
+         * Global variables
+         * aaPFDMI = URL for API (https://cbsdev2.locktonwattana.com)
+         * aaXToX = user public token key
+         * */
         var aaPFDMI = isLocalHost(); 
         var aaXToX = localStorage["aaXXoX"];
-
+        
+        /**
+         * @param {array} Employee
+         * @param {string} "EMPID   "
+         * @param {string} "EMPNAME"
+         * @param {string} "Employee ID value"
+         * return string results
+         * example aArrfindValByKey(aaEmployee, "EMPCode", "EMPNAME", value) value = employee code value
+         * @copyright wikran 2023
+         */
         const aArrfindValByKey = (arr, searchKey, returnValue, searchValue) => {
             const item = arr.find(e => e[searchKey] === searchValue); // Search for the object with the matching key-value pair
             if (item) {
@@ -116,7 +129,15 @@
                 return null; // Return null if the object is not found
             }
         };  
-        
+
+        /**
+         * @param {array} Employee
+         * @param {string} "NAME"
+         * @param {string} "name value"
+         * return json array results
+         * example aSearch2json(aaEmployee, "EMPCode", value) value = employee code value
+         * @copyright wikran 2023
+         */
         const aSearch2json = (arr, searchKey, searchValue) => {
         const results = []; // Initialize an empty array to store the matching objects
         for (const obj of arr) { // Loop through each object in the array
@@ -723,7 +744,6 @@
                                         },
                                         editCellTemplate: dropDownBoxBNF,
                                         setCellValue: function (newData, value, currentRowData) {
-                                            //console.log(value)
                                             let aResult = aSearch2json(aaBenefitLevel, "BenefitLevel", value) //,AllowFamily,AllowSSO,FleetLimit,MedicalLimit,MaternityLimit,LimitPerCase
                                             newData.RefNo03 = value;
                                             newData.AllowFamily = aResult[0].FamilyReimbursement;
@@ -971,14 +991,14 @@
                                     );
                                 }
                             }).dxDataGrid("instance");
-                            /*
+/*
                             function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
                                 let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
                                 console.log('Goal...Repuest Web API : ' + Data);
                                 var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
                                 $.ajax(settings).done(function (response) { console.log(response); });
                             }
-                            */
+                            
                             function aSearchEmp(asSearch) {
                                 return aaEmployee.filter( //aaEmployee
                                     function (data) {
@@ -1034,8 +1054,14 @@
                                     }
                                 );
                             }
-              
-                            // DataGrid > Editing > Custome Editor
+*/              
+                            /**
+                             * @param cellElement (datagrid)
+                             * @param cellinfo (datagrid)
+                             * @return Employee value
+                             * 
+                             * Dropdown Employee array for DataGrid
+                             */
                             function dropDownBoxEMP(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
                                     dropDownOptions: { width: 600 },
@@ -1074,7 +1100,13 @@
                                 });
                             }
 
-                            // DataGrid > Editing > Custome Editor
+                           /**
+                             * @param cellElement (datagrid)
+                             * @param cellinfo (datagrid)
+                             * @return Benefits Code
+                             * 
+                             * Dropdown Benefits array for DataGrid
+                            */
                             function dropDownBoxBNF(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
                                     dropDownOptions: { width: 800 },

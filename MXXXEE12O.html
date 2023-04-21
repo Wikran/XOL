@@ -4387,15 +4387,16 @@
                                                                     let aERStatus = "Confirmed wait for HOD" //"Register"
                                                                     let aTrueORFalse = '1'
                                                                     let aTrueORFalseB = true
+                                                                    let aNowDateT = aNowText()
                                                                     //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
                                                                     //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
-                                                                    var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus };
+                                                                    var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus , ReqDate: new Date()};
                                                                     var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
                                                                     //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
 
                                                                     //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
                                                                     //let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                                    let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", Vendor01Note = '" + aaHODAll4Chk + "', Vendor02Note = '" + aaHODAppName + "', ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                    let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", Vendor01Note = '" + aaHODAll4Chk + "', Vendor02Note = '" + aaHODAppName + "', ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus  + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
                                                                     aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
                                                                     aSQLAction(aaPFDMI, aSQLCommand)
                                                                     aSQLAction(aaPFDMI, aSQLCommand)

@@ -99,7 +99,7 @@
         var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-        var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+        var aaPFDMZz = "https://webspace.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMZz + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -437,13 +437,32 @@
                                 caption: "Department",
                                 dataType: "string",
                                 width: 100,
+                                visible: false,
                             },
                             {
                                 dataField: "DivCode",
                                 caption: "Division Code",
                                 dataType: "string",
                                 width: 100,
+                                visible: false,
                             },
+                            {
+                                dataField: "AccDeptCode",
+                                caption: "AC Dept Code",   
+                                dataType: "string",
+                                editorType: "dxTextBox",
+                                width: 90,
+                                visible: true,
+                            },
+                            {
+                                dataField: "AccDivCode",
+                                caption: "AC Div Code",
+                                //sortOrder: "asc",
+                                dataType: "string",
+                                editorType: "dxTextBox",
+                                width: 90,
+                                visible: true,
+                            },                            
                             {
                                 dataField: "Position",
                                 caption: "Position",

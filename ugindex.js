@@ -1,5 +1,6 @@
 const fs = require('fs');
-const uglify = require('uglify-js');
+//const uglify = require('uglify-js');
+const uglify = require('C:\\Users\\wikra\\node_modules\\uglify-js');
 
 const options = {
   mangle: true,

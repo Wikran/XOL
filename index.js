@@ -1,7 +1,7 @@
 window.onload = function() {
     setTimeout(function() {
         location.reload();
-    }, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
+    }, 24000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
 } 
       
 function unloadAllJS() {

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>DevExtreme Spreadsheet Example</title>
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/21.1.4/css/dx.common.css" />
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/21.1.4/css/dx.light.css" />
+    <script src="https://cdn3.devexpress.com/jslib/21.1.4/js/jquery.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/21.1.4/js/dx.all.js"></script>
+</head>
+<body>
+    <div id="spreadsheetContainer"></div>
+    <script>
+        $(function () {
+            $("#spreadsheetContainer").dxSpreadsheet({
+                dataSource: "http://localhost:8089/ER_Document_Flow.xlsx"   //"https://mydomain.com/myexcel.xlsx"
+            });
+        });
+    </script>
+</body>
+</html>

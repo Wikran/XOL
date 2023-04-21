@@ -548,7 +548,7 @@
 
                     // start get Limit
                     //let aData;
-                    let aaEmpID = $.trim(localStorage["asSTFID"]);
+                    var aaEmpID = $.trim(localStorage["asSTFID"]);
                     let aqr2S = "Where EmpID = '" + aaEmpID + "'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                     let aFieldSelected1 = "RefNo01,RefNo02,MonthlyLimited,LimitedPerTime,TotalLimited,AllowFamily,AllowSSO,FleetLimit,MedicalLimit,MaternityLimit,LimitPerCase"
                     let aFullBody1 = "Select " + aFieldSelected1 + " From " + "ExtraOnLine.dbo.Limitation " + aqr2S; //alert(aFullBody)                                           
@@ -558,6 +558,7 @@
                         //
                         .then(aData => { 
                             var aaLimited = aData;
+                            //console.log(aData);
                             if (jQuery.type(aaLimited[0]) === "undefined") {
                                 DevExpress.ui.dialog.alert({
                                     //showTitle: false,
@@ -579,11 +580,21 @@
                             var aaSSO = aaLimited[0].AllowSSO; // Allow SSO 
                             aaLTotal = aaFleet
 
-                            // start get Approver
+                            /**
+                             * Select TOP (1) ApproveToDivision,ApproverName,ApproverEmail,ApproverDiv from Approver
+                             * ApproveToDivision = Requester Division and AppDefault (Feet Card) = 1 and 
+                             * [For Fleet card approver, Approver must not in the same Division as Requester (Approver Emp ID != Requester Emp ID).
+                             * aaEmpID = Requester Emp ID
+                             * ApproverEmpID = Approver Emp ID] 
+                             * that means Approver can not be the same person as Requester.
+                             * @sample CASE 1 (HOD Request Fleet Card to TOP Management) ApproveToDivision = '1182-00' and AppDefault = 1 and ApproverEmpID != '071401' 
+                             * @sample CASE 2 (Requester is in the save Division of HOD-Approver) ApproverToDivision = '1182-00' and AppDefault = 1 and ApproverEmpID != '071401'
+                             *  Order by LRange02 (the HOD will come first / the TOP Management will come second) and LiMITED for only one Approver by Select TOP (1)
+                             * */
                             let aDivisionC = localStorage["asDIV"];
-                            let aDivS = "Where ApproveToDivision = '" + aDivisionC + "' and AppDefault = 1"
-                            let aFieldSelected = "ApproveToDivision,ApproverName,ApproverEmail"
-                            let aFullBody = "Select " + aFieldSelected + " From " + "ExtraOnLine.dbo.Approver " + aDivS; //alert(aFullBody)                                           
+                            let aDivS = "Where ApproveToDivision = '" + aDivisionC + "' and AppDefault = 1 and ApproverEmpID != '" + aaEmpID + "'"; 
+                            let aFieldSelected = "ApproveToDivision,ApproverName,ApproverEmail,ApproverDiv"
+                            let aFullBody = "Select TOP (1) " + aFieldSelected + " From " + "ExtraOnLine.dbo.Approver " + aDivS + " Order By LRange02"; //alert(aFullBody)                                           
 
                             fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers:{ "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBody) }), redirect: "follow" })
                                 .then(response => response.json())
@@ -591,6 +602,7 @@
                                 .then(hData => {
 
                                     var aaHODApprover = hData;
+                                    console.log(hData);
                                     if (jQuery.type(aaHODApprover[0]) === "undefined") {
                                         DevExpress.ui.dialog.alert({
                                             //showTitle: false,
@@ -2600,15 +2612,16 @@
                                                             let aERStatus = "Confirmed wait for HOD" //"Register"
                                                             let aTrueORFalse = '1'
                                                             let aTrueORFalseB = true
+                                                            let aNowDateT = aNowText()
                                                             //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
                                                             //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
-                                                            var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus };
+                                                            var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus  , ReqDate: new Date()};
                                                             var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
                                                             //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
 
                                                             //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
                                                             //let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                            let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERORefNo6 = '" + aaHODAppEmail + "', Vendor02Note = '" + aaHODAppName + "', ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                            let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERORefNo6 = '" + aaHODAppEmail + "', Vendor02Note = '" + aaHODAppName + "', ERStatus = '" + aERStatus  + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
                                                             aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
                                                             aSQLAction(aaPFDMI, aSQLCommand)
                                                             aSQLAction(aaPFDMI, aSQLCommand)
@@ -3260,7 +3273,7 @@
                                                         caption: "Reimburse",
                                                         dataType: "number",
                                                         format: { type: "fixedPoint", precision: 2 },
-                                                        editorOptions: { format: "#,##0.00", width: 120 },
+                                                        editorOptions: { format: "#,##0.00", width: 120 , readOnly: true},
                                                         width: 120,
                                                     },
                                                     {
