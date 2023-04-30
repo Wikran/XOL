@@ -116,6 +116,43 @@
 
         // Function for Load Master Data for dropdown and others 
         // "https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress","aaOBJDT"
+        // Function to clear newline characters from an array of objects
+        function clearNewlineChars(arr) {
+            return arr.map(obj => {
+                for (let key in obj) {
+                    if (typeof obj[key] === "string") {
+                        obj[key] = obj[key].replace(/\n/g, ""); // Replace newline characters with an empty string
+                    }
+                }
+                return obj;
+            });
+        }
+
+        function createTwoRows(arr) {
+            // Create a new array to store the two rows
+            const twoRowsArray = [];
+
+            // Loop through each object in the input array
+            for (let obj of arr) {
+                // Create a new object for EDESC
+                const eDescObj = {
+                    ACCCODE: obj.ACCCODE,
+                    DESC: obj.EDESC
+                };
+                // Create a new object for TDESC
+                const tDescObj = {
+                    ACCCODE: obj.ACCCODE,
+                    DESC: obj.TDESC
+                };
+                // Push the new objects into the twoRowsArray
+                twoRowsArray.push(eDescObj);
+                twoRowsArray.push(tDescObj);
+            }
+            // Sort the twoRowsArray by DESC in ascending order
+            twoRowsArray.sort((a, b) => a.DESC.localeCompare(b.DESC));
+
+            return twoRowsArray;
+        }
 
         async function aGetDataAPI(aDMZServer, aFullTableName, aFieldSelected, aOBJsName) {
             let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
@@ -181,7 +218,7 @@
 
         }
 
- 
+
     </script>
 
 </head>
@@ -272,15 +309,16 @@
                     var aaTBKey = aObjMPage[0].TBKey;
 
 
-                    let axqr2S = "Where EXPGroup LIKE '%100%' OR EXPGroup LIKE '%400%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
+                    let axqr2S = "Where EXPGroup != '' " // Where EXPGroup LIKE '%100%' OR EXPGroup LIKE '%400%'//"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                     let axFieldSelected = "ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE,EXPGroup,EXPDesc"
                     let axFullBody = "Select " + axFieldSelected + " From " + "ExtraOnLine.dbo.ACCOUNTCHART " + axqr2S; //alert(aFullBody)
                     fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(axFullBody) }), redirect: "follow" })
                         .then(response => response.json())
                         //
                         .then(acData => {
-                            var aaSubGroup = acData;
-                            //console.log(aaSubGroup01);
+                            var aaSubGroup = clearNewlineChars(acData); //clearNewlineChars(myArray);
+                            aaSubGroup = createTwoRows(aaSubGroup); //createTwoRows()
+                            console.log(aaSubGroup);
 
                             //FA Verified and Approved
                             var aqrFull = "ERStatus = 'HOD Approved wait for FA' OR ERStatus = 'HR Approved wait for FA'" //OR ERStatus = 'FA Verified and Approved' "PayToCode = '" + asStaffID + "'" // scopes based permission (View Only Login Name)  ExpensesCode LIKE aaOnInitAccCode
@@ -340,7 +378,8 @@
                                     applyFilter: "auto"
                                 },
                                 headerFilter: {
-                                    visible: true
+                                    visible: true,
+                                    allowSearch: true,
                                 },
                                 grouping: {
                                     autoExpandAll: true,
@@ -557,27 +596,36 @@
                                         width: 40,
                                         buttons: [
                                             { // Reject
-                                                hint: "Reject - Return to Requester - Change status to 'Register'",
+                                                hint: "Reject - Return to Requester / HR - Change status to 'Register' / 'Confirmed wait for HR'",
                                                 icon: "fas fa-redo-alt", //"fas fa-ghost", // "fas fa-redo-alt"
                                                 type: "danger",
                                                 visible: function (e) {
-                                                    return (e.row.data.ID === 1 && e.row.data.ERStatus === "HOD Approved wait for FA") // || e.row.data.ERStatus === "HR Approved wait for FA" && e.row.data.Approved === false //return !e.row.isEditing; && e.row.data.HODApproved === false
+                                                    return (e.row.data.ID === 1) // && e.row.data.ERStatus === "HOD Approved wait for FA" // || e.row.data.ERStatus === "HR Approved wait for FA" && e.row.data.Approved === false //return !e.row.isEditing; && e.row.data.HODApproved === false
                                                 },
                                                 onClick: function (e) {
                                                     // mark FA Reject field
-                                                    let result = DevExpress.ui.dialog.confirm("Are you sure you want to reject this record? ", "REJECT");
+                                                    var aObjKeyData;
+                                                    var aSQLCommand;
+                                                    let aTrueORFalse = '0'
+                                                    var aERStatus = (e.row.data.ERStatus === "HR Approved wait for FA" ? "Confirmed wait for HR" : "Register"); //= "Register" //"HR Approved wait for FA" //"Register"
+                                                    let result = DevExpress.ui.dialog.confirm("Are you sure you want to reject this record? (change Status to '" + aERStatus + "')", "REJECT");
                                                     result.done(function (dresult) {
                                                         if (dresult) {
-                                                            let aERStatus = "Register" //"HR Approved wait for FA" //"Register"
                                                             //let aTrueORFalse = (e.row.data.HRApproved === true ? '0' : '1');
                                                             //let aTrueORFalseB = (e.row.data.HRApproved === true ? false : true);
-                                                            var aObjKeyData = { REFNO: e.row.data.REFNO, Approve: false, HODApprove: false, Confirmed: false, ERStatus: aERStatus }; //HRApproved: aTrueORFalseB,
+                                                            if (aERStatus === "Register") {
+                                                                aObjKeyData = { REFNO: e.row.data.REFNO, Approve: false, HODApprove: false, Confirmed: false, ERStatus: aERStatus }; //HRApproved: aTrueORFalseB,
+                                                                aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Approved = " + aTrueORFalse + ", HODApproved = " + aTrueORFalse + ", Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                                            } else {
+                                                                aObjKeyData = { REFNO: e.row.data.REFNO, HRApprove: false, Approved: false, ERStatus: aERStatus }; //HRApproved: aTrueORFalseB, 
+                                                                aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Approved = " + aTrueORFalse + ", HRApproved = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                                            }
                                                             var aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData));
                                                             sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
 
                                                             //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
-                                                            let aTrueORFalse = '0'
-                                                            let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Approved = " + aTrueORFalse + ", HODApproved = " + aTrueORFalse + ", Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                                            //let aTrueORFalse = '0'
+                                                            //let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Approved = " + aTrueORFalse + ", HODApproved = " + aTrueORFalse + ", Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
                                                             //let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
                                                             aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo return status to Register
                                                             aSQLAction(aaPFDMI, aSQLCommand)
@@ -619,7 +667,9 @@
 
                                                             // send mail API
                                                             //alert(aMessage)
-                                                            aSendMailDMZ(" " + aRequesterName, aRequesterEmail, aApproverEmail, "", "", aSubject, aMessage)
+                                                            if (aERStatus === "Register") {
+                                                                aSendMailDMZ(" " + aRequesterName, aRequesterEmail, aApproverEmail, "", "", aSubject, aMessage)
+                                                            }
 
                                                             $("#gridContainer").dxDataGrid("instance").refresh();
                                                             $("#gridContainer").dxDataGrid("instance").refresh();
@@ -780,16 +830,18 @@
                                         caption: "Type of Reimbursement",
                                         lookup: {
                                             dataSource: aaSubGroup,
-                                            valueExpr: "EDESC",
-                                            displayExpr: "EDESC"
+                                            valueExpr: "DESC",
+                                            displayExpr: "DESC"
                                         },
-                                        editCellTemplate: dropDownBoxEMP,  //dropDownBoxEMP,  dropDownBoxEditorTemplate,                       
+                                        //editCellTemplate: dropDownBoxEMP,  //dropDownBoxEMP,  dropDownBoxEditorTemplate,                       
                                         setCellValue: function (newData, value, currentRowData) { //, componentInstance
-                                            let aResult = aSearchBothjson(aaSubGroup, value)
-                                            newData.ExpensesCode = aResult[0].ACCCODE;
+                                            console.log(aaSubGroup, "aaSubGroup")
+                                            //let aResult = aSearchBothjson(aaSubGroup, value)
+                                            console.log(value)
+                                            newData.ExpensesCode = (aaSubGroup.find(item => item.DESC === value)?.ACCCODE); //aResult[0].ACCCODE;
                                             newData.ERORefNo3 = value;
                                         },
-                                        editorType: "dxTextBox",
+                                        editorType: "dxSelectBox",
                                         editorOptions: { width: 180 }, //, readOnly: true
                                         width: 180,
                                     },
@@ -1743,7 +1795,7 @@
                                 });
                             }
                             // DataGrid > Editing > Custome Editor
-                            function dropDownBoxEMP(cellElement, cellInfo) {
+                            function dropDownBoxEMPxx(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
                                     dropDownOptions: { width: 700 },
                                     dataSource: aaSubGroup, //aaEmployee,
@@ -1754,7 +1806,7 @@
                                         return $("<div>").dxDataGrid({
                                             dataSource: aaSubGroup,
                                             //remoteOperations: true, // ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE,EXPGroup,EXPDesc
-                                            columns: [{ dataField: "EDESC", caption: "Name ENG", width: 250 },{ dataField: "TDESC", caption: "Name THAI", width: 250 }, { dataField: "ACCCODE", caption: "Account Code", width: 70 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                                            columns: [{ dataField: "EDESC", caption: "Name ENG", width: 250 }, { dataField: "TDESC", caption: "Name THAI", width: 250 }, { dataField: "ACCCODE", caption: "Account Code", width: 70 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
                                             hoverStateEnabled: true,
                                             searchPanel: { visible: true },
                                             headerFilter: { visible: true },
@@ -1780,6 +1832,48 @@
                                     },
                                 });
                             }
+
+                            function dropDownBoxEMP(cellElement, cellInfo) {
+                                return $("<div>").dxDropDownBox({
+                                    dropDownOptions: { width: 700 },
+                                    dataSource: aaSubGroup, // aaEmployee
+                                    value: [cellInfo.value],
+                                    valueExpr: "EDESC", //"EMPCode",
+                                    displayExpr: "EDESC", //"EMPCode",
+                                    contentTemplate: function (e) {
+                                        return $("<div>").dxDataGrid({
+                                            dataSource: aaSubGroup,
+                                            columns: [
+                                                { dataField: "EDESC", caption: "Name ENG", width: 250 },
+                                                { dataField: "TDESC", caption: "Name THAI", width: 250 },
+                                                { dataField: "ACCCODE", caption: "Account Code", width: 70 }
+                                            ],
+                                            hoverStateEnabled: true,
+                                            searchPanel: { visible: true },
+                                            headerFilter: { visible: true },
+                                            paging: { enabled: true, pageSize: 15 },
+                                            filterRow: { visible: true },
+                                            showBorders: true,
+                                            scrolling: { mode: "virtual" },
+                                            selection: { mode: "single" },
+                                            height: 450,
+                                            selectedRowKeys: [cellInfo.value],
+                                            focusedRowKey: cellInfo.value,
+                                            onSelectionChanged: function (sArgs) {
+                                                if (sArgs.selectedRowKeys.length > 0) {
+                                                    e.component.option("value", sArgs.selectedRowKeys[0].EDESC);
+                                                    cellInfo.setValue(sArgs.selectedRowKeys[0].EDESC);
+                                                    e.component.close();
+                                                }
+                                            }
+                                        });
+                                    },
+                                });
+                            }
+
+
+
+
 
                             function aPopUpAddForm(iData) { // popup Add New
                                 var aaPFDMI = isLocalHost();
