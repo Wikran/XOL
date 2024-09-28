@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Language" content="th">
     <meta http-equiv="content-Type" content="text/html; charset=window-874">
     <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -55,10 +56,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-    <script src="bundle.min.js"></script>
-    <!-- <script src="ajQjsLib.js"></script> -->
-    <script src="aThaiWord.js"></script>
-    <script src="index.min.js"></script>
+    <script src="bundle.min.js?v=1.0.2"></script>
+    <!-- <script src="ajQjsLib.js"></script> <script src="index.min.js"></script> <script src="yourScript.js?v=1.0.1"></script> -->
+    <script src="aThaiWord.js?v=1.0.2"></script>
+    <script src="index.js?v=1.0.2"></script>
 
     <style>
         body {
@@ -175,12 +176,13 @@
             color: black;
         }
         #popupContainer .dx-popup-title {
+            height: 55px;
             color: rgb(1, 6, 32);
             background-color: rgba(209, 239, 252, 0.555);
         } 
 
         .forgotpwd .dx-button-text{
-            font-size: 11px;
+            font-size: 12px;
             margin-top: -1px;
             float: right;
         }                  
@@ -190,14 +192,31 @@
             font-size: 16px;
             border-radius: 6%;
         }   
-        */     
+        */ 
+        
+        /* Style the entire dialog container */
+
+
+        /* Style the content area of the dialog */
+        .dx-dialog-content {
+            border-radius: 15px;       /* Ensure inner content has rounded corners */
+            padding: 20px;             /* Optional: Padding for the content */
+        }
+        
+        .dx-dialog-buttons .dx-button {
+            background-color: #daf8ff;
+            border: 0px solid #000000;
+            color: #17013b;
+            border-radius: 10px;
+            /*padding: 10px 20px;*/
+        }   
+
         #popupContainer .dx-button  {
            /* color: rgb(6, 36, 189);
             background-color: rgba(155, 253, 253, 0.801);*/
-            border: 0px;
-            border-radius: 10px;
-            font-size: 14px;
-            
+            border: 10px;
+            border-radius: 10px; /* Border-radius: 3px 3px 0 0  10px*/
+            font-size: 14px;   
         }   
         #username .dx-texteditor-input[type="text"] {
             font-size: 16px;
@@ -209,7 +228,16 @@
             font-weight: bold;
             color: darkblue;
         }
+        .custom-dialog-title {
+            color: blue; /* Change this to your desired color */
+            background-color: rgb(208, 231, 252);
+            font-weight: bold;
+        }
 
+        .custom-dialog-message {
+            color: red; /* Change this to your desired color */
+            font-size: 16px;
+        }
     </style>
 </head>
 

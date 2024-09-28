@@ -25,7 +25,6 @@ window.addEventListener('load', function (e) {
     localStorage["aDXTheme"] = aDXTheme;
 });
 
-
 $(document).ready(function () {
     var aDXTheme = localStorage["aDXTheme"] // Parameters
     var aUXTheme = ausrProperty[0].aaDXtm //localStorage["aaDXtm"]; // User Theme
@@ -69,17 +68,17 @@ const aaLOGOUT = () => {
 
 
 /*
-                              aaXXuX: aUname,
-                              aaXrXg: aal,
-                              aaXXoX: aat,
-                              asFTNAME: aftname,
-                              asDEPT: aDeptn,
-                              asDIV: aDivn,
-                              asSTFID: aStaffID,
-                              aaDXtm: aThemeSL,
-                              aaXpXt: apict,
-                              asEMAIL: aemail,
-                              asAct: aAct,
+    aaXXuX: aUname,
+    aaXrXg: aal,
+    aaXXoX: aat,
+    asFTNAME: aftname,
+    asDEPT: aDeptn,
+    asDIV: aDivn,
+    asSTFID: aStaffID,
+    aaDXtm: aThemeSL,
+    aaXpXt: apict,
+    asEMAIL: aemail,
+    asAct: aAct,
 */
 
 var aaXToX = ausrProperty[0].aaXXoX //localStorage["aaXXoX"];
@@ -119,7 +118,7 @@ if (adayx <= 10 && amonthx === 0) {
 
 //var aRgsValue = localStorage["aDXTheme"];
 var aThemeList = [
-    { thid: "generic.light", text: "light", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+    { thid: "generic.light", text: "light", icon: "fas fa-paint-roller", Category: "Generic", visible: true },
     { thid: "generic.dark", text: "dark", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
     { thid: "generic.softblue", text: "Soft blue", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
     { thid: "generic.darkmoon", text: "Darkmoon", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
@@ -154,9 +153,10 @@ const aaProgramName = "Expenses Reimbursement"
 //$(function () { TOP PRG
 $(() => {
     var aPwdNoChange = ausrProperty[0].asAct  //localStorage["asAct"]
+    console.log("asAct = ",aPwdNoChange)
     //console.log(aPwdNoChange, "PWD NO CHG")
     //console.log(jQuery.type(aPwdNoChange))
-    if (aPwdNoChange === "false") {
+    if (aPwdNoChange === false) {
         
         aaCnfBody = "<div style = 'color: red; font-size: 14px;'>Please change your default password to new password <br>first<br> To change password select MENU [ <i class='fas fa-user-edit'></i> User Information ] <br><div style = 'background: #fff0ff;'><hr>second<br>If you have not changed your password yet The program will not work. <hr></div><br><center><p style = 'font-size: 13px;'>VDO - How To Change Password</p><video style='margin-top:-20px;' width='320' height='240' controls><source src='./images/ChangePassword.mp4' type='video/mp4'></video></center>"
         DevExpress.ui.dialog.alert({
@@ -230,14 +230,14 @@ $(() => {
                 return a1 > b1 ? 1 : -1;
             });
 
-            if (aPwdNoChange === "false") {
+            if (aPwdNoChange === false) {
                 aObjMenuV = [
                     { ID: '[990]', name: 'User Information', icon: 'fas fa-user-edit', alabel: 'User Information', url: './SSSU9019.html', rightsgroup: '', PageID: 'SSSU9019' },
-                    { ID: '[99900]', name: 'Help', icon: 'help', alabel: 'Help', url: './BlankPage.html', rightsgroup: '', PageID: '' },
+                    { ID: '[99900]', name: 'Help', icon: 'help', alabel: 'Help', url: './Help.html', rightsgroup: '', PageID: '' },
                     { ID: '[999999]', name: 'Logout', icon: 'fas fa-sign-out-alt', alabel: 'Logout', url: 'aaLOGOUT()', rightsgroup: '', PageID: '' },
                 ]
             }
-
+            console.log(aObjMenuV)
             var drawer = $("#drawer").dxDrawer({
                 opened: true, //false,
                 height: 1000,

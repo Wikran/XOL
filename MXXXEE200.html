@@ -147,137 +147,7 @@
         console.clear();
 
         var aaXToX = localStorage["aaXXoX"];
-        //var aaXNoX = localStorage["aaXXuX"];
-        //var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // Master Page
-        //var aaPXXI = localStorage["aPXIXD"];
-/*
-        const aSQLAction = (aDMZServer, aCommands) => {  //aFullTableName,aFieldSelected
-            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
 
-            let aFullBody = aCommands //"Select " + aFieldSelected + " From " + aFullTableName ; //alert(aFullBody)
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            var raw = JSON.stringify({
-                "@": aFullBody
-            });
-
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
-            };
-
-            let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalNonQueryToken;
-
-            fetch(aURL, requestOptions)
-                .then(response => response.json())
-                //
-                .then(aData => {
-                    //                                   
-                })
-                .catch(e => {
-                    console.log(e);
-                });
-
-        }
-*/
-        /*
-                // Function for Load Master Data for dropdown and others 
-                // "https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress","aaOBJDT"
-        
-                async function aGetDataAPI(aDMZServer, aFullTableName, aFieldSelected, aOBJsName) {
-                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-                    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
-        
-                    var myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-                    var raw = JSON.stringify({
-                        "@": aFullBody
-                    });
-        
-                    var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: raw,
-                        redirect: 'follow'
-                    };
-        
-                    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
-        
-                    await fetch(aURL, requestOptions)
-                        .then(response => response.json())
-                        //
-                        .then(aData => {
-                            localStorage.setItem(aOBJsName, JSON.stringify(aData));
-                        })
-                        .catch((e) => {
-                            console.log(e)
-                        })
-                }
-        
-        async function aGetD2V(aDMZServer, aFullTableName, aFieldSelected, aOBJsName) {
-            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-            let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            var raw = JSON.stringify({
-                "@": aFullBody
-            });
-
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
-            };
-
-            let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
-
-            await fetch(aURL, requestOptions)
-                .then(response => response.json())
-                //
-                .then(aData => {
-                    localStorage.setItem(aOBJsName, JSON.stringify(aData));
-                })
-                .catch((e) => {
-                    console.log(e)
-                })
-
-        }
-
-        //var aRunChar = "ER-" + String( aNowDatev.getFullYear()).substring(2, 4) + String( 100 + aNowDatev.getMonth()).substring(1,3) + String( 100 + aNowDatev.getDate()).substring(1,3) + String( 100 + aNowDatev.getHours()).substring(1,3) + String( 100 + aNowDatev.getMilliseconds()).substring(1,3);
-        const aGetDateRef = () => {
-            //axRunRun = ""
-            let aNowDatev = new Date()
-            let aYear2 = String(aNowDatev.getFullYear()).substring(2, 4);
-            let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
-            let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
-            let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
-            let aDateNow2 = String(Date.now()).substring(5, 13)
-            //axRunRun = "ER" + aDateNow2
-            //alert(aDateNow2)
-            return "ER" + aDateNow2 //+ aYear2 + aMonth2 + aDate2 + aHour2;
-        }
-
-        const aNowText = () => {
-            let aNowDatev = new Date()
-            let aYear2 = String(aNowDatev.getFullYear());
-            let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
-            let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
-            let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
-            let aMinute2 = String(100 + aNowDatev.getMinutes()).substring(1, 3);
-            let aSecond2 = String(100 + aNowDatev.getSeconds()).substring(1, 3);
-            let aDateNow2 = aYear2 + "-" + aMonth2 + "-" + aDate2 + "T" + aHour2 + ":" + aMinute2 + ":" + aSecond2
-            return aDateNow2;
-        }        
-*/
         const aTranTextJson = (aText, aFMark, aLMark) => { //"NAME:" "EMAIL:"
             var axHODFtext = aText;
             var xaChkName;
@@ -322,7 +192,7 @@
         //var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-        var aaPFDMZz = "https://webspace.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+        var aaPFDMZz = aWebSpaceAPI; //"https://webspace.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -394,7 +264,7 @@
                                 aYearNumL = aYearNum + 1;
                                 aYearStrL = aYearNumL.toString(); // 23**
                             }
-                            var aFilterT = aYearStrS + '/05/01'  //2022/05/01
+                            var aFilterT = aYearStrS + '/01/01'  //2022/05/01
                             var aFilterT2 = aYearStrL + '/04/30'  //2023/04/01            
 
                             var aMMaMx = localStorage["MMaMx"];
@@ -995,7 +865,12 @@
                                         caption: "Status",
                                         width: 180,
                                     },
-
+                                    {
+                                        dataField: "ERODesc02",
+                                        caption: "Description",
+                                        width: 200,
+                                        visible: true,
+                                    },
                                     {
                                         dataField: "Division",
                                         caption: "Division",

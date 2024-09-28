@@ -795,6 +795,104 @@
                     });
                 }        
         */
+        var aNowDte = new Date();
+
+        function showPreviousYearPopup(callback) {
+            var today = new Date();
+            var aTYear = new Date().getFullYear();
+            var aLYear = aTYear - 1;
+            var aNYear = aTYear + 1;
+            var aTextThisYear = aTYear.toString() + "-" + aNYear.toString();
+            var aTextLastYear = aLYear.toString() + "-" + aTYear.toString();
+            // Check if the current date is after May 3 of this year
+            //var isAfterMay3 = (today.getMonth() > 3) || (today.getMonth() === 3 && today.getDate() >= 3);
+            var isAfterMay3 = (today.getMonth() === 4 && today.getDate() <= 3)
+            //alert(isAfterMay3);
+            // If the current date is not after May 3, show the button
+            if (isAfterMay3) {
+                // Create an array of possible options
+                var options = [
+                    { id: true, text: "LAST YEAR (" + aTextLastYear + ")" },
+                    { id: false, text: "THIS YEAR (" + aTextThisYear + ")" }
+                ];
+
+                // Create a dxPopup widget with a list selection
+                var popup = $("#popup").dxPopup({
+                    title: "Please Select Year",
+                    width: 250,
+                    height: "auto",
+                    position: { offset: "-100 -350" },
+                    contentTemplate: function (contentElement) {
+                        $("<div>").dxList({
+                            dataSource: options,
+                            height: "100%",
+                            selectionMode: "single",
+                            onSelectionChanged: function (e) {
+                                // Get the selected option
+                                var selectedOption = e.addedItems[0];
+                                // Set the aNowDte variable based on the selected option
+                                if (selectedOption.id) {
+                                    var year = new Date().getFullYear();
+                                    var month = 3; // April is month 3 (zero-based)
+                                    var day = 30;
+                                    var aNowDte = new Date(year, month, day);
+                                    console.log("aNowDte: " + aNowDte);
+                                } else {
+                                    var today = new Date();
+                                    var aNowDte = new Date(); //var aNowDte = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
+                                    console.log("aNowDte: " + aNowDte);
+                                }
+                                // Close the popup
+                                popup.hide();
+                                // Call the callback function with the selected date
+                                callback(aNowDte);
+                            }
+                        }).appendTo(contentElement);
+                    }
+                }).dxPopup("instance");
+
+                // Show the pop-up when a button is clicked
+                $("#showPopupButton").dxButton({
+                    hint: "Please select your submitted year (LAST YEAR or THIS YEAR)",
+                    text: "Year Selection",
+                    icon: "fas fa-calendar-alt",
+                    type: "default",
+                    visible: isAfterMay3,
+                    onClick: function () {
+                        popup.show();
+                    }
+                });
+            } else {
+                // If the current date is after May 3, hide the button
+                var aNowDte = new Date();
+                $("#showPopupButton").hide();
+                callback(aNowDte);
+            }
+        }
+
+        const aaGetBusYear = (aFM, aLM, aNowDatev) => { // get Business year 
+            //let aNowDatev = new Date()
+            let aCalYear = aNowDatev.getFullYear();
+            let aCalMonth = aNowDatev.getMonth() + 1;
+            //console.log(aCalYear, aCalMonth, aFM, aLM);
+            if (aCalMonth >= aFM && aCalMonth <= aLM) {
+                aCalYear = aCalYear - 1
+            }
+            //console.log(aCalYear)
+            return aCalYear;
+        }
+        const aaNowText = (aNowDatev) => {
+            //let aNowDatev = new Date()
+            let aYear2 = String(aNowDatev.getFullYear());
+            let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
+            let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
+            let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
+            let aMinute2 = String(100 + aNowDatev.getMinutes()).substring(1, 3);
+            let aSecond2 = String(100 + aNowDatev.getSeconds()).substring(1, 3);
+            let aDateNow2 = aYear2 + "-" + aMonth2 + "-" + aDate2 + "T" + aHour2 + ":" + aMinute2 + ":" + aSecond2
+            return aDateNow2;
+        }     
+    
     </script>
 
 </head>
@@ -809,6 +907,8 @@
     <div id="popupPrintPDF"></div>
     <fiv id="popupUL"></fiv>
     <div id="aformSave"></div>
+    <div id="popup"></div>
+    <div id="showPopupButton"></div>     
     <div data-bind="dxPopup: { onInitialized: onInit, ... }"></div>
     <dx-popup (onInitialized)="onInit($event)"></dx-popup>
 
@@ -818,7 +918,9 @@
         //var aaKeyField = localStorage["aaXKFX"];
         //var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
-        let aNowDte = new Date()
+        //let aNowDte = new Date() // FIRST PRG
+        showPreviousYearPopup(function (aNowDte) {
+            console.log("Selected date: " + aNowDte);
 
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
         var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
@@ -1813,7 +1915,7 @@
                                                         stylingMode: "contained",
                                                         onClick: () => {
                                                             let aNewDate = new Date()
-                                                            aPopUpAddForm(1, 1, aNewDate);
+                                                            aPopUpAddForm(1, 1, aNowDte);
                                                         }
                                                     }
                                                 },
@@ -2855,7 +2957,7 @@
                                             let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
                                             var aaiHeadRef = axRunRun;
                                             //aaOnInitAccCode            aaOnInitAccDesc         Currency: "THB", Xrate: 1,                                                                                                                                                                     // Fleet Card                                                                                                                                                                                               //                                                                                            
-                                            var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: new Date(), ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: new Date(), ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
+                                            var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: idDate, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
                                             var ObjRowData = JSON.stringify(ObjKeyData);
                                             console.log(ObjRowData)
                                             sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
@@ -3310,7 +3412,7 @@
                                                     e.data.Department = asDepartment
                                                     e.data.Division = asDivision
                                                     e.data.ERODesc06 = asStaffEmail
-                                                    e.data.ReqDate = new Date()
+                                                    e.data.ReqDate = aNowDte //new Date()
                                                     e.data.ExpensesCode = "" //aaOnInitAccCode
                                                     e.data.ExpensesDescription = aaOnInitAccDesc //aaOnInitAccDesc
                                                     e.data.Currency = "THB"
@@ -3518,8 +3620,24 @@
                                                         dataType: "date",
                                                         format: "dd/MM/yyyy",
                                                         width: 120,
-                                                        editorOptions: { width: 120 },
+                                                      //editorOptions: { width: 120 },
                                                         //validationRules: [{ type: "required" }],
+                                                        stylingMode: 'filled',
+
+                                                        editorType: "dxDateBox", //"dxDateBox", //"dxCalendar", function (){return null}
+                                                        editorOptions: {
+                                                            //value: null,
+                                                            showClearButton: true,
+                                                            format: "dd/MM/yyyy",
+                                                            width: 120,
+                                                            showTodayButton: false,
+                                                        },
+                                                        validationRules: [{ type: "required" }, {
+                                                            type: "range",
+                                                            min: new Date(aYearStrS + "-04-30"), //aYearStrS
+                                                            max: new Date(aYearStrL + "-04-30"), //aYearStrL
+                                                            message: "Please Change Bill Date"
+                                                        }],  
                                                         visible: true,
                                                     },
                                                     {
@@ -4145,7 +4263,7 @@
                                             let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
                                             var aaiHeadRef = axRunRun;
                                             //aaOnInitAccCode            aaOnInitAccDesc         Currency: "THB", Xrate: 1,                                                                                                                                                                     
-                                            var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: new Date(), ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: new Date(), ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
+                                            var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: idDate, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
                                             var ObjRowData = JSON.stringify(ObjKeyData);
                                             console.log(ObjRowData)
                                             sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
@@ -4583,7 +4701,7 @@
                                                     e.data.Department = asDepartment
                                                     e.data.Division = asDivision
                                                     e.data.ERODesc06 = asStaffEmail
-                                                    e.data.ReqDate = new Date()
+                                                    e.data.ReqDate = aNowDte //new Date()
                                                     e.data.ExpensesCode = "" //aaOnInitAccCode
                                                     e.data.ExpensesDescription = aaOnInitAccDesc //aaOnInitAccDesc
                                                     e.data.Currency = "THB"
@@ -4798,12 +4916,28 @@
                                                     },
                                                     {
                                                         dataField: "ERODate01",
-                                                        caption: "Bill Date",
+                                                        caption: "Bill Date.",
                                                         dataType: "date",
                                                         format: "dd/MM/yyyy",
-                                                        width: 110,
-                                                        editorOptions: { width: 110 },
-                                                        validationRules: [{ type: "required" }],
+                                                        width: 120,
+                                                        //editorOptions: { width: 120 },
+                                                        //validationRules: [{ type: "required" }],
+                                                        stylingMode: 'filled',
+
+                                                        editorType: "dxDateBox", //"dxDateBox", //"dxCalendar", function (){return null}
+                                                        editorOptions: {
+                                                            //value: null,
+                                                            showClearButton: true,
+                                                            format: "dd/MM/yyyy",
+                                                            width: 120,
+                                                            showTodayButton: false,
+                                                        },
+                                                        validationRules: [{ type: "required" }, {
+                                                            type: "range",
+                                                            min: new Date(aYearStrS + "-04-30"), //aYearStrS
+                                                            max: new Date(aYearStrL + "-04-30"), //aYearStrL
+                                                            message: "Please Change Bill Date"
+                                                        }],
                                                         visible: true,
                                                     },
                                                     {
@@ -5459,7 +5593,7 @@
                 });
                 // TOP PRG
             });  // ajax  
-
+        });  // FIRST PRG  
 
 
     </script>

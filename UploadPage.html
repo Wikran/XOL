@@ -105,8 +105,8 @@
 </head>
 
 <body>
-    <!--<div id="changeTemplateButton"></div>-->
-    <div id="popupContainer">
+    <!--<div id="changeTemplateButton"></div>
+    <div id="popupContainer">-->
         <!--< <div data-options="dxTemplate: { name: 'template1' }">
 	    <h1>Maintenance</h1>
         <p>Develop by DevExtreme, DevExpress, jQuery, javascript, node.js, indexedDB</p>
@@ -114,22 +114,31 @@
 
     </div>
     <script>
+        /*
+        const client = filestack.init("APj2imS2S0yNKUYuvMMRPz");
+        const options = {
+            fromSources: ["local_file_system", "instagram", "facebook"],
+            onUploadDone: (files) => {
+                // Access the uploaded file information
+                const uploadedFile = files[0];
+                const fileHandle = uploadedFile.handle;
+                console.log("File uploaded successfully. Handle:", fileHandle);  
+            }          
+        };
 
-                const client = filestack.init("APj2imS2S0yNKUYuvMMRPz");
-                const options = {
-                fromSources: ["local_file_system","instagram","facebook"],
-                };
+        client.picker(options).open();
+        
 
-                client.picker(options).open();
-
-        var fileUploader = new DevExpress.ui.dxFileUploader(document.getElementById("file-uploader"), {
-            multiple: false,
-            accept: "*",
-            onValueChanged: function (e) {
-                handleUpload(e.value[0]);
-            }
-        });
-
+*/
+        /*
+         var fileUploader = new DevExpress.ui.dxFileUploader(document.getElementById("file-uploader"), {
+             multiple: false,
+             accept: "*",
+             onValueChanged: function (e) {
+                 handleUpload(e.value[0]);
+             }
+         });
+         */
         function handleUpload(file) {
 
             var API_URL = "https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE" //"https://localhost:7067/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE"
@@ -177,7 +186,7 @@
 
         $(function () {
             const popup = $("#popupContainer").dxPopup({
-                title: aDXMenuTitle + " Maintenance (XOL)",
+                title: aDXMenuTitle + " Maintenance (XO)",
                 height: '30%',
                 position: { offset: "40 -300" }, //{my:"top", at:"top", of:window},
                 visible: true,
@@ -187,8 +196,8 @@
                     return $("<div />").append(
                         // $("<div style = 'margin-left: 10px'>รายละเอียด - DESCRIPTIONS</div>"),
                         // $("<p><div style = 'margin-left: 10px' id='first-name'></div></p>"),
-                        $("<p><div style = 'margin-left: 10px' id='changeTemplateButton'></div></p>"),
-
+                        //$("<p><div style = 'margin-left: 10px' id='changeTemplateButton'></div></p>"),
+                        $("<p><div style = 'margin-left: 10px' id='fileUploaderXX'></div></p>"),
                     );
                 }
             }).dxPopup("instance");
@@ -202,16 +211,16 @@
             //        } 
             //   });
             $("#changeTemplateButton").dxButton({
-                text: "Change the Template", 
+                text: "Change the Template",
                 onClick: function (e) {
-                const client = filestack.init("APj2imS2S0yNKUYuvMMRPz");
-                const options = {
-                fromSources: ["local_file_system","instagram","facebook"],
-                };
+                    const client = filestack.init("AFaJisEelTGqmyYV20ZTwz"); //AFaJisEelTGqmyYV20ZTwz //"APj2imS2S0yNKUYuvMMRPz"
+                    const options = {
+                        fromSources: ["local_file_system", "instagram", "facebook"],
+                    };
 
-                client.picker(options).open();
-            } 
-        });
+                    client.picker(options).open();
+                }
+            });
 
             $("#fileUploader").dxFileUploader({
                 multiple: false,
@@ -226,7 +235,7 @@
                 accept: 'image/*',
                 //allowedFileExtensions: [".jpg", ".jpeg", ".png"],
                 maxFileSize: 4000000, // 4 MB
-                uploadUrl: "https://cbsdev3.locktonwattana.com/wwwroot/Uploads",
+                uploadUrl: "http://nod.bkwwin.com/uploads", //"https://cbsdev3.locktonwattana.com/wwwroot/Uploads",
                 onValueChanged: function (e) {
                     var files = e.value;
                     if (files.length > 0) {
@@ -234,13 +243,10 @@
                         var formData = new FormData();
                         formData.append("file", file);
                         //formdata.append("FilePath", "test");
-                        /*
+
                         $.ajax({
-                            url: "https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx", //"http://wikran-w10:8081/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx",
+                            url: "http://nod.bkwwin.com/upload",
                             type: "POST",
-                            timeout: 0,
-                            headers: { "ref": "44095B6C-CC17-47FD-895B-649E0EAA2BAE", "Content-Type": "multipart/form-data;boundary=<calculated when request is sent>", "Access-Control-Allow-Origin": "*" }, //"Content-Type", "multipart/form-data;boundary=<calculated when request is sent>" //"multipart/form-data"
-                            mimeType: "multipart/form-data",
                             data: formData,
                             processData: false,
                             contentType: false,
@@ -251,7 +257,7 @@
                                 console.log("Error uploading file: " + error);
                             }
                         });
-                        */
+
                     }
                 }
             });

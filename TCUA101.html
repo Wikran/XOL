@@ -153,7 +153,7 @@
                     var arExcelEx = aRolesAction(aRrgSx, nExcelPos, 2);
                     var arPDFEx = aRolesAction(aRrgSx, nPDFPos, 2);
 
-                    var aqrFull = "ACCCODE != '' " //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%"
+                    var aqrFull = "IDNO != '' " //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%" ACCCODE != ''
                     var aurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all' //aaPFDMZz  aaPFDMI
 
                     var settings = {
@@ -171,10 +171,11 @@
                     $("#gridContainer").dxDataGrid({
 
                         dataSource: new DevExpress.data.CustomStore({
-                            key: "ACCCODE",
+                            key: "IDNO",  //"ACCCODE"
                             loadMode: "omit",
                             load: function () {
                                 return $.post(settings).done(function (response) { console.log(response); });
+                                $("#gridContainer").dxDataGrid("instance").refresh();
                             },
                             insert: function (values) {
                                 if (aaEnt) {
@@ -185,17 +186,20 @@
                                     var ObjRowData = JSON.stringify(values);
                                 }
                                 sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                $("#gridContainer").dxDataGrid("instance").refresh();
                             },
                             update: function (key, values) {
                                 //console.log( aaKeyField );
-                                var ObjKeyData = { "ACCCODE": $.trim(key) };   //[aaKeyField] key.trim
+                                var ObjKeyData = { "IDNO": $.trim(key) };   //[aaKeyField] key.trim ACCCODE
                                 var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
                                 sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                $("#gridContainer").dxDataGrid("instance").refresh();
                             },
                             remove: function (key) {
-                                var ObjKeyData = { "ACCCODE": $.trim(key) };   //[aaKeyField] key.trim
+                                var ObjKeyData = { "IDNO": $.trim(key) };   //[aaKeyField] key.trim ACCCODE
                                 var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
                                 sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                $("#gridContainer").dxDataGrid("instance").refresh();
                             }
                         }),
 
@@ -449,14 +453,7 @@
                             );
                         }
                     }).dxDataGrid("instance");
-                    /*
-                    function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
-                        let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
-                        console.log('Goal...Repuest Web API : ' + Data);
-                        var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
-                        $.ajax(settings).done(function (response) { console.log(response); });
-                    }
-                    */
+
                 });
                 // TOP PRG
             });  // ajax          

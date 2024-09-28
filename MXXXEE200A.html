@@ -685,6 +685,8 @@
                                             //console.log(e.row.data.HeadRefNo)
                                             let aRefNoHead = e.row.data.HeadRefNo;
                                             let aTypeLRef = aRefNoHead.substring(0, 1)
+                                            console.log(aRefNoHead)
+                                            console.log(aTypeLRef)
                                             
                                             if (aTypeLRef === "T") {
                                                 aRPTPrint2Pdf(e.row.data.HeadRefNo, aaPFDMI, "TMasterReport", "Travel & Entertainment")

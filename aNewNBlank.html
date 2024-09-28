@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DevExtreme Theme Color Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css" data-active="true">
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <style>
+        .dx-popup-title {
+            color: rgb(1, 6, 32);  
+        }
+    </style>
+</head>
+<body>
+<div id="popupContainer"></div>
+<script>
+    // Function to convert HEX to RGB
+    function hexToRgb(hex) {
+        hex = hex.replace(/^#/, '');
+        let bigint = parseInt(hex, 16);
+        let r = (bigint >> 16) & 255;
+        let g = (bigint >> 8) & 255;
+        let b = bigint & 255;
+        return `${r}, ${g}, ${b}`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the theme color using DevExtreme ThemeManager
+        const themeManager = DevExpress.ui.themes;
+
+        const focusColor = themeManager.current().focusColor; // Example to get focus color
+        const focusColorRgb = hexToRgb(focusColor);
+
+        // Apply the focus color to the popup title
+        const style = document.createElement('style');
+        style.innerHTML = `.dx-popup-title { background-color: rgb(${focusColorRgb}); }`;
+        document.head.appendChild(style);
+
+        // Initialize the popup
+        const aDXMenuTitle = localStorage["aDXMenuTitle"] || "Default Title";
+        const aMMaMx = localStorage["MMaMx"] || "Default";
+        const aRRgRs = aMMaMx.split('0');
+        const aDDeDx = aRRgRs[0] || "Default";
+        const aRrgSx = aRRgRs[1] || "377B";
+        const aRText = aRolesDesc(aRrgSx);
+
+        $("#popupContainer").dxPopup({
+            title: `${aDXMenuTitle} Maintenance (XOL)`,
+            height: '30%',
+            position: { offset: "40 -300" },
+            visible: true,
+            showCloseButton: false,
+            contentTemplate: `<h1><i class='fas fa-clock'></i> IN PROGRESS</h1>
+                              <p>Developed by DevExtreme, DevExpress, jQuery, JavaScript, Font Awesome, Uicons</br>
+                              Program Access Rights: ${aDDeDx}</br>
+                              Usage Roles: ${aRrgSx} [${aRText}]</p>`
+        });
+    });
+
+    function aRolesDesc(aRoles) {
+        const aRolesM = ["00", "ReadOnly", "CRU", "CRUD", "Disable", "Import", "Export", "Import and Export", "Printable", "Export2PDF", "Export2Excel", "Report Full Rights"];
+        const aFR = ["Data:", "Excel:", "PDF:", "REPORT:"];
+        let aPass = "";
+        for (let i = 0; i < 4; i++) {
+            const role = aRoles.charAt(i);
+            const aCC = role === "A" ? 10 : role === "B" ? 11 : parseInt(role, 10);
+            aPass += `${aFR[i]} ${aRolesM[aCC]},`;
+        }
+        return aPass;
+    }
+</script>
+</body>
+</html>
+

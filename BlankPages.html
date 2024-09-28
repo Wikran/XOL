@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>BLANK PAGE</title>
+
+    <!-- Font Awesome -->
+    <link href="./fontawesome-free-5.15.1-web/css/all.min.css" rel="stylesheet">
+
+    <!-- DevExtreme Theme -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.softblue.css" data-theme="generic.softblue">
+
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Include DevExpress -->
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/22.2.5/css/dx.light.css">
+    <script src="https://cdn3.devexpress.com/jslib/22.2.5/js/dx.all.js"></script>
+
+    <style>
+        .dx-popup-title {  
+            color: rgb(1, 6, 32);  
+            background-color: rgb(224, 252, 224);
+        }
+    </style>
+</head>
+<body>
+    <div id="popupContainer"></div>
+
+    <script>
+        window.onload = () => {
+            setTimeout(() => {
+                location.reload();
+            }, 3000000); // Refresh after 5 minutes
+        };
+
+        $(document).ready(() => {
+            const aDXTheme = localStorage.getItem("aDXTheme");
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+
+        const aRolesDesc = (aRoles) => {
+            const aRolesM = ["00","ReadOnly","CRU","CRUD","Disable","Import","Export","Import and Export","Printable","Export2PDF","Export2Excel","Report Full Rights"];
+            const aFR = ["Data:", "Excel:", "PDF:", "REPORT:"];
+            let aPass = "";
+            const aF1 = aRoles.substring(0, 1);
+            
+            for (let i = 0; i < 4; i++) {
+                const aChar = aRoles.substring(i, i + 1);
+                const aCC = aChar === "A" ? 10 : (aChar === "B" ? 11 : Number(aChar));
+                aPass += `${aFR[i]} ${aRolesM[aCC]},`;
+            }
+            
+            return aPass;
+        };
+
+        const aDXMenuTitle = localStorage.getItem("aDXMenuTitle");
+        const aMMaMx = localStorage.getItem("MMaMx");
+        const [aDDeDx, aRrgSx = "377B"] = aMMaMx.split('0');
+        const aRText = aRolesDesc(aRrgSx);
+
+        $(function() {
+            $("#popupContainer").dxPopup({
+                title: `${aDXMenuTitle} Maintenance (XOL)`,
+                height: '30%',
+                position: { offset: "40 -300" },
+                visible: true,
+                showCloseButton: false,
+                contentTemplate: `<h1><i class='fas fa-clock'></i> IN PROGRESS</h1>
+                                  <p>Developed by DevExtreme, DevExpress, jQuery, JavaScript, FontAwesome, UIicons</br>
+                                  Program Access Rights: ${aDDeDx}</br>
+                                  Usage Roles: ${aRrgSx} [${aRText}]</p>`
+            });
+        });
+    </script>
+</body>
+</html>

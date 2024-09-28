@@ -228,6 +228,7 @@
     <div id="gridContainer"></div>
     <div id="popupContainer"></div>
     <div id="popupContainerAdd"></div>
+    <div id="popupPrintPDF"></div>
     <div id="aformSave"></div>
 
 
@@ -521,7 +522,7 @@
                                     },
                                     {
                                         type: "buttons",
-                                        width: 60,
+                                        width: 90,
                                         buttons: [
                                             {
                                                 hint: "Email to Requester",
@@ -534,6 +535,35 @@
                                                     $("#gridContainer").dxDataGrid("instance").refresh();
                                                 }
                                             },
+                                            { // Print Document
+                                                hint: "Pre-Invoice",
+                                                icon: "fas fa-print", //"fas fa-marker", "fas fa-print", "print" HR Approved wait for FA //Confirmed wait for HR //HR Denied || e.row.data.ERStatus === "Register" || e.row.data.ERStatus === "Confirmed wait for HR"
+                                                visible: function (e) {
+                                                    return (e.row.data.ID === 1 ) //false; && e.row.data.Confirmed === true //return !e.row.isEditing; && (e.row.data.ERStatus !== "HR Denied")
+                                                },
+                                                onClick: function (e) {
+
+                                                    let aRefNoHead = e.row.data.HeadRefNo;
+                                                    let aTypeLRef = aRefNoHead.substring(0, 1)
+                                                   
+                                                    if (aTypeLRef === "T") {
+                                                        //aRPTPrint2Pdf(aKeyValue, aHServer, aMasterReport, aTitle, aRptSrv, aPublic, aKeyF, aOper)
+                                                        aRPTPrint2Pdf(e.row.data.HeadRefNo, aaPFDMI, "TMasterReport", "Travel & Entertainment")
+                                                    } else if (aTypeLRef === "O") {
+                                                        aRPTPrint2Pdf(e.row.data.HeadRefNo, aaPFDMI, "OMasterReport", "Other")
+                                                    } else if (aTypeLRef === "F") {
+                                                        aRPTPrint2Pdf(e.row.data.HeadRefNo, aaPFDMI, "FMasterReport", "Fleet card")
+                                                    } else if (aTypeLRef === "M") {
+                                                        aRPTPrint2Pdf(e.row.data.HeadRefNo, aaPFDMI, "MMasterReport", "Medical")                                                
+                                                    }                                            
+                                                    e.component.refresh(true);
+                                                    e.component.refresh(true);
+                                                    e.component.refresh(true);
+                                                    e.component.refresh(true);
+                                                    e.event.preventDefault();
+                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                }
+                                            },                                            
                                             {
                                                 hint: "Approve",
                                                 icon: "fas fa-check-circle",

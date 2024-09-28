@@ -184,7 +184,8 @@
             var aDXTheme = localStorage["aDXTheme"]
             DevExpress.ui.themes.current(aDXTheme);
         });
-
+        const aaSubGroup = [{ ExpSubGroup: "OPD" }, { ExpSubGroup: "Dental" }, { ExpSubGroup: "Dental (SSO)" }, { ExpSubGroup: "Maternity" }, { ExpSubGroup: "Others" }]; //, { ExpSubGroup: "Others" }
+        
         //HR wait for Document HR Approved wait for FA
         const arIPDOPD = [{ CODE: "OPD" }, { CODE: "Maternity" }, { CODE: "Others" }];
         const arEMPTYPE = [{ CODE: "Employee" }, { CODE: "Spouse" }, { CODE: "Child" }];
@@ -704,7 +705,7 @@
                             if (e.parentType === "dataRow" && arDataU === 0) {
                                 e.editorOptions.disabled = true;
                             } else {
-                                if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "ID" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department" || e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "ERStatus" || e.dataField === "ERORefNo3" || e.dataField === "EROCode02" )) { //ERODesc02 || e.dataField === "EROCode02"
+                                if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "ID" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department" || e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "ERStatus"  )) { //ERODesc02 || e.dataField === "EROCode02" || e.dataField === "ERORefNo3" || e.dataField === "EROCode02"
                                     e.editorOptions.disabled = true;
                                 } //|| e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "LocalAmount" || e.dataField === "ERStatus" || e.dataField === "ERORefNo3"
                             }
@@ -1057,13 +1058,24 @@
                             {
                                 dataField: "ERORefNo3",//"ExpensesDescription",
                                 caption: "Sub Expenses",
-                                dataType: "string",
+                                dataType: "string", //
+                                lookup: {
+                                    dataSource: aaSubGroup,
+                                    valueExpr: "ExpSubGroup",
+                                    displayExpr: "ExpSubGroup"
+                                },
                                 width: 140,
+                                editorOptions: { width: 140 },
                             },
                             {
                                 dataField: "EROCode02",
                                 caption: "Patient",
                                 dataType: "string",
+                                lookup: {
+                                    dataSource: arEMPTYPE,
+                                    valueExpr: "CODE",
+                                    displayExpr: "CODE"
+                                },                                
                                 width: 110,
                                 visible: true,
                             },                            

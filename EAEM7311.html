@@ -6,8 +6,11 @@
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Expires" CONTENT="-1">
     <meta http-equiv="Content-Language" content="th">
+    <!-- 
     <meta http-equiv="content-Type" content="text/html; charset=window-874">
     <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    -->
+    <meta charset="UTF-8">   
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -104,32 +107,11 @@
 
         var aaXToX = localStorage["aaXXoX"];
         var aaXNoX = localStorage["aaXXuX"];
-        /*
-        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492";
-        var aaPXXI = localStorage["aPXIXD"];
-        var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaXTXB + '/' + aaPXXI, function (e) {
-            console.log("success");
-            aObjMPage = e;
-            aaKeyField = aObjMPage[0].PrimaryKey;
-            aaTBKey = aObjMPage[0].TBKey;
-            localStorage.setItem("aaXKFX", aaKeyField);
-            localStorage.setItem("aaXTBX", aaTBKey);
-        })
-            .done(function (e) {
-                console.log("second success");
-                aObjMPage = e;
-                aaKeyField = aObjMPage[0].PrimaryKey;
-                aaTBKey = aObjMPage[0].TBKey;
-                localStorage.setItem("aaXKFX", aaKeyField);
-                localStorage.setItem("aaXTBX", aaTBKey);
-            })
-            .fail(function () {
-                console.log("error");
-            })
-            .always(function () {
-                console.log("complete");
-            });	
-        */
+        
+        var atest1 = vigenereEncode("XYZ", "key")
+        console.log(atest1);
+        var attst2 = vigenereDecode(atest1, "key");
+        console.log(attst2);
     </script>
 </head>
 
@@ -438,14 +420,7 @@
                             );
                         }
                     }).dxDataGrid("instance");
-                    /*
-                    function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
-                        let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
-                        console.log('Goal...Repuest Web API : ' + Data);
-                        var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
-                        $.ajax(settings).done(function (response) { console.log(response); });
-                    }
-                    */
+
                 });
                 // TOP PRG
             });  // ajax        

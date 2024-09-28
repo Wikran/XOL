@@ -113,7 +113,16 @@
             color: rgb(1, 6, 32);
             background-color: rgb(189, 223, 255)
         }
+        .dx-switch-on .dx-switch-container {
+            background-color: #4CAF50; /* Color for 'on' state */
+        }
 
+        .dx-switch-off .dx-switch-container {
+            background-color: #F44336; /* Color for 'off' state */
+        }
+        .custom-editor {
+            color: blueviolet;
+        }        
         /*#gridContainer*/
     </style>
     <script>
@@ -285,7 +294,7 @@
             }
             return results; // Return the array of matching objects
         }
-        const arAPTYPE = [{ CODE: "HOD" }, { CODE: "HR" }, { CODE: "FA" }];
+        const arAPTYPE = [{ CODE: "HOD" }, { CODE: "HR" }, { CODE: "FA" }, { CODE: "AD" }, { CODE: "TRF" }, { CODE: "TRFO" }];
         const aaERTYPE = [{ ERTYPE: "Fleet Card", CODE: "200" },
         { ERTYPE: "Travel&Entertainment", CODE: "400" },
         { ERTYPE: "Other", CODE: "100" }];
@@ -306,7 +315,7 @@
         var aaEnt = aaPXIXD.includes("X");
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-        var aaPFDMZz = "https://webspace.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+        var aaPFDMZz = "https://webspace.locktonwattana.com"; //"https://webspace.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMZz + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -315,7 +324,7 @@
             "method": "POST",
             "timeout": 0,
             "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+            "data": JSON.stringify({ "@": afqrFull }), //"ï¿½pageID='Resigned'ï¿½"
         };
         // var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/' + aaPXXI, function (e) {
         var jqxhr = $.post(afsettings, function (e) { })
@@ -441,7 +450,7 @@
                                             "Content-Type": "application/json"
                                         },
                                         "data": JSON.stringify({
-                                            "@": aqrFull //" Status!='Resigned' "
+                                            "@": aqrFull //"ï¿½Status!='Resigned'ï¿½"
                                         }),
                                     };
 
@@ -661,8 +670,9 @@
                                                 dataField: "AppDefault",
                                                 caption: "Fleet Card Approval",
                                                 dataType: "boolean",
-                                                editorType: "dxSwitch",
-                                                editorOptions: { switchedOffText: "NO", switchedOnText: "YES" },
+                                                //editorType: "dxSwitch",
+                                                //cssClass: "custom-editor",
+                                                editorOptions: { switchedOffText: "NO", switchedOnText: "YES"},
                                                 width: 120,
                                             },
                                             {
@@ -720,11 +730,6 @@
                                                         dataField: "ApproverEmpID",
                                                         caption: "Approver ID",
                                                         dataType: "string",
-                                                        /*lookup: {
-                                                            dataSource: aaEmployee, //JSON.parse(localStorage.getItem("aaOBJEmp")), //aaEmployee, //EMPCode,FullNameThai
-                                                            valueExpr: "EMPCode",
-                                                            displayExpr: "EMPCode",
-                                                        },*/
                                                         editCellTemplate: dropDownBoxEMP,
                                                         setCellValue: function (newData, value, currentRowData) {
                                                             if (arDataU === 1) {
@@ -1141,7 +1146,7 @@
                                                         "Content-Type": "application/json"
                                                     },
                                                     "data": JSON.stringify({
-                                                        "@": xaqrFullx //" Status!='Resigned' "
+                                                        "@": xaqrFullx //"ï¿½Status!='Resigned'ï¿½"
                                                     }),
                                                 }; */
                                         //console.log(aaAllData);
@@ -1366,7 +1371,7 @@
                                                         "Content-Type": "application/json"
                                                     },
                                                     "data": JSON.stringify({
-                                                        "@": xaqrFullx //" Status!='Resigned' "
+                                                        "@": xaqrFullx //"ï¿½Status!='Resigned'ï¿½"
                                                     }),
                                                 }; */
                                                 $("#Res-dxDataGrid").dxDataGrid("instance").refresh();

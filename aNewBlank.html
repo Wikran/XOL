@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>BLANK PAGE</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script> 
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <!-- Font Awesome -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <!-- Uicons -->
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+    <!-- DevExtreme Theme --> 	  	
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css" data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false"> 
+    <link rel="dx-theme" data-theme="material.purple.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">       
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- DevExpress Scripts -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <style>
+        .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: var(--focused-border-color);
+            /*background-color:  @focused-border-color; /*rgb(224, 252, 224);
+            border: 1px solid @focused-border-color;*/
+        }        
+    </style>
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                location.reload();
+            }, 3000000); // refresh every 50 minutes
+        }         
+        $(document).ready(function () {	        
+            var aDXTheme = localStorage["aDXTheme"];
+            DevExpress.ui.themes.current(aDXTheme);		
+        });
+        function aRolesDesc(aRoles) {
+            /* 1ReadOnly  2CRU 3CRUD  4Disable   5Import   6Export   7Import and Export  8Printable    9Export2PDF    A	Export2Excel    BReport Full Rights */
+            let aRolesM = ["00","ReadOnly","CRU","CRUD","Disable","Import","Export","Import and Export","Printable","Export2PDF","Export2Excel","Report Full Rights"];
+            let aFR = ["Data:","Excel:","PDF:","REPORT:"];
+            let aPass = "";
+            let aF1 = aRoles.substring(0,1);
+            let i = 0;
+            while (i < 4) {
+                let aCC = aRoles.substring(i,i+1) === "A" ? 10 : aRoles.substring(i,i+1) === "B" ? 11 : Number(aRoles.substring(i,i+1));
+                aPass += aFR[i] + " " + aRolesM[aCC] + ",";
+                i++;
+            }
+            return aPass;
+        }
+      
+    </script>
+</head>
+<body>
+<div id="popupContainer"></div>
+<script>
+    var aDXMenuTitle = localStorage["aDXMenuTitle"];
+    var aMMaMx = localStorage["MMaMx"];
+    var aRRgRs = aMMaMx.split('0');
+    var aDDeDx = aRRgRs[0];
+    var aRrgSx = aRRgRs[1] || "377B";
+    var aRText = aRolesDesc(aRrgSx);
+    const rootElement = document.documentElement;
+
+    function applyThemeColor() {
+        // Get the active theme's color
+        var activeTheme = DevExpress.ui.themes.current();
+        var themeColor;
+
+        switch(activeTheme) {
+            case "material.orange.light.compact":
+                themeColor = "rgba(255, 87, 34, 0.8)"; // Adjust color as per the theme
+                break;
+            case "material.blue.light.compact": // generic.softblue
+                themeColor = "rgba(3, 169, 244, 1)" //"#ebf4ff"; // Adjust color as per the theme
+                break;
+            // Add other themes and their respective colors
+            default:
+                themeColor = "#ffffff";
+        }
+
+        $(".dx-popup-title").css("background-color", themeColor);
+    }    
+
+    $(function() {
+        const popup = $("#popupContainer").dxPopup({
+            title: aDXMenuTitle + " Maintenance (XOL)",
+            height: '30%',
+            position: {offset: "40 -300"},
+            visible: true,
+            showCloseButton: false,
+            contentTemplate: "<h1><i class='fas fa-clock'></i> IN PROGRESS</h1><p>Developed by DevExtreme, DevExpress, jQuery, JavaScript, Font Awesome, Uicons</br>Program Access Rights: " + aDDeDx + "</br>Usage Roles: " + aRrgSx + " [" + aRText + "]</p>",
+            //onShown: applyThemeColor // Apply the theme color when the popup is shown
+        }).dxPopup("instance");
+    });
+</script>	
+</body>
+</html>

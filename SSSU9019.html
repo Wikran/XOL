@@ -155,6 +155,10 @@
                 "Description": "Fleet Card",
             },
             {
+                "FullRightsName": "nusertrf",
+                "Description": "Travel Requisition Form",
+            },            
+            {
                 "FullRightsName": "nuserm,nusert,nusero",
                 "Description": "Standard Expenses Reimbursement",
             },
@@ -178,6 +182,10 @@
                 "FullRightsName": "HODApp",
                 "Description": "HOD Approver",
             },
+            {
+                "FullRightsName": "HODRpt",
+                "Description": "HOD Report",
+            },            
             {
                 "FullRightsName": "*DEL*",
                 "Description": "Delete Group Rights",
@@ -742,7 +750,7 @@
                                         dataField: "Pword",
                                         caption: "Password",
                                         dataType: "string",
-                                        editorOptions: { width: 450, readOnly: ahrSuperEdit }, //mode: "password",
+                                        editorOptions: { width: 450, readOnly: ahrSuperEdit, mode: "password", }, //mode: "password",
                                         width: 450,
                                         visible: false,
                                     },
@@ -764,7 +772,7 @@
                                     },
                                     {
                                         dataField: "Description",
-                                        caption: "Description",
+                                        caption: "Position",
                                         dataType: "string",
                                         editorOptions: { width: 450, readOnly: ahrSuperEdit },
                                         width: 450,
@@ -959,15 +967,7 @@
                                     );
                                 }
                             }).dxDataGrid("instance");
-                            /*
-                            function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
-                                let Url = domain + "/DMP/" + acPRJ + "/" + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
-                                console.log('Goal...Repuest Web API : ' + Data);
-                                var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
-                                $.ajax(settings).done(function (response) { console.log(response); });
-                            }
-                            */
-
+                            
                             function EditUserProfiles(iData) { //,aaSS,nOfRec
                                 //console.log(aaSS)
                                 var aOldPwd = iData.Pword
@@ -1378,7 +1378,7 @@
                             // DataGrid > Editing > Custome Editor
                             function dropDownBoxEMP(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
-                                    dropDownOptions: { width: 600 },
+                                    dropDownOptions: { width: 1000 },
                                     dataSource: aaEmployee,
                                     value: [cellInfo.value],
                                     valueExpr: "EMPCode",
@@ -1387,7 +1387,7 @@
                                         return $("<div>").dxDataGrid({
                                             dataSource: aaEmployee,
                                             //remoteOperations: true, // EMPCode,FullNameThai
-                                            columns: [{ dataField: "AccDeptCode", caption: "Dept", width: 100 }, { dataField: "EMPCode", caption: "ID", width: 80 }, { dataField: "FullNameThai", caption: "Thai Name", width: 200 }, { dataField: "FullNameEng", caption: "Eng Name", width: 200 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                                            columns: [{ dataField: "AccDeptCode", caption: "Dept", width: 100 }, { dataField: "EMPCode", caption: "ID", width: 80 }, { dataField: "FullNameThai", caption: "Thai Name", width: 200 }, { dataField: "FullNameEng", caption: "Eng Name", width: 200 }, { dataField: "Position", caption: "Position", width: 200 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
                                             hoverStateEnabled: true,
                                             searchPanel: { visible: true },
                                             headerFilter: { visible: true },

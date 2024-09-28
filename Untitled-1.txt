@@ -1,0 +1,15 @@
+// You can create the Accordion widget using the following code.
+// Read more at https://js.devexpress.com/Documentation/Guide/Widgets/Common/Advanced/3rd-Party_Frameworks_Integration_API/#Create_and_Configure_a_Widget.
+
+new DevExpress.ui.dxAccordion(container, {
+    "dataSource": [
+        {
+            "title": "Personal Data",
+            "text": "Name: John Smith, Birth Year: 1986"
+        },
+        {
+            "title": "Contacts",
+            "text": "Phone: (555)555-5555, Email: John.Smith@example.com"
+        }
+    ]
+});

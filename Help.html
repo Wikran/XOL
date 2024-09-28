@@ -6,13 +6,13 @@
        and (min-width: 1400px) -->
   <style>
     .viewPDF {
-      zoom: 132%;
+      zoom: 130%;
     }
   </style>
 </head>
 
 <body>
-  <object id="viewPDF" type="application/pdf" width="1300" height="780" zoom="132%"></object>
+  <object id="viewPDF" type="application/pdf" width="1300" height="780" zoom="130%"></object>
   <script>
     window.onload = function () {
       setTimeout(function () {
@@ -28,7 +28,7 @@
     }
     const viewPDF = document.getElementById("viewPDF"); //data= PDFHelpFile 
     viewPDF.setAttribute("data", PDFHelpFile);
-    viewPDF.requestFullscreen();
+    //viewPDF.requestFullscreen();
   </script>
 </body>
 

@@ -3,6 +3,23 @@ window.onload = function() {
         location.reload();
     }, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
 } 
+// Disable right-click
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// Disable F12, Ctrl+Shift+I, Ctrl+U
+document.addEventListener('keydown', function(e) {
+    if (e.keyCode == 123) { // F12
+        e.preventDefault();
+    }
+    if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { // Ctrl+Shift+I
+        e.preventDefault();
+    }
+    if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { // Ctrl+U
+        e.preventDefault();
+    }
+});
       
 function unloadAllJS() {
     var jsArray = new Array();

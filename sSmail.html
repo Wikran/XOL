@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email with Microsoft Graph</title>
+    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-graph-client/3.0.0/graph-js-sdk.min.js"></script>
+</head>
+<body>
+    <button onclick="sendEmail()">Send Email</button>
+
+    <script>
+        const msalConfig = {
+            auth: {
+                clientId: '9a544291-7a94-4b4e-ac42-95488a0f39c8', // Your Application (client) ID
+                authority: 'https://login.microsoftonline.com/2946b013-c232-420e-9d11-f17dcc4f7fc2', // Your Directory (tenant) ID
+                redirectUri: 'http://localhost:8089' // Your redirect URI
+            }
+        };
+
+        let cca;
+
+        window.onload = function() {
+            cca = new msal.PublicClientApplication(msalConfig);
+        };
+
+        async function getAccessToken() {
+            const ropcRequest = {
+                scopes: ["https://graph.microsoft.com/.default"],
+                username: 'wikran@hotmail.com', // Your Office 365 username
+                password: 'Saxx5398Saxx5398##'  // Your Office 365 password
+            };
+
+            try {
+                const response = await cca.acquireTokenByUsernamePassword(ropcRequest);
+                return response.accessToken;
+            } catch (error) {
+                console.error("Error acquiring token:", error);
+            }
+        }
+
+        async function sendEmail() {
+            const accessToken = await getAccessToken();
+            if (!accessToken) {
+                console.error("Failed to acquire access token");
+                return;
+            }
+
+            const email = {
+                message: {
+                    subject: "Test Email from Microsoft Graph API",
+                    body: {
+                        contentType: "Text",
+                        content: "This is a test email sent using the Microsoft Graph API."
+                    },
+                    toRecipients: [
+                        {
+                            emailAddress: {
+                                address: "wikran@hotmail.com"
+                            }
+                        }
+                    ]
+                },
+                saveToSentItems: "true"
+            };
+
+            try {
+                const response = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(email)
+                });
+
+                if (response.ok) {
+                    console.log('Email sent successfully');
+                } else {
+                    console.error('Error sending email', response.statusText);
+                }
+            } catch (error) {
+                console.error("Error sending email:", error);
+            }
+            alert("send mail")
+        }
+    </script>
+</body>
+</html>
