@@ -89,6 +89,8 @@
         :root {
             --dgBG: #f4d2fce5;
             --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;            
         }
 
         /*-----------------------------*/
@@ -302,15 +304,16 @@
         }
 
         .dx-datagrid .dx-row.dx-selection {
-            /*rgb(227, 120, 7); rgba(255, 87, 34, 1);*/
-            color: rgba(239, 0, 0, 0.994);
-            font-weight: bold;
+            /*rgb(227, 120, 7); rgba(255, 87, 34, 1);  rgba(239, 0, 0, 0.994)*/
+            color: var(--dgSelText);
+            /*font-weight: bold;*/
         }
 
         .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
             /*not change the color*/
             /*background-color: rgba(248, 219, 187, 0.312);*/
             /*background-color: rgba(253, 242, 238, 0.697);*/
+            background-color: var(--dgSelBar);
             color: unset;
         }
 
@@ -1226,7 +1229,7 @@
                                                                         let aSubject = aaOnInitExpGroupDesc + " - CALLBACK"
                                                                         let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
                                                                         let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) + aEmailTRF[6] + aaOnInitExpGroupDesc + aEmailTRF[7] + e.row.data.HeadRefNo + aEmailTRF[8] + aAddress2Do + aEmailTRF[9] + aRequesterName + aEmailTRF[10];
-                                                                        //let aMessage01 = "<div>à¹€à¸£à¸µà¸¢à¸ÿ à¸ÿà¸¸à¸“" + $.trim(aApproverName) + "<br>à¸ÿà¸¹à¹ÿà¸ÿà¸­à¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´à¹ÿà¸”à¹ÿà¹€à¸£à¸µà¸¢à¸ÿà¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥ " + aaOnInitExpGroupDesc + " Expenses Reimbursement à¸ªà¸³à¸«à¸£à¸±à¸ÿ REFNO = [" + e.row.data.HeadRefNo + "]<br> à¸ÿà¸¥à¸±à¸ÿà¹ÿà¸ÿà¹ÿà¸ÿà¹ÿà¹ÿà¸ÿ <br> à¹ÿà¸ÿà¹ÿà¸ÿà¸²à¸ÿà¹ÿà¸ÿà¸£à¹ÿà¸ÿà¸£à¸¡à¸—à¸µà¹ÿ " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
+                                                                        //let aMessage01 = "<div>à¹€à¸£à¸µà¸¢ï¿½ï¿½ ï¿½ï¿½à¸¸à¸“" + $.trim(aApproverName) + "<br>ï¿½ï¿½à¸¹ï¿½ï¿½ï¿½ï¿½à¸­à¸­ï¿½ï¿½à¸¸à¸¡à¸±à¸•à¸´ï¿½ï¿½à¸”ï¿½ï¿½à¹€à¸£à¸µà¸¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸­à¸¡à¸¹à¸¥ " + aaOnInitExpGroupDesc + " Expenses Reimbursement à¸ªà¸³à¸«à¸£à¸±ï¿½ï¿½ REFNO = [" + e.row.data.HeadRefNo + "]<br> ï¿½ï¿½à¸¥à¸±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ <br> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£ï¿½ï¿½ï¿½ï¿½à¸£à¸¡à¸—à¸µï¿½ï¿½ " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
                                                                         //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
                                                                         //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
                                                                         var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #9700F9; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#F5E6FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
@@ -2675,7 +2678,7 @@
                                                         //console.log("asERODesc02 = ", asERODesc02)
 
                                                         if (aRecNo === 1) {
-                                                            let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>à¸ÿà¸” 'YES' à¹€à¸ÿà¸·à¹ÿà¸­à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿ" +
+                                                            let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>ï¿½ï¿½à¸” 'YES' à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½" +
                                                             result.done(function (dresult) {
                                                                 if (dresult) {
                                                                     /* old 
@@ -2961,9 +2964,9 @@
 
                                                                             if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTRFnAlert01, "INPUT ERROR"); }
                                                                             else {
-                                                                                //let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm (" + aaCheckOverseas + ") & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>à¸ÿà¸” 'YES' à¹€à¸ÿà¸·à¹ÿà¸­Ö¡à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿ" +
-                                                                                let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> " + " Press [YES] to confirm (" + aaCheckOverseas + ") and send email to ¤Ø³" + aaHODAppName + " (" + aaHODAppEmail + ") <br></b></p><p style='color: darkgreen; font-size: 14px;'>(" + (xxChkLenxx) + " HOD to approve)</p>", "CONFIRM TO HOD"); // "<br>à¸ÿà¸” 'YES' à¹€à¸ÿà¸·à¹ÿà¸­à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿ" +
-                                                                                //let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > à¹ÿà¸¥à¸° à¸ÿà¸£à¸¸à¸“à¸²à¸•à¸£à¸§à¸ÿà¸ªà¸­à¸ÿà¸ÿà¸²à¸£à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿà¸£à¸²à¸¢à¸ÿà¸²à¸£à¹ÿà¸«à¹ÿà¸ÿà¸£à¸ÿà¸—à¸¸à¸ÿà¸ÿà¹ÿà¸­à¸ÿà¹ÿà¸ÿà¸—à¸¸à¸ÿà¸ÿà¸£à¸£à¸—à¸±à¸”** <br><b><u>à¹ÿà¸¡à¹ÿà¹€à¸ÿà¹ÿà¸ÿà¸ÿà¸±à¹ÿà¸ÿ</u> à¸ÿà¸°à¸—à¸³à¹ÿà¸«à¹ÿà¸£à¸²à¸¢à¸ÿà¸²à¸£à¸ÿà¸µà¹ÿà¹€à¸ÿà¸´à¸ÿà¸ÿà¹ÿà¸²à¸¢à¹ÿà¸¡à¹ÿà¹ÿà¸”à¹ÿ </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>à¸ÿà¸” 'YES' à¹€à¸ÿà¸·à¹ÿà¸­à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿ" +
+                                                                                //let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm (" + aaCheckOverseas + ") & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>ï¿½ï¿½à¸” 'YES' à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­Ö¡ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½" +
+                                                                                let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> " + " Press [YES] to confirm (" + aaCheckOverseas + ") and send email to " + aaHODAppName + " (" + aaHODAppEmail + ") <br></b></p><p style='color: darkgreen; font-size: 14px;'>(" + (xxChkLenxx) + " HOD to approve)</p>", "CONFIRM TO HOD"); // "<br>ï¿½ï¿½à¸” 'YES' à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½" +
+                                                                                //let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > ï¿½ï¿½à¸¥à¸° ï¿½ï¿½à¸£à¸¸à¸“à¸²à¸•à¸£à¸§ï¿½ï¿½à¸ªà¸­ï¿½ï¿½ï¿½ï¿½à¸²à¸£ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ï¿½ï¿½à¸«ï¿½ï¿½ï¿½ï¿½à¸£ï¿½ï¿½à¸—à¸¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸—à¸¸ï¿½ï¿½ï¿½ï¿½à¸£à¸£à¸—à¸±à¸”** <br><b><u>ï¿½ï¿½à¸¡ï¿½ï¿½à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸±ï¿½ï¿½ï¿½ï¿½</u> ï¿½ï¿½à¸°à¸—à¸³ï¿½ï¿½à¸«ï¿½ï¿½à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ï¿½ï¿½à¸µï¿½ï¿½à¹€ï¿½ï¿½à¸´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸²à¸¢ï¿½ï¿½à¸¡ï¿½ï¿½ï¿½ï¿½à¸”ï¿½ï¿½ </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>ï¿½ï¿½à¸” 'YES' à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½" +
                                                                                 result.done(function (dresult) {//                                                                                                                                                                                                                    
                                                                                     if (dresult) {
                                                                                         //if (aContinueChk !== true) {
@@ -2997,7 +3000,7 @@
                                                                                         let aRefNoa = aaiHeadRef //iData.HeadRefNo
                                                                                         let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>";
                                                                                         let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) + aEmailTRF[1] + aaOnInitExpGroupDesc + aEmailTRF[2] + aRefNoa + aEmailTRF[3] + aAddress2Do + aEmailTRF[12] + aRequesterName + aEmailTRF[5];
-                                                                                        //let aMessage01 = "<div>à¹€à¸£à¸µà¸¢à¸ÿ à¸ÿà¸¸à¸“" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;à¸ÿà¸£à¸¸à¸“à¸²à¸•à¸£à¸§à¸ÿà¸ªà¸­à¸ÿ à¹ÿà¸¥à¸°à¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´à¸£à¸²à¸¢à¸ÿà¸²à¸£ " + aaOnInitExpGroupDesc + " Expenses à¸ªà¸³à¸«à¸£à¸±à¸ÿ REFNO = [" + aRefNoa + "]<br> à¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸ÿà¹ÿà¸²à¹ÿà¸ÿà¹ÿà¹ÿà¸ÿà¸£à¹ÿà¸ÿà¸£à¸¡à¹ÿà¸”à¹ÿà¸—à¸µà¹ÿ " + aAddress2Do + " (à¸«à¸±à¸§à¸ÿà¹ÿà¸­ Approve --> HOD Approve) <br><br>à¸ÿà¸­à¹ÿà¸ªà¸”à¸ÿà¸ÿà¸§à¸²à¸¡à¸ÿà¸±à¸ÿà¸–à¸·à¸­<br>" + aRequesterName + "</div>"
+                                                                                        //let aMessage01 = "<div>à¹€à¸£à¸µà¸¢ï¿½ï¿½ ï¿½ï¿½à¸¸à¸“" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;ï¿½ï¿½à¸£à¸¸à¸“à¸²à¸•à¸£à¸§ï¿½ï¿½à¸ªà¸­ï¿½ï¿½ ï¿½ï¿½à¸¥à¸°à¸­ï¿½ï¿½à¸¸à¸¡à¸±à¸•à¸´à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ " + aaOnInitExpGroupDesc + " Expenses à¸ªà¸³à¸«à¸£à¸±ï¿½ï¿½ REFNO = [" + aRefNoa + "]<br> à¸ªà¸²à¸¡à¸²à¸£à¸–à¹€ï¿½ï¿½ï¿½ï¿½à¸²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£ï¿½ï¿½ï¿½ï¿½à¸£à¸¡ï¿½ï¿½à¸”ï¿½ï¿½à¸—à¸µï¿½ï¿½ " + aAddress2Do + " (à¸«à¸±à¸§ï¿½ï¿½ï¿½ï¿½à¸­ Approve --> HOD Approve) <br><br>ï¿½ï¿½à¸­ï¿½ï¿½à¸ªà¸”ï¿½ï¿½ï¿½ï¿½à¸§à¸²à¸¡ï¿½ï¿½à¸±ï¿½ï¿½à¸–à¸·à¸­<br>" + aRequesterName + "</div>"
                                                                                         var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                                         aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
 
@@ -3660,7 +3663,7 @@
                                                             editorType: "dxTextBox",
                                                             width: 180,
                                                             editorOptions: { width: 180, },
-                                                            validationRules: [{ type: "required" }],
+                                                            //validationRules: [{ type: "required" }],
                                                             visible: true,
                                                         },
                                                         {
@@ -3682,15 +3685,20 @@
                                                         {
                                                             dataField: "PSPvDate",
                                                             caption: "Send Passport Copy to Admin*",
-                                                            cssClass: "colorRED",
+                                                            //cssClass: "colorRED",
                                                             dataType: "date",
                                                             format: "dd/MM/yyyy",
+                                                            placeholder: '01/01/1901',
+                                                            //showClearButton: true,
+                                                            //useMaskBehavior: true,
+                                                            value: new Date(),
                                                             width: 120,
                                                             editorOptions: {
                                                                 width: 120,
-                                                                //showClearButton: true,  
+                                                                showClearButton: true, 
+                                                                useMaskBehavior: true, 
                                                                 pickerType: "calendar",
-                                                                value: new Date(),
+                                                                //value: new Date(),
                                                                 hint: "Select the send Email Date"
                                                             },
                                                             visible: true,
@@ -3768,13 +3776,13 @@
                                                             editorType: "dxTextBox",
                                                             width: 120,
                                                             editorOptions: { width: 120 },
-                                                            validationRules: [{
-                                                                type: "custom",
-                                                                validationCallback: function (options) {
-                                                                    return options.value !== "";
-                                                                },
-                                                                message: "Company's Movile Phone cannot be empty"
-                                                            }],
+                                                            //validationRules: [{
+                                                            //    type: "custom",
+                                                            //    validationCallback: function (options) {
+                                                            //        return options.value !== "";
+                                                            //    },
+                                                            //    message: "Company's Movile Phone cannot be empty"
+                                                            // }],
                                                             visible: true,
                                                         },
                                                         {

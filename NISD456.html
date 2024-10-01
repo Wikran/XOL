@@ -122,7 +122,7 @@
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
         var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev3.locktonwattana.com"; // API for DMZ only        
-
+        var aaPFDMIZz = isLocalHost();
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMZz + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
         var afsettings = {
@@ -204,7 +204,7 @@
                             key: "DivCode", //aaaKeyField, //"DivCode",
                             loadMode: "omit",
                             load: function () { //$.post(settings).done(function (response) { console.log(response); }); fetch(aurl,requestOptions).then(response => response.json()).then(data => {console.log(data)} );
-                                return $.post(settings).done(function (response) { console.log(response); }); //$.post(aaPFDMZz + '/DMQ/XOL/'+ atob(aaXToX) +'/' + aaTBKey + '/all') //,{ "@": aqrFull  }
+                                return $.post(settings).done(function (response) { console.log("DATA = ",response); }); //$.post(aaPFDMZz + '/DMQ/XOL/'+ atob(aaXToX) +'/' + aaTBKey + '/all') //,{ "@": aqrFull  }
                                 //.fail(function() { throw "Data loading error" });
                             },
                             insert: function (values) {
@@ -219,9 +219,10 @@
                                 sendRequestNew("Insert", ObjRowData, aaaTBKey, aaPFDMI, atob(aaXToX));
                             },
                             update: function (key, values) {
-                                //console.log( aaKeyField );
+                                console.log( key, values );
                                 var ObjKeyData = { "DivCode": $.trim(key) };   //[aaKeyField] key.trim
                                 var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                console.log("Update row data ",ObjRowData)
                                 sendRequestNew(aUpdateText, ObjRowData, aaaTBKey, aaPFDMI, atob(aaXToX));
                             },
                             remove: function (key) {
@@ -305,11 +306,11 @@
                         //
                         // Editing
                         editing: {
-                            mode: "row",
+                            mode: "row", // row, popup
                             useIcons: true,
-                            allowUpdating: true,
-                            allowDeleting: arDataD,
-                            allowAdding: arDataC,
+                            allowUpdating: true, //true,
+                            allowDeleting: false, //arDataD,
+                            allowAdding: false, //arDataC,
                             form: {
                                 labelLocation: 'left',
                                 showColonAfterLabel: false,
@@ -322,7 +323,7 @@
                                 type: "buttons",
                                 width: 110,
                                 buttons: ["edit", "delete"],
-                                //visible: false,
+                                visible: false,
                             },
                             {
                                 dataField: "DivCode",

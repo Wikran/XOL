@@ -82,6 +82,8 @@
         :root {
             --dgBG: #f4d2fce5;
             --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;             
         }
 
         /*-----------------------------*/
@@ -275,15 +277,19 @@
         .dx-tab-selected {
             background-color: rgb(230, 237, 254) !important;
         }   
-        .dx-datagrid .dx-row.dx-selection { /*rgb(227, 120, 7); rgba(255, 87, 34, 1);*/
-            color: rgba(239, 0, 0, 0.994);
-            font-weight: bold;
+        .dx-datagrid .dx-row.dx-selection {
+            /*rgb(227, 120, 7); rgba(255, 87, 34, 1);  rgba(239, 0, 0, 0.994)*/
+            color: var(--dgSelText);
+            /*font-weight: bold;*/
         }
-        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed) > td { /*not change the color*/
+
+        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
+            /*not change the color*/
             /*background-color: rgba(248, 219, 187, 0.312);*/
             /*background-color: rgba(253, 242, 238, 0.697);*/
+            background-color: var(--dgSelBar);
             color: unset;
-        }                       
+        }                     
     </style>
     <script>
         window.onload = function () {
@@ -3017,6 +3023,15 @@
                                                     //visible: true,
                                                     visible: aViewG, //true,
                                                     onClick: function (e) {
+                                                            const validationResult = aform.validate();
+                                                            if (validationResult.isValid) {
+                                                                console.log("Form is valid. Proceed with submission.");
+                                                                // Proceed with your submission logic here
+                                                            } else {
+                                                                console.log("Form is invalid. Please correct the errors.");
+                                                                // Optionally, you can show the error messages or highlight invalid fields
+                                                            }
+                                                            console.log("validationResult: ", validationResult)
                                                             console.log("HR = ",aaHODApprover) // To HR
                                                             let aObjRowData = JSON.stringify(iData); //EROCode04
                                                             console.log("Update when Confirm ",aObjRowData)
@@ -3122,7 +3137,7 @@
                                                             aaLoadData(isLocalHost(),aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
                                                                 .then(atestCehcka => { 
                                                                 //console.log("xx",atestCehcka); // Logs the actual message
-                                                                if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTravelEnAlert01, "INPUT ERROR"); }    //  " + aaCheckOverseas + "                                                                                                                                                                                                                                                    
+                                                                if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTRFnAlert02, "INPUT ERROR"); }    //  " + aaCheckOverseas + "                                                                                                                                                                                                                                                    
                                                                 else {                                                                                                                                                                                                                                                         //xxChkLenxx                                                                     
                                                                     let result = DevExpress.ui.dialog.confirm(aaAlertMessage + " " + aaRecpName + " (" + aaRecpEmail + ") ? <br>" + aaaFAMess + "<p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'>" + "</p>", aaTitMess); //
                                                         
@@ -3402,7 +3417,7 @@
                                                                             cssClass: "verylight-green",
                                                                             visible: true,
                                                                             colSpan: 2,
-                                                                            //validationRules: [{ type: "required" }],
+                                                                            validationRules: [{ type: "required" }],
                                                                         },
                                                                         {
                                                                             dataField: "ERODesc04",
@@ -3412,6 +3427,7 @@
                                                                             cssClass: "verylight-green",
                                                                             visible: true,
                                                                             colSpan: 2,
+                                                                            validationRules: [{ type: "required" }],
                                                                         },
                                                                         /* {
                                                                              itemType: "Empty",
@@ -4005,6 +4021,7 @@
                                                             {
                                                                 location: "after",
                                                                 widget: "dxButton",
+                                                                visible: false,
                                                                 options: {
                                                                     icon: "fas fa-info",
                                                                     text: "HELP",

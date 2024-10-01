@@ -69,6 +69,7 @@
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="aaTMain.js"></script>
     <script src="aThaiHelp.js?v=2"></script>
+    <script src="NewDivision.js"></script>
     <script src="bundle.min.js"></script>
 
     <!-- <script src="ajQjsLib.js"></script> -->
@@ -113,17 +114,42 @@
             color: rgb(1, 6, 32);
             background-color: rgb(189, 223, 255)
         }
+
         .dx-switch-on .dx-switch-container {
-            background-color: #4CAF50; /* Color for 'on' state */
+            background-color: #4CAF50;
+            /* Color for 'on' state */
         }
 
         .dx-switch-off .dx-switch-container {
-            background-color: #F44336; /* Color for 'off' state */
+            background-color: #F44336;
+            /* Color for 'off' state */
         }
+
         .custom-editor {
             color: blueviolet;
-        }        
+        }
+
         /*#gridContainer*/
+
+        .custom-group {
+            color: blue;
+            font-weight: bold;
+            /* background-color: #dceef990; Change this to your desired background color */
+
+        }
+
+        .custom-group-header {
+            color: blue;
+            font-weight: bold;
+            /*background-color: #f0f0f061;  Change this to your desired background color */
+            background: linear-gradient(to bottom, white, #f5f5f5b4);
+            /*border-top: 1px solid blue; 
+            border-bottom: 1px solid blue;  Change this to your desired line color */
+            border: 1.5px solid blue;
+            border-radius: 10px;
+            padding: 10px;
+            /* Optional: Add some padding */
+        }
     </style>
     <script>
         window.onload = function () {
@@ -143,115 +169,7 @@
         var aaXNoX = localStorage["aaXXuX"];
         var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // MasterPage
         var aaPXXI = localStorage["aPXIXD"];
-        /*
-                const aGetDataAPI = (aDMZServer, aFullTableName, aFieldSelected, aOBJsName) => {
-                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-                    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
-                    var myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-                    var raw = JSON.stringify({
-                        "@": aFullBody
-                    });
-                    var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: raw,
-                        redirect: 'follow'
-                    };
-                    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
-                    fetch(aURL, requestOptions)
-                        .then(response => response.json())
-                        //
-                        .then(aData => {
-                            aaObjData = aData;
-                            localStorage.setItem(aOBJsName, JSON.stringify(aaObjData));
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                        });
-                    return 1
-                }
-        
-        
-                const aGetData4Model = (aServerURL, aPUBToken, aTBToken, aSearchFor, aOBJName) => {   // with Search string (for Index Key in Modelctl.json file) example "WIK06749"
-                    let jqOTHs = $.post(aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/' + aSearchFor, function (e) {
-                        //aaExpLU = e;
-                        localStorage.setItem(aOBJName, JSON.stringify(e));
-                    })
-                        .done(function (e) {
-                            localStorage.setItem(aOBJName, JSON.stringify(e));
-                        })
-                        .fail(function () {
-                            console.log("error EXP");
-                        })
-                        .always(function () {
-                        });
-                    return 1
-                }
-        
-                const aGet4DataModel = (aServerURL, aPUBToken, aTBToken, aSearchFor, aOBJName) => {     // SearchFor = sql statement example "code = 'xxxx' and ID = 1111"
-                    var jqOTHs = $.post(aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/all', { "@": aSearchFor }, function (e) {
-                        aaExpLU = e;
-                        localStorage.setItem(aOBJName, JSON.stringify(aaExpLU));
-                    })
-                        .done(function (e) {
-                        })
-                        .fail(function () {
-                            console.log("error EXP");
-                        })
-                        .always(function () {
-                        });
-                    return 1
-                }
-        
-                const aGetD2V = (aDMZServer, aFullTableName, aFieldSelected, aOBJsName) => {
-                    //if (localStorage.getItem(aOBJsName) === null) {
-                    //console.log(`Email address not exists`);
-                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-        
-                    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName; //alert(aFullBody)
-                    //alert(aFullBody)
-                    let myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-                    let raw = JSON.stringify({
-                        "@": "Select " + aFieldSelected + " From " + aFullTableName
-                    });
-        
-                    let requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: raw,
-                        redirect: 'follow'
-                    };
-        
-                    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
-        
-                    fetch(aURL, requestOptions)
-                        .then(response => response.json())
-                        //
-                        .then(aData => {
-                            //aaObjData = aData;
-                            //aReturnArr = aData;
-                            //console.log(aData)
-                            //localStorage.setItem(aOBJsName, "");
-                            localStorage.setItem(aOBJsName, JSON.stringify(aData));
-                        })
-        
-                }
-        */
-        /**
-         * @param string aERSuf ("") or ("A")
-         * @param string aMSub ("") or ("M") middle 
-         * @param number nFtoL (No of the last digit) if 12 = (12-1) - 5 = 6 digits after YYMMDD
-         * @sample result = 2304057573995 (YYMMDDTTTTTT)
-         * @Sample result = A230405M7573995 (AYYMMDDMTTTTTT)
-         * 
-         * @pattern (aERSuf + DDMMYY + aMsub + no of Time Digits (nFtoL - 1 - 5 ))
-         * */
+
         const aGetDateRefE = (aERSuf, aMSuf, nFtoL) => {
             let aNowDatev = new Date()
             let aYear2 = String(aNowDatev.getFullYear()).substring(2, 4);
@@ -275,16 +193,6 @@
             return filteredData;
         }
 
-        //console.log(aGetDateRefE("","", 12)) // 5 to 11 = 11-5 = 6  //2304057573995
-
-        /**
-         * @param {array} Employee
-         * @param {string} "NAME"
-         * @param {string} "name value"
-         * return json array results
-         * example aSearch2json(aaEmployee, "EMPCode", value) value = employee code value
-         * @copyright wikran 2023
-         */
         const aSearch2json = (arr, searchKey, searchValue) => {
             const results = []; // Initialize an empty array to store the matching objects
             for (const obj of arr) { // Loop through each object in the array
@@ -298,7 +206,139 @@
         const aaERTYPE = [{ ERTYPE: "Fleet Card", CODE: "200" },
         { ERTYPE: "Travel&Entertainment", CODE: "400" },
         { ERTYPE: "Other", CODE: "100" }];
-        //class="dx-viewport" <div class="container">   </div><div class="loadpanel"></div>
+
+        function findDuplicates(arr) {
+            const seen = new Set();
+            const duplicates = new Set();
+
+            arr.forEach(item => {
+                if (seen.has(item.AccDivCode)) {
+                    duplicates.add(item.AccDivCode);
+                } else {
+                    seen.add(item.AccDivCode);
+                }
+            });
+
+            return Array.from(duplicates);
+        }
+
+        const aSaveCloneN = (iData, aaTBKey, aaPFDMI, aaXToX, NewDiv) => {
+            let aaID = aGetDateRefE("", "", 12)
+            let aObjKeyData = { IDNO: aaID }
+            if (NewDiv !== undefined) {
+                aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+            }
+            let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+            sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+        }
+
+        //delegateAction
+        const delegateAction = (iData, aaTBKey, aaPFDMI, aaXToX, PreApprove, NewApprove, PreAppCode, NewAppCode, aaaEmployee) => {
+            // Search for PreDiv 
+            let aaqrFull = "Where ApproverName = '" + PreApprove + "' "
+            let aaFieldSelected2 = "IDNO,ApproverCode,ApperverDesc,ApproveToDivision,ApproverEmpID,ApproverName,ApproverEmail,ApproverDept,ApproverDiv,ApproverPos,Note,LRange01,LRange02,AppOrder,AppDefault"
+            let aFullBody2 = "Select " + aaFieldSelected2 + " From ExtraOnLine.dbo.Approver " + aaqrFull
+            fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody2 }), redirect: "follow" })
+                .then(response => response.json())
+                //
+                .then(aData => {
+                    console.log("aData = ", aData)
+                    console.log(typeof aData)
+                    var aDataObj = { data: aData };
+                    console.log("aData.length ",aData.length)
+                    //let xData = JSON.stringify(aData);
+                    //console.log(xData)
+                    //.log(typeof xData)
+                    // Loop from i = 1 to Last
+                    // Insert New Division 1 
+                    //let aaID;
+                    for (let i = 0; i < 1; i++) { //< aData.length;
+                        console.log("aData ", "type aData ",typeof aData)
+                        //let aaID = aGetDateRefE("", "", 12)
+                        let aaID = aData[i].IDNO
+                        console.log(aaID)
+                        
+                        //console.log(aaaEmployee)
+                        //let aObjKeyData = { ApperverDesc: PreApprove, ApproverName: NewApprove }
+                        //console.log("type KEYdata ",typeof aObjKeyData," data = ", aObjKeyData)
+                        //let aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
+                        //var aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
+                        //console.log("type Row ",typeof aObjRowData," Combine data =",aObjRowData)
+                        let aaResult = aSearch2json(aaaEmployee, "EMPCode", NewAppCode);
+                        let aaaAccDeptCode = aaResult[0].AccDeptCode
+                        let aaaAccDivCode = aaResult[0].AccDivCode
+                        let aaaEMPCode = aaResult[0].EMPCode
+                        let aaaEmailAddress = aaResult[0].EmailAddress
+                        let aaaFullNameThai = aaResult[0].FullNameThai
+                        let aaaPosition = aaResult[0].Position
+                        //ApproverEmpID = '" + aaaEMPCode + "',ApproverName = '" + NewApprove + "',ApproverEmail = '" + aaaEmailAddress + "',ApproverDept = '" + aaaAccDeptCode + "',ApproverDiv = '" + aaaAccDivCode + "',ApproverPos = '" + aaaPosition + "' "
+                        //let aSQLCommand = "use ExtraOnLine; UPDATE Approver SET ApperverDesc = '" + PreApprove + "', ApproverName = '" + NewApprove + "' Where IDNO = '" + aaID + "'" //"' Where ApproverName = '" + PreApprove + "'"
+                        let aSQLCommand = "use ExtraOnLine; UPDATE Approver SET ApperverDesc = '" + PreApprove + "',ApproverEmpID = '" + aaaEMPCode + "',ApproverName = '" + NewApprove + "',ApproverEmail = '" + aaaEmailAddress + "',ApproverDept = '" + aaaAccDeptCode + "',ApproverDiv = '" + aaaAccDivCode + "',ApproverPos = '" + aaaPosition + "' Where IDNO = '" + aaID + "'"
+                        console.log(aSQLCommand)
+                        aSQLAction(aaPFDMI, aSQLCommand)
+                        aSQLAction(aaPFDMI, aSQLCommand)
+                        aSQLAction(aaPFDMI, aSQLCommand)
+                        $("#gridContainer").dxDataGrid("instance").refresh();
+                        $("#gridContainer").dxDataGrid("instance").refresh();
+                        $("#gridContainer").dxDataGrid("instance").refresh();
+                        //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));                        
+                        
+                        //let aObjRowData = $.extend({}, aData, aObjKeyData);
+                        //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                    }
+                       /* let aaID = aGetDateRefE("", "", 12)
+                        let aObjKeyData = { IDNO: aaID }
+                        if (NewDiv !== undefined) {
+                            aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+                        }
+                        let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));*/
+
+                        //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                }
+             )
+            }    
+            // Insert New division
+       
+        const ClonePretoNew = (iData, aaTBKey, aaPFDMI, aaXToX, PreDiv, NewDiv) => {
+            // Search for PreDiv 
+            let aaqrFull = "Where ApproveToDivision = '" + PreDiv + "' "
+            let aaFieldSelected2 = "IDNO,ApproverCode,ApperverDesc,ApproveToDivision,ApproverEmpID,ApproverName,ApproverEmail,ApproverDept,ApproverDiv,ApproverPos,Note,LRange01,LRange02,AppOrder,AppDefault"
+            let aFullBody2 = "Select " + aaFieldSelected2 + " From ExtraOnLine.dbo.Approver " + aaqrFull
+            fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody2 }), redirect: "follow" })
+                .then(response => response.json())
+                //
+                .then(aData => {
+                    console.log("aData = ", aData)
+                    console.log(typeof aData)
+                    //let xData = JSON.stringify(aData);
+                    //console.log(xData)
+                    //.log(typeof xData)
+                    // Loop from i = 1 to Last
+                    // Insert New Division 1 
+                    let aaID;
+                    for (let i = 0; i < aData.length; i++) {
+                        console.log("aData ", i , aData[i].IDNO, "type aData ",typeof aData)
+                        let aaID = aGetDateRefE("", "", 12)
+                        let aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+                        console.log("type KEYdata ",typeof aObjKeyData," data = ", aObjKeyData)
+                        let aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
+                        //let aObjRowData = $.extend({}, aData, aObjKeyData);
+                        console.log("type Row ",typeof aObjRowData," Combine data =",aObjRowData)
+                        //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                    }
+                       /* let aaID = aGetDateRefE("", "", 12)
+                        let aObjKeyData = { IDNO: aaID }
+                        if (NewDiv !== undefined) {
+                            aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+                        }
+                        let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));*/
+
+                        //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                }
+             )
+            }    
+   
+
     </script>
 </head>
 
@@ -324,7 +364,7 @@
             "method": "POST",
             "timeout": 0,
             "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": afqrFull }), //"�pageID='Resigned'�"
+            "data": JSON.stringify({ "@": afqrFull }), 
         };
         // var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/' + aaPXXI, function (e) {
         var jqxhr = $.post(afsettings, function (e) { })
@@ -357,25 +397,17 @@
                         aEMPPDFI = "https://cbsdev2.locktonwattana.com";
                     }
 
-                    // Employee 
-                    /**
-                     *  aaEmployee Read from ExtraOnline.dbo.XOLStaffs (Not Resigned)
-                     *  
-                     * */
-
                     let aqrFull = "Where Status != 'Resigned' "
-                    //setInterval(aGetD2V(aaDMZSn, "[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff " + aqrFull, "EMPCode,FullNameThai,FullNameEng,Dept,DivCode,Position,EmailAddress", "aaOBJEmp"), 10)
 
                     let aFieldSelected = "EMPCode,FullNameThai,FullNameEng,Dept,DivCode,Position,EmailAddress,AccDeptCode,AccDivCode,Status"
                     let aFullBody = "Select " + aFieldSelected + " From ExtraOnLine.dbo.XOLStaffs " + aqrFull; //alert(aFullBody)   " + aDBEMPServerName + ".                                        
-                    //aaDMZSn
+                    //Employee Load
                     fetch(aEMPPDFI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody }), redirect: "follow" })
                         .then(response => response.json())
                         //
                         .then(aData => {
                             var aaEmployee = aData;
                             // Division  
-                            //let aqrFull2 = "Where Status != 'Resigned' "
                             let aFieldSelected2 = "AccDivCode"
                             let aFullBody2 = "Select " + aFieldSelected2 + " From ExtraOnLine.dbo.XOLDivision ORDER BY AccDivCode" //+ aqrFull2; //alert(aFullBody)   " + aDBServerName + ".           
                             //setInterval(aGetData4Model(aaDMZSn, atob(aaXToX), "c2dee741-7ecd-498c-b761-56e7db248b89", "all", "aaOBJDiv"), 10)
@@ -386,30 +418,31 @@
                                 .then(aData => {
                                     var aaDivision = aData;
 
-                                    /**
-                                     *  Add data to the array using push() method
-                                     * */
-                                    let newAaDivision = { AccDivCode: "1194-09" };
-                                    aaDivision.push(newAaDivision);
+                                    //let newAaDivision = { AccDivCode: "1194-09" };
+                                    //aaDivision.push(newAaDivision);
+                                    let zeroData = { AccDivCode: "-00" };
+                                    // Using a for loop to add newAaDivision elements to aaDivision
+                                    for (let i = 0; i < newAaDivision.length; i++) {
+                                        aaDivision.push(newAaDivision[i]);
+                                    }
+                                    aaDivision = aaDivision.filter(item => item.AccDivCode !== zeroData.AccDivCode);
+                                    const duplicates = findDuplicates(aaDivision);
+                                    //console.log(duplicates); // Output: ['1127-00']
+                                    aaDivision = aaDivision.filter(item => !duplicates.includes(item.AccDivCode));
+                                    const transformedArray = duplicates.map(item => ({ AccDivCode: item }));
+                                    //console.log(transformedArray);
                                     //console.log(aaDivision);
-                                    //console.log(aData);
-                                    /*
-                                    // Approver Next IDNO " + aDBServerName + ".
-                                    let aFieldSelected3 = "NextNO"
-                                    let aFullBody3 = "Select " + aFieldSelected3 + " From ExtraOnLine.dbo.ApproverNextNoView " //+ aqrFull2; //alert(aFullBody) 
-                                    //aaDMZSn
-                                    fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody3 }), redirect: "follow" })
-                                        .then(response => response.json())
-                                        //
-                                        .then(aData => {
-                                            var aaNextNOn = aData;
+                                    aaDivision = aaDivision.concat(transformedArray);
+                                    aaDivision.sort((a, b) => {
+                                        if (a.AccDivCode > b.AccDivCode) {
+                                            return 1;
+                                        }
+                                        if (a.AccDivCode < b.AccDivCode) {
+                                            return -1;
+                                        }
+                                        return 0;
+                                    });
 
-                                            //setInterval(aGetD2V(aaPFDMI, "ExtraOnLine.dbo.ApproverNextNoView ", "NextNO", "asOBJNext"), 10) //ApproverNextNoView
-                                            //let aaNextNOn = JSON.parse(localStorage.getItem("asOBJNext"));
-                                            //var aaDivision = JSON.parse(localStorage.getItem("aaOBJDiv"));
-                                            //var aaEmployee = JSON.parse(localStorage.getItem("aaOBJEmp"));
-                                            aaNextNOp = String(aaNextNOn[0].NextNO).padStart(5, '0')
-                                    */
                                     var aMMaMx = localStorage["MMaMx"];
                                     var aRRgRs = aMMaMx.split('0');
                                     var aDDeDx = aRRgRs[0];
@@ -450,7 +483,7 @@
                                             "Content-Type": "application/json"
                                         },
                                         "data": JSON.stringify({
-                                            "@": aqrFull //"�Status!='Resigned'�"
+                                            "@": aqrFull //"Status!='Resigned'"
                                         }),
                                     };
 
@@ -488,7 +521,7 @@
 
                                         allowColumnReordering: true,
                                         allowColumnResizing: true,
-                                        columnMinWidth: 100,
+                                        columnMinWidth: 40,
                                         columnChooser: {
                                             enabled: true
                                         },
@@ -521,7 +554,7 @@
                                         },
                                         pager: {
                                             showPageSizeSelector: true,
-                                            allowedPageSizes: [10, 20, 50],
+                                            allowedPageSizes: [10, 15, 20],
                                             showInfo: true
                                         },
                                         showBorders: true,
@@ -606,114 +639,421 @@
                                                     e.component.option('toolbarItems[1].options.icon', aCancelicon);
                                                     e.component.option('toolbarItems[1].options.type', aCancelType);
                                                 }
-                                            }
+                                            },
+
+                                            form: {
+                                                labelLocation: 'left',
+                                                //labelMode: 'floating',
+                                                showColonAfterLabel: false,
+                                                colCount: 1,
+                                                items: [
+                                                    {
+                                                        itemType: "group",
+                                                        caption: "APPROVAL CONDITION",
+                                                        //icon: "fas fa-info-circle",
+                                                        //captionTemplate: groupCaptionTemplate('info'),
+                                                        cssClass: "custom-group",
+                                                        colCount: 4,
+                                                        items: [
+
+                                                            {
+                                                                dataField: "ApproverCode",
+                                                                label: { text: "TYPE" },
+                                                                //caption: "Type",
+                                                                dataType: "string",
+                                                                //groupIndex: 0,
+                                                                //editorType: "dxTextBox",
+                                                                editorOptions: { width: 100 },
+                                                                sortOrder: "asc",
+                                                                lookup: {
+                                                                    dataSource: arAPTYPE,
+                                                                    valueExpr: "CODE",
+                                                                    displayExpr: "CODE",
+                                                                },
+                                                                width: 100,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "ApproveToDivision",
+                                                                label: { text: "Approve For" },
+                                                                sortOrder: "asc",
+                                                                dataType: "string",
+                                                                editorOptions: { width: 140 },
+                                                                showClearButton: true,
+                                                                lookup: {
+                                                                    dataSource: aaDivision, //JSON.parse(localStorage.getItem("aaOBJDiv")), //aaDivision,
+                                                                    valueExpr: "AccDivCode",
+                                                                    displayExpr: "AccDivCode",
+                                                                },
+                                                                //setCellValue: function(newData, value, currentRowData) {   
+                                                                //    newData.ApproveToDivision = value;
+                                                                //},         
+                                                                //validationRules: [{ type: "required" }],
+                                                                width: 140,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+
+                                                            {
+                                                                dataField: "AppOrder",
+                                                                label: { text: "Order" },
+                                                                dataType: "number",
+                                                                editorType: "dxNumberBox",
+                                                                editorOptions: {
+                                                                    format: "###",
+                                                                    width: 100,
+                                                                    value: 0,
+                                                                    min: 0,
+                                                                    max: 9,
+                                                                    showSpinButtons: true,
+                                                                },
+                                                                width: 120,
+                                                                visible: false,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 2,
+                                                            },
+                                                            {
+                                                                dataField: "AppDefault",
+                                                                label: { text: "Fleet Card Approval" },
+                                                                dataType: "boolean",
+                                                                //editorType: "dxSwitch",
+                                                                editorOptions: { switchedOffText: "NO", switchedOnText: "YES" },
+                                                                width: 120,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "LRange01",
+                                                                label: { text: "Limit From" },
+                                                                dataType: "number",
+                                                                format: { type: "fixedPoint", precision: 2 },
+                                                                editorType: "dxNumberBox",
+                                                                editorOptions: {
+                                                                    format: "#,##0.00",
+                                                                    width: 120,
+                                                                    value: 0,
+                                                                    step: 5000,
+                                                                    min: 0,
+                                                                    max: 9999999,
+                                                                    showSpinButtons: true,
+                                                                    //rtlEnabled: true 
+                                                                },
+                                                                width: 120,
+                                                                visible: true,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "LRange02",
+                                                                label: { text: "Limit To" },
+                                                                dataType: "number",
+                                                                format: { type: "fixedPoint", precision: 2 },
+                                                                editorType: "dxNumberBox",
+                                                                editorOptions: {
+                                                                    format: "#,##0.00",
+                                                                    width: 120,
+                                                                    value: 0,
+                                                                    step: 5000,
+                                                                    min: 15000,
+                                                                    max: 9999999,
+                                                                    showSpinButtons: true,
+                                                                    //rtlEnabled: true 
+                                                                },
+                                                                width: 120,
+                                                                visible: true,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                        ],
+
+                                                    },
+                                                    {
+                                                        itemType: "group",
+                                                        caption: "APPROVER INFO",
+                                                        //icon: "fas fa-info-circle",
+                                                        //captionTemplate: groupCaptionTemplate('info'),
+                                                        cssClass: "custom-group-header",
+                                                        colCount: 4,
+                                                        items: [
+                                                            {
+                                                                dataField: "ApproverEmpID",
+                                                                label: { text: "Approver ID" },
+                                                                dataType: "string",
+                                                                editCellTemplate: dropDownBoxEMP,
+                                                                setCellValue: function (newData, value, currentRowData) {
+                                                                    if (arDataU === 1) {
+                                                                        let aResult = aSearchEMP(aaEmployee, value);
+                                                                        newData.ApproverEmpID = value;
+                                                                        newData.ApproverDept = aResult[0].AccDeptCode;
+                                                                        newData.ApproverDiv = aResult[0].AccDivCode;
+                                                                        newData.ApproverEmail = aResult[0].EmailAddress;
+                                                                        newData.ApproverName = aResult[0].FullNameThai;
+                                                                        newData.ApproverPos = aResult[0].Position;
+                                                                    }
+                                                                },
+                                                                editorOptions: { width: 100 },
+                                                                width: 100,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverName",
+                                                                label: { text: "Approver Name" },
+                                                                dataType: "string",
+                                                                editorOptions: { width: 220 },
+                                                                width: 220,
+                                                                colSpan: 2,
+                                                            },
+
+                                                            {
+                                                                dataField: "ApproverPos",
+                                                                label: { text: "Position" },
+                                                                dataType: "string",
+                                                                editorOptions: { width: 220 },
+                                                                width: 200,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverEmail",
+                                                                label: { text: "Approver Email" },
+                                                                dataType: "string",
+                                                                editorOptions: { width: 220 },
+                                                                width: 300,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverDept",
+                                                                label: { text: "Department" },
+                                                                editorOptions: { width: 100 },
+                                                                width: 100,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "ApproverDiv",
+                                                                label: { text: "Division" },
+                                                                editorOptions: { width: 100 },
+                                                                width: 100,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "IDNO",
+                                                                label: { text: "IDNO" },
+                                                                sortOrder: "asc",
+                                                                allowHiding: false,
+                                                                editorOptions: { width: 80 },
+                                                                width: 80,
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "ApperverDesc",
+                                                                label: { text: "Approver Desc" },
+                                                                width: 200,
+                                                                editorOptions: { width: 200 },
+                                                            },
+                                                            {
+                                                                itemType: "Empty",
+                                                                colSpan: 1,
+                                                            },
+                                                            {
+                                                                dataField: "Note",
+                                                                label: { text: "Note" },
+                                                                editorType: "dxTextArea",
+                                                                editorOptions: { width: 950, height: 80 },
+                                                                width: 950,
+                                                                colSpan: 4,
+                                                            },
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+
+
                                         },
                                         // column list
                                         columns: [
                                             {
                                                 type: "buttons",
-                                                width: 110,
+                                                width: 20,
+                                                buttons: [// Clone first record ID++
+                                                    {
+                                                        hint: "Clone this Line",
+                                                        icon: "fas fa-plus",
+                                                        visible: true,
+                                                        onClick: (e) => {
+                                                            let result = DevExpress.ui.dialog.confirm("Are you sure to clone this RECORD ? <br> ", "CLONE THIS RECORD ?");
+                                                            result.done(function (dresult) {
+                                                                if (dresult) {
+                                                                    aSaveCloneN(e.row.data, aaTBKey, aaPFDMI, aaXToX)
+
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                }
+                                                            })
+                                                        }
+                                                    },
+                                                ]
+                                            },
+                                            {
+                                                type: "buttons",
+                                                width: 80,
                                                 buttons: ["edit", "delete"]
                                             },
-
                                             {
-                                                dataField: "ApproverCode",
-                                                caption: "Type",
-                                                dataType: "string",
-                                                //groupIndex: 0,
-                                                //editorType: "dxTextBox",
-                                                editorOptions: { width: 100 },
-                                                sortOrder: "asc",
-                                                lookup: {
-                                                    dataSource: arAPTYPE,
-                                                    valueExpr: "CODE",
-                                                    displayExpr: "CODE",
-                                                },
-                                                width: 100,
+                                                caption: 'APPROVAL CONDITION',
+                                                columns: [
+                                                    /*{
+                                                        dataField: "Department",
+                                                        caption: "Department",
+                                                        sortOrder: "asc",
+                                                        calculateGroupValue: function (data) {
+                                                            // Return the first 4 characters of the ApproveToDivision
+                                                            return data.ApproveToDivision ? data.ApproveToDivision.substring(0, 4) : null;
+                                                        },
+                                                        groupIndex: 0 // Group by this column
+                                                    },  
+                                                    */
+                                                    {
+                                                        dataField: "DivisionGroup",
+                                                        caption: "Division Group",
+                                                        calculateGroupValue: function (data) {
+                                                            // Return the first 4 characters of the ApproveToDivision
+                                                            return data.ApproveToDivision ? data.ApproveToDivision.substring(0, 8) : null;
+                                                        },
+                                                        groupIndex: 0, // Group by this column
+                                                        //visible: false,
+                                                    },                                                                                              
+                                                    {
+                                                        dataField: "ApproverCode",
+                                                        caption: "Type",
+                                                        dataType: "string",
+                                                        //groupIndex: 0,
+                                                        //editorType: "dxTextBox",
+                                                        editorOptions: { width: 100 },
+                                                        sortOrder: "asc",
+                                                        lookup: {
+                                                            dataSource: arAPTYPE,
+                                                            valueExpr: "CODE",
+                                                            displayExpr: "CODE",
+                                                        },
+                                                        width: 100,
+                                                    },
+                                                    {
+                                                        dataField: "ApproveToDivision",
+                                                        caption: "Approve For",
+                                                        sortOrder: "asc",
+                                                        dataType: "string",
+                                                        editorOptions: { width: 140 },
+                                                        showClearButton: true,
+                                                        lookup: {
+                                                            dataSource: aaDivision, //JSON.parse(localStorage.getItem("aaOBJDiv")), //aaDivision,
+                                                            valueExpr: "AccDivCode",
+                                                            displayExpr: "AccDivCode",
+                                                        },
+                                                        //setCellValue: function(newData, value, currentRowData) {   
+                                                        //    newData.ApproveToDivision = value;
+                                                        //},         
+                                                        //validationRules: [{ type: "required" }],
+                                                        width: 140,
+                                                    },
+                                                    {
+                                                        dataField: "AppOrder",
+                                                        caption: "Order",
+                                                        dataType: "number",
+                                                        //
+                                                        editorType: "dxNumberBox",
+                                                        editorOptions: {
+                                                            format: "###",
+                                                            width: 100,
+                                                            value: 0,
+                                                            min: 0,
+                                                            max: 9,
+                                                            showSpinButtons: true,
+                                                        },
+                                                        width: 120,
+                                                        visible: false,
+                                                    },
+                                                    {
+                                                        dataField: "AppDefault",
+                                                        caption: "Fleet Card Approval",
+                                                        dataType: "boolean",
+                                                        //editorType: "dxSwitch",
+                                                        //cssClass: "custom-editor",
+                                                        editorOptions: { switchedOffText: "NO", switchedOnText: "YES" },
+                                                        width: 120,
+                                                    },
+                                                    {
+                                                        dataField: "LRange01",
+                                                        caption: "Limit From",
+                                                        dataType: "number",
+                                                        sortOrder: "asc",
+                                                        format: { type: "fixedPoint", precision: 2 },
+                                                        editorType: "dxNumberBox",
+                                                        editorOptions: {
+                                                            format: "#,##0.00",
+                                                            width: 120,
+                                                            value: 0,
+                                                            step: 5000,
+                                                            min: 0,
+                                                            max: 9999999,
+                                                            showSpinButtons: true,
+                                                            //rtlEnabled: true 
+                                                        },
+                                                        width: 120,
+                                                        visible: true,
+                                                    },
+                                                    {
+                                                        dataField: "LRange02",
+                                                        caption: "Limit To",
+                                                        dataType: "number",
+                                                        format: { type: "fixedPoint", precision: 2 },
+                                                        editorType: "dxNumberBox",
+                                                        editorOptions: {
+                                                            format: "#,##0.00",
+                                                            width: 120,
+                                                            value: 0,
+                                                            step: 5000,
+                                                            min: 15000,
+                                                            max: 9999999,
+                                                            showSpinButtons: true,
+                                                            //rtlEnabled: true 
+                                                        },
+                                                        width: 120,
+                                                        visible: true,
+                                                    },
+                                                ],
                                             },
-                                            {
-                                                dataField: "ApproveToDivision",
-                                                caption: "Approve For",
-                                                sortOrder: "asc",
-                                                dataType: "string",
-                                                editorOptions: { width: 140 },
-                                                showClearButton: true,
-                                                lookup: {
-                                                    dataSource: aaDivision, //JSON.parse(localStorage.getItem("aaOBJDiv")), //aaDivision,
-                                                    valueExpr: "AccDivCode",
-                                                    displayExpr: "AccDivCode",
-                                                },
-                                                //setCellValue: function(newData, value, currentRowData) {   
-                                                //    newData.ApproveToDivision = value;
-                                                //},         
-                                                //validationRules: [{ type: "required" }],
-                                                width: 140,
-                                            },
-                                            {
-                                                dataField: "AppOrder",
-                                                caption: "Order",
-                                                dataType: "number",
-                                                //
-                                                editorType: "dxNumberBox",
-                                                editorOptions: {
-                                                    format: "###",
-                                                    width: 100,
-                                                    value: 0,
-                                                    min: 0,
-                                                    max: 9,
-                                                    showSpinButtons: true,
-                                                },
-                                                width: 120,
-                                                visible: false,
-                                            },
-                                            {
-                                                dataField: "AppDefault",
-                                                caption: "Fleet Card Approval",
-                                                dataType: "boolean",
-                                                //editorType: "dxSwitch",
-                                                //cssClass: "custom-editor",
-                                                editorOptions: { switchedOffText: "NO", switchedOnText: "YES"},
-                                                width: 120,
-                                            },
-                                            {
-                                                dataField: "LRange01",
-                                                caption: "Limit From",
-                                                dataType: "number",
-                                                format: { type: "fixedPoint", precision: 2 },
-                                                editorType: "dxNumberBox",
-                                                editorOptions: {
-                                                    format: "#,##0.00",
-                                                    width: 120,
-                                                    value: 0,
-                                                    step: 5000,
-                                                    min: 0,
-                                                    max: 9999999,
-                                                    showSpinButtons: true,
-                                                    //rtlEnabled: true 
-                                                },
-                                                width: 120,
-                                                visible: true,
-                                            },
-                                            {
-                                                dataField: "LRange02",
-                                                caption: "Limit To",
-                                                dataType: "number",
-                                                format: { type: "fixedPoint", precision: 2 },
-                                                editorType: "dxNumberBox",
-                                                editorOptions: {
-                                                    format: "#,##0.00",
-                                                    width: 120,
-                                                    value: 0,
-                                                    step: 5000,
-                                                    min: 15000,
-                                                    max: 9999999,
-                                                    showSpinButtons: true,
-                                                    //rtlEnabled: true 
-                                                },
-                                                width: 120,
-                                                visible: true,
-                                            },
-                                            {
+                                            /*{
                                                 caption: "[ APPROVER INFORMATION ]",
                                                 editorOptions: { width: 0 },
                                                 visible: false,
@@ -722,7 +1062,7 @@
                                                 caption: " ",
                                                 editorOptions: { width: 0 },
                                                 visible: false,
-                                            },
+                                            },*/
                                             {
                                                 caption: 'APPROVER',
                                                 columns: [
@@ -853,6 +1193,42 @@
                                                     location: "after",
                                                     widget: "dxButton",
                                                     visible: false,
+                                                    
+                                                    options: {
+                                                        icon: "fas fa-clone",
+                                                        text: "CLONING",
+                                                        type: "danger",
+                                                        stylingMode: "contained",
+                                                        onClick: function (e) {
+                                                            //dataGrid.refresh();
+                                                            aCloningPopup(aaDivision)
+                                                            //aPopupEMP() //
+                                                        }
+                                                    }
+                                                },                                                
+                                                {
+                                                    location: "after",
+                                                    widget: "dxButton",
+                                                    //visible: false,
+                                                    
+                                                    options: {
+                                                        icon: "fas fa-user-friends",
+                                                        text: "DELEGATE",
+                                                        type: "danger",
+                                                        //disabled: true,
+                                                        stylingMode: "outlined", //"contained",
+                                                        onClick: function () {
+                                                            //dataGrid.refresh();
+                                                            //aPopupEMP() //
+                                                            //console.log("button DELEGATE ", aaEmployee)
+                                                            DelegatePopup(aaDivision,aaEmployee)
+                                                        }
+                                                    }
+                                                },                                                 
+                                                {
+                                                    location: "after",
+                                                    widget: "dxButton",
+                                                    visible: false,
                                                     options: {
                                                         icon: "fas fa-check-circle",
                                                         text: "STAFF LIST",
@@ -927,12 +1303,404 @@
                                             );
                                         }
                                     }).dxDataGrid("instance");
-                                    /*                                  contentTemplate: function () {
-                                                                                    return $("<div />").append(
-                                                                                        $("<p><div id='EMP-dxDataGrid'></div></p>"), //divForm
-                                                                                    );
-                                                                                },
-                                    */
+
+
+                                    const aCloningPopup = (aaDivision) => {
+                                        var CloneData = { Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" , PreDivision: "", NextDivision: ""};
+                                        var aaPreDiv;
+                                        var aaNewDiv;
+                                        const popup = $("#popupHelp").dxPopup({
+                                            title: "CLONING",
+                                            height: 200,
+                                            width: 600,
+                                            scrollingEnabled: true,
+                                            maxHeight: 600,
+                                            position: { offset: "-180 -280" },
+                                            visible: true,
+                                            showCloseButton: true,
+                                            //contentTemplate: aApproversHelp,
+                                            contentTemplate: function () {
+                                                return $("<div />").append(
+                                                   $("<p><div id='Clone-Form'></div></p>"), 
+                                                   $("<span id='CloneConfirm'></span>"),
+                                                   $("<span style='padding: 5px 15px;'></span>").text(" "),
+                                                   $("<span id='Clonepopupexit'></span>"),
+                                                );
+                                            },
+                                        }).dxPopup("instance");
+
+                                        $("#Clone-Form").dxForm({
+                                            formData: CloneData, //{ Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" },
+                                            itemType: "group",
+                                            showColonAfterLabel: false,
+                                            labelLocation: "left",                                            
+                                            colCount: 4,
+                                            items: [
+                                                {
+                                                    dataField: "PreDivision",
+                                                    editorType: "dxSelectBox",  
+                                                    label: { text: "From Division" },
+                                                    editorOptions: {
+                                                        width: "90px",
+                                                        searchEnabled: true, // enable search aaTypeCode
+                                                        dataSource: aaDivision,
+                                                        displayExpr: "AccDivCode",
+                                                        valueExpr: "AccDivCode",
+                                                        onValueChanged: function (e) {
+                                                            console.log(" aaPreDiv = ",e.value)
+                                                            aaPreDiv = e.value
+                                                        }, 
+                                                    },
+                                                                                                 
+                                                    visible: true,
+                                                },
+                                                {
+                                                    itemType: "empty",
+                                                    colSpan: 1,
+                                                },                                                
+                                                {
+                                                    dataField: "NextDivision",
+                                                    editorType: "dxSelectBox", 
+                                                    label: { text: "To Division" },
+                                                    editorOptions: {
+                                                        width: "90px",
+                                                        searchEnabled: true, // enable search aaTypeCode
+                                                        dataSource: aaDivision,
+                                                        displayExpr: "AccDivCode",
+                                                        valueExpr: "AccDivCode",
+                                                        onValueChanged: function (e) {
+                                                            console.log(" aaNewDiv = ",e.value)
+                                                            aaNewDiv = e.value
+                                                        },
+                                                    },
+                                                    visible: true,
+                                                },
+                                                /*
+                                                {
+                                                    dataField: "Requester",
+                                                    label: { text: "Requester" },
+                                                    editorType: "dxSelectBox",
+                                                    editorOptions: {
+                                                        width: "300px",
+                                                        searchEnabled: true,
+                                                        dataSource: aaEmployee,
+                                                        valueExpr: "EMPCode",
+                                                        displayExpr: "FullNameThai",
+                                                        showClearButton: true,
+                                                        onValueChanged: function (e) {
+                                                            let aResult = aSearch2json(aaEmployee, "EMPCode", e.value);
+                                                            aaDiv = aResult[0].AccDivCode
+                                                            aaEmp = aResult[0].EMPCode
+                                                            //affData.Division = aResult[0].AccDivCode;
+                                                        },
+                                                    },
+                                                },
+
+                                                {
+                                                    itemType: "empty"
+                                                },
+
+                                                {
+                                                    dataField: "EXPType",
+                                                    editorType: "dxSelectBox",  //aaERTYPE
+                                                    label: { text: "Type" },
+                                                    editorOptions: {
+                                                        width: "200px",
+                                                        value: "200",
+                                                        searchEnabled: true, // enable search aaTypeCode
+                                                        dataSource: aaERTYPE,
+                                                        displayExpr: "ERTYPE",
+                                                        valueExpr: "CODE",
+                                                        onValueChanged: function (e) {
+                                                            aaTypeCode = e.value
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    itemType: "empty"
+                                                },
+                                                {
+                                                    dataField: "RAmount",
+                                                    editorType: "dxNumberBox",
+                                                    editorOptions: { width: "120px", format: "#,##0.00", rtlEnabled: true },
+                                                    label: { text: "Reimbursement" },
+                                                    visible: false,
+                                                },
+                                                {
+                                                    dataField: "Approver",
+                                                    editorType: "dxTextBox",
+                                                    editorOptions: { width: "300px" },
+                                                    label: { text: "Approver Name" },
+                                                    visible: false,
+                                                },
+                                                {
+                                                    dataField: "AppEmpID",
+                                                    editorType: "dxTextBox",
+                                                    editorOptions: { width: "90px" },
+                                                    label: { text: "Approver ID" },
+                                                    visible: false,
+
+                                                },
+                                                {
+                                                    dataField: "AppEmail",
+                                                    editorType: "dxTextBox",
+                                                    editorOptions: { width: "300px" },
+                                                    label: { text: "Approver Email" },
+                                                    visible: false,
+                                                },
+                                                */
+                                            ]
+
+                                        }).dxForm("instance");
+                                      
+                                        $("#CloneConfirm").dxButton({
+                                            hint: "Cloning Confirm",
+                                            icon: "fas fa-check-circle",
+                                            type: "default",
+                                            text: "CONFIRM",
+                                            visible: true,
+                                            onClick: function (e) {
+                                                let result = DevExpress.ui.dialog.confirm("Confirm to clone ? <br> from Division " + aaPreDiv + " To Division " + aaNewDiv , "CLONE THIS RECORD ?"); 
+                                                            result.done(function (dresult) {
+                                                                if (dresult) {
+                                                                    ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
+                                                        
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                }
+                                                            })
+                                                        }
+                                        });
+                                       
+                                        $("#Clonepopupexit").dxButton({
+                                            hing: "Exit",
+                                            icon: "fas fa-times",
+                                            type: "danger",
+                                            text: "EXIT",
+                                            width: "120px",
+                                            visible: true,
+                                            onClick: function () {
+                                                popup.hide();
+                                            }
+                                        });                                    
+                                    
+                                    }
+
+
+                                    const DelegatePopup = (aaDivision,aaaEmployee) => {
+                                        var DelegateData = { Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" , PreDivision: "", NextDivision: "",ApperverDesc: "", NewApprover: ""};
+                                        var aaPreApprover;
+                                        var aaNewApprover;
+                                        var aaPreAppCode;
+                                        var aaNewAppCode;
+                                        //console.log("inside ",aaaEmployee)
+                                        const popup = $("#popupHelp").dxPopup({
+                                            title: "DELEGATE",
+                                            height: 250,
+                                            width: 1000,
+                                            scrollingEnabled: true,
+                                            maxHeight: 600,
+                                            position: { offset: "-180 -280" },
+                                            visible: true,
+                                            showCloseButton: true,
+                                            //contentTemplate: aApproversHelp,
+                                            contentTemplate: function () {
+                                                return $("<div />").append(
+                                                   $("<p><div id='delegate-Form'></div></p>"), 
+                                                   $("<p><br><br><br></div></p>"),
+                                                   $("<span id='delegateConfirm'></span>"),
+                                                   $("<span style='padding: 5px 15px;'></span>").text(" "),
+                                                   $("<span id='delegatepopupexit'></span>"),
+                                                );
+                                            },
+                                        }).dxPopup("instance");
+
+                                        $("#delegate-Form").dxForm({
+                                            formData: DelegateData, //{ Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" },
+                                            itemType: "group",
+                                            showColonAfterLabel: false,
+                                            labelLocation: "left",                                            
+                                            colCount: 4,
+                                            items: [
+                                                {
+                                                    dataField: "Approver",
+                                                    editorType: "dxSelectBox",  
+                                                    label: { text: "From Division" },
+                                                    editorOptions: {
+                                                        width: "90px",
+                                                        searchEnabled: true, // enable search aaTypeCode
+                                                        dataSource: aaDivision,
+                                                        displayExpr: "AccDivCode",
+                                                        valueExpr: "AccDivCode",
+                                                        onValueChanged: function (e) {
+                                                            console.log(" aaPreDiv = ",e.value)
+                                                            aaPreApprover = e.value
+                                                        }, 
+                                                    },
+                                                                                                 
+                                                    visible: false,
+                                                },
+                                                {
+                                                    dataField: "Approver",
+                                                    label: { text: "Approver" },
+                                                    editorType: "dxSelectBox",
+                                                    editorOptions: {
+                                                        width: "300px",
+                                                        searchEnabled: true,
+                                                        dataSource: aaEmployee,
+                                                        valueExpr: "FullNameThai",
+                                                        displayExpr: "FullNameThai",
+                                                        showClearButton: true,
+                                                        onValueChanged: function (e) {
+                                                            //let aResult = aSearch2json(aaEmployee, "EMPCode", e.value);
+                                                            //aaDiv = aResult[0].AccDivCode
+                                                            aaPreApprover = e.value //
+                                                            let aResult = aSearch2json(aaEmployee, "FullNameThai", e.value);
+                                                            aaPreAppCode = aResult[0].EMPCode
+                                                            //affData.Division = aResult[0].AccDivCode;
+                                                        },
+                                                    },
+                                                },                                                
+                                                {
+                                                    itemType: "empty",
+                                                    colSpan: 1,
+                                                },                                                
+                                                {
+                                                    dataField: "NewApprover",
+                                                    editorType: "dxSelectBox", 
+                                                    label: { text: "New Approver" },
+                                                    editorType: "dxSelectBox",
+                                                    editorOptions: {
+                                                        width: "300px",
+                                                        searchEnabled: true,
+                                                        dataSource: aaEmployee,
+                                                        valueExpr: "FullNameThai",
+                                                        displayExpr: "FullNameThai",
+                                                        showClearButton: true,
+                                                        onValueChanged: function (e) {
+                                                            aaNewApprover = e.value
+                                                            let aResult = aSearch2json(aaEmployee, "FullNameThai", e.value);
+                                                            //aaDiv = aResult[0].AccDivCode
+                                                            aaNewAppCode = aResult[0].EMPCode
+                                                            //affData.Division = aResult[0].AccDivCode;
+                                                        },
+                                                    },
+                                                    visible: true,
+                                                },
+                                                /*
+                                                {
+                                                    dataField: "Requester",
+                                                    label: { text: "Requester" },
+                                                    editorType: "dxSelectBox",
+                                                    editorOptions: {
+                                                        width: "300px",
+                                                        searchEnabled: true,
+                                                        dataSource: aaEmployee,
+                                                        valueExpr: "EMPCode",
+                                                        displayExpr: "FullNameThai",
+                                                        showClearButton: true,
+                                                        onValueChanged: function (e) {
+                                                            let aResult = aSearch2json(aaEmployee, "EMPCode", e.value);
+                                                            aaDiv = aResult[0].AccDivCode
+                                                            aaEmp = aResult[0].EMPCode
+                                                            //affData.Division = aResult[0].AccDivCode;
+                                                        },
+                                                    },
+                                                },
+
+                                                {
+                                                    itemType: "empty"
+                                                },
+
+                                                {
+                                                    dataField: "EXPType",
+                                                    editorType: "dxSelectBox",  //aaERTYPE
+                                                    label: { text: "Type" },
+                                                    editorOptions: {
+                                                        width: "200px",
+                                                        value: "200",
+                                                        searchEnabled: true, // enable search aaTypeCode
+                                                        dataSource: aaERTYPE,
+                                                        displayExpr: "ERTYPE",
+                                                        valueExpr: "CODE",
+                                                        onValueChanged: function (e) {
+                                                            aaTypeCode = e.value
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    itemType: "empty"
+                                                },
+                                                {
+                                                    dataField: "RAmount",
+                                                    editorType: "dxNumberBox",
+                                                    editorOptions: { width: "120px", format: "#,##0.00", rtlEnabled: true },
+                                                    label: { text: "Reimbursement" },
+                                                    visible: false,
+                                                },
+                                                {
+                                                    dataField: "Approver",
+                                                    editorType: "dxTextBox",
+                                                    editorOptions: { width: "300px" },
+                                                    label: { text: "Approver Name" },
+                                                    visible: false,
+                                                },
+                                                {
+                                                    dataField: "AppEmpID",
+                                                    editorType: "dxTextBox",
+                                                    editorOptions: { width: "90px" },
+                                                    label: { text: "Approver ID" },
+                                                    visible: false,
+
+                                                },
+                                                {
+                                                    dataField: "AppEmail",
+                                                    editorType: "dxTextBox",
+                                                    editorOptions: { width: "300px" },
+                                                    label: { text: "Approver Email" },
+                                                    visible: false,
+                                                },
+                                                */
+                                            ]
+
+                                        }).dxForm("instance");
+                                      
+                                        $("#delegateConfirm").dxButton({
+                                            hint: "Delegate Confirm",
+                                            icon: "fas fa-check-circle",
+                                            type: "default",
+                                            text: "CONFIRM",
+                                            visible: true,
+                                            onClick: function (e) {
+                                                let result = DevExpress.ui.dialog.confirm("Confirm to Delegate Approver ? <br> from Approver " + aaPreApprover + " [" + aaPreAppCode + "]" + " To Approver " + aaNewApprover + " [" + aaNewAppCode + "]" , "DELEGATE ?"); 
+                                                            result.done(function (dresult) {
+                                                                if (dresult) {
+                                                                    //ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
+
+                                                                    delegateAction("", aaTBKey, aaPFDMI, aaXToX, aaPreApprover, aaNewApprover, aaPreAppCode, aaNewAppCode, aaaEmployee)
+                                                                    //ApproverEmpID
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                }
+                                                            })
+                                                        }
+                                        });
+                                       
+                                        $("#delegatepopupexit").dxButton({
+                                            hing: "Exit",
+                                            icon: "fas fa-times",
+                                            type: "danger",
+                                            text: "EXIT",
+                                            width: "120px",
+                                            visible: true,
+                                            onClick: function () {
+                                                popup.hide();
+                                            }
+                                        });                                    
+                                    
+                                    }
 
                                     const aPopupEMP = () => {
                                         const popup = $("#popupHelp").dxPopup({
