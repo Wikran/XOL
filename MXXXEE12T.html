@@ -182,13 +182,7 @@
             height: 380px !important;
         }
  
-        /* Custom CSS for the editing area IT is working */
-        #Add-dxDataGrid .dx-datagrid .dx-editor-cell .dx-texteditor-input { 
-            height: 100%; /* Set the height to 400px */
-            line-height: normal; /* Ensure normal line height */
-            padding: 0; /* Remove any padding */
-            margin: 0; /* Remove any margin */            
-        }
+ 
 
         .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
             height: 380px;
@@ -270,7 +264,15 @@
 
         .custom-editor {
             font-size: 11.5px;
-            font-family: Tahoma, Segoe UI, Geneva, Verdana, sans-serif;
+            font-family: Tahoma, Segoe UI, Geneva, Verdana, sans-serif;            
+        }
+
+       /* Custom CSS for the editing area IT is working */
+       #Add-dxDataGrid .dx-datagrid .dx-editor-cell .dx-texteditor-input { 
+            height: 100%; /* Set the height to 400px */
+            line-height: normal; /* Ensure normal line height */
+            padding: 0; /* Remove any padding */
+            margin: 0; /* Remove any margin */            
         }
 
         .dx-icon {
@@ -349,6 +351,27 @@
             background-color: var(--dgSelBar);
             color: unset;
         }
+        .dx-popup-fullscreen .dx-popup-bottom {
+            /*float: left;         
+            margin-top: -240px; Adjust this value as needed */
+            position: absolute;
+            left: -1400px;
+            top: 650px;
+        }
+        /* Custom CSS to change the color and background color of the buttons */
+        .dx-popup-fullscreen .dx-popup-bottom .dx-button {
+            background-color: #c7fec9d4; /* Change this to your desired background color */
+            color: rgb(4, 4, 4); /* Change this to your desired text color */
+            /* border: 1px; Optional: Remove border */
+            /*padding: 10px 20px;  Optional: Adjust padding */
+            font-size: 12px; /* Optional: Adjust font size */
+            font-weight: bold;
+        }
+
+        /* Optional: Add hover effect */
+        .dx-popup-fullscreen .dx-popup-bottom .dx-button:hover {
+            background-color: #dbfcdce8; /* Change this to your desired hover background color */
+        }
 
         /*
         .dx-datagrid .dx-row.dx-selection .dx-icon {
@@ -359,11 +382,11 @@
         }*/
     </style>
     <script>
-        window.onload = function () {
+        /*window.onload = function () {
             setTimeout(function () {
                 location.reload();
             }, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-        }
+        }*/
 
         $(document).ready(function () {
             var aDXTheme = localStorage["aDXTheme"]
@@ -909,7 +932,7 @@
     <div id="aformSave"></div>
     <div id="popup"></div>
     <div id="showPopupButton"></div>
-    <div id="row-alternation"></div>
+    <!--<div id="row-alternation"></div>-->
     <div data-bind="dxPopup: { onInitialized: onInit, ... }"></div>
     <dx-popup (onInitialized)="onInit($event)"></dx-popup>
 
@@ -1308,7 +1331,7 @@
                                                                         return (e.row.data.ID === 1 && e.row.data.Confirmed === true && e.row.data.HODApproved === false) //return !e.row.isEditing;
                                                                     },
                                                                     onClick: function (e) {
-                                                                        let result = DevExpress.ui.dialog.confirm("Are you sure you want to Un-Confirmed to Edit this Record ? <br> ขณะนี้อยู่ระหว่างการดำเนินการตรวจสอบเพื่ออนุมัติของ คุณ" + e.row.data.Vendor02Note + " <br><p style='color:Red; font-size: 12px;' > กรุณาตรวจสอบให้รอบคอบก่อนการดำเนินการต่อ <br><b><u>ไม่เช่นนั้น</u> อาจเกิดการผิดพลาดในขั้นตอนการขออนุมัติได้ </b></p><p style='color: grey; font-size: 10px;'></p>ยืนยันหรือไม่", "UN-CONFIRMED ?"); // "<br>กด 'YES' เพื่อบันทึก" +
+                                                                        let result = DevExpress.ui.dialog.confirm("Are you sure you want to Un-Confirmed to Edit this Record ? <br> �׹�ѹ���� ���¡�����š�Ѻ���������ö��䢢����� ������������ Email ��价��س <br>" + e.row.data.Vendor02Note + "[" + aaHODAppEmail +"]" + " <br><p style='color:Red; font-size: 12px;' ><br><p style='color: grey; font-size: 10px;'></p>�س��ͧ���¡��ԡ����׹�ѹ (UN-Confirmed) �������?", "UN-CONFIRMED ?"); // 
                                                                         result.done(function (dresult) {
                                                                             if (dresult) {
                                                                                 // mark Confirmed field
@@ -1338,7 +1361,8 @@
                                                                                 let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
                                                                                 let aSubject = aaOnInitExpGroupDesc + " EXPENSES REIMBURSEMENT - CALLBACK"
                                                                                 let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                let aMessage01 = "<div>เรียน คุณ" + $.trim(aApproverName) + "<br>ผู้ขออนุมัติได้เรียกข้อมูล " + aaOnInitExpGroupDesc + " Expenses Reimbursement สำหรับ REFNO = [" + e.row.data.HeadRefNo + "]<br> กลับไปแก้ไข <br> ใช้งานโปรแกรมที่ " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
+                                                                                let aMessageT1 = "<div>เรีย�� ��ุณ" + $.trim(aApproverName) + "<br>��ู����ออ��ุมัติ��ด��เรีย������อมูล " + aaOnInitExpGroupDesc + " Expenses Reimbursement สำหรั�� REFNO = [" + e.row.data.HeadRefNo + "]<br> ��ลั���������������� <br> ��������า������ร����รมที�� " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
+                                                                                let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) +  aEmailTRF[7]  + aaOnInitExpGroupDesc + " Expenses REFNO = [" + aRefNoa + aEmailTRF[8] + aAddress2Do + aEmailTRF[12]+ aRequesterName + aEmailTRF[5] 
                                                                                 //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
                                                                                 //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
                                                                                 var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #9700F9; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#F5E6FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
@@ -1706,7 +1730,7 @@
                                                         //asDivision 
                                                         var asPREDepartment = iData.EROCode05; //(iData.EROCode05 === "" ? asDepartment : iData.EROCode05)
                                                         var asPREDivision = iData.EROCode06; //(iData.EROCode06 === "" ? asDivision : iData.EROCode06)
-                                                        insideAddNew = false;
+                                                        //insideAddNew = false;
                                                     //}
                                                     var aaSchRefx = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // (DataGrid View Only This New Item)
                                                     aqrFull = aaSchRefx;
@@ -1922,10 +1946,7 @@
                                                                 },      
                                                                 {
                                                                     itemType: "empty",
-                                                                    colSpan: 1, // Adjust if necessary
-                                                                    //editorOptions: {
-                                                                    //    class: "empty-space"
-                                                                    //}
+                                                                    colSpan: 1, 
                                                                 },  
                                                                 {
                                                                     dataField: "EROCode06",
@@ -1938,7 +1959,7 @@
                                                                     label: { text: "Previous Department" },
                                                                     editorType: "dxTextBox",
                                                                     editorOptions: { readOnly: true,  width: 100 ,elementAttr: {class: "custom-editor"}},
-                                                                },                                                                                                                                                                                                                                                                                                                                                                                                                  
+                                                                },                                           
                                                                 {
                                                                     itemType: "empty",
                                                                     colSpan: 1, 
@@ -2086,7 +2107,7 @@
                                                         let aSubmitD = aSubD.substring(8, 10) + "/" + aSubD.substring(5, 7) + "/" + aSubD.substring(0, 4)
                                                         //let aSubmitD =  aSubD.getFullYear() + "/" + aSubD.getMonth() + "/" + aSubD.getDate()
                                                         let atitledtl = "Travel & Expenses Expenses Reimbursement";
-                                                        let aAlertMessage = "<big>กรุณาแนบใบเสร็จและเอกสารที่จำเป็นมาด้วย ไม่เช่นนั้นจะไม่สามารถทำการเบิกได้ **</big>";
+                                                        let aAlertMessage = "<big>��รุณา����������เสร������ละเอ��สารที����ำเ������มาด��วย ��ม��เ��������ั������ะ��ม��สามารถทำ��ารเ��ิ����ด�� **</big>";
                                                         let arectanglehtml = "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><rect x='1' y='1' width='100' height='100' stroke='black' stroke-width='0.2' fill='none' /></svg>"
                                                         let arspace = (no) => { return "&nbsp;".repeat(no) }; //= "&nbsp;".repeat(30);
                                                         let arlineno = (nor) => { return "<br>".repeat(nor) };
@@ -2102,17 +2123,17 @@
                                                             $("<div style = 'margin-left: " + abodyleftm + "'>รายละเอียด - DESCRIPTIONS</div>"),
                                                             $("<div style = 'margin-left: " + atopmargin + "'>" + aDetailHTML + " </div>"),
                                                             //$("<p><div style = 'margin-left: " + abodyleftm + "' id='detail-dxDataGrid'></div></p>"),
-                                                            $("<p style = 'margin-left: " + abodyleftm + "'>ข้อมูลทางบ/ช - ACCOUNTING INFORMATION</p>"),
+                                                            $("<p style = 'margin-left: " + abodyleftm + "'>����อมูลทา����/�� - ACCOUNTING INFORMATION</p>"),
                                                             $("<div style = 'margin-left: " + atopmargin + "'>" + aACHTML + " </div>"),
                                                             //$("<p><div style = 'margin-left: " + abodyleftm + "' id='ACCChart-dxDataGrid'></div></p>"), //#ACCChart-dxDataGri alastLine
-                                                            $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)), //.text("กรุณาแนบ ใบเสร็จ มาพร้อมกับเอกสารฉบับนี้ | Please attach the receipt with this document."),
+                                                            $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)), //.text("��รุณา������ ����เสร���� มา��ร��อม��ั��เอ��สาร����ั����ี�� | Please attach the receipt with this document."),
                                                             //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
                                                             //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
                                                             //$(" " + arlineno(8) + "<center><div style = 'margin-left: " + abodylefts + "' class= 'colorRBGlightgrey'>Requester ___________________________________________ <span style='padding: 100px 20px;'>" + arspace(25) + "Approver ___________________________________________</span></div></center>"),
                                                             //$("<span style = 'margin-left: " +  abodylefts + "'></span>").text(" "),
-                                                            $(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>ผู้ขออนุมัติ (Requester)</b></small></div>"),
+                                                            $(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>��ู����ออ��ุมัติ (Requester)</b></small></div>"),
                                                             $("<span>" + arspace(28) + "</span>"),
-                                                            $("<div class='colorRBGlightgrey';><small><b>ผู้อนุมัติ (Approver)</b></small></div>"),
+                                                            $("<div class='colorRBGlightgrey';><small><b>��ู��อ��ุมัติ (Approver)</b></small></div>"),
                                                             //Requester_______________</span></div>' + arspace(25) + '<span class = 'colorBGlightgrey';>Approver</span>'),
                                                         );
                                                         //console.log(aHTMLsource)       
@@ -2432,6 +2453,7 @@
                                                                 {
                                                                     dataField: "ExpensesCode",
                                                                     caption: "CODE",
+                                                                    editorType: "dxTextBox",
                                                                     editorOptions: { width: 100 },
                                                                     width: 100,
                                                                     visible: true,
@@ -2526,7 +2548,7 @@
                                                         var ObjRowData = JSON.stringify(ObjKeyData);
                                                         console.log(ObjRowData)
                                                         sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
-                                                        insideAddNew = true;
+                                                        //insideAddNew = true;
                                                         //console.log(aTRFresult)    
                                                     } else {
                                                         var aaiHeadRef = aRecNo;
@@ -2539,7 +2561,7 @@
                                                         editingMode = aTRFREFNO.substring(0, 1) === "R" ? "popup" : "cell";
                                                         console.log(aTRFREFNO, aTRFREFNO.substring(0, 1), editingMode)
                                                         asDivision = iData.Division;
-                                                        insideAddNew = false;
+                                                        //insideAddNew = false;
                                                     }
                                                     var aaSchRefx = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // (DataGrid View Only This New Item)
                                                     aqrFull = aaSchRefx;
@@ -2656,7 +2678,7 @@
                                                             onClick: function (e) {
                                                                 $("#gridContainer").dxDataGrid("instance").refresh();
                                                                 if (aRecNo === 1) {
-                                                                    let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>กด 'YES' เพื่อบันทึก" +
+                                                                    let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
                                                                     result.done(function (dresult) {
                                                                         if (dresult) {
                                                                             // not delete 
@@ -2685,13 +2707,13 @@
                                                             text: "CONFIRM",
                                                             visible: true,
                                                             onClick: function (e) {
-                                                                var dataGrid = $("#Add-dxDataGrid").dxDataGrid("instance");
-                                                                var isValid = true;
+                                                                //var dataGrid = $("#Add-dxDataGrid").dxDataGrid("instance");
+                                                                //var isValid = true;
 
-                                                                dataGrid.getController("validating").validate(true).then(function (validationResult) {
-                                                                    isValid = validationResult.isValid;
-                                                                });
-                                                                if (!isValid) { alert("test") } else {
+                                                                //dataGrid.getController("validating").validate(true).then(function (validationResult) {
+                                                                //    isValid = validationResult.isValid;
+                                                                //});
+                                                                //if (!isValid) { alert("test") } else {
 
                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
@@ -2772,7 +2794,7 @@
                                                                                     //console.log("xx",atestCehcka); // Logs the actual message
                                                                                     if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTravelEnAlert01, "INPUT ERROR"); }
                                                                                     else {
-                                                                                        let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> " + " Press [YES] to confirm and send email to HOD " + aaHODAppName + " (" + aaHODAppEmail + ") <br></b></p><p style='color: darkgreen; font-size: 14px;'>(" + (xxChkLenxx) + " HOD to approve)</p>", "CONFIRM TO HOD"); // "<br>กด 'YES' เพื่อบันทึก" +
+                                                                                        let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> " + " Press [YES] to confirm and send email to HOD " + aaHODAppName + " (" + aaHODAppEmail + ") <br></b></p><p style='color: darkgreen; font-size: 14px;'>(" + (xxChkLenxx) + " HOD to approve)</p>", "CONFIRM TO HOD"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
                                                                                         result.done(function (dresult) {
                                                                                             if (dresult) {
 
@@ -2803,8 +2825,8 @@
                                                                                                 var aSubject = aaMailTitle
                                                                                                 let aRefNoa = aaiHeadRef //iData.HeadRefNo
                                                                                                 let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                                let aMessage01 = "<div>เรียน คุณ" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;กรุณาตรวจสอบ และอนุมัติรายการ " + aaOnInitExpGroupDesc + " Expenses สำหรับ REFNO = [" + aRefNoa + "]<br> สามารถเข้าใช้โปรแกรมได้ที่ " + aAddress2Do + " (หัวข้อ Approve --> HOD Approve) <br><br>ขอแสดงความนับถือ<br>" + aRequesterName + "</div>"
-                                                                                                //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
+                                                                                                let aMessageX1 = "<div>เรีย�� ��ุณ" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��รุณาตรว��สอ�� ��ละอ��ุมัติราย��าร " + aaOnInitExpGroupDesc + " Expenses สำหรั�� REFNO = [" + aRefNoa + "]<br> สามารถเ����า����������ร����รม��ด��ที�� " + aAddress2Do + " (หัว����อ Approve --> HOD Approve) <br><br>��อ��สด����วาม��ั��ถือ<br>" + aRequesterName + "</div>"
+                                                                                                let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) +  aEmailTRF[1]  + aaOnInitExpGroupDesc + " Expenses REFNO = [" + aRefNoa + aEmailTRF[3] + aAddress2Do + aEmailTRF[4] + aEmailTRF[12]+ aRequesterName + aEmailTRF[5]                                                                       //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                                                                 var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                                                 aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
 
@@ -2824,7 +2846,7 @@
                                                                                 }); // then check  
                                                                         });
                                                                     //} // if (aRecNo === 1) {
-                                                                }
+                                                                //}
                                                             }//validate
                                                         });
 
@@ -3130,10 +3152,10 @@
                                                                 },                                                             
                                                                 popup: {
                                                                     title: "Travel & Expenses Reimbursement",
-                                                                    fullScreen: false,
+                                                                    fullScreen: true, //false,
                                                                     showTitle: true,
-                                                                    width: 1600,
-                                                                    height: 730,
+                                                                    width: 1650,
+                                                                    height: 500,
 
                                                                     position: {
                                                                         my: "top",
@@ -3160,18 +3182,11 @@
                                                                         itemType: 'tabbed', //"group" itemType: "tabbed"
                                                                         tabPanelOptions: {
                                                                             deferRendering: true,
-                                                                            selectedIndex: 1,//activeTabIndex, // Use the stored active tab index   
-                                                                            //onSelectionChanged: function(e) {
-                                                                            //            alert(e.component.option("selectedIndex"))
-                                                                            //            activeTabIndex = e.component.option("selectedIndex"); // Update the active tab index
-                                                                            //        },                                                                             
-                                                                                                                                                    
+                                                                            selectedIndex: 1,//activeTabIndex, // Use the stored active tab index                                                                          
                                                                             width: 1550, // Set the desired width here
                                                                             height: 580
                                                                         },
-                                                                        //colCount: 6,
-                                                                        //colSpan: 2,
-                                                                        //caption: 'Original Info',
+                                                    
                                                                         tabs: [
                                                                             {
                                                                                 title: "TRF REFNO",
@@ -3196,22 +3211,18 @@
                                                                             {
                                                                                 title: "Original Info",
                                                                                 icon: "fas fa-info-circle",
-                                                                                //captionTemplate: groupCaptionTemplate('info'),
                                                                                 iconPosition: "start",
                                                                                 colCount: 1,
                                                                                 items: [
                                                                                     {
                                                                                         itemType: "group",
                                                                                         caption: "GENERAL INFO",
-                                                                                        //icon: "fas fa-info-circle",
-                                                                                        //captionTemplate: groupCaptionTemplate('info'),
                                                                                         cssClass: "custom-group",
                                                                                         colCount: 11,
                                                                                         items: [
                                                                                             {
                                                                                                 dataField: "ID",
                                                                                                 label: { text: "NO" },
-                                                                                                //cssClass: "verylight-blue",
                                                                                                 elementAttr: {class: "colorRed"},
                                                                                                 editorOptions: { width: 60, readOnly: true, },
                                                                                                 colSpan: 1,
@@ -3229,10 +3240,8 @@
                                                                                                 editorOptions: {
                                                                                                     displayFormat: "dd/MM/yyyy",
                                                                                                     width: 140,
-                                                                                                    //showClearButton: true,
                                                                                                     showTodayButton: true,
-                                                                                                },	  //showClearButton: true,  //value: new Date(), 
-                                                                                                //validationRules: [{ type: "required", message: "Bill Date is required" }],
+                                                                                                },	  
                                                                                                 validationRules: [{ type: "required" }, {
                                                                                                     type: "range",
                                                                                                     min: new Date(aYearStrS + "-04-30"), //aYearStrS
@@ -3242,7 +3251,7 @@
                                                                                                 colSpan: 1,
                                                                                             },
                                                                                             {
-                                                                                                itemType: "Empty",
+                                                                                                itemType: "empty",
                                                                                                 colSpan: 1,
                                                                                             },
 
@@ -3261,7 +3270,7 @@
                                                                                                 colSpan: 2,
                                                                                             },
                                                                                             {
-                                                                                                itemType: "Empty",
+                                                                                                itemType: "empty",
                                                                                                 colSpan: 1,
                                                                                             },
                                                                                             {
@@ -3275,14 +3284,13 @@
                                                                                                 },
                                                                                                 editorOptions: {
                                                                                                     width: 80,
-                                                                                                    elementAttr: { class: "custom-editor" }
-                                                                                                    //onValueChanged: function (e) { }  
+                                                                                                    elementAttr: { class: "custom-editor" } 
                                                                                                 }                                                                  
                                                                                             },      
                                                                                             {
-                                                                                                itemType: "Empty",
+                                                                                                itemType: "empty",
                                                                                                 colSpan: 3,
-                                                                                            },                                                                                                                                                                                  
+                                                                                            },                                                                                  
                                                                                             {
                                                                                                 dataField: "ERODesc02",
                                                                                                 label: { text: "Description" },
@@ -3294,7 +3302,7 @@
                                                                                                 colSpan: 3,
                                                                                             },
                                                                                             {
-                                                                                                itemType: "Empty",
+                                                                                                itemType: "empty",
                                                                                                 colSpan: 1,
                                                                                             },                                                                                    
                                                                                             {
@@ -3308,7 +3316,7 @@
                                                                                                 colSpan: 3,
                                                                                             },
                                                                                             {
-                                                                                                itemType: "Empty",
+                                                                                                itemType: "empty",
                                                                                                 colSpan: 1,
                                                                                             },                                                                                    
                                                                                             {
@@ -3327,14 +3335,12 @@
                                                                                     caption: "CALCULATION",
                                                                                     icon: "fas fa-info-circle",
                                                                                     cssClass: "custom-group-header",
-                                                                                    //captionTemplate: function(data, container) {container.append('<i class="fas fa-info-circle"></i> ' + data.caption);},
-                                                                                    //colCount: 10,
                                                                                     colCount: 5,
                                                                                     items: [
                                                                                     {
                                                                                         dataField: "Amount",
                                                                                         label: { text: "Original currency" },
-                                                                                        dataType: "number",
+                                                                                        //dataType: "number",
                                                                                         format: { type: "fixedPoint", precision: 2 },
                                                                                         setCellValue: function (newData, value, currentRowData) {
                                                                                             newData.Amount = value;
@@ -3357,20 +3363,21 @@
                                                                                     {
                                                                                         dataField: "Currency",
                                                                                         label: { text: "Currency" },
-                                                                                        lookup: {
+                                                                                        editorType: "dxSelectBox", //dxSelectBox dxLookup
+                                                                                        editorOptions: {
                                                                                             dataSource: aCurrenciesList,
                                                                                             searchExpr: "code",
                                                                                             valueExpr: "code",
                                                                                             displayExpr: "code",
-                                                                                        },
-                                                                                        editorOptions: { width: 70, elementAttr: { class: "right-align-number" } },
-                                                                                        //colSpan: 1,
-                                                                                    },
-                                                                                    
+                                                                                            searchEnabled: true,
+                                                                                            width: 100,
+                                                                                         },
+                                                                                        colSpan: 1,
+                                                                                    }, 
                                                                                     {
                                                                                         dataField: "Xrate",
                                                                                         label: { text: "X-Rate" },
-                                                                                        dataType: "number",
+                                                                                        //dataType: "number",
                                                                                         editorType: "dxNumberBox",
                                                                                         editorOptions: { format: "#,##0.000000", width: 120, elementAttr: { class: "right-align-number" } },
                                                                                         format: "#,##0.000000",
@@ -3413,7 +3420,7 @@
                                                                                         colSpan: 1,
                                                                                     },
                                                                                     {
-                                                                                        itemType: "Empty",
+                                                                                        itemType: "empty",
                                                                                         colSpan: 1,
                                                                                     },                                                                                    
                                                                                     {
@@ -3619,6 +3626,7 @@
                                                                 {
                                                                     dataField: "HeadRefNo",
                                                                     caption: "REFNO",
+                                                                    cssClass: "custom-editor",
                                                                     editorOptions: { width: 30, readOnly: true, elementAttr: { class: "custom-editor" } },
                                                                     width: 40,
                                                                     visible: false,
@@ -3626,6 +3634,7 @@
                                                                 {
                                                                     dataField: "ERORefNo4",
                                                                     caption: "Bill No",
+                                                                    cssClass: "custom-editor",
                                                                     editorOptions: { width: 70, elementAttr: { class: "custom-editor" } },
                                                                     width: 70,
                                                                     visible: true,
@@ -3638,6 +3647,7 @@
                                                                     width: 95,
                                                                     stylingMode: 'filled',
                                                                     editorType: "dxDateBox", //"dxDateBox", //"dxCalendar", function (){return null}
+                                                                    cssClass: "custom-editor",
                                                                     editorOptions: {
                                                                         //value: null,
                                                                         //showClearButton: true,
@@ -3662,8 +3672,9 @@
                                                                     editorType: "dxTextArea",
                                                                     alignment: 'top',
                                                                     width: 230,
-                                                                    height: 200,
-                                                                    editorOptions: { width: 230, height: 200,  }, //elementAttr: { class: "custom-editor" }
+                                                                    height: 60,
+                                                                    cssClass: "custom-editor",
+                                                                    editorOptions: { width: 230, height: 200, cssClass: "custom-editor", }, //elementAttr: { class: "custom-editor" }
                                                                     visible: true,
                                                                 },
                                                                 {
@@ -3672,7 +3683,8 @@
                                                                     alignment: 'top',
                                                                     editorType: "dxTextArea",
                                                                     width: 230,
-                                                                    height: 200,
+                                                                    height: 60,
+                                                                    cssClass: "custom-editor",
                                                                     editorOptions: { width: 230, height: 200, cssClass: "custom-editor", },  //elementAttr: { class: "custom-editor" } 
                                                                     visible: true,
                                                                 },
@@ -3682,8 +3694,9 @@
                                                                     label: { text: "Company/Perosnal Name" },
                                                                     editorType: "dxTextArea",
                                                                     width: 230,
-                                                                    height: 200,
-                                                                    editorOptions: { width: 230, height: 200,}, // elementAttr: { class: "custom-editor" } 
+                                                                    height: 60,
+                                                                    cssClass: "custom-editor",
+                                                                    editorOptions: { width: 230, height: 200, cssClass: "custom-editor",}, // elementAttr: { class: "custom-editor" } 
                                                                     visible: true,
                                                                 },
                                                                 {
@@ -3691,7 +3704,8 @@
                                                                     caption: "TRF REF##",
                                                                     editorType: "dxTextBox",
                                                                     width: 120,
-                                                                    editorOptions: { width: 150, },
+                                                                    cssClass: "custom-editor",
+                                                                    editorOptions: { width: 150, cssClass: "custom-editor", },
                                                                     editCellTemplate: dropDownBoxTRF,
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         //let aResult = aSearch2json(aaTRFGroup01, "HeadRefNo", value)
@@ -3703,9 +3717,10 @@
                                                                 {
                                                                     dataField: "ERORefNo3",
                                                                     caption: "Type of Reimbursement*",
-                                                                    width: 185,
+                                                                    width: 250,
                                                                     editorType: "dxTextBox",
-                                                                    editorOptions: { width: 185, showClearButton: true, elementAttr: { class: "custom-editor" } },
+                                                                    cssClass: "custom-editor",
+                                                                    editorOptions: { width: 250, showClearButton: true, elementAttr: { class: "custom-editor" } },
                                                                     editCellTemplate: dropDownBoxACC,
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         let aResult = aSearch2json(aaSubGroup01, "EDESC", value)
@@ -3719,6 +3734,7 @@
                                                                     dataField: "EROCheck05",
                                                                     caption: "GIFT",
                                                                     editorType: "dxCheckBox",
+                                                                    cssClass: "custom-editor",
                                                                     setCellValue: function(newData, value, currentRowData){
                                                                         newData.EROCheck05 = value;
                                                                         newData.RefundedAmount = 0;
@@ -3735,6 +3751,7 @@
                                                                     dataField: "Amount",
                                                                     caption: "Original currency*",
                                                                     dataType: "number",
+                                                                    cssClass: "custom-editor",
                                                                     format: { type: "fixedPoint", precision: 2 },
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         newData.Amount = value;
@@ -3757,7 +3774,8 @@
                                                                         valueExpr: "code",
                                                                         displayExpr: "code",
                                                                     },
-
+                                                                    cssClass: "custom-editor",
+                                                                    editorType: "dxTextBox",
                                                                     editorOptions: { width: 70, elementAttr: { class: "custom-editor" } },
                                                                     width: 70,
                                                                     visible: true,
@@ -3769,9 +3787,11 @@
                                                                     editorType: "dxNumberBox",
                                                                     editorOptions: { format: "#,##0.000000", width: 80, elementAttr: { class: "custom-editor" } },
                                                                     format: "#,##0.000000",
+                                                                    cssClass: "custom-editor",
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         //let anewX = 1; //anewX = currentRowData.Amount; //newData.Xrate = value
-                                                                        if (currentRowData.EROCheck05 === True) {
+                                                                        console.log (currentRowData.EROCheck05, " currentRowData")
+                                                                        if (currentRowData.EROCheck05 ) { //=== true
                                                                             newData.RefundedAmount = 0
                                                                         } else {
                                                                         newData.Xrate = value;
@@ -3781,6 +3801,7 @@
                                                                         //aXratea = value;  
                                                                         //aaRefunda = value * currentRowData.Amount; 
                                                                         newData.EROAmount2 = (value * currentRowData.Amount) / currentRowData.EROAmount1;
+                                                                        console.log(newData.EROAmount2)
                                                                         }
                                                                     },
                                                                     width: 80,
@@ -3795,7 +3816,7 @@
                                                                     editorOptions: { format: "#,##0.00", width: 85, readOnly: false, elementAttr: { class: "custom-editor" } }, //aaDiffa
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         //let anewX = 1; //anewX = currentRowData.Amount; //newData.Xrate = value
-                                                                        if (currentRowData.EROCheck05 === True) {
+                                                                        if (currentRowData.EROCheck05 ) { //=== True
                                                                             //
                                                                         } else {
                                                                             newData.RefundedAmount = value;
@@ -4435,11 +4456,11 @@
                                                                 showCloseButton: true,
                                                                 contentTemplate:
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
-                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>กดที่ icon " + "<i class='fas fa-plus'></i>" + " เพื่อเพิ่ม รายการ </li><li>จะเป็นรายการ เปล่าไม่มีข้อมูล ยกเว้น หัวข้อวันที่ จะแสดงเป็นวันนี้</li></ul></br></p>" +
+                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>��ดที�� icon " + "<i class='fas fa-plus'></i>" + " เ��ื��อเ��ิ��ม ราย��าร </li><li>��ะเ������ราย��าร เ��ล��า��ม��มี����อมูล ย��เว���� หัว����อวั��ที�� ��ะ��สด��เ������วั����ี��</li></ul></br></p>" +
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
-                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>กดที่ icon " + "<i class='fas fa-trash'></i>" + " เพื่อลบรายการในบรรทัดที่เลือก</li><li>แต่ถ้าเลือกลบ บรรทัดที่ 1 จะถือว่าเป็นการลบข้อมูลทั้งหมด ** ต้องระมัดระวัง </ul></li></br></p>" +
+                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>��ดที�� icon " + "<i class='fas fa-trash'></i>" + " เ��ื��อล��ราย��าร������รรทัดที��เลือ��</li><li>��ต��ถ��าเลือ��ล�� ��รรทัดที�� 1 ��ะถือว��าเ��������ารล������อมูลทั����หมด ** ต��อ��ระมัดระวั�� </ul></li></br></p>" +
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-redo'></i>" + " REFRESH</div>" +
-                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>กดที่ icon " + "<i class='fas fa-plus'></i>" + " เพื่อเพิ่ม รายการ </li><li>จะเป็นรายการ เปล่าไม่มีข้อมูล ยกเว้น หัวข้อวันที่ จะแสดงเป็นวันนี้</li></ul></br></p>" +
+                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>��ดที�� icon " + "<i class='fas fa-plus'></i>" + " เ��ื��อเ��ิ��ม ราย��าร </li><li>��ะเ������ราย��าร เ��ล��า��ม��มี����อมูล ย��เว���� หัว����อวั��ที�� ��ะ��สด��เ������วั����ี��</li></ul></br></p>" +
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " INPUT VDO</div>" +
                                                                     "<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
                                                             }).dxPopup("instance");

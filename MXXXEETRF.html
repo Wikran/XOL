@@ -365,41 +365,7 @@
             const xxNameArr = JSON.parse(xaChkName);
             return xxNameArr;
         }
-/*
-        function aGenPDF4HTML() {
-            // Step 1: Include the jsPDF library
-            // Step 2: Create a new instance of the jsPDF object
-            var doc = new jsPDF();
-
-            // Step 3: Use the html method to add the HTML, JavaScript, and jQuery code to the PDF
-            var html = '<h1>Hello, World!</h1>';
-            doc.html(
-                html, {
-                callback: function (doc) {
-                    console.log("Hello, World!");
-                    $("#example").click(function () { console.log("Button clicked!"); });
-                }
-            }
-            );
-            // Step 4: Use the save method to save the PDF
-            doc.save('document.pdf');
-        }
-*/        
-/*
-        function generatePDF() {
-            var pdf = new jsPDF({
-                orientation: 'p',
-                unit: 'mm',
-                format: 'a5',
-                putOnlyUsedFonts: true
-            });
-            pdf.text("Generate a PDF with JavaScript", 20, 20);
-            pdf.text("published on APITemplate.io", 20, 30);
-            pdf.addPage();
-            pdf.text(20, 20, 'The second page');
-            pdf.save('jsPDF_2Pages.pdf');
-        }
-*/
+       
         function aPDFFromHTML(source) {
             var doc = new jsPDF();
 
