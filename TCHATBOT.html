@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +21,7 @@
     <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
     <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
     <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
-    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">    
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
     <!-- Include jQuery from a CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
@@ -32,28 +33,33 @@
             padding: 10px;
             overflow-y: auto;
         }
+
         .message {
             margin: 5px 0;
         }
+
         .user {
             text-align: right;
             color: blue;
         }
+
         .bot {
             text-align: left;
             color: green;
         }
     </style>
 </head>
+
 <body>
     <h1>CHATBOT</h1>
     <!-- Chatbot container -->
     <div id="chatbot"></div>
-    <input type="text" id="userInput" placeholder="Type a message..." />
+    <input type="text" id="userInput" placeholder="Type a message" />
     <button id="sendButton">Send</button>
 
     <script>
-        $(document).ready(function() {
+
+        $(document).ready(function () {
             const responses = {
                 "hello": "Hi there! How can I help you?",
                 "how are you": "I'm just a bot, but I'm here to help you!",
@@ -84,7 +90,7 @@
                 return "I'm sorry, I don't understand that.";
             }
 
-            $('#sendButton').click(function() {
+            $('#sendButton').click(function () {
                 const userInput = $('#userInput').val();
                 if (userInput.trim() !== "") {
                     displayMessage(userInput, 'user');
@@ -94,7 +100,7 @@
                 }
             });
 
-            $('#userInput').keypress(function(e) {
+            $('#userInput').keypress(function (e) {
                 if (e.which == 13) { // Enter key pressed
                     $('#sendButton').click();
                 }
@@ -103,41 +109,8 @@
             // Initial welcome message
             displayMessage("Welcome to the chatbot!", 'bot');
         });
-
-        var popup = $("#popup").dxPopup({
-                    title: "Please Select Year",
-                    width: 250,
-                    height: "auto",
-                    position: { offset: "-100 -350" },
-                    contentTemplate: function (contentElement) {
-                        $("<div>").dxList({
-                            dataSource: options,
-                            height: "100%",
-                            selectionMode: "single",
-                            onSelectionChanged: function (e) {
-                                // Get the selected option
-                                var selectedOption = e.addedItems[0];
-                                // Set the aNowDte variable based on the selected option
-                                if (selectedOption.id) {
-                                    var year = new Date().getFullYear();
-                                    var month = 3; // April is month 3 (zero-based)
-                                    var day = 30;
-                                    var aNowDte = new Date(year, month, day);
-                                    console.log("aNowDte: " + aNowDte);
-                                } else {
-                                    var today = new Date();
-                                    var aNowDte = new Date(); //var aNowDte = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
-                                    console.log("aNowDte: " + aNowDte);
-                                }
-                                // Close the popup
-                                popup.hide();
-                                // Call the callback function with the selected date
-                                callback(aNowDte);
-                            }
-                        }).appendTo(contentElement);
-                    }
-                }).dxPopup("instance");        
+       
     </script>
 </body>
-</html>
 
+</html>

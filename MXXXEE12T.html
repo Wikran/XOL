@@ -89,6 +89,10 @@
         }
 
         /*-----------------------------*/
+        #scversion {
+            color: darkgreen;
+            font-size: 12px;  
+        }
         #gridContainer .dx-datagrid-headers {
             color: var(--dgColor) !important;
             background-color: var(--dgBG) !important;
@@ -351,6 +355,7 @@
             background-color: var(--dgSelBar);
             color: unset;
         }
+
         .dx-popup-fullscreen .dx-popup-bottom {
             /*float: left;         
             margin-top: -240px; Adjust this value as needed */
@@ -919,6 +924,7 @@
 
 <body class="dx-viewport">
     <div id="gridContainer"></div>
+    <div id="scversion"><br>&#10026; V.24.10.04</div> 
     <div id="popupChangeDiv"></div>
     <div id="popupChangeDivForm"></div>
     <div id="aConfirmCDIV"></div>
@@ -982,17 +988,17 @@
                         var TaaERTYPE = "800"
                         //TRF
                         let aaaDivisionC = (localStorage["agbNewDiv"] === undefined) ? localStorage["asDIV"] : localStorage["agbNewDiv"];
-                        console.log("TRF Division ", aaaDivisionC)
+                        //console.log("TRF Division ", aaaDivisionC)
                         let Taxqr2S = "Where ExpGroupCode LIKE '%" + TaaERTYPE + "%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                         let TaxFieldSelected = "HeadRefNo,ExpGroupCode,Department,Division,ERODesc02,ERODesc03"
                         let TaxFullBody = "Select " + TaxFieldSelected + " From " + "ExtraOnLine.dbo.TRVREQF " + Taxqr2S; //alert(aFullBody)
-                        console.log("TaxFullBody = ", TaxFullBody)
+                        //console.log("TaxFullBody = ", TaxFullBody)
                         fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(TaxFullBody) }), redirect: "follow" })
                             .then(response => response.json())
                             //
                             .then(TacData => {
                                 var aaTRFGroup01 = TacData;
-                                console.log("TacData = ", aaTRFGroup01)
+                                //console.log("TacData = ", aaTRFGroup01)
 
                                 let axqr2S = "Where EXPGroup LIKE '%" + aaERTYPE + "%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                                 let axFieldSelected = "ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE,EXPGroup,EXPDesc"
@@ -1362,7 +1368,7 @@
                                                                                 let aSubject = aaOnInitExpGroupDesc + " EXPENSES REIMBURSEMENT - CALLBACK"
                                                                                 let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
                                                                                 let aMessageT1 = "<div>à¹€à¸£à¸µà¸¢à¸ÿ à¸ÿà¸¸à¸“" + $.trim(aApproverName) + "<br>à¸ÿà¸¹à¹ÿà¸ÿà¸­à¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´à¹ÿà¸”à¹ÿà¹€à¸£à¸µà¸¢à¸ÿà¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥ " + aaOnInitExpGroupDesc + " Expenses Reimbursement à¸ªà¸³à¸«à¸£à¸±à¸ÿ REFNO = [" + e.row.data.HeadRefNo + "]<br> à¸ÿà¸¥à¸±à¸ÿà¹ÿà¸ÿà¹ÿà¸ÿà¹ÿà¹ÿà¸ÿ <br> à¹ÿà¸ÿà¹ÿà¸ÿà¸²à¸ÿà¹ÿà¸ÿà¸£à¹ÿà¸ÿà¸£à¸¡à¸—à¸µà¹ÿ " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
-                                                                                let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) +  aEmailTRF[7]  + aaOnInitExpGroupDesc + " Expenses REFNO = [" + aRefNoa + aEmailTRF[8] + aAddress2Do + aEmailTRF[12]+ aRequesterName + aEmailTRF[5] 
+                                                                                let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) +  aEmailTRF[7]  + aaOnInitExpGroupDesc + " Expenses REFNO = [" + e.row.data.HeadRefNo + aEmailTRF[8] + aAddress2Do + aEmailTRF[12]+ aRequesterName + aEmailTRF[5] 
                                                                                 //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
                                                                                 //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
                                                                                 var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #9700F9; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#F5E6FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
@@ -3271,7 +3277,7 @@
                                                                                             },
                                                                                             {
                                                                                                 itemType: "empty",
-                                                                                                colSpan: 1,
+                                                                                                colSpan: 2,
                                                                                             },
                                                                                             {
                                                                                                 dataField: "EROCheck05",
@@ -3285,7 +3291,8 @@
                                                                                                 editorOptions: {
                                                                                                     width: 80,
                                                                                                     elementAttr: { class: "custom-editor" } 
-                                                                                                }                                                                  
+                                                                                                },
+                                                                                                visible: false,
                                                                                             },      
                                                                                             {
                                                                                                 itemType: "empty",
@@ -3745,7 +3752,8 @@
                                                                         width: 80, 
                                                                         elementAttr: { class: "custom-editor" }
                                                                         //onValueChanged: function (e) { }  
-                                                                    }                                                                  
+                                                                    },
+                                                                    visible: false,
                                                                 },
                                                                 {
                                                                     dataField: "Amount",

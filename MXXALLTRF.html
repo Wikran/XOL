@@ -90,8 +90,15 @@
         :root {
             --dgBG: #f4d2fce5;
             --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;
         }
-
+        #scversion {
+            color: darkgreen;
+            font-size: 12px;
+            /*font-weight: bold;*/
+            /*font-style: italic;*/
+        }
         /*-----------------------------*/
         #gridContainer .dx-datagrid-headers {
             color: var(--dgColor) !important;
@@ -286,13 +293,16 @@
         .dx-tab-selected {
             background-color: rgb(230, 237, 254) !important;
         }    
-        .dx-datagrid .dx-row.dx-selection { /*rgb(227, 120, 7); rgba(255, 87, 34, 1);*/
-            color: rgba(239, 0, 0, 0.994);
-            font-weight: bold;
+        .dx-datagrid .dx-row.dx-selection {
+            /*rgb(227, 120, 7); rgba(255, 87, 34, 1); rgba(239, 0, 0, 0.994);*/
+            color: var(--dgSelText);
+            /*font-weight: bold;*/
         }
-        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed) > td { /*not change the color*/
-            /*background-color: rgba(248, 219, 187, 0.312);*/
-            /*background-color: rgba(253, 242, 238, 0.697);*/
+
+        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
+            /*not change the color*/
+            /*background-color: rgba(248, 219, 187, 0.312); rgba(253, 242, 238, 0.626);*/
+            background-color: var(--dgSelBar);
             color: unset;
         }
         /*
@@ -780,6 +790,7 @@
 
 <body class="dx-viewport">
     <div id="gridContainer"></div>
+    <div id="scversion"><br>&#10026; V.24.10.04</div>
     <div id="popupContainer"></div>
     <!--<div id="action-add"></div>-->
     <div id="popupContainerAdd"></div>
