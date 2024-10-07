@@ -78,6 +78,7 @@
             color: darkgreen;
             font-size: 12px;
         }
+
         #aIndicator {
             margin: 0px 0;
             -webkit-touch-callout: none;
@@ -155,6 +156,16 @@
             /* Optional: Add some padding */
         }
     </style>
+</head>
+
+<body class="dx-viewport">
+
+    <div id="gridContainer"></div>
+    <!-- <div id="scversion"><br>&#10026; V.24.10.07</div>-->
+    <div id="popupHelp"></div>
+    <div id="popupTChk"></div>
+    <div id="popupViewEMP"></div>
+
     <script>
         window.onload = function () {
             setTimeout(function () {
@@ -237,73 +248,95 @@
         }
 
         //delegateAction
-        const delegateAction = (iData, aaTBKey, aaPFDMI, aaXToX, PreApprove, NewApprove, PreAppCode, NewAppCode, aaaEmployee) => {
-            // Search for PreDiv 
-            let aaqrFull = "Where ApproverName = '" + PreApprove + "' "
+        const delegateAction = (aChecker, aaTBKey, aaPFDMI, aaXToX, PreApprove, NewApprove, PreAppCode, NewAppCode, aaaEmployee) => {
+            // 1: Delegate, 2: CallBack, 3: Approver Raplace 
+            console.log(aChecker)
+            let aaCodeForSearch;
+            let aaqrFull;
+            let aaSubSQLCommand;
+            if (aChecker === 1) {
+                aaCodeForSearch = NewAppCode;
+                aaqrFull = "Where ApproverName = '" + PreApprove + "' ";             
+            } else if (aChecker === 2) {
+                aaCodeForSearch = PreAppCode;
+                aaqrFull = "Where ApperverDesc = '" + PreApprove + "' ";  
+                console.log("aChecker",aChecker)             
+            } else if (aChecker === 3) {
+                aaCodeForSearch = NewAppCode;
+                aaqrFull = "Where ApproverName = '" + PreApprove + "' ";                 
+            }
+            console.log(aaqrFull)         
             let aaFieldSelected2 = "IDNO,ApproverCode,ApperverDesc,ApproveToDivision,ApproverEmpID,ApproverName,ApproverEmail,ApproverDept,ApproverDiv,ApproverPos,Note,LRange01,LRange02,AppOrder,AppDefault"
             let aFullBody2 = "Select " + aaFieldSelected2 + " From ExtraOnLine.dbo.Approver " + aaqrFull
             fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody2 }), redirect: "follow" })
                 .then(response => response.json())
                 //
                 .then(aData => {
+                    console.log("Checker ", aChecker)
                     console.log("aData = ", aData)
                     console.log(typeof aData)
                     var aDataObj = { data: aData };
-                    console.log("aData.length ",aData.length)
-                    //let xData = JSON.stringify(aData);
-                    //console.log(xData)
-                    //.log(typeof xData)
-                    // Loop from i = 1 to Last
-                    // Insert New Division 1 
-                    //let aaID;
-                    for (let i = 0; i < 1; i++) { //< aData.length;
-                        console.log("aData ", "type aData ",typeof aData)
-                        //let aaID = aGetDateRefE("", "", 12)
+                    console.log("aData.length ", aData.length)
+                    for (let i = 0; i < 1; i++) { //< aData.length;, < 1;
+                        console.log("aData ", "type aData ", typeof aData)
+                        //let aaID = aGetDateRefE("", "", 12) // "Insert"
                         let aaID = aData[i].IDNO
                         console.log(aaID)
-                        
-                        //console.log(aaaEmployee)
-                        //let aObjKeyData = { ApperverDesc: PreApprove, ApproverName: NewApprove }
-                        //console.log("type KEYdata ",typeof aObjKeyData," data = ", aObjKeyData)
-                        //let aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
-                        //var aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
-                        //console.log("type Row ",typeof aObjRowData," Combine data =",aObjRowData)
-                        let aaResult = aSearch2json(aaaEmployee, "EMPCode", NewAppCode);
+                        let aaResult = aSearch2json(aaaEmployee, "EMPCode", aaCodeForSearch);
                         let aaaAccDeptCode = aaResult[0].AccDeptCode
                         let aaaAccDivCode = aaResult[0].AccDivCode
                         let aaaEMPCode = aaResult[0].EMPCode
                         let aaaEmailAddress = aaResult[0].EmailAddress
                         let aaaFullNameThai = aaResult[0].FullNameThai
                         let aaaPosition = aaResult[0].Position
-                        //ApproverEmpID = '" + aaaEMPCode + "',ApproverName = '" + NewApprove + "',ApproverEmail = '" + aaaEmailAddress + "',ApproverDept = '" + aaaAccDeptCode + "',ApproverDiv = '" + aaaAccDivCode + "',ApproverPos = '" + aaaPosition + "' "
-                        //let aSQLCommand = "use ExtraOnLine; UPDATE Approver SET ApperverDesc = '" + PreApprove + "', ApproverName = '" + NewApprove + "' Where IDNO = '" + aaID + "'" //"' Where ApproverName = '" + PreApprove + "'"
-                        let aSQLCommand = "use ExtraOnLine; UPDATE Approver SET ApperverDesc = '" + PreApprove + "',ApproverEmpID = '" + aaaEMPCode + "',ApproverName = '" + NewApprove + "',ApproverEmail = '" + aaaEmailAddress + "',ApproverDept = '" + aaaAccDeptCode + "',ApproverDiv = '" + aaaAccDivCode + "',ApproverPos = '" + aaaPosition + "' Where IDNO = '" + aaID + "'"
+                        if (aChecker === 1) {
+                                aaSubSQLCommand = 
+                                        "ApperverDesc = '" + PreApprove 
+                                        + "',ApproverEmpID = '" + aaaEMPCode 
+                                        + "',ApproverName = '" + NewApprove 
+                                        + "',ApproverEmail = '" + aaaEmailAddress 
+                                        + "',ApproverDept = '" + aaaAccDeptCode 
+                                        + "',ApproverDiv = '" + aaaAccDivCode 
+                                        + "',ApproverPos = '" + aaaPosition 
+                                        + "' Where IDNO = '" + aaID + "'"                
+                        } else if (aChecker === 2) {
+                                aaSubSQLCommand = 
+                                        "ApperverDesc = '" + " " 
+                                        + "',ApproverEmpID = '" + aaaEMPCode 
+                                        + "',ApproverName = '" + PreApprove 
+                                        + "',ApproverEmail = '" + aaaEmailAddress 
+                                        + "',ApproverDept = '" + aaaAccDeptCode 
+                                        + "',ApproverDiv = '" + aaaAccDivCode 
+                                        + "',ApproverPos = '" + aaaPosition 
+                                        + "' Where IDNO = '" + aaID + "'"                
+                        } else if (aChecker === 3) {
+                                aaSubSQLCommand =
+                                        "ApproverEmpID = '" + aaaEMPCode 
+                                        + "',ApproverName = '" + NewApprove 
+                                        + "',ApproverEmail = '" + aaaEmailAddress 
+                                        + "',ApproverDept = '" + aaaAccDeptCode 
+                                        + "',ApproverDiv = '" + aaaAccDivCode 
+                                        + "',ApproverPos = '" + aaaPosition 
+                                        + "' Where IDNO = '" + aaID + "'"                  
+                        }
+                        let aSQLCommand = "use ExtraOnLine; UPDATE Approver SET " + aaSubSQLCommand       
                         console.log(aSQLCommand)
-                        aSQLAction(aaPFDMI, aSQLCommand)
-                        aSQLAction(aaPFDMI, aSQLCommand)
-                        aSQLAction(aaPFDMI, aSQLCommand)
+                        //aSQLAction(aaPFDMI, aSQLCommand)
+                        //aSQLAction(aaPFDMI, aSQLCommand)
+                        //aSQLAction(aaPFDMI, aSQLCommand)
                         $("#gridContainer").dxDataGrid("instance").refresh();
                         $("#gridContainer").dxDataGrid("instance").refresh();
                         $("#gridContainer").dxDataGrid("instance").refresh();
                         //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));                        
-                        
-                        //let aObjRowData = $.extend({}, aData, aObjKeyData);
-                        //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
-                    }
-                       /* let aaID = aGetDateRefE("", "", 12)
-                        let aObjKeyData = { IDNO: aaID }
-                        if (NewDiv !== undefined) {
-                            aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
-                        }
-                        let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));*/
 
-                        //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                    }
+
                 }
-             )
-            }    
-            // Insert New division
-       
-        const ClonePretoNew = (iData, aaTBKey, aaPFDMI, aaXToX, PreDiv, NewDiv) => {
+                )
+        }
+        // Insert New division
+
+        const ClonePretoNew = (a, aaTBKey, aaPFDMI, aaXToX, PreDiv, NewDiv) => {
             // Search for PreDiv 
             let aaqrFull = "Where ApproveToDivision = '" + PreDiv + "' "
             let aaFieldSelected2 = "IDNO,ApproverCode,ApperverDesc,ApproveToDivision,ApproverEmpID,ApproverName,ApproverEmail,ApproverDept,ApproverDiv,ApproverPos,Note,LRange01,LRange02,AppOrder,AppDefault"
@@ -321,40 +354,27 @@
                     // Insert New Division 1 
                     let aaID;
                     for (let i = 0; i < aData.length; i++) {
-                        console.log("aData ", i , aData[i].IDNO, "type aData ",typeof aData)
+                        console.log("aData ", i, aData[i].IDNO, "type aData ", typeof aData)
                         let aaID = aGetDateRefE("", "", 12)
                         let aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
-                        console.log("type KEYdata ",typeof aObjKeyData," data = ", aObjKeyData)
+                        console.log("type KEYdata ", typeof aObjKeyData, " data = ", aObjKeyData)
                         let aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
                         //let aObjRowData = $.extend({}, aData, aObjKeyData);
-                        console.log("type Row ",typeof aObjRowData," Combine data =",aObjRowData)
+                        console.log("type Row ", typeof aObjRowData, " Combine data =", aObjRowData)
                         //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
                     }
-                       /* let aaID = aGetDateRefE("", "", 12)
-                        let aObjKeyData = { IDNO: aaID }
-                        if (NewDiv !== undefined) {
-                            aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
-                        }
-                        let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));*/
+                    /* let aaID = aGetDateRefE("", "", 12)
+                     let aObjKeyData = { IDNO: aaID }
+                     if (NewDiv !== undefined) {
+                         aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+                     }
+                     let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));*/
 
-                        //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                    //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
                 }
-             )
-            }    
-   
+                )
+        }
 
-    </script>
-</head>
-
-<body class="dx-viewport">
-
-    <div id="gridContainer"></div>
-    <div id="scversion"><br>&#10026; V.24.10.02</div>
-    <div id="popupHelp"></div>
-    <div id="popupTChk"></div>
-    <div id="popupViewEMP"></div>
-
-    <script>
 
         var aaPXIXD = localStorage["aPXIXD"];
         var aaEnt = aaPXIXD.includes("X");
@@ -369,12 +389,12 @@
             "method": "POST",
             "timeout": 0,
             "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": afqrFull }), 
+            "data": JSON.stringify({ "@": afqrFull }),
         };
         // var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/' + aaPXXI, function (e) {
         var jqxhr = $.post(afsettings, function (e) { })
             .done(function (e) {
-                console.log("set aaTBKey");
+                //console.log("set aaTBKey");
                 aObjMPage = e;
                 var aaKeyField = aObjMPage[0].PrimaryKey;
                 var aaTBKey = aObjMPage[0].TBKey;
@@ -881,7 +901,7 @@
                                                             },
                                                             {
                                                                 dataField: "ApperverDesc",
-                                                                label: { text: "Approver Desc" },
+                                                                label: { text: "Delegator" },
                                                                 width: 200,
                                                                 editorOptions: { width: 200 },
                                                             },
@@ -957,7 +977,7 @@
                                                         },
                                                         groupIndex: 0, // Group by this column
                                                         //visible: false,
-                                                    },                                                                                              
+                                                    },
                                                     {
                                                         dataField: "ApproverCode",
                                                         caption: "Type",
@@ -1141,7 +1161,7 @@
                                             },
                                             {
                                                 dataField: "ApperverDesc",
-                                                caption: "Apperver Desc",
+                                                caption: "Delegator",
                                                 width: 200,
                                                 editorOptions: { width: 200 },
                                                 visible: false,
@@ -1198,7 +1218,7 @@
                                                     location: "after",
                                                     widget: "dxButton",
                                                     visible: false,
-                                                    
+
                                                     options: {
                                                         icon: "fas fa-clone",
                                                         text: "CLONING",
@@ -1210,15 +1230,15 @@
                                                             //aPopupEMP() //
                                                         }
                                                     }
-                                                },                                                
+                                                },
                                                 {
                                                     location: "after",
                                                     widget: "dxButton",
                                                     //visible: false,
-                                                    
+
                                                     options: {
                                                         icon: "fas fa-user-friends",
-                                                        text: "DELEGATE",
+                                                        text: "BATCH",
                                                         type: "danger",
                                                         //disabled: true,
                                                         stylingMode: "outlined", //"contained",
@@ -1226,10 +1246,10 @@
                                                             //dataGrid.refresh();
                                                             //aPopupEMP() //
                                                             //console.log("button DELEGATE ", aaEmployee)
-                                                            DelegatePopup(aaDivision,aaEmployee)
+                                                            DelegatePopup(aaDivision, aaEmployee)
                                                         }
                                                     }
-                                                },                                                 
+                                                },
                                                 {
                                                     location: "after",
                                                     widget: "dxButton",
@@ -1311,7 +1331,7 @@
 
 
                                     const aCloningPopup = (aaDivision) => {
-                                        var CloneData = { Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" , PreDivision: "", NextDivision: ""};
+                                        var CloneData = { Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "", PreDivision: "", NextDivision: "" };
                                         var aaPreDiv;
                                         var aaNewDiv;
                                         const popup = $("#popupHelp").dxPopup({
@@ -1326,10 +1346,10 @@
                                             //contentTemplate: aApproversHelp,
                                             contentTemplate: function () {
                                                 return $("<div />").append(
-                                                   $("<p><div id='Clone-Form'></div></p>"), 
-                                                   $("<span id='CloneConfirm'></span>"),
-                                                   $("<span style='padding: 5px 15px;'></span>").text(" "),
-                                                   $("<span id='Clonepopupexit'></span>"),
+                                                    $("<p><div id='Clone-Form'></div></p>"),
+                                                    $("<span id='CloneConfirm'></span>"),
+                                                    $("<span style='padding: 5px 15px;'></span>").text(" "),
+                                                    $("<span id='Clonepopupexit'></span>"),
                                                 );
                                             },
                                         }).dxPopup("instance");
@@ -1338,12 +1358,12 @@
                                             formData: CloneData, //{ Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" },
                                             itemType: "group",
                                             showColonAfterLabel: false,
-                                            labelLocation: "left",                                            
+                                            labelLocation: "left",
                                             colCount: 4,
                                             items: [
                                                 {
                                                     dataField: "PreDivision",
-                                                    editorType: "dxSelectBox",  
+                                                    editorType: "dxSelectBox",
                                                     label: { text: "From Division" },
                                                     editorOptions: {
                                                         width: "90px",
@@ -1352,20 +1372,20 @@
                                                         displayExpr: "AccDivCode",
                                                         valueExpr: "AccDivCode",
                                                         onValueChanged: function (e) {
-                                                            console.log(" aaPreDiv = ",e.value)
+                                                            console.log(" aaPreDiv = ", e.value)
                                                             aaPreDiv = e.value
-                                                        }, 
+                                                        },
                                                     },
-                                                                                                 
+
                                                     visible: true,
                                                 },
                                                 {
                                                     itemType: "empty",
                                                     colSpan: 1,
-                                                },                                                
+                                                },
                                                 {
                                                     dataField: "NextDivision",
-                                                    editorType: "dxSelectBox", 
+                                                    editorType: "dxSelectBox",
                                                     label: { text: "To Division" },
                                                     editorOptions: {
                                                         width: "90px",
@@ -1374,7 +1394,7 @@
                                                         displayExpr: "AccDivCode",
                                                         valueExpr: "AccDivCode",
                                                         onValueChanged: function (e) {
-                                                            console.log(" aaNewDiv = ",e.value)
+                                                            console.log(" aaNewDiv = ", e.value)
                                                             aaNewDiv = e.value
                                                         },
                                                     },
@@ -1457,7 +1477,7 @@
                                             ]
 
                                         }).dxForm("instance");
-                                      
+
                                         $("#CloneConfirm").dxButton({
                                             hint: "Cloning Confirm",
                                             icon: "fas fa-check-circle",
@@ -1465,19 +1485,19 @@
                                             text: "CONFIRM",
                                             visible: true,
                                             onClick: function (e) {
-                                                let result = DevExpress.ui.dialog.confirm("Confirm to clone ? <br> from Division " + aaPreDiv + " To Division " + aaNewDiv , "CLONE THIS RECORD ?"); 
-                                                            result.done(function (dresult) {
-                                                                if (dresult) {
-                                                                    ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
-                                                        
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                }
-                                                            })
-                                                        }
+                                                let result = DevExpress.ui.dialog.confirm("Confirm to clone ? <br> from Division " + aaPreDiv + " To Division " + aaNewDiv, "CLONE THIS RECORD ?");
+                                                result.done(function (dresult) {
+                                                    if (dresult) {
+                                                        ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
+
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                    }
+                                                })
+                                            }
                                         });
-                                       
+
                                         $("#Clonepopupexit").dxButton({
                                             hing: "Exit",
                                             icon: "fas fa-times",
@@ -1488,21 +1508,33 @@
                                             onClick: function () {
                                                 popup.hide();
                                             }
-                                        });                                    
-                                    
+                                        });
+
                                     }
 
 
-                                    const DelegatePopup = (aaDivision,aaaEmployee) => {
-                                        var DelegateData = { Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" , PreDivision: "", NextDivision: "",ApperverDesc: "", NewApprover: ""};
+                                    const DelegatePopup = (aaDivision, aaaEmployee) => {
+                                        var DelegateData = { Delegate: " ", Assignee: "",  Division: "", ToDivision: "", ActionType: 0, APPEmpID: "", Approver: "", AppEmail: "", PreDivision: "", NextDivision: "", ApperverDesc: "", NewApprover: "" , OldApprover: "", TargetApprover: ""};
+                                        // Delegate
                                         var aaPreApprover;
                                         var aaNewApprover;
                                         var aaPreAppCode;
                                         var aaNewAppCode;
+                                        //Clone Division
+                                        var aaPreDivision;
+                                        var aaToDivision;
+                                        
+                                        var aaActionType = 0; //Radio button
+                                        // Approver Replacement
+                                        var aaOldApprover;
+                                        var aaOldAppCode;
+                                        var aaTargetApprover;
+                                        var aaTargetAppCode;
+
                                         //console.log("inside ",aaaEmployee)
                                         const popup = $("#popupHelp").dxPopup({
-                                            title: "DELEGATE",
-                                            height: 250,
+                                            title: "BATCH SETUP",
+                                            height: 320,
                                             width: 1000,
                                             scrollingEnabled: true,
                                             maxHeight: 600,
@@ -1512,25 +1544,53 @@
                                             //contentTemplate: aApproversHelp,
                                             contentTemplate: function () {
                                                 return $("<div />").append(
-                                                   $("<p><div id='delegate-Form'></div></p>"), 
-                                                   $("<p><br><br><br></div></p>"),
-                                                   $("<span id='delegateConfirm'></span>"),
-                                                   $("<span style='padding: 5px 15px;'></span>").text(" "),
-                                                   $("<span id='delegatepopupexit'></span>"),
+                                                    $("<p><div id='delegate-Form'></div></p>"),
+                                                    $("<p><br><br><br><br></div></p>"),
+                                                    $("<span id='delegateConfirm'></span>"),
+                                                    $("<span style='padding: 5px 15px;'></span>").text(" "),
+                                                    $("<span id='delegatepopupexit'></span>"),
                                                 );
                                             },
                                         }).dxPopup("instance");
 
                                         $("#delegate-Form").dxForm({
-                                            formData: DelegateData, //{ Requester: " ", Division: "", EXPType: "", RAmount: 0, APPEmpID: "", Approver: "", AppEmail: "" },
+                                            formData: DelegateData, //{ Delegate: " ", Division: "", Assignee: "", ActionType: 0, APPEmpID: "", Approver: "", AppEmail: "", PreDivision: "", NextDivision: "", ApperverDesc: "", NewApprover: "" };
                                             itemType: "group",
                                             showColonAfterLabel: false,
-                                            labelLocation: "left",                                            
+                                            labelLocation: "left",
                                             colCount: 4,
                                             items: [
                                                 {
-                                                    dataField: "Approver",
-                                                    editorType: "dxSelectBox",  
+                                                    dataField: "ActionType",
+                                                    label: { text: "Action" },
+                                                    editorType: "dxRadioGroup",
+                                                    editorOptions: {
+                                                        items: [
+                                                            { text: "Delegate", value: 1 },
+                                                            { text: "Callback", value: 2 },
+                                                            { text: "Approver Replacement", value: 3 },
+                                                            { text: "Clone Division", value: 4 },
+                                                        ],
+                                                        displayExpr: "text",
+                                                        valueExpr: "value",
+                                                        layout: "horizontal",
+                                                        onValueChanged: function(e) {
+                                                            aaActionType = e.value;
+                                                            console.log("Selected ActionType:", aaActionType);
+                                                            var formInstance = $("#delegate-Form").dxForm("instance");
+                                                            formInstance.itemOption("Division", "visible", aaActionType === 4);  
+                                                            formInstance.itemOption("ToDivision", "visible", aaActionType === 4); 
+                                                            formInstance.itemOption("Delegate", "visible", aaActionType === 1 || aaActionType === 2);  
+                                                            formInstance.itemOption("Assignee", "visible", aaActionType === 1);
+                                                            formInstance.itemOption("OldApprover", "visible", aaActionType === 3); 
+                                                            formInstance.itemOption("TargetApprover", "visible", aaActionType === 3);                                                                                                                                
+                                                        }
+                                                    },
+                                                    colSpan: 4
+                                                },
+                                                {
+                                                    dataField: "Division",
+                                                    editorType: "dxSelectBox",
                                                     label: { text: "From Division" },
                                                     editorOptions: {
                                                         width: "90px",
@@ -1539,16 +1599,34 @@
                                                         displayExpr: "AccDivCode",
                                                         valueExpr: "AccDivCode",
                                                         onValueChanged: function (e) {
-                                                            console.log(" aaPreDiv = ",e.value)
-                                                            aaPreApprover = e.value
-                                                        }, 
+                                                            console.log(" aaPreDivision = ", e.value)
+                                                            aaPreDivision = e.value
+                                                        },
                                                     },
-                                                                                                 
+                                                    colSpan: 1,
                                                     visible: false,
                                                 },
                                                 {
-                                                    dataField: "Approver",
-                                                    label: { text: "Approver" },
+                                                    dataField: "ToDivision",
+                                                    editorType: "dxSelectBox",
+                                                    label: { text: "To Division" },
+                                                    editorOptions: {
+                                                        width: "90px",
+                                                        searchEnabled: true, // enable search aaTypeCode
+                                                        dataSource: aaDivision,
+                                                        displayExpr: "AccDivCode",
+                                                        valueExpr: "AccDivCode",
+                                                        onValueChanged: function (e) {
+                                                            console.log(" aaToDivision = ", e.value)
+                                                            aaToDivision = e.value
+                                                        },
+                                                    },
+                                                    colSpan: 3,
+                                                    visible: false,
+                                                },
+                                                {
+                                                    dataField: "Delegate",
+                                                    label: { text: "Delegator" },
                                                     editorType: "dxSelectBox",
                                                     editorOptions: {
                                                         width: "300px",
@@ -1566,15 +1644,17 @@
                                                             //affData.Division = aResult[0].AccDivCode;
                                                         },
                                                     },
-                                                },                                                
+                                                    visible: false,
+                                                    colSpan: 2,
+                                                },
+                                                //{
+                                                //    itemType: "empty",
+                                                //    colSpan: 1,
+                                                //},
                                                 {
-                                                    itemType: "empty",
-                                                    colSpan: 1,
-                                                },                                                
-                                                {
-                                                    dataField: "NewApprover",
-                                                    editorType: "dxSelectBox", 
-                                                    label: { text: "New Approver" },
+                                                    dataField: "Assignee",
+                                                    editorType: "dxSelectBox",
+                                                    label: { text: "Assignee" },
                                                     editorType: "dxSelectBox",
                                                     editorOptions: {
                                                         width: "300px",
@@ -1591,86 +1671,59 @@
                                                             //affData.Division = aResult[0].AccDivCode;
                                                         },
                                                     },
-                                                    visible: true,
+                                                    visible: false,
+                                                    colSpan: 2,
                                                 },
-                                                /*
                                                 {
-                                                    dataField: "Requester",
-                                                    label: { text: "Requester" },
+                                                    dataField: "OldApprover",
+                                                    label: { text: "From Previous Approver" },
                                                     editorType: "dxSelectBox",
                                                     editorOptions: {
                                                         width: "300px",
                                                         searchEnabled: true,
                                                         dataSource: aaEmployee,
-                                                        valueExpr: "EMPCode",
+                                                        valueExpr: "FullNameThai",
                                                         displayExpr: "FullNameThai",
                                                         showClearButton: true,
                                                         onValueChanged: function (e) {
-                                                            let aResult = aSearch2json(aaEmployee, "EMPCode", e.value);
-                                                            aaDiv = aResult[0].AccDivCode
-                                                            aaEmp = aResult[0].EMPCode
+                                                            //let aResult = aSearch2json(aaEmployee, "EMPCode", e.value);
+                                                            //aaDiv = aResult[0].AccDivCode
+                                                            aaOldApprover = e.value //
+                                                            let aResult = aSearch2json(aaEmployee, "FullNameThai", e.value);
+                                                            aaOldAppCode = aResult[0].EMPCode
                                                             //affData.Division = aResult[0].AccDivCode;
                                                         },
                                                     },
+                                                    visible: false,
+                                                    colSpan: 2,
                                                 },
-
                                                 {
-                                                    itemType: "empty"
-                                                },
-
-                                                {
-                                                    dataField: "EXPType",
-                                                    editorType: "dxSelectBox",  //aaERTYPE
-                                                    label: { text: "Type" },
+                                                    dataField: "TargetApprover",
+                                                    editorType: "dxSelectBox",
+                                                    label: { text: "To New Approver" },
+                                                    editorType: "dxSelectBox",
                                                     editorOptions: {
-                                                        width: "200px",
-                                                        value: "200",
-                                                        searchEnabled: true, // enable search aaTypeCode
-                                                        dataSource: aaERTYPE,
-                                                        displayExpr: "ERTYPE",
-                                                        valueExpr: "CODE",
+                                                        width: "300px",
+                                                        searchEnabled: true,
+                                                        dataSource: aaEmployee,
+                                                        valueExpr: "FullNameThai",
+                                                        displayExpr: "FullNameThai",
+                                                        showClearButton: true,
                                                         onValueChanged: function (e) {
-                                                            aaTypeCode = e.value
+                                                            aaTargetApprover = e.value
+                                                            let aResult = aSearch2json(aaEmployee, "FullNameThai", e.value);
+                                                            //aaDiv = aResult[0].AccDivCode
+                                                            aaTargetAppCode = aResult[0].EMPCode
+                                                            //affData.Division = aResult[0].AccDivCode;
                                                         },
                                                     },
-                                                },
-                                                {
-                                                    itemType: "empty"
-                                                },
-                                                {
-                                                    dataField: "RAmount",
-                                                    editorType: "dxNumberBox",
-                                                    editorOptions: { width: "120px", format: "#,##0.00", rtlEnabled: true },
-                                                    label: { text: "Reimbursement" },
                                                     visible: false,
-                                                },
-                                                {
-                                                    dataField: "Approver",
-                                                    editorType: "dxTextBox",
-                                                    editorOptions: { width: "300px" },
-                                                    label: { text: "Approver Name" },
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "AppEmpID",
-                                                    editorType: "dxTextBox",
-                                                    editorOptions: { width: "90px" },
-                                                    label: { text: "Approver ID" },
-                                                    visible: false,
-
-                                                },
-                                                {
-                                                    dataField: "AppEmail",
-                                                    editorType: "dxTextBox",
-                                                    editorOptions: { width: "300px" },
-                                                    label: { text: "Approver Email" },
-                                                    visible: false,
-                                                },
-                                                */
+                                                    colSpan: 2,
+                                                },                                                
                                             ]
 
                                         }).dxForm("instance");
-                                      
+
                                         $("#delegateConfirm").dxButton({
                                             hint: "Delegate Confirm",
                                             icon: "fas fa-check-circle",
@@ -1678,21 +1731,48 @@
                                             text: "CONFIRM",
                                             visible: true,
                                             onClick: function (e) {
-                                                let result = DevExpress.ui.dialog.confirm("Confirm to Delegate Approver ? <br> from Approver " + aaPreApprover + " [" + aaPreAppCode + "]" + " To Approver " + aaNewApprover + " [" + aaNewAppCode + "]" , "DELEGATE ?"); 
-                                                            result.done(function (dresult) {
-                                                                if (dresult) {
-                                                                    //ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
+                                                console.log("Radio button",aaActionType)
+                                                console.log("Delegate ",aaPreApprover,aaNewApprover, aaPreAppCode, aaNewAppCode)
+                                                console.log("CallBack",aaPreApprover, aaPreAppCode)
+                                                console.log("Clone Division", aaPreDivision,aaToDivision)
+                                                console.log("Approver Replacement",aaOldApprover,aaOldAppCode,aaTargetApprover,aaTargetAppCode)
+                                                let aaIndex = (aaActionType > 0 ? (aaActionType - 1) : 0) ;
+                                                let aTextCheck = ["Delegate","Callback", "Approver Replacement","Clone Division"];
+                                                let aaActionCheck = aTextCheck[aaIndex];
+                                                let aLabelAction;
+                                                if (aaIndex === 0) {
+                                                    aLabelAction = "From Delegator " + aaPreApprover + " [" + aaPreAppCode + "]"
+                                                    + "To Assignee " + aaNewApprover + " [" + aaNewAppCode + "]"
+                                                } else if (aaIndex === 1) {
+                                                    aLabelAction = "From Delegator " + aaPreApprover + " [" + aaPreAppCode + "]"
+                                                    //+ "To Assignee " + aaNewApprover + " [" + aaNewAppCode + "]"
+                                                }  else if (aaIndex === 2) {
+                                                    aLabelAction = "From Old Approver " + aaOldApprover + " [" + aaOldAppCode + "]"
+                                                    + "To New Approver " + aaTargetApprover + " [" + aaTargetAppCode + "]"
+                                                } else if (aaIndex === 3) {
+                                                    aLabelAction = "From Division " +  aaPreDivision + "To Division " + aaToDivision 
+                                                }
 
-                                                                    delegateAction("", aaTBKey, aaPFDMI, aaXToX, aaPreApprover, aaNewApprover, aaPreAppCode, aaNewAppCode, aaaEmployee)
-                                                                    //ApproverEmpID
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                }
-                                                            })
-                                                        }
+                                                let result = DevExpress.ui.dialog.confirm("Confirm to " + aaActionCheck + " ? <br> " + aLabelAction , aaActionCheck + " ?");
+                                                result.done(function (dresult) {
+                                                    if (dresult) {
+                                                        //ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
+                                                        //Delegate
+                                                        if (aaIndex === 0) {
+                                                            delegateAction(1, aaTBKey, aaPFDMI, aaXToX, aaPreApprover, aaNewApprover, aaPreAppCode, aaNewAppCode, aaaEmployee)
+                                                        } else if (aaIndex === 1) { //callback
+                                                            delegateAction(2, aaTBKey, aaPFDMI, aaXToX, aaPreApprover, "", aaPreAppCode, "", aaaEmployee)
+                                                        }  else if (aaIndex === 2) { //callback
+                                                            delegateAction(3, aaTBKey, aaPFDMI, aaXToX, aaOldApprover, aaTargetApprover, aaOldAppCode, aaTargetAppCode, aaaEmployee)
+                                                        }   
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                    }
+                                                })
+                                            }
                                         });
-                                       
+
                                         $("#delegatepopupexit").dxButton({
                                             hing: "Exit",
                                             icon: "fas fa-times",
@@ -1703,8 +1783,8 @@
                                             onClick: function () {
                                                 popup.hide();
                                             }
-                                        });                                    
-                                    
+                                        });
+
                                     }
 
                                     const aPopupEMP = () => {

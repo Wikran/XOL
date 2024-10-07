@@ -763,7 +763,7 @@
 
 <body class="dx-viewport">
     <div id="gridContainer"></div>
-    <div id="scversion"><br>&#10026; V.24.10.04</div> 
+    <!-- <div id="scversion"><br>&#10026; V.24.10.07</div>-->
     <div id="popupContainer"></div>
     <!--<div id="action-add"></div>-->
     <div id="popupContainerAdd"></div>
@@ -3305,6 +3305,19 @@
                                                                                 }
                                                                             }
                                                                         },
+                                                                        {
+                                                                            dataField: "EROCheck03",
+                                                                            label: { text: "Conference" },
+                                                                            editorType: "dxCheckBox",
+                                                                            /*editorOptions: {
+                                                                                //value: false, // Initial value
+                                                                                onValueChanged: function (e) {
+                                                                                    asEROCheck01 = e.value;
+                                                                                    aAddStaff.columnOption("PSPvDate", "visible", e.value);
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                }
+                                                                            }*/
+                                                                        },                                                                          
                                                                         {
                                                                             dataField: "EROCheck02",
                                                                             label: { text: "Need Roaming" },
