@@ -265,7 +265,10 @@
             border-radius: 15px 15px 0 0;
             /* Ensure selected tab also has rounded corners */
         }
-
+        .custom-icon-size {
+            font-size: 30px;
+            color: green;
+        }
         @media screen,
         print {
 
@@ -2144,7 +2147,8 @@
                                                                     $("#gridContainer").dxDataGrid("instance").refresh();
                                                                     alert(iData.ERODesc03) //ReqDate ERODesc03
                                                                     if (aRecNo === 1) {
-                                                                        let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?");
+                                                                        //let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?");
+                                                                        let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?");
                                                                         result.done(function (dresult) {
                                                                             if (dresult) {
                                                                                 // not delete
@@ -2665,9 +2669,10 @@
                                                                             validationRules: [{ type: "required", message: "Travel End Date is required" }]
                                                                         },
                                                                         {
-                                                                            itemType: "Empty",
-                                                                            colSpan: 1,
-                                                                        },
+                                                                            dataField: "EROCheck03",
+                                                                            label: { text: "Conference" },
+                                                                            editorType: "dxCheckBox",
+                                                                        },  
                                                                         {
                                                                             dataField: "ERODesc02",
                                                                             label: { text: "Destination" },
@@ -2696,19 +2701,7 @@
                                                                                 }
                                                                             }
                                                                         },
-                                                                        {
-                                                                            dataField: "EROCheck03",
-                                                                            label: { text: "Conference" },
-                                                                            editorType: "dxCheckBox",
-                                                                            /*editorOptions: {
-                                                                                //value: false, // Initial value
-                                                                                onValueChanged: function (e) {
-                                                                                    asEROCheck01 = e.value;
-                                                                                    aAddStaff.columnOption("PSPvDate", "visible", e.value);
-                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                }
-                                                                            }*/
-                                                                        },                                                                        
+                                                                                                                                       
                                                                         {
                                                                             dataField: "EROCheck02",
                                                                             label: { text: "Need Roaming" },

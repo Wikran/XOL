@@ -990,7 +990,7 @@
                         let aaaDivisionC = (localStorage["agbNewDiv"] === undefined) ? localStorage["asDIV"] : localStorage["agbNewDiv"];
                         //console.log("TRF Division ", aaaDivisionC)
                         let Taxqr2S = "Where ExpGroupCode LIKE '%" + TaaERTYPE + "%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
-                        let TaxFieldSelected = "HeadRefNo,ExpGroupCode,Department,Division,ERODesc02,ERODesc03"
+                        let TaxFieldSelected = "HeadRefNo,ExpGroupCode,Department,Division,ERODesc02,ERODesc03,EROCheck01,EROCheck03"
                         let TaxFullBody = "Select " + TaxFieldSelected + " From " + "ExtraOnLine.dbo.TRVREQF " + Taxqr2S; //alert(aFullBody)
                         //console.log("TaxFullBody = ", TaxFullBody)
                         fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(TaxFullBody) }), redirect: "follow" })
@@ -4368,7 +4368,7 @@
 
                                                         function dropDownBoxTRF(cellElement, cellInfo) {
                                                             return $("<div>").dxDropDownBox({
-                                                                dropDownOptions: { width: 750 },
+                                                                dropDownOptions: { width: 850 },
                                                                 dataSource: aaTRFGroup01,
                                                                 value: [cellInfo.value],
                                                                 valueExpr: "HeadRefNo",
@@ -4381,7 +4381,9 @@
                                                                             { dataField: "HeadRefNo", caption: "TRF REF#", width: 150, sortOrder: "asc" },
                                                                             { dataField: "Department", caption: "Department", width: 80 },
                                                                             { dataField: "ERODesc03", caption: "Purpose", width: 200 },
-                                                                            { dataField: "ERODesc02", caption: "Destination", width: 200 }
+                                                                            { dataField: "ERODesc02", caption: "Destination", width: 200 },
+                                                                            { dataField: "EROCheck01", caption: "Overseas", width: 100, alignment: "center" },
+                                                                            { dataField: "EROCheck03", caption: "Conference", width: 100, alignment: "center" }
                                                                         ],
                                                                         hoverStateEnabled: true,
                                                                         searchPanel: { visible: true },
