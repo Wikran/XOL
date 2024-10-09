@@ -3161,7 +3161,7 @@
                                                                                                 location: "after",
                                                                                                 template: function () { return $("<div style='padding: 5px 15px;'/>") }
                                                                                             },
-                                                                                            {
+                                                                                            /*{
                                                                                                 location: "after",
                                                                                                 widget: "dxButton",
                                                                                                 options: {
@@ -3174,7 +3174,7 @@
                                                                                                         aPopupHelp()
                                                                                                     }
                                                                                                 }
-                                                                                            }
+                                                                                            }*/
 
 
                                                                                         );
@@ -3295,7 +3295,7 @@
                                                                                                         var aSubject = aaMailTitle + " - " + "Request For Approve"
                                                                                                         let aRefNoa = aaiHeadRef //iData.HeadRefNo
                                                                                                         let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                                        let aMessage01 = "<div>���¹ �س" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��سҵ�Ǩ�ͺ ���͹��ѵ���¡�� " + aaOnInitExpGroupDesc + " Expenses Reimbursement ����Ѻ REFNO = [" + aRefNoa + "] ��������������� <br> ����ö�������������� " + aAddress2Do + " (��Ǣ�� HR Approve) <br><br>���ʴ������Ѻ���<br><b>" + aRequesterName + "</b></div>"
+                                                                                                        let aMessage01 = "<div>เรียน คุณ " + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��سҵ�Ǩ�ͺ ���͹��ѵ���¡�� " + aaOnInitExpGroupDesc + " Expenses Reimbursement ����Ѻ REFNO = [" + aRefNoa + "] ��������������� <br> ����ö�������������� " + aAddress2Do + " (��Ǣ�� HR Approve) <br><br>���ʴ������Ѻ���<br><b>" + aRequesterName + "</b></div>"
                                                                                                         //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                                                                         var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "<br><small>Request For Approve</small>" + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                                                         aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)

@@ -6,9 +6,9 @@
     <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
     <META HTTP-EQUIV="Expires" CONTENT="-1">
     <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="content-Type" content="text/html; charset=window-874">
     <meta http-equiv="content-Type" content="text/html; charset=tis-620">
-    <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -186,8 +186,6 @@
             height: 380px !important;
         }
  
- 
-
         .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
             height: 380px;
         }
@@ -901,6 +899,7 @@
             //console.log(aCalYear)
             return aCalYear;
         }
+
         const aaNowText = (aNowDatev) => {
             //let aNowDatev = new Date()
             let aYear2 = String(aNowDatev.getFullYear());
@@ -918,6 +917,22 @@
             return $(`<i class='dx-icon dx-icon-${$icon}'></i><span>${data.caption}</span>`);
             }
         }        
+    
+        const searchExpenses = (array, searchTerms) => {
+            return array.filter(item => 
+                searchTerms.some(term => item.EXPDesc.includes(term))
+                ).map(item => ({
+                    ACCCODE: item.ACCCODE,
+                    ALTERACC: item.ALTERACC,
+                    EDESC: item.EDESC,
+                    EXPDesc: item.EXPDesc,
+                    EXPGroup: item.EXPDesc,
+                    MAPPING: item.MAPPING,
+                    NOTE: item.NOTE,
+                    TDESC: item.TDESC,
+                }));
+        }; /*  ACCCODE ALTERACC EDESC EXPDesc EXPGroup MAPPING NOTE TDESC */
+    
     </script>
 
 </head>
@@ -1098,9 +1113,9 @@
 
                                                 var asFullName = localStorage["asFTNAME"];
                                                 var asStaffID = $.trim(localStorage["asSTFID"]);
-                                                var asDepartment = aaDeptC //localStorage["asDEPT"];
+                                                var asDepartment = aaDeptC    //localStorage["asDEPT"];
                                                 var asDivision = localStorage["asDIV"];
-                                                var gbNewDiv = asDivision; // for change div
+                                                var gbNewDiv = asDivision;    // for change div
                                                 var gbNewDept = asDepartment; // for change div
                                                 var asStaffEmail = localStorage["asEMAIL"];
 
@@ -1212,7 +1227,7 @@
                                                             component: e.component
                                                         }).then(function () {
                                                             workbook.xlsx.writeBuffer().then(function (buffer) {
-                                                                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TRAVELnENTERTAIN' + '.xlsx');
+                                                                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TRAVELnEXPENSES' + '.xlsx');
                                                             });
                                                         });
                                                         e.cancel = true;
@@ -1295,7 +1310,6 @@
                                                         {
                                                             type: "buttons",
                                                             width: 40,
-
                                                             buttons: [// Edit Record
                                                                 {
                                                                     hint: "Edit",
@@ -1308,7 +1322,6 @@
                                                                         asDepartment = e.row.data.Department;
                                                                         asDivision = e.row.data.Division;
                                                                         aPopUpAddForm(e.row.data.HeadRefNo, e.row.data, e.row.data.ReqDate);
-
                                                                         $("#gridContainer").dxDataGrid("instance").refresh();
                                                                     }
                                                                 },
@@ -2532,12 +2545,23 @@
 
 
                                                 // This is the first
-                                                const aPopUpAddForm = (aRecNo, iData, idDate, aSetTravel) => {                                                    
+                                                const aPopUpAddForm = (aRecNo, iData, idDate, aSetTravel) => {    
+                                                    var aaOverseasxx;
+                                                    var aaConferencexx;                                                
                                                     var aaPFDMI = isLocalHost();
                                                     var aTravelSC = aSetTravel;
                                                     var editingMode = aTravelSC ? "popup" : "cell";
                                                     console.log("aTravelSC = ", aTravelSC)
                                                     console.log("editingMode = ",editingMode)
+
+                                                    var searchTermsO = ['.', '402', '403'];   // overseas
+                                                    var searchTermsOC = ['401','402','403'];  // overseas & Conference
+                                                    var searchTermsLC = ['441','404']         // local & conference
+                                                    var searchTermsL = ['.','404']            // local
+                                                    //var aaSrchTerm = searchTermsOC;
+                                                    //console.log(" Data ",aaSubGroup01)
+                                                    var xxxSubGroup01 = aaSubGroup01; //searchExpenses(aaSubGroup01, aaSrchTerm);
+                                                    console.log(xxxSubGroup01);
                                                     //var idsToFilter = [1, 5, 16, 21];
                                                     var astr = localStorage["aDXTheme"]
                                                     if (aRecNo === 1) {
@@ -2549,8 +2573,10 @@
                                                         asDepartment = localStorage["asDEPT"];
                                                         asDivision = localStorage["asDIV"];
                                                         var aaERStatuss = "Register"
+                                                        var aTRFREFNO = aTravelSC ? "R" : "";
+                                                        console.log("TRF ",aTRFREFNO)
                                                         //aaOnInitAccCode            aaOnInitAccDesc         Currency: "THB", Xrate: 1,                                                                                                                                                                     // Fleet Card                                                                                                                                                                              // "Register"                //                                                                                            
-                                                        var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ERODesc02: "", ERODesc03: "", ERODesc04: "", ReqDate: aNowDte, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: aaERStatuss, ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROAmount1: 1, EROAmount2: 0, EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
+                                                        var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ERODesc02: "", ERODesc03: "", ERODesc04: "", ReqDate: aNowDte, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: aaERStatuss, ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", ERORefNo5: aTRFREFNO,  EROAmount1: 1, EROAmount2: 0, EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
                                                         var ObjRowData = JSON.stringify(ObjKeyData);
                                                         console.log(ObjRowData)
                                                         sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
@@ -2576,12 +2602,6 @@
 
                                                     $(() => {
                                                         var aaLastLineNo = 1;
-                                                        /*
-                                                        var aXXData = function () {
-                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aaSchRefx }) // Change aaTBKey to TokenKey for this table 5102300001
-                                                                .fail(function () { throw "Data loading error" });
-                                                        };
-                                                        */
                                                         var aXXData = function () { return $.post(aaxSettings).done(); }
                                                         if (iData === 1) {
                                                             iData = aXXData[0];
@@ -2916,6 +2936,7 @@
                                                                     label: { text: "TRF REF#" },
                                                                     editorType: "dxTextBox",
                                                                     editorOptions: { width: 130, readOnly: false, },
+                                                                    value: [aTRFREFNO],
                                                                     editCellTemplate: dropDownBoxTRF,
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         newData.ERORefNo5 = value;
@@ -3200,18 +3221,103 @@
                                                                                 iconPosition: "start",
                                                                                 colCount: 10,
                                                                                 visible: (editingMode === "cell" ? false : true),
-                                                                                items: [                                                                                            {
+                                                                                items: [ 
+                                                                                           {
                                                                                                 dataField: "ERORefNo5",
-                                                                                                label: { text: "TRF REF##" },
-                                                                                                editorType: "dxTextBox",
-                                                                                                editorOptions: { width: 150, },
-                                                                                                editCellTemplate: dropDownBoxTRF,
-                                                                                                setCellValue: function (newData, value, currentRowData) {
-                                                                                                    newData.ERORefNo5 = value;
+                                                                                                label: { text: "TRF REF.#" },
+                                                                                                /*
+                                                                                                editorType: "dxDropDownBox",
+                                                                                                editorOptions: {
+                                                                                                    dataSource: aaTRFGroup01,
+                                                                                                    valueExpr: "HeadRefNo",
+                                                                                                    displayExpr: "PayToName", // Adjust this to the field you want to display in the text box
+                                                                                                    contentTemplate: function(e) {
+                                                                                                        var value = e.component.option("value");
+                                                                                                        $("<div>").dxDataGrid({
+                                                                                                            dataSource: aaTRFGroup01,
+                                                                                                            columns: [
+                                                                                                                { dataField: "HeadRefNo", caption: "Ref No" },
+                                                                                                                { dataField: "PayToName", caption: "Name" },
+                                                                                                                { dataField: "Division", caption: "Division" },
+                                                                                                                { dataField: "EROCheck01", caption: "Overseas" }, // Add more columns as needed
+                                                                                                                { dataField: "EROCheck03", caption: "Conference" },
+                                                                                                            ],
+                                                                                                            selection: {
+                                                                                                                mode: "single"
+                                                                                                            },
+                                                                                                            selectedRowKeys: [value],
+                                                                                                            onSelectionChanged: function(selectedItems) {
+                                                                                                                var keys = selectedItems.selectedRowKeys;
+                                                                                                                e.component.option("value", keys.length ? keys[0] : null);
+                                                                                                                e.component.close();
+                                                                                                            }
+                                                                                                        }).appendTo(e.content);
+                                                                                                    },
                                                                                                 },
+                                                                                                    
+                                                                                                    editorType: "dxTextBox",
+                                                                                                    editCellTemplate: dropDownBoxTRF,
+                                                                                                    setCellValue: function (newData, value, currentRowData) {
+                                                                                                        newData.ERORefNo5 = value;
+                                                                                                        console.log("Value ",value)
+                                                                                                        let Result   = aSearch2json(aaTRFGroup01, "HeadRefNo", value)
+                                                                                                        let aaOverseasaa = Result.EROCheck01[0] ? 1 : 0;
+                                                                                                        let aaConferenceaa = Result.EROCheck03[0] ? 1 : 0;
+                                                                                                        console.log("aaOverseas ", aaOverseasaa," aaConferenceaa ", aaConferenceaa)
+                                                                                                        newData.EROCode05 = aaOverseasaa;
+                                                                                                        newData.EROCode06 = aaConferenceaa;
+                                                                                                    },
+                                                                                                    editorOptions: { width: 80, 
+                                                                                                        //dataSource: divisionsList,
+                                                                                                        //searchExpr: "HeadRefNo",
+                                                                                                        //valueExpr: "HeadRefNo",
+                                                                                                        //displayExpr: "code",
+                                                                                                        //searchEnabled: true,
+                                                                                                        width: 100,
+                                                                                                        //value: aNewDiva,
+                                                                                                        onValueChanged: function(args) {
+                                                                                                            let newRefNo = args.value;
+                                                                                                            console.log("value ",newRefNo);
+                                                                                                            alert(newRefNo)
+                                                                                                            aaConferenceN = 0
+                                                                                                            aaOveseasN = 0
+                                                                                                            //let newDepartment = args.value.slice(0, 4) //calculateNewDepartment(newDivision);
+                                                                                                            //let formInstance = $("#PopupChangeDiv").dxForm("instance");
+                                                                                                            //asNewDept = args.value;
+                                                                                                            //var asNewDiv = args.value.slice(0, 4);
+                                                                                                            //gbNewDiv = args.value;
+                                                                                                            //gbNewDept = args.value.slice(0, 4);
+                                                                                                            // Update NewDepartment in the form dynamically
+                                                                                                            // formInstance.updateData("EROCode03", newDepartment);
+                                                                                                        } 
+                                                                                                    },
+                                                                                                    */
+                                                                                              
                                                                                                 colSpan: 1,
                                                                                                 visible: true,
                                                                                             },
+                                                                                            /*
+                                                                                            {
+                                                                                                dataField: "EROSum1",
+                                                                                                label: { text: "TRF Overseas" },
+                                                                                                editorType: "dxNumberBox",
+                                                                                                editorOptions: { width: 150, },
+                                                                                                colSpan: 1,
+                                                                                                visible: true,
+                                                                                            },
+                                                                                            {
+                                                                                                itemType: "empty",
+                                                                                                colSpan: 1,
+                                                                                            },                                                                                            
+                                                                                            {
+                                                                                                dataField: "EROCode06",
+                                                                                                label: { text: "TRF Conference" },
+                                                                                                editorType: "dxTextBox",
+                                                                                                editorOptions: { width: 150, },
+                                                                                                colSpan: 1,
+                                                                                                visible: true,
+                                                                                            },
+                                                                                            */                                                                                                                                                                                          
                                                                                         ],   
                                                                             },
                                                                             {
@@ -3268,7 +3374,7 @@
                                                                                                 editorOptions: { width: 250, showClearButton: true },
                                                                                                 editCellTemplate: dropDownBoxACC,
                                                                                                 setCellValue: function (newData, value, currentRowData) {
-                                                                                                    let aResult = aSearch2json(aaSubGroup01, "EDESC", value)
+                                                                                                    let aResult = aSearch2json(xxxSubGroup01, "EDESC", value)
                                                                                                     newData.ERORefNo3 = value;
                                                                                                     newData.ExpensesCode = aResult[0].ACCCODE
                                                                                                 },
@@ -3717,6 +3823,31 @@
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         //let aResult = aSearch2json(aaTRFGroup01, "HeadRefNo", value)
                                                                         newData.ERORefNo5 = value;
+                                                                        console.log("test ", value);
+                                                                        
+                                                                        let aaResultx   = aSearch2json(aaTRFGroup01, "HeadRefNo", value)
+                                                                        aaOverseasxx = aaResultx[0].EROCheck01;
+                                                                        aaConferencexx = aaResultx[0].EROCheck03;
+
+                                                                        //const searchTermsO = ['.', '402', '403'];   // overseas
+                                                                        //const searchTermsOC = ['401','402','403']; // overseas & Conference
+                                                                        //const searchTermsLC = ['441','404']         // local & conference
+                                                                        //const searchTermsL = ['.','404']           // local
+                                                                        
+                                                                        //xxxSubGroup01 = searchExpenses(aaSubGroup01, aaSrchTerm);
+
+                                                                        if (aaOverseasxx && aaConferencexx ){
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOC);
+                                                                        } else if (aaOverseasxx && !aaConferencexx) {
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsO);
+                                                                        } else if (!aaOverseasxx && aaConferencexx) {
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsLC);
+                                                                        } else if (!aaOverseasxx && !aaConferencexx) {
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );
+                                                                        }
+                                                                        console.log("xxxSubGroup01 ",xxxSubGroup01)
+                                                                        console.log("Overseas ", aaOverseasxx, "Conference ", aaConferencexx)
+                                                                        //let aaConferenceaa = aSearch2json(aaTRFGroup01, "EROCheck03", value)
                                                                         //newData.ExpensesCode = aResult[0].ACCCODE
                                                                     },
                                                                     visible: false,
@@ -3730,7 +3861,7 @@
                                                                     editorOptions: { width: 250, showClearButton: true, elementAttr: { class: "custom-editor" } },
                                                                     editCellTemplate: dropDownBoxACC,
                                                                     setCellValue: function (newData, value, currentRowData) {
-                                                                        let aResult = aSearch2json(aaSubGroup01, "EDESC", value)
+                                                                        let aResult = aSearch2json(xxxSubGroup01, "EDESC", value)
                                                                         newData.ERORefNo3 = value;
                                                                         newData.ExpensesCode = aResult[0].ACCCODE
                                                                         //aaTypeOfRa = value;
@@ -4330,17 +4461,18 @@
                                                         function dropDownBoxACC(cellElement, cellInfo) {
                                                             return $("<div>").dxDropDownBox({
                                                                 dropDownOptions: { width: 750 },
-                                                                dataSource: aaSubGroup01,
+                                                                dataSource: xxxSubGroup01, //aaSubGroup01 
                                                                 value: [cellInfo.value],
                                                                 valueExpr: "EDESC",
                                                                 displayExpr: "EDESC",
                                                                 contentTemplate: (e) => {
                                                                     return $("<div>").dxDataGrid({
-                                                                        dataSource: aaSubGroup01,
+                                                                        dataSource: xxxSubGroup01, //aaSubGroup01
                                                                         columns: [
                                                                             { dataField: "EDESC", caption: "Eng Desc.", width: 200, sortOrder: "asc" },
                                                                             { dataField: "TDESC", caption: "Thai Desc", width: 280 },
-                                                                            { dataField: "ACCCODE", caption: "Account Code", width: 100 }
+                                                                            { dataField: "ACCCODE", caption: "Account Code", width: 100 },
+                                                                            { dataField: "EXPDesc", caption: "Group", width: 100 }
                                                                         ],
                                                                         hoverStateEnabled: true,
                                                                         searchPanel: { visible: true },

@@ -12,7 +12,7 @@
     <!-- 
      <meta charset="UTF-8">
     -->
-   
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -82,6 +82,8 @@
         :root {
             --dgBG: #e5eff8e5;
             --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;            
         }
 
         /*-----------------------------*/
@@ -166,13 +168,16 @@
         .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
             height: 180px;
         }
+
         .custom-icon-size {
             font-size: 20px;
             color: green;
-        } 
+        }
+
         .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:vertical {
             width: 180px;
         }
+
         /*.dx-popup-fullscreen .dx-overlay-content {
             overflow: hidden;
         }*/
@@ -180,10 +185,12 @@
             color: whitesmoke;
             background-color: black;
         }
+
         .dx-popup-fullscreen {
             overflow-y: scroll;
             height: 100%;
-        }  
+        }
+
         /*.dx-form {
             background-color: rgb(229, 244, 248);
         }*/
@@ -243,28 +250,36 @@
         #Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-text-content {
             text-align: top;
         }
+
         .dx-dialog-content {
-            border-radius: 15px; /* Adjust the value as needed */
-        }  
+            border-radius: 15px;
+            /* Adjust the value as needed */
+        }
 
         /* Default row background color */
         .dx-datagrid .dx-row {
-        background-color: white;
-        }
-        /* Alternating row background color */
-        .dx-datagrid .dx-row-alt {
-        background-color: lightblue; /* Change this to your desired color */
+            background-color: white;
         }
 
-        .dx-datagrid .dx-row.dx-selection { /*rgb(227, 120, 7); rgba(255, 87, 34, 1);*/
-            color: rgba(239, 0, 0, 0.994);
-            font-weight: bold;
+        /* Alternating row background color */
+        .dx-datagrid .dx-row-alt {
+            background-color: lightblue;
+            /* Change this to your desired color */
         }
-        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed) > td { /*not change the color*/
-            /*background-color: rgba(248, 219, 187, 0.312);*/
-            /*background-color: rgba(253, 242, 238, 0.697);*/
+
+        .dx-datagrid .dx-row.dx-selection {
+            /*rgb(227, 120, 7); rgba(255, 87, 34, 1); rgba(239, 0, 0, 0.994);*/
+            color: var(--dgSelText);
+            /*font-weight: bold;*/
+        }
+
+        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
+            /*not change the color*/
+            /*background-color: rgba(248, 219, 187, 0.312); rgba(253, 242, 238, 0.626);*/
+            background-color: var(--dgSelBar);
             color: unset;
         }
+
         /*
         .dx-datagrid .dx-row.dx-selection .dx-icon {
             color:rgba(239, 0, 0, 0.994); 
@@ -272,9 +287,8 @@
         .dx-datagrid .dx-row.dx-selection:hover .dx-icon {
             color: rgba(252, 137, 6, 0.82); 
         }*/
-
     </style>
-    
+
     <script>
         window.onload = function () {
             setTimeout(function () {
@@ -304,7 +318,7 @@
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
         console.clear();
-        
+
         var aaXToX = localStorage["aaXXoX"];
         var aaXNoX = localStorage["aaXXuX"];
         var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // Master Page
@@ -315,39 +329,39 @@
         var aNowDte = new Date();
 
         async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
-                //let aDataBasea = "ExtraOnLine.dbo.EXPREIM";
-                //let aKeyfield = "HeadRefNo";
-                let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
-                console.log(aKeya);
-                let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
-                console.log(axqr2S)
-                //let axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
-                let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S; 
+            //let aDataBasea = "ExtraOnLine.dbo.EXPREIM";
+            //let aKeyfield = "HeadRefNo";
+            let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+            console.log(aKeya);
+            let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
+            console.log(axqr2S)
+            //let axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+            let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
 
-                let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, { 
-                    method: "POST", 
-                    headers: { "Content-Type": "application/json" }, 
-                    body: JSON.stringify({ "@": btoa(axFullBody) }), 
-                    redirect: "follow" 
-                });
-                
-                let acData = await response.json();
-                //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
-                console.log("record ",acData.length);
-                console.log(acData);
-                const filteredArray = acData.filter(condition);
-                //console.log(filteredArray);
-                //console.log(filteredArray.length);
-                
-                let abc;
-                if (filteredArray.length === 0) {  
-                    abc = 0; 
-                } else { 
-                    abc = 1; 
-                }
-                return abc;
-            }  
-        
+            let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "@": btoa(axFullBody) }),
+                redirect: "follow"
+            });
+
+            let acData = await response.json();
+            //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
+            console.log("record ", acData.length);
+            console.log(acData);
+            const filteredArray = acData.filter(condition);
+            //console.log(filteredArray);
+            //console.log(filteredArray.length);
+
+            let abc;
+            if (filteredArray.length === 0) {
+                abc = 0;
+            } else {
+                abc = 1;
+            }
+            return abc;
+        }
+
         function showPreviousYearPopup(callback) {
             var today = new Date();
             var aTYear = new Date().getFullYear();
@@ -528,7 +542,7 @@
                                     DevExpress.ui.dialog.alert({
                                         //showTitle: false,
                                         title: "ACCESS DENIED!!",
-                                        messageHtml: "<div>Un-completed system setup, please contact Administrator <br> ระ����ติดตั������ม��สม��ูรณ�� ��รุณาติดต��อ��ู��ดู��ลระ���� </div>"
+                                        messageHtml: "<div>Un-completed system setup, please contact Administrator <br> ��سҵԴ��ͼ������к� </div>"
                                     });
                                     System.exit(0);
                                 }
@@ -890,7 +904,7 @@
                                                                 return (e.row.data.ID === 1 && e.row.data.Confirmed === true && e.row.data.HODApproved === false) //return !e.row.isEditing;
                                                             },
                                                             onClick: function (e) {
-                                                                let result = DevExpress.ui.dialog.confirm("Are you sure you want to Un-Confirmed to Edit this Record ? <br> ��ณะ��ี��อยู��ระหว��า����ารดำเ��ิ����ารตรว��สอ��เ��ื��ออ��ุมัติ��อ�� ��ุณ" + e.row.data.Vendor02Note + " <br><p style='color:Red; font-size: 12px;' > ��รุณาตรว��สอ����ห��รอ����อ������อ����ารดำเ��ิ����ารต��อ <br><b><u>��ม��เ��������ั����</u> อา��เ��ิด��าร��ิด��ลาด������ั����ตอ����าร��ออ��ุมัติ��ด�� </b></p><p style='color: grey; font-size: 10px;'></p>ยื��ยั��หรือ��ม��", "UN-CONFIRMED ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
+                                                                let result = DevExpress.ui.dialog.confirm("Are you sure you want to Un-Confirmed to Edit this Record ? <br> ��¡�����������ҧ��õ�Ǩ�ͺ�ͧ �س" + e.row.data.Vendor02Note + " <br><p style='color:Red; font-size: 12px;' > �׹�ѹ���� ��Ѻ仴��Թ�����䢢���ٺ��", "UN-CONFIRMED ?");
                                                                 result.done(function (dresult) {
                                                                     if (dresult) {
 
@@ -922,7 +936,7 @@
                                                                         //let aSubject = aaOnInitExpGroupDesc + " Expenses (Approved)"
                                                                         var aSubject = aaMailTitle
                                                                         let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                        let aMessage01 = "<div>เรีย�� ��ุณ" + $.trim(aApproverName) + "<br>&nbsp;&nbsp;&nbsp;&nbsp;��ู����ออ��ุมัติ��ด��เรีย������อมูล " + aaOnInitExpGroupDesc + " Expenses สำหรั�� REFNO = [" + e.row.data.HeadRefNo + "] ��ลั������เ��ื��อ����������เ��ิ��มเติม <br>&nbsp;&nbsp;&nbsp;&nbsp;สามารถเ����า����������ร����รม��ด��ที�� " + aAddress2Do + " (หัว����อ Approve --> HOD Approve) <br><br>��อ��สด����วาม��ั��ถือ<br>" + aRequesterName + "</div>"
+                                                                        let aMessage01 = "<div>���¹ �س�" + $.trim(aApproverName) + "<br>&nbsp;&nbsp;&nbsp;&nbsp; �ô��Ǩ�ͺ ���͹��ѵ� " + aaOnInitExpGroupDesc + " Expenses REFNO = [" + e.row.data.HeadRefNo + "] <br>&nbsp;&nbsp;&nbsp;&nbsp; �������������� " + aAddress2Do + " (��Ǣ�� Approve --> HOD Approve) <br><br>���ʴ������Ѻ���<br>" + aRequesterName + "</div>"
                                                                         //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
                                                                         //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
                                                                         //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #9700F9; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#F9F3FD'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
@@ -944,9 +958,6 @@
                                                             hint: "Confirm",
                                                             icon: "fas fa-check-circle",
                                                             visible: false,
-                                                            /*function (e) {
-                                                                return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
-                                                            },*/
                                                             onClick: function (e) {
                                                                 // mark Confirmed field
 
@@ -2291,30 +2302,30 @@
                                                         //alert(aAllChecked)
                                                         //if (aAllTChecked === "" || aAllChecked === 0) { DevExpress.ui.dialog.alert("Please Input the needed field before press EXIT <br> ��รุณา��ั��ทึ������อมูล��ห����ร��ทุ��ราย��ารที����ำเ����������อ�� ��ด EXIT", "INPUT ERROR"); } //DevExpress.ui.dialog.alert("Amount can not be 0 and Expenses Type can not empty, please correct or delete that line before EXIT","INPUT ERROR")      
                                                         //else {
-                                                            if (aRecNo === 1) {
-                                                                let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
-                                                                result.done(function (dresult) {
-                                                                    if (dresult) {
-                                                                        // not delete
-                                                                    } else {
-                                                                        // delete data
-                                                                        // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
-                                                                        let aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + aaiHeadRef + "'"
-                                                                        //alert(aSQLCommand)
-                                                                        //console.log(aXXData[0].ERStatus)
-                                                                        aSQLAction(aaPFDMI, aSQLCommand)
-                                                                        aSQLAction(aaPFDMI, aSQLCommand)
-                                                                        aSQLAction(aaPFDMI, aSQLCommand)
-                                                                        $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                    }
-                                                                });
-                                                            }
+                                                        if (aRecNo === 1) {
+                                                            let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
+                                                            result.done(function (dresult) {
+                                                                if (dresult) {
+                                                                    // not delete
+                                                                } else {
+                                                                    // delete data
+                                                                    // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
+                                                                    let aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + aaiHeadRef + "'"
+                                                                    //alert(aSQLCommand)
+                                                                    //console.log(aXXData[0].ERStatus)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                }
+                                                            });
+                                                        }
 
-                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                            $("#gridContainer").dxDataGrid("instance").refresh();
-                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                            popup.hide()
+                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                        popup.hide()
                                                         //}
                                                     }
                                                 });
@@ -2341,68 +2352,68 @@
                                                         var aDatabasea = "ExtraOnLine.dbo.EXPREIM";
                                                         var aKeyField = "HeadRefNo";
                                                         var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724"
-                                                        var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";  
-                                                        var condition = item => item.Amount === 0 || item.ERORefNo3 === "";    
- 
-                                                        aaLoadData(isLocalHost(),aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
-                                                             .then(atestCehcka => {                                                         
-                                                        if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aFeetCardAlert01, "INPUT ERRORs"); }  //(aAllTChecked === "") || (aAllChecked === 0) DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: "��ุณต��อ����ั��ทึ������อมูล��ห����ร��ทุ��ราย��าร����อ�� ��ด Confirm" });
-                                                        //DevExpress.ui.dialog.alert(messageHtml, title);
-                                                        else {
-                                                            let result = DevExpress.ui.dialog.confirm("Press 'YES' For Expenses Reimbursement Request & Send Mail to " + aaHODAppName + " (" + aaHODAppEmail + ")", "CONFIRM TO HOD ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
-                                                            result.done(function (dresult) {
-                                                                if (dresult) {
-                                                                    //if (aContinueChk !== true) {
-                                                                    let aFREF = aaiHeadRef + "-001"
-                                                                    console.log(aaiHeadRef)
-                                                                    console.log(aFREF)
-                                                                    let aERStatus = "Confirmed wait for HOD" //"Register"
-                                                                    let aTrueORFalse = '1'
-                                                                    let aTrueORFalseB = true
-                                                                    let aNowDateT = aaNowText(aNowDte)
-                                                                    //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
-                                                                    //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
-                                                                    var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus, ReqDate: aNowDte };
-                                                                    var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
-                                                                    //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+                                                        var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+                                                        var condition = item => item.Amount === 0 || item.ERORefNo3 === "";
 
-                                                                    //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
-                                                                    //let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                                    let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERORefNo6 = '" + aaHODAppEmail + "', Vendor02Note = '" + aaHODAppName + "', ERStatus = '" + aERStatus + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                                    aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
-                                                                    aSQLAction(aaPFDMI, aSQLCommand)
-                                                                    aSQLAction(aaPFDMI, aSQLCommand)
-                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
+                                                            .then(atestCehcka => {
+                                                                if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aFeetCardAlert01, "INPUT ERRORs"); }  //(aAllTChecked === "") || (aAllChecked === 0) DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: "��ุณต��อ����ั��ทึ������อมูล��ห����ร��ทุ��ราย��าร����อ�� ��ด Confirm" });
+                                                                //DevExpress.ui.dialog.alert(messageHtml, title);
+                                                                else {
+                                                                    let result = DevExpress.ui.dialog.confirm("Press 'YES' For Expenses Reimbursement Request & Send Mail to " + aaHODAppName + " (" + aaHODAppEmail + ") <br><b style = 'color: red;'> ��سҵ�Ǩ�ͺ ǧ�Թ��������� = [" + aaLTotal + "] ��͹��͹��ѵ� </b>", "CONFIRM TO HOD ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
+                                                                    result.done(function (dresult) {
+                                                                        if (dresult) {
+                                                                            //if (aContinueChk !== true) {
+                                                                            let aFREF = aaiHeadRef + "-001"
+                                                                            console.log(aaiHeadRef)
+                                                                            console.log(aFREF)
+                                                                            let aERStatus = "Confirmed wait for HOD" //"Register"
+                                                                            let aTrueORFalse = '1'
+                                                                            let aTrueORFalseB = true
+                                                                            let aNowDateT = aaNowText(aNowDte)
+                                                                            //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
+                                                                            //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
+                                                                            var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus, ReqDate: aNowDte };
+                                                                            var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+                                                                            //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
 
-                                                                    //send Email
-                                                                    var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " REIMBURSEMENT REQUEST";
-                                                                    let aApproverName = aaHODAppName      //aaHRAppName //"Wikran" + " [HOD]"         // HOD Approver Name
-                                                                    let aApproverEmail = $.trim(aaHODAppEmail)      // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
-                                                                    let aRequesterName = asFullName //e.data.PayToName //"Wikran Intaraprajaks"
-                                                                    let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
-                                                                    //let aSubject = aaOnInitExpGroupDesc + " Expewnses Reimbursement Requested"
-                                                                    var aSubject = aaMailTitle
-                                                                    let aRefNoa = aaiHeadRef //iData.HeadRefNo //*
-                                                                    let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>";
-                                                                    let aMessage01 = "<div>เรีย�� ��ุณ" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��รุณาตรว��สอ�� ��ละอ��ุมัติราย��าร " + aaOnInitExpGroupDesc + " Expenses สำหรั�� REFNO = [" + aRefNoa + "]<br> สามารถเ����า����������ร����รม��ด��ที�� " + aAddress2Do + " (หัว����อ Approve --> HOD Approve) <br><br>��อ��สด����วาม��ั��ถือ<br>" + aRequesterName + "</div>"
-                                                                    //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
-                                                                    var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
-                                                                    aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+                                                                            //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
+                                                                            //let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                            let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERORefNo6 = '" + aaHODAppEmail + "', Vendor02Note = '" + aaHODAppName + "', ERStatus = '" + aERStatus + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                            aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                                                                            aSQLAction(aaPFDMI, aSQLCommand)
+                                                                            aSQLAction(aaPFDMI, aSQLCommand)
+                                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                            $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                            $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                            $("#gridContainer").dxDataGrid("instance").refresh();
 
-                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
-                                                                    aMessageAlert("Already Confirmed", "DarkGreen")
-                                                                    popup.hide();
-                                                                }
+                                                                            //send Email
+                                                                            var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " REIMBURSEMENT REQUEST";
+                                                                            let aApproverName = aaHODAppName      //aaHRAppName //"Wikran" + " [HOD]"         // HOD Approver Name
+                                                                            let aApproverEmail = $.trim(aaHODAppEmail)      // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                                                                            let aRequesterName = asFullName //e.data.PayToName //"Wikran Intaraprajaks"
+                                                                            let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                                                                            //let aSubject = aaOnInitExpGroupDesc + " Expewnses Reimbursement Requested"
+                                                                            var aSubject = aaMailTitle
+                                                                            let aRefNoa = aaiHeadRef //iData.HeadRefNo //*
+                                                                            let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>";
+                                                                            let aMessage01 = "<div>เรีย�� ��ุณ" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��รุณาตรว��สอ�� ��ละอ��ุมัติราย��าร " + aaOnInitExpGroupDesc + " Expenses สำหรั�� REFNO = [" + aRefNoa + "]<br> สามารถเ����า����ร����รม��ด��ที�� " + aAddress2Do + " (หัว����อ Approve --> HOD Approve) <br><br>��อ��สด����วาม��ั��ถือ<br>" + aRequesterName + "</div>"
+                                                                            //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
+                                                                            var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                            aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+
+                                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                            $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                            aMessageAlert("Already Confirmed", "DarkGreen")
+                                                                            popup.hide();
+                                                                        }
+                                                                    });
+                                                                    //1
+                                                                } //else if
                                                             });
-                                                            //1
-                                                        } //else if
-                                                      });
                                                     } //on click
                                                 });
 
@@ -2792,10 +2803,10 @@
                                                                     hint: "Add More Line",
                                                                     icon: "fas fa-plus",
                                                                     visible: function (e) {
-                                                                    const aadataGrid = $("#Add-dxDataGrid").dxDataGrid("instance");
-                                                                    const aapageSize = aadataGrid.option('paging.pageSize'); // check page size [5,10,15]
-                                                                    return(((e.row.data.ID - 1) % aapageSize === 0 && e.row.data.ID >= 1) && e.row.data.Confirmed === false) // count which record to show +                                                                        
-                                                                    //return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                                                        const aadataGrid = $("#Add-dxDataGrid").dxDataGrid("instance");
+                                                                        const aapageSize = aadataGrid.option('paging.pageSize'); // check page size [5,10,15]
+                                                                        return (((e.row.data.ID - 1) % aapageSize === 0 && e.row.data.ID >= 1) && e.row.data.Confirmed === false) // count which record to show +                                                                        
+                                                                        //return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
                                                                     },
                                                                     onClick: function (e) {
                                                                         aaLastLineNo = aaLastLineNo + 1
@@ -2982,7 +2993,7 @@
                                                                     }
                                                                 } else { // Over Limitation
                                                                     //nThisAmount = aaRemainChk;
-                                                                    let aaAMessage = "<div  style='color:Tomato; font-size: 16px;'><center><b><i class='fas fa-exclamation-triangle'></i> OVER LIMITATION - เ��ิ��ว��เ��ิ��</b></center><hr></div> ยอดเ��ิ������เหลือ (The Remaining amount) = " + aTRem + "<div>" //"</br>ดั����ั����สามารถเ��ิ����ด��เ��ีย�� (The Reimbursement Amount will be) " + aTRem + " เท��า��ั����</div>";
+                                                                    let aaAMessage = "<div  style='color:Tomato; font-size: 16px;'><center><b><i class='fas fa-exclamation-triangle'></i> OVER LIMITATION - �Թǧ�Թ</b></center><hr></div> ǧ�Թ������� (The Remaining amount) = " + aTRem + "<div>" //"</br>ดั����ั����สามารถเ��ิ����ด��เ��ีย�� (The Reimbursement Amount will be) " + aTRem + " เท��า��ั����</div>";
                                                                     DevExpress.ui.dialog.alert({
                                                                         showTitle: false,
                                                                         //title: "OVER LIMITATION",
@@ -3412,6 +3423,7 @@
                                                                 location: "after",
                                                                 template: function () { return $("<div style='padding: 5px 15px;'/>") }
                                                             },
+                                                            /*
                                                             {
                                                                 location: "after",
                                                                 widget: "dxButton",
@@ -3425,30 +3437,30 @@
                                                                         aPopupHelp()
                                                                     }
                                                                 }
-                                                            }
+                                                            }*/
                                                         );
                                                     }
 
                                                 }).dxDataGrid("instance");
 
                                                 const aPopupHelp = () => {
-	const popup = $("#popupHelp").dxPopup({
-		title: " HELP - Data Input",
-		height: 400,
-		width: 1000,
-		position: { offset: "40 -100" }, //{my:"top", at:"top", of:window}, <ul><li>
-		visible: true,
-		showCloseButton: true,
-		contentTemplate:
-			"<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
-			"<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-plus'></i>" + " �������� ��¡�� </li><li>������¡�� ��������բ����� ¡��� ��Ǣ���ѹ��� ���ʴ����ѹ���</li></ul></br></p>" +
-			"<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
-			"<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-trash'></i>" + " ����ź��¡��㹺�÷Ѵ������͡</li><li>�������͡ź ��÷Ѵ��� 1 �ж������繡��ź�����ŷ����� ** ��ͧ���Ѵ���ѧ </ul></li></br></p>" +
-			"<div style = 'color: darkred; font-size: 16px;'><i class='dx-icon-refresh'></i>" + " REFRESH</div>" +
-			"<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='dx-icon-refresh'></i>" + " �繡�����ê˹�Ҩ� ���˹�ҨͶ١��ͧ�ç������ԧ </li><li>��͹ Confirm ��á����� REFRESH ��͹���͵�Ǩ�ͺ���������ç�����ԧ</li></ul></br></p>" // +
-			//"<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " ADD/EDIT (VDO SAMPLE) </div><br>" +
-			//"<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
-	}).dxPopup("instance");
+                                                    const popup = $("#popupHelp").dxPopup({
+                                                        title: " HELP - Data Input",
+                                                        height: 400,
+                                                        width: 1000,
+                                                        position: { offset: "40 -100" }, //{my:"top", at:"top", of:window}, <ul><li>
+                                                        visible: true,
+                                                        showCloseButton: true,
+                                                        contentTemplate:
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-plus'></i>" + " �������� ��¡�� </li><li>������¡�� ��������բ����� ¡��� ��Ǣ���ѹ��� ���ʴ����ѹ���</li></ul></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-trash'></i>" + " ����ź��¡��㹺�÷Ѵ������͡</li><li>�������͡ź ��÷Ѵ��� 1 �ж������繡��ź�����ŷ����� ** ��ͧ���Ѵ���ѧ </ul></li></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='dx-icon-refresh'></i>" + " REFRESH</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='dx-icon-refresh'></i>" + " �繡�����ê˹�Ҩ� ���˹�ҨͶ١��ͧ�ç������ԧ </li><li>��͹ Confirm ��á����� REFRESH ��͹���͵�Ǩ�ͺ���������ç�����ԧ</li></ul></br></p>" // +
+                                                        //"<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " ADD/EDIT (VDO SAMPLE) </div><br>" +
+                                                        //"<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
+                                                    }).dxPopup("instance");
 
 
 
