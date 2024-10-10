@@ -963,13 +963,12 @@
         //var aaKeyField = localStorage["aaXKFX"];
         //var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
-        //let aNowDte = new Date()
+        var aaFullName = localStorage["asFTNAME"];
+        var aaSFID = localStorage["asSTFID"].trim();
         showPreviousYearPopup(function (aNowDte) {
             console.log("Selected date: " + aNowDte);
 
-            var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-            //var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
-            //aaPFDMI = aaPFDMZz
+            var aaPFDMI = isLocalHost();
             var afqrFull = "pageID='" + aaPXIXD + "' "
             var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
             var afsettings = {
@@ -977,7 +976,7 @@
                 "method": "POST",
                 "timeout": 0,
                 "headers": { "Content-Type": "application/json" },
-                "data": JSON.stringify({ "@": btoa(afqrFull) }), //" pageID='Resigned' "
+                "data": JSON.stringify({ "@": btoa(afqrFull) }), 
             };
             var jqxhr = $.post(afsettings, function (e) { })
                 .done(function (e) {
@@ -993,18 +992,17 @@
                     $(() => {
 
                         var aaPFDMI = isLocalHost();
-                        //aaPFDMI = aaPFDMZz
                         var aaXToX = localStorage["aaXXoX"];
-
                         var aaOnInitExpGroupCode = "400"
                         var aaOnInitExpGroupDesc = "Travel & Entertainment"
                         var aaOnInitAccCode = "55101150003"
                         var aaOnInitAccDesc = "Travel & Entertainment"
                         var TaaERTYPE = "800"
+                        console.log(aaUsrN,aaSFID,aaFullName)
                         //TRF
                         let aaaDivisionC = (localStorage["agbNewDiv"] === undefined) ? localStorage["asDIV"] : localStorage["agbNewDiv"];
                         //console.log("TRF Division ", aaaDivisionC)
-                        let Taxqr2S = "Where ExpGroupCode LIKE '%" + TaaERTYPE + "%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
+                        let Taxqr2S = "Where ExpGroupCode LIKE '%" + TaaERTYPE + "%' and PayToCode LIKE '%" + aaSFID + "'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                         let TaxFieldSelected = "HeadRefNo,ExpGroupCode,Department,Division,ERODesc02,ERODesc03,EROCheck01,EROCheck03"
                         let TaxFullBody = "Select " + TaxFieldSelected + " From " + "ExtraOnLine.dbo.TRVREQF " + Taxqr2S; //alert(aFullBody)
                         //console.log("TaxFullBody = ", TaxFullBody)
@@ -2589,6 +2587,22 @@
                                                         //console.log("iData = ",iData)
                                                         console.log("iData.division = ", iData.Division)
                                                         console.log("iData.ERORefNo5 = ", iData.ERORefNo5)
+                                                        console.log("iData.EROCode01 = ", iData.EROCode01," ",iData.EROCode01.charAt(0))
+                                                        console.log("iData.EROCode02 = ", iData.EROCode02," ",iData.EROCode02.charAt(0))
+                                                        //var aaCheckOC;
+                                                        aaOverseasxx = iData.EROCode01.charAt(0) === "O"; 
+                                                        aaConferencexx = iData.EROCode02.charAt(0) === "C";
+                                                        if (aaOverseasxx && aaConferencexx ){
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOC);
+                                                        } else if (aaOverseasxx && !aaConferencexx) {
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsO);
+                                                        } else if (!aaOverseasxx && aaConferencexx) {
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsLC);
+                                                        } else if (!aaOverseasxx && !aaConferencexx) {
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );
+                                                        }
+                                                        console.log(aaOverseasxx,aaConferencexx)
+                                                        console.log(xxxSubGroup01)
                                                         var aTRFREFNO = iData.ERORefNo5
                                                         editingMode = aTRFREFNO.substring(0, 1) === "R" ? "popup" : "cell";
                                                         console.log(aTRFREFNO, aTRFREFNO.substring(0, 1), editingMode)
@@ -2943,6 +2957,20 @@
                                                                     },
                                                                     visible: [aTravelSC],
                                                                 },
+                                                                {
+                                                                    dataField: "EROCode01",
+                                                                    label: { text: "TRF Trip" },
+                                                                    editorType: "dxTextBox",
+                                                                    editorOptions: { width: 130, readOnly: true, },
+                                                                    visible: [aTravelSC],
+                                                                },    
+                                                                {
+                                                                    dataField: "EROCode02",
+                                                                    label: { text: "TRF Conference" },
+                                                                    editorType: "dxTextBox",
+                                                                    editorOptions: { width: 130, readOnly: true, },
+                                                                    visible: [aTravelSC],
+                                                                },                                                                                                                             
                                                                 ]
 
                                                             },
@@ -3296,12 +3324,12 @@
                                                                                                 colSpan: 1,
                                                                                                 visible: true,
                                                                                             },
-                                                                                            /*
+                                                                                            
                                                                                             {
-                                                                                                dataField: "EROSum1",
+                                                                                                dataField: "EROCode01",
                                                                                                 label: { text: "TRF Overseas" },
-                                                                                                editorType: "dxNumberBox",
-                                                                                                editorOptions: { width: 150, },
+                                                                                                editorType: "dxTextBox",
+                                                                                                editorOptions: { width: 150, readOnly: true },
                                                                                                 colSpan: 1,
                                                                                                 visible: true,
                                                                                             },
@@ -3310,14 +3338,14 @@
                                                                                                 colSpan: 1,
                                                                                             },                                                                                            
                                                                                             {
-                                                                                                dataField: "EROCode06",
+                                                                                                dataField: "EROCode02",
                                                                                                 label: { text: "TRF Conference" },
                                                                                                 editorType: "dxTextBox",
-                                                                                                editorOptions: { width: 150, },
+                                                                                                editorOptions: { width: 150, readOnly: true },
                                                                                                 colSpan: 1,
                                                                                                 visible: true,
                                                                                             },
-                                                                                            */                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                  
                                                                                         ],   
                                                                             },
                                                                             {
@@ -3828,12 +3856,10 @@
                                                                         let aaResultx   = aSearch2json(aaTRFGroup01, "HeadRefNo", value)
                                                                         aaOverseasxx = aaResultx[0].EROCheck01;
                                                                         aaConferencexx = aaResultx[0].EROCheck03;
-
-                                                                        //const searchTermsO = ['.', '402', '403'];   // overseas
-                                                                        //const searchTermsOC = ['401','402','403']; // overseas & Conference
-                                                                        //const searchTermsLC = ['441','404']         // local & conference
-                                                                        //const searchTermsL = ['.','404']           // local
-                                                                        
+                                                                        // searchTermsO = ['.', '402', '403'];  // overseas
+                                                                        // searchTermsOC = ['401','402','403']; // overseas & Conference
+                                                                        // searchTermsLC = ['441','404']        // local & conference
+                                                                        // searchTermsL = ['.','404']           // local
                                                                         //xxxSubGroup01 = searchExpenses(aaSubGroup01, aaSrchTerm);
 
                                                                         if (aaOverseasxx && aaConferencexx ){
@@ -3847,11 +3873,23 @@
                                                                         }
                                                                         console.log("xxxSubGroup01 ",xxxSubGroup01)
                                                                         console.log("Overseas ", aaOverseasxx, "Conference ", aaConferencexx)
+                                                                        newData.EROCode01 = aaOverseasxx ? "Overseas" : "Local"
+                                                                        newData.EROCode02 = aaConferencexx ? "Conference" : ""
                                                                         //let aaConferenceaa = aSearch2json(aaTRFGroup01, "EROCheck03", value)
                                                                         //newData.ExpensesCode = aResult[0].ACCCODE
                                                                     },
                                                                     visible: false,
                                                                 },
+                                                                {
+                                                                    dataField: "EROCode01",
+                                                                    caption: "Overseas",
+                                                                    visible: false,
+                                                                },
+                                                                {
+                                                                    dataField: "EROCode02",
+                                                                    caption: "Overseas",
+                                                                    visible: false,
+                                                                },                                                                
                                                                 {
                                                                     dataField: "ERORefNo3",
                                                                     caption: "Type of Reimbursement*",
@@ -4514,8 +4552,8 @@
                                                                             { dataField: "Department", caption: "Department", width: 80 },
                                                                             { dataField: "ERODesc03", caption: "Purpose", width: 200 },
                                                                             { dataField: "ERODesc02", caption: "Destination", width: 200 },
-                                                                            { dataField: "EROCheck01", caption: "Overseas", width: 100, alignment: "center" },
-                                                                            { dataField: "EROCheck03", caption: "Conference", width: 100, alignment: "center" }
+                                                                            { dataField: "EROCheck01", caption: "O", width: 30 },
+                                                                            { dataField: "EROCheck03", caption: "C", width: 30 }
                                                                         ],
                                                                         hoverStateEnabled: true,
                                                                         searchPanel: { visible: true },

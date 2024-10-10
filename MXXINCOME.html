@@ -910,9 +910,7 @@
         showPreviousYearPopup(function (aNowDte) {
             console.log("Selected date: " + aNowDte);
 
-        var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-        //var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
-        //aaPFDMI = aaPFDMZz
+        var aaPFDMI = isLocalHost(); 
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
         var afsettings = {
@@ -1477,14 +1475,12 @@
                                                 visible: true,
                                             },
                                             {
-                                                dataField: "ERORefNo3",
-                                                caption: "Expenses Type",
+                                                dataField: "ERStatus",
+                                                caption: "Status",
                                                 dataType: "string",
-                                                validationRules: [{ type: "required" }],
-                                                width: 300,
-                                                visible: false,
-                                                //editorOptions: {width: 150},
-                                            },
+                                                width: 250,
+                                                visible: true,
+                                            },                                            
                                         ],
                                         // summary
                                         summary: {
@@ -2912,7 +2908,11 @@
                                                                     $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
                                                                     $("#gridContainer").dxDataGrid("instance").refresh();
 
-                                                                    aMessageAlert("Already Confirmed ") //& send mail to Requester " + aApproverName + " (" + aApproverEmail + ")", "DarkGreen")
+                                                                    aMessageAlert("Already Confirmed !!") //& send mail to Requester " + aApproverName + " (" + aApproverEmail + ")", "DarkGreen")
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
                                                                     popup.hide();
                                                                 }
                                                             });
