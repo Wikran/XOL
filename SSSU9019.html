@@ -320,7 +320,7 @@
         var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost();
-        var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+        var aaPFDMZz = aaPFDMI; //"https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
         var afqrFull = "pageID = '" + aaPXIXD + "' "
         var afURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + atob(aaXToX) + '/' + aaXTXB + '/all' //+ aaPXXI aaXTXB "326459ff-7ea6-4465-a946-9326b783d492"
@@ -679,7 +679,7 @@
                                         allowHiding: false,
                                         validationRules: [{ type: 'required', message: 'Department is required' }],
                                         groupIndex: 0,
-                                        editorOptions: { width: 450, readOnly: ahrSuperEdit },
+                                        editorOptions: { width: 450, },//readOnly: ahrSuperEdit 
                                         width: 120,
                                         //visible: false,
                                     },
@@ -705,7 +705,7 @@
                                         dataField: "Division",
                                         caption: "Division (ACC)",
                                         dataType: "string",
-                                        editorOptions: { width: 450, readOnly: ahrSuperEdit },
+                                        editorOptions: { width: 450, }, //readOnly: ahrSuperEdit 
                                         width: 150,
                                         //visible: false,
                                     },

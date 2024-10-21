@@ -39,7 +39,8 @@ $(document).ready(function () {
     };
     localStorage["aDXTheme"] = aDXTheme;
     DevExpress.ui.themes.current(aDXTheme); //'generic.light'
-    $(".dx-icon").addClass("dx-theme-accent-as-text-color");
+    $(".dx-icon").removeClass("dx-theme-accent-as-text-color").addClass("dx-theme-accent-as-text-color");
+    //$(".context").hide();
     let aUserNamea = ausrProperty[0].aaXXuX //localStorage["aaXXuX"];
     document.getElementById("aUsrName").innerHTML = aUserNamea;
     //let aaIMGaa = "/images/" + aUserNamea + ".png";
@@ -96,7 +97,7 @@ var aOptionMenu = [{
         { ID: "104", text: "New Login             ", type: "normal", icon: "fas fa-key", visible: false, onClick: function () { aRunLogin() } },
         { ID: "105", text: "Help                  ", type: "danger", icon: "help", visible: true, onClick: () => { aRuniFrame("./Help.html", "Help") } },
         { ID: "105", text: "Logout                ", type: "danger", icon: "fas fa-sign-out-alt", visible: true, onClick: () => { aaGOTO('index.html') } },
-        { ID: "106", text: "Themes                ", type: "normal", badge: "12", icon: "fas fa-palette", visible: true, onClick: () => { aThemeSelect() } }
+        { ID: "106", text: "Themes                ", type: "normal", badge: "12", icon: "fas fa-palette", visible: true, onClick: () => { aThemeSelect() } },
     ]
 }];
 

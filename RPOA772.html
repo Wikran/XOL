@@ -192,9 +192,6 @@
             let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
             let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
             let aDateNow2 = aYear2 + aMonth2 + aDate2 + aMSuf + String(Date.now()).substring(5, nFtoL) // 5,16
-            //let aERCode = "5102300001"
-            //let aERSuf = "F"
-            //axRunRun = "ER" + aDateNow2
             return aERSuf + aDateNow2 //+ aYear2 + aMonth2 + aDate2 + aHour2;
         }
 
@@ -277,7 +274,7 @@
                     console.log(typeof aData)
                     var aDataObj = { data: aData };
                     console.log("aData.length ", aData.length)
-                    for (let i = 0; i < 1; i++) { //< aData.length;, < 1;
+                    for (let i = 0; i < aData.length; i++) { //< aData.length;, < 1;
                         console.log("aData ", "type aData ", typeof aData)
                         //let aaID = aGetDateRefE("", "", 12) // "Insert"
                         let aaID = aData[i].IDNO
@@ -321,9 +318,9 @@
                         }
                         let aSQLCommand = "use ExtraOnLine; UPDATE Approver SET " + aaSubSQLCommand       
                         console.log(aSQLCommand)
-                        //aSQLAction(aaPFDMI, aSQLCommand)
-                        //aSQLAction(aaPFDMI, aSQLCommand)
-                        //aSQLAction(aaPFDMI, aSQLCommand)
+                        aSQLAction(aaPFDMI, aSQLCommand)
+                        aSQLAction(aaPFDMI, aSQLCommand)
+                        aSQLAction(aaPFDMI, aSQLCommand)
                         $("#gridContainer").dxDataGrid("instance").refresh();
                         $("#gridContainer").dxDataGrid("instance").refresh();
                         $("#gridContainer").dxDataGrid("instance").refresh();
@@ -334,8 +331,8 @@
                 }
                 )
         }
+        
         // Insert New division
-
         const ClonePretoNew = (a, aaTBKey, aaPFDMI, aaXToX, PreDiv, NewDiv) => {
             // Search for PreDiv 
             let aaqrFull = "Where ApproveToDivision = '" + PreDiv + "' "
@@ -345,23 +342,59 @@
                 .then(response => response.json())
                 //
                 .then(aData => {
-                    console.log("aData = ", aData)
-                    console.log(typeof aData)
+                    //console.log("aData = ", aData)
+                    //console.log(typeof aData)
                     //let xData = JSON.stringify(aData);
                     //console.log(xData)
                     //.log(typeof xData)
                     // Loop from i = 1 to Last
                     // Insert New Division 1 
+                    //INSERT INTO Customers
+                    //VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+                    //IDNO,ApproverCode,ApperverDesc,ApproveToDivision,ApproverEmpID,ApproverName,ApproverEmail,ApproverDept,ApproverDiv,ApproverPos,Note,LRange01,LRange02,AppOrder,AppDefault
                     let aaID;
+                    let aFleetCard = 0;
                     for (let i = 0; i < aData.length; i++) {
-                        console.log("aData ", i, aData[i].IDNO, "type aData ", typeof aData)
-                        let aaID = aGetDateRefE("", "", 12)
-                        let aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
-                        console.log("type KEYdata ", typeof aObjKeyData, " data = ", aObjKeyData)
-                        let aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
+                        //console.log("aData ", i, aData[i].IDNO, "type aData ", typeof aData)
+                        //console.log("ApproverCode ", aData[i].ApproverCode)
+                        //console.log("ApproverEmpID ", aData[i].ApproverEmpID)
+                        //console.log("ApproverName ", aData[i].ApproverName)
+
+                        let aaID = aGetDateRefE("", "", 12) + i.toString(); 
+                        aFleetCard = aData[i].AppDefault ? 1 : 0;
+                        ////let aObjKeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+                        //let aOjkeyData = { IDNO: aaID, ApproveToDivision: NewDiv }
+                        //let aaSQLValues = "'" + aaID + "','" + aData[i].ApproverCode + "','','" + NewDiv.trim() + aData[i].ApproverEmpID.trim() + "','" + aData[i].ApproverName + "','"                         + aData[i].ApproverEmail + "','" + aData[i].ApproverDept + "','" 
+                        //+ aData[i].ApproverDiv + "','" + aData[i].ApproverPos + "',''," 
+                        //+  aData[i].LRange01 + "," +  aData[i].LRange02 + "," 
+                        //+  aData[i].AppOrder + ","  +  aFleetCard; 
+
+                        let aObjKeyData = { IDNO: aaID, ApproverCode: aData[i].ApproverCode, ApperverDesc: "", ApproveToDivision: NewDiv, ApproverEmpID: aData[i].ApproverEmpID.trim(),
+                            ApproverName: aData[i].ApproverName, ApproverEmail: aData[i].ApproverEmail, ApproverDept: aData[i].ApproverDept,
+                            ApproverDiv: aData[i].ApproverDiv, ApproverPos: aData[i].ApproverPos, Note: "", LRange01: aData[i].LRange01, LRange02: aData[i].LRange02, AppOrder: aData[i].AppOrder,AppDefault: aFleetCard }
+                        
+                        //console.log("objkeydata  ",aObjKeyData)
+                        //let aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+                        let aObjRowData = JSON.stringify(aObjKeyData);
+                        sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                        ////console.log("type KEYdata ", typeof aObjKeyData, " data = ", aObjKeyData)
+                        //let aObjRowData = JSON.stringify($.extend({}, aObjKeyData, aData));
+                        ////let aObjRowData = JSON.stringify($.extend({}, aData, aObjKeyData));
                         //let aObjRowData = $.extend({}, aData, aObjKeyData);
-                        console.log("type Row ", typeof aObjRowData, " Combine data =", aObjRowData)
+                        ////console.log("type Row ", typeof aObjRowData, " Combine data =", aObjRowData)
                         //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                        //sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                        //IDNO,ApproverCode,ApperverDesc,ApproveToDivision,ApproverEmpID,ApproverName,ApproverEmail,ApproverDept,ApproverDiv,ApproverPos,Note,LRange01,LRange02,AppOrder,AppDefault                                                                                                                                 LRange01,LRange02,AppOrder,AppDefault                                                                        
+                        //" + aData[i].ApperverDesc + "
+                        
+                        //let aSQLValues = "'" + aaID + "','" + aData[i].ApproverCode + "','','" + NewDiv.trim() + "','" + aData[i].ApproverEmpID.trim() + "','" + aData[i].ApproverName + "','" + aData[i].ApproverEmail + "','" + aData[i].ApproverDept + "','" + aData[i].ApproverDiv + "','" + aData[i].ApproverPos + "',''," +  aData[i].LRange01 + "," +  aData[i].LRange02 + "," +  aData[i].AppOrder + ","  +  aFleetCard; 
+                        //console.log("SQL ", aSQLValues)
+                        //let aSQLCommand = "use ExtraOnLine; INSERT INTO Approver VALUES (" + aSQLValues + ")"
+                        /////////////////////console.log("SQL ", aSQLCommand)
+                        //let aSQLCommand = "use ExtraOnLine; UPDATE TRVREQF  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                        //aSQLAction(aaPFDMI, aSQLCommand)  
+                        //aSQLAction(aaPFDMI, aSQLCommand)
+                        //aSQLAction(aaPFDMI, aSQLCommand)
                     }
                     /* let aaID = aGetDateRefE("", "", 12)
                      let aObjKeyData = { IDNO: aaID }
@@ -579,7 +612,7 @@
                                         },
                                         pager: {
                                             showPageSizeSelector: true,
-                                            allowedPageSizes: [10, 15, 20],
+                                            allowedPageSizes: [10, 15, 20, 50, 80, 100],
                                             showInfo: true
                                         },
                                         showBorders: true,
@@ -1758,13 +1791,19 @@
                                                     if (dresult) {
                                                         //ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDiv, aaNewDiv)
                                                         //Delegate
-                                                        if (aaIndex === 0) {
+                                                        if (aaIndex === 0) { //Delegate
                                                             delegateAction(1, aaTBKey, aaPFDMI, aaXToX, aaPreApprover, aaNewApprover, aaPreAppCode, aaNewAppCode, aaaEmployee)
                                                         } else if (aaIndex === 1) { //callback
                                                             delegateAction(2, aaTBKey, aaPFDMI, aaXToX, aaPreApprover, "", aaPreAppCode, "", aaaEmployee)
-                                                        }  else if (aaIndex === 2) { //callback
+                                                        }  else if (aaIndex === 2) { //Replace Old Approver
                                                             delegateAction(3, aaTBKey, aaPFDMI, aaXToX, aaOldApprover, aaTargetApprover, aaOldAppCode, aaTargetAppCode, aaaEmployee)
-                                                        }   
+                                                        } else if (aaIndex === 3) {
+                                                            ClonePretoNew("", aaTBKey, aaPFDMI, aaXToX, aaPreDivision, aaToDivision)
+                                                        }
+                                                        
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
                                                         $("#gridContainer").dxDataGrid("instance").refresh();
                                                         $("#gridContainer").dxDataGrid("instance").refresh();
                                                         $("#gridContainer").dxDataGrid("instance").refresh();

@@ -86,6 +86,7 @@
             --dgColor: black;
             --dgSelBar: #d2f2fc4c;
             --dgSelText: blue;
+            --stBgcolor: #F5F5F5;
         }
 
         /*-----------------------------*/
@@ -125,7 +126,38 @@
         #gridContainer .dx-datagrid-filter-panel {
             background-color: var(--dgBG) !important;
         }
-
+        .dx-form .dx-field-item-label-text {
+            color: black;
+            font-style: bold;
+        }
+        /*-----------------------------*/
+        .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+        #popupContainerAdd .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-form .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-form01 .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-dxDataGrid .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }        
+        #Add-dxDataGrid .dx-datagrid-rowsview .dx-scrollable-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-dxDataGrid .dx-datagrid-header-panel {
+            background-color: var(--stBgcolor);
+        }   
+        #Add-dxDataGrid .dx-toolbar-items-container { 
+            background-color: var(--stBgcolor);
+        }               
+        #Add-dxDataGrid .dx-datagrid {
+            background-color: var(--stBgcolor);
+        }
         /*-----------------------------*/
         .title-bg {
             background-color: rgba(191, 191, 191, 0.15);
@@ -354,28 +386,28 @@
             color: unset;
         }
 
-        .dx-popup-fullscreen .dx-popup-bottom {
+        /*.dx-popup-fullscreen .dx-popup-bottom {
             /*float: left;         
-            margin-top: -240px; Adjust this value as needed */
+            margin-top: -240px; Adjust this value as needed 
             position: absolute;
             left: -1400px;
             top: 650px;
-        }
-        /* Custom CSS to change the color and background color of the buttons */
+        }*/
+        /* Custom CSS to change the color and background color of the buttons 
         .dx-popup-fullscreen .dx-popup-bottom .dx-button {
-            background-color: #c7fec9d4; /* Change this to your desired background color */
+            background-color: #c7fec9d4; Change this to your desired background color 
             color: rgb(4, 4, 4); /* Change this to your desired text color */
-            /* border: 1px; Optional: Remove border */
-            /*padding: 10px 20px;  Optional: Adjust padding */
-            font-size: 12px; /* Optional: Adjust font size */
+            /* border: 1px; Optional: Remove border 
+            /*padding: 10px 20px;  Optional: Adjust padding 
+            font-size: 12px;  Optional: Adjust font size 
             font-weight: bold;
-        }
+        }*/
 
-        /* Optional: Add hover effect */
+        /* Optional: Add hover effect 
         .dx-popup-fullscreen .dx-popup-bottom .dx-button:hover {
-            background-color: #dbfcdce8; /* Change this to your desired hover background color */
+            background-color: #dbfcdce8; Change this to your desired hover background color 
         }
-
+        */
         /*
         .dx-datagrid .dx-row.dx-selection .dx-icon {
             color:rgba(239, 0, 0, 0.994); 
@@ -400,6 +432,15 @@
         applyPlugin(window.jsPDF);
         console.clear();
         //console.log(aCurrenciesList)
+        //Overseas                         10,000 B. per Person/ Night 
+        //Entertainment                    40,000 per Person (per Year?) 
+        //Gift Provide and/or      Receive 40,000 per Person (per Year?)
+        const aaLimitedAmt = [
+            {code: "Overseas", lmtamt: 10000},
+            {code: "Entertainment", lmtamt: 40000},
+            {code: "Gift", lmtamt: 40000}
+        ]
+
         const divisionsList = [
             {"code": "1127-00"},
             {"code": "1127-01"},
@@ -1003,7 +1044,7 @@
                         let aaaDivisionC = (localStorage["agbNewDiv"] === undefined) ? localStorage["asDIV"] : localStorage["agbNewDiv"];
                         //console.log("TRF Division ", aaaDivisionC)
                         let Taxqr2S = "Where ExpGroupCode LIKE '%" + TaaERTYPE + "%' and PayToCode LIKE '%" + aaSFID + "'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
-                        let TaxFieldSelected = "HeadRefNo,ExpGroupCode,Department,Division,ERODesc02,ERODesc03,EROCheck01,EROCheck03"
+                        let TaxFieldSelected = "HeadRefNo,ExpGroupCode,Department,Division,ERODesc02,ERODesc03,EROCheck01,EROCheck03,ERORefNo1"
                         let TaxFullBody = "Select " + TaxFieldSelected + " From " + "ExtraOnLine.dbo.TRVREQF " + Taxqr2S; //alert(aFullBody)
                         //console.log("TaxFullBody = ", TaxFullBody)
                         fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(TaxFullBody) }), redirect: "follow" })
@@ -1348,7 +1389,7 @@
                                                                         return (e.row.data.ID === 1 && e.row.data.Confirmed === true && e.row.data.HODApproved === false) //return !e.row.isEditing;
                                                                     },
                                                                     onClick: function (e) {
-                                                                        let result = DevExpress.ui.dialog.confirm("Are you sure you want to Un-Confirmed to Edit this Record ? <br> Â×¹ÂÑ¹à¾×èÍ àÃÕÂ¡¢éÍÁÙÅ¡ÅÑºä»à¾×èÍÊÒÁÒÃ¶á¡éä¢¢éÍÁÙÅ áÅÐâ»Ãá¡ÃÁ¨ÐÊè§ Email á¨é§ä»·Õè¤Ø³ <br>" + e.row.data.Vendor02Note + "[" + aaHODAppEmail +"]" + " <br><p style='color:Red; font-size: 12px;' ><br><p style='color: grey; font-size: 10px;'></p>¤Ø³µéÍ§¡ÒÃÂ¡àÅÔ¡¡ÒÃÂ×¹ÂÑ¹ (UN-Confirmed) ËÃ×ÍäÁè?", "UN-CONFIRMED ?"); // 
+                                                                        let result = DevExpress.ui.dialog.confirm("Are you sure you want to Un-Confirmed to Edit this Record ? <br> ï¿½×¹ï¿½Ñ¹ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½Å¡ï¿½Ñºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ä¢¢ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Email ï¿½ï¿½ä»·ï¿½ï¿½Ø³ <br>" + e.row.data.Vendor02Note + "[" + aaHODAppEmail +"]" + " <br><p style='color:Red; font-size: 12px;' ><br><p style='color: grey; font-size: 10px;'></p>ï¿½Ø³ï¿½ï¿½Í§ï¿½ï¿½ï¿½Â¡ï¿½ï¿½Ô¡ï¿½ï¿½ï¿½ï¿½×¹ï¿½Ñ¹ (UN-Confirmed) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?", "UN-CONFIRMED ?"); // 
                                                                         result.done(function (dresult) {
                                                                             if (dresult) {
                                                                                 // mark Confirmed field
@@ -1378,7 +1419,7 @@
                                                                                 let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
                                                                                 let aSubject = aaOnInitExpGroupDesc + " EXPENSES REIMBURSEMENT - CALLBACK"
                                                                                 let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                let aMessageT1 = "<div>à¹€à¸£à¸µà¸¢à¸ÿ à¸ÿà¸¸à¸“" + $.trim(aApproverName) + "<br>à¸ÿà¸¹à¹ÿà¸ÿà¸­à¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´à¹ÿà¸”à¹ÿà¹€à¸£à¸µà¸¢à¸ÿà¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥ " + aaOnInitExpGroupDesc + " Expenses Reimbursement à¸ªà¸³à¸«à¸£à¸±à¸ÿ REFNO = [" + e.row.data.HeadRefNo + "]<br> à¸ÿà¸¥à¸±à¸ÿà¹ÿà¸ÿà¹ÿà¸ÿà¹ÿà¹ÿà¸ÿ <br> à¹ÿà¸ÿà¹ÿà¸ÿà¸²à¸ÿà¹ÿà¸ÿà¸£à¹ÿà¸ÿà¸£à¸¡à¸—à¸µà¹ÿ " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
+                                                                                let aMessageT1 = "<div>à¹€à¸£à¸µà¸¢ï¿½ï¿½ ï¿½ï¿½à¸¸à¸“" + $.trim(aApproverName) + "<br>ï¿½ï¿½à¸¹ï¿½ï¿½ï¿½ï¿½à¸­à¸­ï¿½ï¿½à¸¸à¸¡à¸±à¸•à¸´ï¿½ï¿½à¸”ï¿½ï¿½à¹€à¸£à¸µà¸¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸­à¸¡à¸¹à¸¥ " + aaOnInitExpGroupDesc + " Expenses Reimbursement à¸ªà¸³à¸«à¸£à¸±ï¿½ï¿½ REFNO = [" + e.row.data.HeadRefNo + "]<br> ï¿½ï¿½à¸¥à¸±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ <br> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£ï¿½ï¿½ï¿½ï¿½à¸£à¸¡à¸—à¸µï¿½ï¿½ " + aAddress2Do + "<br><br><br><b>" + aRequesterName + "</b></div>"
                                                                                 let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) +  aEmailTRF[7]  + aaOnInitExpGroupDesc + " Expenses REFNO = [" + e.row.data.HeadRefNo + aEmailTRF[8] + aAddress2Do + aEmailTRF[12]+ aRequesterName + aEmailTRF[5] 
                                                                                 //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
                                                                                 //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
@@ -2124,7 +2165,7 @@
                                                         let aSubmitD = aSubD.substring(8, 10) + "/" + aSubD.substring(5, 7) + "/" + aSubD.substring(0, 4)
                                                         //let aSubmitD =  aSubD.getFullYear() + "/" + aSubD.getMonth() + "/" + aSubD.getDate()
                                                         let atitledtl = "Travel & Expenses Expenses Reimbursement";
-                                                        let aAlertMessage = "<big>à¸ÿà¸£à¸¸à¸“à¸²à¹ÿà¸ÿà¸ÿà¹ÿà¸ÿà¹€à¸ªà¸£à¹ÿà¸ÿà¹ÿà¸¥à¸°à¹€à¸­à¸ÿà¸ªà¸²à¸£à¸—à¸µà¹ÿà¸ÿà¸³à¹€à¸ÿà¹ÿà¸ÿà¸¡à¸²à¸”à¹ÿà¸§à¸¢ à¹ÿà¸¡à¹ÿà¹€à¸ÿà¹ÿà¸ÿà¸ÿà¸±à¹ÿà¸ÿà¸ÿà¸°à¹ÿà¸¡à¹ÿà¸ªà¸²à¸¡à¸²à¸£à¸–à¸—à¸³à¸ÿà¸²à¸£à¹€à¸ÿà¸´à¸ÿà¹ÿà¸”à¹ÿ **</big>";
+                                                        let aAlertMessage = "<big>ï¿½ï¿½à¸£à¸¸à¸“à¸²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¹€à¸ªà¸£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸¥à¸°à¹€à¸­ï¿½ï¿½à¸ªà¸²à¸£à¸—à¸µï¿½ï¿½ï¿½ï¿½à¸³à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸¡à¸²à¸”ï¿½ï¿½à¸§à¸¢ ï¿½ï¿½à¸¡ï¿½ï¿½à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸°ï¿½ï¿½à¸¡ï¿½ï¿½à¸ªà¸²à¸¡à¸²à¸£à¸–à¸—à¸³ï¿½ï¿½à¸²à¸£à¹€ï¿½ï¿½à¸´ï¿½ï¿½ï¿½ï¿½à¸”ï¿½ï¿½ **</big>";
                                                         let arectanglehtml = "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><rect x='1' y='1' width='100' height='100' stroke='black' stroke-width='0.2' fill='none' /></svg>"
                                                         let arspace = (no) => { return "&nbsp;".repeat(no) }; //= "&nbsp;".repeat(30);
                                                         let arlineno = (nor) => { return "<br>".repeat(nor) };
@@ -2140,17 +2181,17 @@
                                                             $("<div style = 'margin-left: " + abodyleftm + "'>à¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸” - DESCRIPTIONS</div>"),
                                                             $("<div style = 'margin-left: " + atopmargin + "'>" + aDetailHTML + " </div>"),
                                                             //$("<p><div style = 'margin-left: " + abodyleftm + "' id='detail-dxDataGrid'></div></p>"),
-                                                            $("<p style = 'margin-left: " + abodyleftm + "'>à¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥à¸—à¸²à¸ÿà¸ÿ/à¸ÿ - ACCOUNTING INFORMATION</p>"),
+                                                            $("<p style = 'margin-left: " + abodyleftm + "'>ï¿½ï¿½ï¿½ï¿½à¸­à¸¡à¸¹à¸¥à¸—à¸²ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ - ACCOUNTING INFORMATION</p>"),
                                                             $("<div style = 'margin-left: " + atopmargin + "'>" + aACHTML + " </div>"),
                                                             //$("<p><div style = 'margin-left: " + abodyleftm + "' id='ACCChart-dxDataGrid'></div></p>"), //#ACCChart-dxDataGri alastLine
-                                                            $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)), //.text("à¸ÿà¸£à¸¸à¸“à¸²à¹ÿà¸ÿà¸ÿ à¹ÿà¸ÿà¹€à¸ªà¸£à¹ÿà¸ÿ à¸¡à¸²à¸ÿà¸£à¹ÿà¸­à¸¡à¸ÿà¸±à¸ÿà¹€à¸­à¸ÿà¸ªà¸²à¸£à¸ÿà¸ÿà¸±à¸ÿà¸ÿà¸µà¹ÿ | Please attach the receipt with this document."),
+                                                            $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)), //.text("ï¿½ï¿½à¸£à¸¸à¸“à¸²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½à¹€à¸ªà¸£ï¿½ï¿½ï¿½ï¿½ à¸¡à¸²ï¿½ï¿½à¸£ï¿½ï¿½à¸­à¸¡ï¿½ï¿½à¸±ï¿½ï¿½à¹€à¸­ï¿½ï¿½à¸ªà¸²à¸£ï¿½ï¿½ï¿½ï¿½à¸±ï¿½ï¿½ï¿½ï¿½à¸µï¿½ï¿½ | Please attach the receipt with this document."),
                                                             //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
                                                             //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
                                                             //$(" " + arlineno(8) + "<center><div style = 'margin-left: " + abodylefts + "' class= 'colorRBGlightgrey'>Requester ___________________________________________ <span style='padding: 100px 20px;'>" + arspace(25) + "Approver ___________________________________________</span></div></center>"),
                                                             //$("<span style = 'margin-left: " +  abodylefts + "'></span>").text(" "),
-                                                            $(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>à¸ÿà¸¹à¹ÿà¸ÿà¸­à¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´ (Requester)</b></small></div>"),
+                                                            $(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>ï¿½ï¿½à¸¹ï¿½ï¿½ï¿½ï¿½à¸­à¸­ï¿½ï¿½à¸¸à¸¡à¸±à¸•à¸´ (Requester)</b></small></div>"),
                                                             $("<span>" + arspace(28) + "</span>"),
-                                                            $("<div class='colorRBGlightgrey';><small><b>à¸ÿà¸¹à¹ÿà¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´ (Approver)</b></small></div>"),
+                                                            $("<div class='colorRBGlightgrey';><small><b>ï¿½ï¿½à¸¹ï¿½ï¿½à¸­ï¿½ï¿½à¸¸à¸¡à¸±à¸•à¸´ (Approver)</b></small></div>"),
                                                             //Requester_______________</span></div>' + arspace(25) + '<span class = 'colorBGlightgrey';>Approver</span>'),
                                                         );
                                                         //console.log(aHTMLsource)       
@@ -2545,17 +2586,25 @@
                                                 // This is the first
                                                 const aPopUpAddForm = (aRecNo, iData, idDate, aSetTravel) => {    
                                                     var aaOverseasxx;
-                                                    var aaConferencexx;                                                
+                                                    var aaConferencexx; 
+                                                    var aaPurposexx = "";                                               
                                                     var aaPFDMI = isLocalHost();
                                                     var aTravelSC = aSetTravel;
                                                     var editingMode = aTravelSC ? "popup" : "cell";
                                                     console.log("aTravelSC = ", aTravelSC)
                                                     console.log("editingMode = ",editingMode)
 
-                                                    var searchTermsO = ['.', '402', '403'];   // overseas
-                                                    var searchTermsOC = ['401','402','403'];  // overseas & Conference
-                                                    var searchTermsLC = ['441','404']         // local & conference
-                                                    var searchTermsL = ['.','404']            // local
+                                                    //var searchTermsO = ['.', '402', '403'];   // overseas
+                                                    //var searchTermsOC = ['401','402','403'];  // overseas & Conference
+                                                    //var searchTermsLC = ['441','404']         // local & conference
+                                                    //var searchTermsL = ['.','404']            // local
+                                                    
+                                                    var searchTermsLC = ['441','404']; Â // local & conference
+                                                    var searchTermsOC = ['401','403']; Â // overseas & Conference
+                                                    var searchTermsOT = ['.','402','403']; Â  // overseas & Training
+                                                    var searchTermsO = ['.','403']; Â  // overseas traveling
+                                                    var searchTermsL = ['.','404']; Â  // local traveling
+
                                                     //var aaSrchTerm = searchTermsOC;
                                                     //console.log(" Data ",aaSubGroup01)
                                                     var xxxSubGroup01 = aaSubGroup01; //searchExpenses(aaSubGroup01, aaSrchTerm);
@@ -2592,13 +2641,28 @@
                                                         //var aaCheckOC;
                                                         aaOverseasxx = iData.EROCode01.charAt(0) === "O"; 
                                                         aaConferencexx = iData.EROCode02.charAt(0) === "C";
-                                                        if (aaOverseasxx && aaConferencexx ){
+                                                        aaPurposexx = iData.EROCode02; //Conference,Training,Traveling
+
+                                                        /*if (aaOverseasxx && aaConferencexx ){
                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOC);
                                                         } else if (aaOverseasxx && !aaConferencexx) {
                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsO);
                                                         } else if (!aaOverseasxx && aaConferencexx) {
                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsLC);
                                                         } else if (!aaOverseasxx && !aaConferencexx) {
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );
+                                                        }*/
+                                                        if (aaOverseasxx && aaPurposexx === "Conference" ){ // 2.OverseasConference
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOC);
+                                                        } else if (!aaOverseasxx && aaPurposexx === "Conference") { // 1.LocalConference
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsLC);
+                                                        } else if (aaOverseasxx && aaPurposexx === "Training") { //3.OverseasTraining
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOT);
+                                                        } else if (aaOverseasxx &&  aaPurposexx === "Traveling") { // 4.OverseasTraveling
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsO );
+                                                        } else if (!aaOverseasxx &&  aaPurposexx === "Traveling") { // 5.LocalTraveling
+                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );    
+                                                        } else { //not match
                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );
                                                         }
                                                         console.log(aaOverseasxx,aaConferencexx)
@@ -2718,7 +2782,7 @@
                                                             onClick: function (e) {
                                                                 $("#gridContainer").dxDataGrid("instance").refresh();
                                                                 if (aRecNo === 1) {
-                                                                    let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>à¸ÿà¸” 'YES' à¹€à¸ÿà¸·à¹ÿà¸­à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿ" +
+                                                                    let result = DevExpress.ui.dialog.confirm("<center><i class='fas fa-save custom-icon-size'></i>" + " Press 'YES' To SAVE </center>", "SAVE BEFORE EXIT ?"); // "<br>ï¿½ï¿½à¸” 'YES' à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½" +
                                                                     result.done(function (dresult) {
                                                                         if (dresult) {
                                                                             // not delete 
@@ -2834,7 +2898,7 @@
                                                                                     //console.log("xx",atestCehcka); // Logs the actual message
                                                                                     if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTravelEnAlert01, "INPUT ERROR"); }
                                                                                     else {
-                                                                                        let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> " + " Press [YES] to confirm and send email to HOD " + aaHODAppName + " (" + aaHODAppEmail + ") <br></b></p><p style='color: darkgreen; font-size: 14px;'>(" + (xxChkLenxx) + " HOD to approve)</p>", "CONFIRM TO HOD"); // "<br>à¸ÿà¸” 'YES' à¹€à¸ÿà¸·à¹ÿà¸­à¸ÿà¸±à¸ÿà¸—à¸¶à¸ÿ" +
+                                                                                        let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> " + " Press [YES] to confirm and send email to HOD " + aaHODAppName + " (" + aaHODAppEmail + ") <br></b></p><p style='color: darkgreen; font-size: 14px;'>(" + (xxChkLenxx) + " HOD to approve)</p>", "CONFIRM TO HOD"); // "<br>ï¿½ï¿½à¸” 'YES' à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­ï¿½ï¿½à¸±ï¿½ï¿½à¸—à¸¶ï¿½ï¿½" +
                                                                                         result.done(function (dresult) {
                                                                                             if (dresult) {
 
@@ -2865,7 +2929,7 @@
                                                                                                 var aSubject = aaMailTitle
                                                                                                 let aRefNoa = aaiHeadRef //iData.HeadRefNo
                                                                                                 let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                                let aMessageX1 = "<div>à¹€à¸£à¸µà¸¢à¸ÿ à¸ÿà¸¸à¸“" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;à¸ÿà¸£à¸¸à¸“à¸²à¸•à¸£à¸§à¸ÿà¸ªà¸­à¸ÿ à¹ÿà¸¥à¸°à¸­à¸ÿà¸¸à¸¡à¸±à¸•à¸´à¸£à¸²à¸¢à¸ÿà¸²à¸£ " + aaOnInitExpGroupDesc + " Expenses à¸ªà¸³à¸«à¸£à¸±à¸ÿ REFNO = [" + aRefNoa + "]<br> à¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸ÿà¹ÿà¸²à¹ÿà¸ÿà¹ÿà¹ÿà¸ÿà¸£à¹ÿà¸ÿà¸£à¸¡à¹ÿà¸”à¹ÿà¸—à¸µà¹ÿ " + aAddress2Do + " (à¸«à¸±à¸§à¸ÿà¹ÿà¸­ Approve --> HOD Approve) <br><br>à¸ÿà¸­à¹ÿà¸ªà¸”à¸ÿà¸ÿà¸§à¸²à¸¡à¸ÿà¸±à¸ÿà¸–à¸·à¸­<br>" + aRequesterName + "</div>"
+                                                                                                let aMessageX1 = "<div>à¹€à¸£à¸µà¸¢ï¿½ï¿½ ï¿½ï¿½à¸¸à¸“" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;ï¿½ï¿½à¸£à¸¸à¸“à¸²à¸•à¸£à¸§ï¿½ï¿½à¸ªà¸­ï¿½ï¿½ ï¿½ï¿½à¸¥à¸°à¸­ï¿½ï¿½à¸¸à¸¡à¸±à¸•à¸´à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ " + aaOnInitExpGroupDesc + " Expenses à¸ªà¸³à¸«à¸£à¸±ï¿½ï¿½ REFNO = [" + aRefNoa + "]<br> à¸ªà¸²à¸¡à¸²à¸£à¸–à¹€ï¿½ï¿½ï¿½ï¿½à¸²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£ï¿½ï¿½ï¿½ï¿½à¸£à¸¡ï¿½ï¿½à¸”ï¿½ï¿½à¸—à¸µï¿½ï¿½ " + aAddress2Do + " (à¸«à¸±à¸§ï¿½ï¿½ï¿½ï¿½à¸­ Approve --> HOD Approve) <br><br>ï¿½ï¿½à¸­ï¿½ï¿½à¸ªà¸”ï¿½ï¿½ï¿½ï¿½à¸§à¸²à¸¡ï¿½ï¿½à¸±ï¿½ï¿½à¸–à¸·à¸­<br>" + aRequesterName + "</div>"
                                                                                                 let aMessage01 = aEmailTRF[0] + $.trim(aApproverName) +  aEmailTRF[1]  + aaOnInitExpGroupDesc + " Expenses REFNO = [" + aRefNoa + aEmailTRF[3] + aAddress2Do + aEmailTRF[4] + aEmailTRF[12]+ aRequesterName + aEmailTRF[5]                                                                       //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                                                                 var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                                                 aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
@@ -2966,7 +3030,7 @@
                                                                 },    
                                                                 {
                                                                     dataField: "EROCode02",
-                                                                    label: { text: "TRF Conference" },
+                                                                    label: { text: "TRF Purpose" },
                                                                     editorType: "dxTextBox",
                                                                     editorOptions: { width: 130, readOnly: true, },
                                                                     visible: [aTravelSC],
@@ -3208,6 +3272,7 @@
                                                                 popup: {
                                                                     title: "Travel & Expenses Reimbursement",
                                                                     fullScreen: true, //false,
+                                                                    showCloseButton: false,
                                                                     showTitle: true,
                                                                     width: 1650,
                                                                     height: 500,
@@ -3227,8 +3292,40 @@
                                                                         // Add custom CSS class to the popup content
                                                                         //e.component.content().addClass('custom-popup-content');
                                                                         //e.element.addClass("vertical-grid");
+                                                                    },
+                                                                    toolbarItems: [
+                                                                    {
+                                                                        widget: "dxButton",
+                                                                        toolbar: "top",
+                                                                        location: "after",
+                                                                        options: {
+                                                                            text: "SAVE",
+                                                                            type: "default",
+                                                                            stylingMode: "contained",
+                                                                            onClick: function(e) {
+                                                                                // Save logic
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").saveEditData();
+                                                                                //$("#popup").dxPopup("instance").hide();
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        widget: "dxButton",
+                                                                        toolbar: "top",
+                                                                        location: "after",
+                                                                        options: {
+                                                                            text: "CANCLE",
+                                                                            type: "danger",
+                                                                            stylingMode: "contained",
+                                                                            onClick: function(e) {
+                                                                                // Cancel logic
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").cancelEditData();
+                                                                            }
+                                                                        }
                                                                     }
+                                                                ],                                                                     
                                                                 },
+                                                                                                                              
                                                                 form: {
                                                                     showColonAfterLabel: false,
                                                                     labelLocation: "top",//"left", //"top",
@@ -3339,7 +3436,7 @@
                                                                                             },                                                                                            
                                                                                             {
                                                                                                 dataField: "EROCode02",
-                                                                                                label: { text: "TRF Conference" },
+                                                                                                label: { text: "TRF Purpose" },
                                                                                                 editorType: "dxTextBox",
                                                                                                 editorOptions: { width: 150, readOnly: true },
                                                                                                 colSpan: 1,
@@ -3856,25 +3953,35 @@
                                                                         let aaResultx   = aSearch2json(aaTRFGroup01, "HeadRefNo", value)
                                                                         aaOverseasxx = aaResultx[0].EROCheck01;
                                                                         aaConferencexx = aaResultx[0].EROCheck03;
-                                                                        // searchTermsO = ['.', '402', '403'];  // overseas
-                                                                        // searchTermsOC = ['401','402','403']; // overseas & Conference
-                                                                        // searchTermsLC = ['441','404']        // local & conference
-                                                                        // searchTermsL = ['.','404']           // local
+                                                                        aaPurposexx = aaResultx[0].ERORefNo1;
+                                                                        console.log("aaPurposexx = ", aaPurposexx)
+
+                                                                        //aaConferencexx = aaResultx[0].ERORefNo1;
+                                                                        //var searchTermsLC = ['441','404']; Â       // 1.local & conference
+                                                                        //var searchTermsOC = ['401','403']; Â       // 2.overseas & conference
+                                                                        //var searchTermsOT = ['.','402','403']; Â   // 3.overseas & training
+                                                                        //var searchTermsO  = ['.','403']; Â         // 4.overseas traveling
+                                                                        //var searchTermsL  = ['.','404']; Â         // 5.local traveling
                                                                         //xxxSubGroup01 = searchExpenses(aaSubGroup01, aaSrchTerm);
 
-                                                                        if (aaOverseasxx && aaConferencexx ){
+                                                                        if (aaOverseasxx && aaPurposexx === "Conference" ){ // 2.OverseasConference
                                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOC);
-                                                                        } else if (aaOverseasxx && !aaConferencexx) {
-                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsO);
-                                                                        } else if (!aaOverseasxx && aaConferencexx) {
+                                                                        } else if (!aaOverseasxx && aaPurposexx === "Conference") { // 1.LocalConference
                                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsLC);
-                                                                        } else if (!aaOverseasxx && !aaConferencexx) {
+                                                                        } else if (aaOverseasxx && aaPurposexx === "Training") { //3.OverseasTraining
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsOT);
+                                                                        } else if (aaOverseasxx &&  aaPurposexx === "Traveling") { // 4.OverseasTraveling
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsO );
+                                                                        } else if (!aaOverseasxx &&  aaPurposexx === "Traveling") { // 5.LocalTraveling
+                                                                            xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );    
+                                                                        } else { //not match
                                                                             xxxSubGroup01 = searchExpenses(aaSubGroup01, searchTermsL );
                                                                         }
                                                                         console.log("xxxSubGroup01 ",xxxSubGroup01)
-                                                                        console.log("Overseas ", aaOverseasxx, "Conference ", aaConferencexx)
+                                                                        console.log("Overseas ", aaOverseasxx, "Conference ", aaConferencexx, "Purpose ", aaPurposexx)
                                                                         newData.EROCode01 = aaOverseasxx ? "Overseas" : "Local"
-                                                                        newData.EROCode02 = aaConferencexx ? "Conference" : ""
+                                                                        //newData.EROCode02 = aaConferencexx ? "Conference" : ""
+                                                                        newData.EROCode02 = aaPurposexx;
                                                                         //let aaConferenceaa = aSearch2json(aaTRFGroup01, "EROCheck03", value)
                                                                         //newData.ExpensesCode = aResult[0].ACCCODE
                                                                     },
@@ -4038,7 +4145,25 @@
                                                                     editorType: "dxNumberBox",
                                                                     editorOptions: { format: "#,##0.00", width: 90, elementAttr: { class: "custom-editor" }, readOnly: true },
                                                                     width: 90,
-                                                                    visible: true,
+                                                                    visible: true, //ERORefNo3 
+                                                                    validationRules: [
+                                                                        { type: "required" },
+                                                                        {
+                                                                            type: "custom",
+                                                                            validationCallback: function (e) { //EROCode01
+                                                                                if (e.data.EROCode01  === "Overseas") {
+                                                                                    let aResultxxx = aSearch2json(aaLimitedAmt, "code", "Overseas");
+                                                                                    let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
+                                                                                    return e.value <= (aLimitAmtaa);
+                                                                                } else if (e.data.ERORefNo3  === "Entertainment In Town" ) {
+                                                                                   let aResultxxx = aSearch2json(aaLimitedAmt, "code", "Entertainment");
+                                                                                   let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
+                                                                                   return e.value <= (aLimitAmtaa);
+                                                                                } else { return true}
+                                                                            },
+                                                                            message: "Over Limited"
+                                                                        }
+                                                                    ],
                                                                 },
                                                                 {
                                                                     dataField: "ERODesc05",
@@ -4507,10 +4632,10 @@
                                                                     return $("<div>").dxDataGrid({
                                                                         dataSource: xxxSubGroup01, //aaSubGroup01
                                                                         columns: [
-                                                                            { dataField: "EDESC", caption: "Eng Desc.", width: 200, sortOrder: "asc" },
-                                                                            { dataField: "TDESC", caption: "Thai Desc", width: 280 },
-                                                                            { dataField: "ACCCODE", caption: "Account Code", width: 100 },
-                                                                            { dataField: "EXPDesc", caption: "Group", width: 100 }
+                                                                            { dataField: "EDESC", caption: "Eng Desc.", width: 300 },
+                                                                            { dataField: "TDESC", caption: "Thai Desc", width: 300 },
+                                                                            { dataField: "ACCCODE", caption: "Account Code", width: 100 , sortOrder: "asc"},
+                                                                            //{ dataField: "EXPDesc", caption: "Group", width: 100 }
                                                                         ],
                                                                         hoverStateEnabled: true,
                                                                         searchPanel: { visible: true },
@@ -4538,7 +4663,7 @@
 
                                                         function dropDownBoxTRF(cellElement, cellInfo) {
                                                             return $("<div>").dxDropDownBox({
-                                                                dropDownOptions: { width: 850 },
+                                                                dropDownOptions: { width: 950 },
                                                                 dataSource: aaTRFGroup01,
                                                                 value: [cellInfo.value],
                                                                 valueExpr: "HeadRefNo",
@@ -4552,8 +4677,9 @@
                                                                             { dataField: "Department", caption: "Department", width: 80 },
                                                                             { dataField: "ERODesc03", caption: "Purpose", width: 200 },
                                                                             { dataField: "ERODesc02", caption: "Destination", width: 200 },
-                                                                            { dataField: "EROCheck01", caption: "O", width: 30 },
-                                                                            { dataField: "EROCheck03", caption: "C", width: 30 }
+                                                                            { dataField: "EROCheck01", caption: "Location", width: 150, calculateCellValue: function(data) {return data.EROCheck01 ? "Overseas" : "Local";}},
+                                                                            { dataField: "ERORefNo1", caption: "Purpose", width: 150 },
+                                                                            //{ dataField: "EROCheck03", caption: "C", width: 30 }
                                                                         ],
                                                                         hoverStateEnabled: true,
                                                                         searchPanel: { visible: true },
@@ -4636,11 +4762,11 @@
                                                                 showCloseButton: true,
                                                                 contentTemplate:
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
-                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>à¸ÿà¸”à¸—à¸µà¹ÿ icon " + "<i class='fas fa-plus'></i>" + " à¹€à¸ÿà¸·à¹ÿà¸­à¹€à¸ÿà¸´à¹ÿà¸¡ à¸£à¸²à¸¢à¸ÿà¸²à¸£ </li><li>à¸ÿà¸°à¹€à¸ÿà¹ÿà¸ÿà¸£à¸²à¸¢à¸ÿà¸²à¸£ à¹€à¸ÿà¸¥à¹ÿà¸²à¹ÿà¸¡à¹ÿà¸¡à¸µà¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥ à¸¢à¸ÿà¹€à¸§à¹ÿà¸ÿ à¸«à¸±à¸§à¸ÿà¹ÿà¸­à¸§à¸±à¸ÿà¸—à¸µà¹ÿ à¸ÿà¸°à¹ÿà¸ªà¸”à¸ÿà¹€à¸ÿà¹ÿà¸ÿà¸§à¸±à¸ÿà¸ÿà¸µà¹ÿ</li></ul></br></p>" +
+                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>ï¿½ï¿½à¸”à¸—à¸µï¿½ï¿½ icon " + "<i class='fas fa-plus'></i>" + " à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­à¹€ï¿½ï¿½à¸´ï¿½ï¿½à¸¡ à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ </li><li>ï¿½ï¿½à¸°à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ à¹€ï¿½ï¿½à¸¥ï¿½ï¿½à¸²ï¿½ï¿½à¸¡ï¿½ï¿½à¸¡à¸µï¿½ï¿½ï¿½ï¿½à¸­à¸¡à¸¹à¸¥ à¸¢ï¿½ï¿½à¹€à¸§ï¿½ï¿½ï¿½ï¿½ à¸«à¸±à¸§ï¿½ï¿½ï¿½ï¿½à¸­à¸§à¸±ï¿½ï¿½à¸—à¸µï¿½ï¿½ ï¿½ï¿½à¸°ï¿½ï¿½à¸ªà¸”ï¿½ï¿½à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸§à¸±ï¿½ï¿½ï¿½ï¿½à¸µï¿½ï¿½</li></ul></br></p>" +
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
-                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>à¸ÿà¸”à¸—à¸µà¹ÿ icon " + "<i class='fas fa-trash'></i>" + " à¹€à¸ÿà¸·à¹ÿà¸­à¸¥à¸ÿà¸£à¸²à¸¢à¸ÿà¸²à¸£à¹ÿà¸ÿà¸ÿà¸£à¸£à¸—à¸±à¸”à¸—à¸µà¹ÿà¹€à¸¥à¸·à¸­à¸ÿ</li><li>à¹ÿà¸•à¹ÿà¸–à¹ÿà¸²à¹€à¸¥à¸·à¸­à¸ÿà¸¥à¸ÿ à¸ÿà¸£à¸£à¸—à¸±à¸”à¸—à¸µà¹ÿ 1 à¸ÿà¸°à¸–à¸·à¸­à¸§à¹ÿà¸²à¹€à¸ÿà¹ÿà¸ÿà¸ÿà¸²à¸£à¸¥à¸ÿà¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥à¸—à¸±à¹ÿà¸ÿà¸«à¸¡à¸” ** à¸•à¹ÿà¸­à¸ÿà¸£à¸°à¸¡à¸±à¸”à¸£à¸°à¸§à¸±à¸ÿ </ul></li></br></p>" +
+                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>ï¿½ï¿½à¸”à¸—à¸µï¿½ï¿½ icon " + "<i class='fas fa-trash'></i>" + " à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­à¸¥ï¿½ï¿½à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£à¸£à¸—à¸±à¸”à¸—à¸µï¿½ï¿½à¹€à¸¥à¸·à¸­ï¿½ï¿½</li><li>ï¿½ï¿½à¸•ï¿½ï¿½à¸–ï¿½ï¿½à¸²à¹€à¸¥à¸·à¸­ï¿½ï¿½à¸¥ï¿½ï¿½ ï¿½ï¿½à¸£à¸£à¸—à¸±à¸”à¸—à¸µï¿½ï¿½ 1 ï¿½ï¿½à¸°à¸–à¸·à¸­à¸§ï¿½ï¿½à¸²à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸²à¸£à¸¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸­à¸¡à¸¹à¸¥à¸—à¸±ï¿½ï¿½ï¿½ï¿½à¸«à¸¡à¸” ** à¸•ï¿½ï¿½à¸­ï¿½ï¿½à¸£à¸°à¸¡à¸±à¸”à¸£à¸°à¸§à¸±ï¿½ï¿½ </ul></li></br></p>" +
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-redo'></i>" + " REFRESH</div>" +
-                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>à¸ÿà¸”à¸—à¸µà¹ÿ icon " + "<i class='fas fa-plus'></i>" + " à¹€à¸ÿà¸·à¹ÿà¸­à¹€à¸ÿà¸´à¹ÿà¸¡ à¸£à¸²à¸¢à¸ÿà¸²à¸£ </li><li>à¸ÿà¸°à¹€à¸ÿà¹ÿà¸ÿà¸£à¸²à¸¢à¸ÿà¸²à¸£ à¹€à¸ÿà¸¥à¹ÿà¸²à¹ÿà¸¡à¹ÿà¸¡à¸µà¸ÿà¹ÿà¸­à¸¡à¸¹à¸¥ à¸¢à¸ÿà¹€à¸§à¹ÿà¸ÿ à¸«à¸±à¸§à¸ÿà¹ÿà¸­à¸§à¸±à¸ÿà¸—à¸µà¹ÿ à¸ÿà¸°à¹ÿà¸ªà¸”à¸ÿà¹€à¸ÿà¹ÿà¸ÿà¸§à¸±à¸ÿà¸ÿà¸µà¹ÿ</li></ul></br></p>" +
+                                                                    "<p style = 'color: green; font-size: 14px;'><ul><li>ï¿½ï¿½à¸”à¸—à¸µï¿½ï¿½ icon " + "<i class='fas fa-plus'></i>" + " à¹€ï¿½ï¿½à¸·ï¿½ï¿½à¸­à¹€ï¿½ï¿½à¸´ï¿½ï¿½à¸¡ à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ </li><li>ï¿½ï¿½à¸°à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸£à¸²à¸¢ï¿½ï¿½à¸²à¸£ à¹€ï¿½ï¿½à¸¥ï¿½ï¿½à¸²ï¿½ï¿½à¸¡ï¿½ï¿½à¸¡à¸µï¿½ï¿½ï¿½ï¿½à¸­à¸¡à¸¹à¸¥ à¸¢ï¿½ï¿½à¹€à¸§ï¿½ï¿½ï¿½ï¿½ à¸«à¸±à¸§ï¿½ï¿½ï¿½ï¿½à¸­à¸§à¸±ï¿½ï¿½à¸—à¸µï¿½ï¿½ ï¿½ï¿½à¸°ï¿½ï¿½à¸ªà¸”ï¿½ï¿½à¹€ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à¸§à¸±ï¿½ï¿½ï¿½ï¿½à¸µï¿½ï¿½</li></ul></br></p>" +
                                                                     "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " INPUT VDO</div>" +
                                                                     "<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
                                                             }).dxPopup("instance");

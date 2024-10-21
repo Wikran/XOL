@@ -83,7 +83,8 @@
             --dgBG: #f4d2fce5;
             --dgColor: black;
             --dgSelBar: #d2f2fc4c;
-            --dgSelText: blue;             
+            --dgSelText: blue;   
+            --stBgcolor: #F5F5F5;          
         }
 
         /*-----------------------------*/
@@ -117,7 +118,26 @@
         #gridContainer .dx-datagrid-filter-panel {
             background-color: var(--dgBG) !important;
         }
-
+        .dx-form .dx-field-item-label-text {
+            color: black;
+            font-style: bold;
+        }
+        /*-----------------------------*/
+        #popupContainerAdd .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-dxDataGrid .dx-datagrid-rowsview .dx-scrollable-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-dxDataGrid .dx-datagrid-header-panel {
+            background-color: var(--stBgcolor);
+        }   
+        #Add-dxDataGrid .dx-toolbar-items-container { 
+            background-color: var(--stBgcolor);
+        }               
+        #Add-dxDataGrid .dx-datagrid {
+            background-color: var(--stBgcolor);
+        }
         /*-----------------------------*/
         .title-bg {
             background-color: rgba(191, 191, 191, 0.15);
@@ -310,7 +330,31 @@
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
         console.clear();
-
+        //
+        const aaPurposeTable = [
+            { "Purpose": "Conference", "TPurpose": "ประชุม" },
+            { "Purpose": "Training", "TPurpose": "อบรม" },
+            { "Purpose": "Traveling", "TPurpose": "การเดินทาง" },
+            //{ "Purpose": "Others", "TPurpose": "อื่นๆ" }
+        ]
+        const aaPurposeTableaa = [
+            { "Purpose": "Conference", "TPurpose": "ประชุม" },
+            { "Purpose": "Training", "TPurpose": "อบรม" },
+            { "Purpose": "Traveling", "TPurpose": "การเดินทาง" },
+            { "Purpose": "Client visit", "TPurpose": "เยี่ยมลูกค้า" },
+            { "Purpose": "Product launch", "TPurpose": "เปิดตัวผลิตภัณฑ์" },
+            { "Purpose": "Site visit", "TPurpose": "ศึกษาดูงาน" },
+            { "Purpose": "Negotiation", "TPurpose": "เจรจาต่อรอง" },
+            { "Purpose": "Troubleshooting", "TPurpose": "แก้ไขปัญหา" },
+            { "Purpose": "Exhibition", "TPurpose": "เข้าร่วมงานแสดงสินค้า" },
+            { "Purpose": "Market research", "TPurpose": "วิจัยตลาด" },
+            { "Purpose": "Others", "TPurpose": "อื่นๆ" }
+        ]
+        const aaYesNoList = [
+            { "Code": "YES" },
+            { "Code": "NO" },
+        ]        
+        //
         var aMulSet01 = {
             aTableFontSize: "80%",
             aHHeight: 60,
@@ -832,16 +876,18 @@
                                 var aaSubGroup01 = acData;
                                 let aDivisionC = localStorage["asDIV"];
                                 let aDivS = "Where ApproverCode = 'HR' OR ApproverCode = 'FA' "
-                                let aFieldSelected = "ApproveToDivision,ApproverName,ApproverEmail"
+                                let aFieldSelected = "ApproveToDivision,ApproverName,ApproverEmail,ApproverCode"
                                 let aFullBody = "Select " + aFieldSelected + " From " + "ExtraOnLine.dbo.Approver " + aDivS;
                                           
                                 fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBody) }), redirect: "follow" })
                                     .then(response => response.json())
                                     //
                                     .then(hData => {
-
+                                       // const aaHRArr = hData.find(item => item.ApproverCode === 'HR');
+                                        //console.log("HR = ",aaHRArr);
                                         var aaaHODApprover = hData; // HR Approver
-                                        console.log(aaaHODApprover)
+                                        //console.log("hData HR or FA ",aaaHODApprover)
+                                        
                                         if (jQuery.type(aaaHODApprover[0]) === "undefined") {
                                             DevExpress.ui.dialog.alert({
                                                 position: { offset: "-130 -310" },
@@ -851,17 +897,20 @@
                                             System.exit(0);
                                         }
                                         // HR FA
-                                        console.log("Type HR = ",typeof aaaHODApprover)
-                                        console.log("1 ", aaaHODApprover[1])
-                                        console.log("0 ", aaaHODApprover[0])
-                                        var aaHODApprover = aaaHODApprover[1]
-                                        var aaFAApprover = aaaHODApprover[0]
-                                        console.log(typeof aaHODApprover, aaHODApprover)
+                                        //console.log("Type HR = ",typeof aaaHODApprover)
+                                        //console.log("ARR ", aaaHODApprover)
+                                        //const FAresult = aaaHODApprover.find(item => item.ApproverCode === 'FA');
+                                        //console.log(FAresult)
+                                        //console.log("FA 1 ", aaaHODApprover[1])
+                                        //console.log("HR 0 ", aaaHODApprover[0])
+                                        var aaHODApprover = aaaHODApprover.find(item => item.ApproverCode === 'HR'); //= aaaHODApprover[1]
+                                        var aaFAApprover = aaaHODApprover.find(item => item.ApproverCode === 'FA'); //aaaHODApprover[0]
+                                        //console.log(typeof aaHODApprover, aaHODApprover)
                                         var aaHODAppName = aaHODApprover.ApproverName
                                         var aaHODAppEmail = aaHODApprover.ApproverEmail //.LRange02
                                         var aaFAAppName = aaFAApprover.ApproverName
                                         var aaFAAppEmail = aaFAApprover.ApproverEmail
-                                        console.log(aaHODAppName, aaHODAppEmail, aaFAAppName, aaFAAppEmail)
+                                        console.log("HR:",aaHODAppName, aaHODAppEmail, "FA:", aaFAAppName,aaFAAppEmail)
                                         var aYearNum = aNowDte.getFullYear()  // 2022
                                         var aMonthNum = aNowDte.getMonth() // 10
                                         var aYearStr = aYearNum.toString() // 2022
@@ -3128,7 +3177,7 @@
                                                                     aaaFAMess = "";
                                                                     aaTitMess = "CONFIRM TO HR"
                                                             
-                                                                } else { // send to requester Raaming = 'NO'
+                                                                } else if (aaCheckRoaming === "NO") { // send to requester Raaming = 'NO'
                                                                     aaAlertMessage = "Confirm & send mail to Requester - "
                                                                     aaRecpName = aaPTName;
                                                                     aaRecpEmail = aaStaffEM;
@@ -3144,7 +3193,8 @@
                                                                 //console.log("xx",atestCehcka); // Logs the actual message
                                                                 if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTRFnAlert02, "INPUT ERROR"); }    //  " + aaCheckOverseas + "                                                                                                                                                                                                                                                    
                                                                 else {                                                                                                                                                                                                                                                         //xxChkLenxx                                                                     
-                                                                    let result = DevExpress.ui.dialog.confirm(aaAlertMessage + " " + aaRecpName + " (" + aaRecpEmail + ") ? <br>" + aaaFAMess + "<p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'>" + "</p>", aaTitMess); //
+                                                                    let result = DevExpress.ui.dialog.confirm(aaAlertMessage + " " + aaRecpName + " (" + aaRecpEmail + ") ? <br>" 
+                                                                    + aaaFAMess + "<p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'>" + "</p>", aaTitMess); //
                                                         
                                                                 result.done(function (dresult) {//                                                                                                                                                                                                                          
                                                                     if (dresult) {
@@ -3281,43 +3331,80 @@
                                                             //colCount: 5,
 
                                                             tabs: [
-                                                                {
+                                                            {
                                                                     title: "TRAVEL INFO",
                                                                     icon: "fas fa-info-circle",
-                                                                    iconPosition: "start",                                                                    
+                                                                    iconPosition: "start",
                                                                     colCount: 5,
                                                                     items: [
-
                                                                         {
-                                                                            dataField: "ERODesc03",
-                                                                            label: { text: "Purpose of Trip" }, //,cssClass: "bold-label" }, 
-                                                                            editorType: "dxTextArea",
+                                                                            dataField: "ERORefNo1",
+                                                                            label: { text: "Purpose of Trip." }, //,cssClass: "bold-label" }, 
+                                                                            editorType: "dxSelectBox", //dxSelectBox dxLookup
                                                                             editorOptions: {
-                                                                                width: 400, height: 80,readOnly: true,
+                                                                                dataSource: aaPurposeTable,
+                                                                                searchExpr: "Purpose",
+                                                                                valueExpr: "Purpose",
+                                                                                displayExpr: "Purpose",
+                                                                                searchEnabled: true,
+                                                                                width: 180,
+                                                                                //value: aNewDiva,
+                                                                                readOnly: true,
                                                                                 onValueChanged: function (e) {
-                                                                                    asERODesc03 = e.value;
-                                                                                    //iData.ERODesc03 = e.value;
+                                                                                    asERORefNo1 = e.value;
                                                                                 }
-                                                                            }, //value: asFullName,
+                                                                                /*onValueChanged: function(args) {
+                                                                                    
+                                                                                    let newDivision = args.value;
+                                                                                    let newDepartment = args.value.slice(0, 4) //calculateNewDepartment(newDivision);
+                                                                                    let formInstance = $("#PopupChangeDiv").dxForm("instance");
+                                                                                    asNewDept = args.value;
+                                                                                    var asNewDiv = args.value.slice(0, 4);
+                                                                                    gbNewDiv = args.value;
+                                                                                    gbNewDept = args.value.slice(0, 4);
+                                                                                    // Update NewDepartment in the form dynamically
+                                                                                    formInstance.updateData("EROCode03", newDepartment);
+                                                                                },*/
+                                                                            },
                                                                             cssClass: "verylight-blue",
                                                                             visible: true,
                                                                             colSpan: 2,
-                                                                            //validationRules: [{ type: "required" }],
+                                                                            //validationRules: [{ type: "required", message: "Purpose of Trip is required" }]                                                                            
                                                                         },
-
-
+                                                                     
                                                                         {
                                                                             dataField: "ERODate02",
                                                                             label: { text: "Travel Start Date" },
                                                                             editorType: "dxDateBox",
                                                                             editorOptions: {
-                                                                                displayFormat: "dd/MM/yyyy", width: 150,readOnly: true,
+                                                                                displayFormat: "dd/MM/yyyy",
+                                                                                width: 150,
+                                                                                readOnly: true,
                                                                                 onValueChanged: function (e) {
+                                                                                    var formInstance = $("#Add-form").dxForm("instance");
+                                                                                    formInstance.updateData("ERODate03", e.value);
+                                                                                    formInstance.updateData("ERODate05", e.value);
                                                                                     asERODate02 = e.value;
-                                                                                }
+                                                                                    iData.ERODate05 = e.value;
+                                                                                    //var xdataGrid = $("#Add-dxDataGrid").dxDataGrid({}).dxDataGrid("instance");                                                                         
+                                                                                    //var xdataSource = xdataGrid.getDataSource();
+                                                                                    //xdataSource.reload();                                                                                    
+
+                                                                                    aSaveMemToDB(iData, aaTBKey, aaPFDMI, aaXToX)
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    //var formInstance2 = $("#Add-dxDataGrid").dxDataGrid("instance");
+                                                                                    //formInstance2.updateData("ERODate05", e.value);                                                                                    
+                                                                                },
+
                                                                             },	  //showClearButton: true,  //value: new Date(),   value: idDate,
+                                                                            //setCellValue: function (newData, value, currentRowData) {
+                                                                            //   newData.ERODate05 = value;
+                                                                            //   newData.ERODate06 = value;
+                                                                            //},
                                                                             showClearButton: true,
                                                                             colSpan: 1,
+                                                                            validationRules: [{ type: "required", message: "Travel Start Date is required" }]
                                                                         },
                                                                         {
                                                                             dataField: "ERODate03",
@@ -3326,29 +3413,57 @@
                                                                             editorOptions: {
                                                                                 displayFormat: "dd/MM/yyyy", width: 150,readOnly: true,
                                                                                 onValueChanged: function (e) {
+                                                                                    var formInstance = $("#Add-form").dxForm("instance");
+                                                                                    formInstance.updateData("ERODate06", e.value);
                                                                                     asERODate03 = e.value;
+                                                                                    iData.ERODate06 = e.value;
+                                                                                    aSaveMemToDB(iData, aaTBKey, aaPFDMI, aaXToX)
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
                                                                                 }
                                                                             },	  //showClearButton: true,  //value: new Date(), 
                                                                             showClearButton: true,
                                                                             colSpan: 1,
+                                                                            validationRules: [{ type: "required", message: "Travel End Date is required" }]
                                                                         },
-                                                                        {
+                                                                        /*{
                                                                             dataField: "EROCheck03",
                                                                             label: { text: "Conference" },
                                                                             editorType: "dxCheckBox",
+                                                                        }, */ 
+                                                                        {
+                                                                             itemType: "Empty",
+                                                                             colSpan: 1,
                                                                         }, 
                                                                         {
-                                                                            dataField: "ERODesc02",
-                                                                            label: { text: "Destination" },
+                                                                            dataField: "ERODesc03",
+                                                                            label: { text: "Purpose Of Trip Description" }, //,cssClass: "bold-label" }, Purpose of Trip
                                                                             editorType: "dxTextArea",
                                                                             editorOptions: {
-                                                                                width: 400, height: 80,readOnly: true,
+                                                                                width: 400, readOnly: true,
+                                                                                height: 50,
+                                                                                onValueChanged: function (e) {
+                                                                                    asERODesc03 = e.value;
+                                                                                }
+                                                                            },
+                                                                            cssClass: "verylight-blue",
+                                                                            visible: true,
+                                                                            colSpan: 5,
+                                                                            //validationRules: [{ type: "required", message: "Purpose of Trip is required" }]
+                                                                        },                                                                                                                                              
+                                                                        {
+                                                                            dataField: "ERODesc02",
+                                                                            label: { text: "Destination/Country" },
+                                                                            editorType: "dxTextArea",
+                                                                            editorOptions: {
+                                                                                width: 400, height: 50,readOnly: true,
                                                                                 onValueChanged: function (e) {
                                                                                     asERODesc02 = e.value;
                                                                                 }
                                                                             },
                                                                             cssClass: "verylight-blue",
-                                                                            //validationRules: [{ type: "required" }], value: asERODesc02,
+                                                                            validationRules: [{ type: "required", message: "Destination is required" }],
                                                                             visible: true,
                                                                             colSpan: 2,
                                                                         },
@@ -3361,16 +3476,12 @@
                                                                                 readOnly: true,
                                                                                 onValueChanged: function (e) {
                                                                                     asEROCheck01 = e.value;
-                                                                                    //aform.itemOption("EROCheck02", "visible", e.value);
-                                                                                    //aform.itemOption('EROCheck02', 'editorOptions', { readOnly: e.value }); //$("#Add-form").dxForm("instance").refresh();
-                                                                                    //$("#Add-form").dxForm("instance").refresh();
                                                                                     aAddStaff.columnOption("PSPvDate", "visible", e.value);
                                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-
                                                                                 }
                                                                             }
                                                                         },
-                                                                                                                                               
+                                                                                                                                       
                                                                         {
                                                                             dataField: "EROCheck02",
                                                                             label: { text: "Need Roaming" },
@@ -3380,7 +3491,7 @@
                                                                                 readOnly: true,
                                                                                 onValueChanged: function (e) {
                                                                                     asEROCheck02 = e.value;
-                                                                                    aAddStaff.columnOption("HR Arrange for Roaming", "visible", e.value);
+                                                                                    aAddStaff.columnOption("ROAMING INFORMATION", "visible", e.value); //HR Arrange for Roaming
                                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
                                                                                 }
 
@@ -3393,20 +3504,43 @@
                                                                             label: { text: "Estimated Cost" },
                                                                             dataType: "dxNumberBox",
                                                                             //format: { type: "fixedPoint", precision: 2 },
+                                                                            hint: "Estimated Cost can not be zero !!!",
                                                                             editorOptions: {
                                                                                 readOnly: true,
                                                                                 format: "#,##0.00", width: 150, elementAttr: { class: "right-align-number" },
+                                                                                hint: "Estimated Cost can not be zero !!!",
                                                                                 onValueChanged: function (e) {
                                                                                     asRefundedAmount = e.value;
                                                                                 }
                                                                             }, //showSpinButtons: true, readOnly: true,
                                                                             cssClass: "verylight-blue",
                                                                             colSpan: 1,
+                                                                            validationRules: [{ type: "required" }, {
+                                                                                type: "range",
+                                                                                min: 1, //aYearStrS
+                                                                                max: 9999999, //aYearStrL
+                                                                                message: "Please ensure that the estimated cost is entered and is greater than zero.",
+                                                                            }],
+                                                                        },
+                                                                        {
+                                                                            dataField: "ERODate05",
+                                                                            label: { text: "Date" },
+                                                                            dataType: "dxNumberBox",
+                                                                            visible: false
+                                                                        },
+                                                                        {
+                                                                            dataField: "ERODate06",
+                                                                            label: { text: "Date" },
+                                                                            dataType: "dxNumberBox",
+                                                                            visible: false
                                                                         },
 
-
-                                                                    ]
-
+                                                                    ],
+                                                                    onFieldDataChanged: function (e) {
+                                                                        if (e.dataField === "ERODate02") {
+                                                                            e.component.updateData("ERODate03", e.value);
+                                                                        }
+                                                                    },
 
                                                                 },
                                                                 {

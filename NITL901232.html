@@ -148,201 +148,8 @@
         return results; // Return the array of matching objects
         }
 
-        
-/*
-        function aDropDownStaff(cellElement, cellInfo, loadDataOnSearch) {
-        const div = document.createElement("div");
-        const dataGridDiv = document.createElement("div");
-        div.appendChild(dataGridDiv);
 
-        const loadDataSource = () => {
-            fetch("http://example.com/aaEmployee") // replace with appropriate URL
-            .then(response => response.json())
-            .then(data => {
-                const dataGrid = new DevExpress.ui.dxDataGrid(dataGridDiv, {
-                dataSource: data,
-                columns: [
-                    { dataField: "EMPCode", caption: "ID", width: 100 },
-                    { dataField: "AccDeptCode", caption: "Dept.", width: 100 },
-                    { dataField: "FullNameEng", caption: "ENG.Name", width: 200 },
-                    { dataField: "FullNameThai", caption: "THI.Name", width: 200 }
-                ],
-                hoverStateEnabled: true,
-                searchPanel: { visible: true },
-                headerFilter: { visible: true },
-                paging: { enabled: true, pageSize: 15 },
-                filterRow: { visible: true },
-                showBorders: true,
-                scrolling: { mode: "virtual" },
-                selection: { mode: "single" },
-                height: 450,
-                selectedRowKeys: [cellInfo.value],
-                focusedRowKey: cellInfo.value,
-                onSelectionChanged: function (sArgs) {
-                    e.component.option("value", sArgs.selectedRowKeys[0].EMPCode); // Works but Error Need to correct next time !!!
-                    cellInfo.setValue(sArgs.selectedRowKeys[0].EMPCode);
-                    if (sArgs.selectedRowKeys.length > 0) {
-                    e.component.close();
-                    }
-                }
-                });
-
-                const dropDownBox = new DevExpress.ui.dxDropDownBox(div, {
-                dropDownOptions: { width: 600 },
-                dataSource: data,
-                value: [cellInfo.value],
-                valueExpr: "EMPCode",
-                displayExpr: "EMPCode",
-                contentTemplate: function (e) {
-                    return div;
-                },
-                });
-            });
-        }
-
-        if (loadDataOnSearch) {
-            const dropDownBox = new DevExpress.ui.dxDropDownBox(div, {
-            dropDownOptions: { width: 600 },
-            value: [cellInfo.value],
-            valueExpr: "EMPCode",
-            displayExpr: "EMPCode",
-            contentTemplate: function (e) {
-                e.component.option("dataSource", null);
-                return div;
-            },
-            searchEnabled: true,
-            onInput: function (e) {
-                if (e.component.option("dataSource") === null) {
-                loadDataSource();
-                }
-            }
-            });
-        } else {
-            loadDataSource();
-            const dropDownBox = new DevExpress.ui.dxDropDownBox(div, {
-            dropDownOptions: { width: 600 },
-            dataSource: null,
-            value: [cellInfo.value],
-            valueExpr: "EMPCode",
-            displayExpr: "EMPCode",
-            contentTemplate: function (e) {
-                return div;
-            },
-            });
-        }
-        }
-*/
-/*        
-        var aaXNoX = localStorage["aaXXuX"];
-        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // MasterPage
-        var aaPXXI = localStorage["aPXIXD"];
-
-        var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaXTXB + '/' + aaPXXI, function (e) {
-            console.log("success");
-            aObjMPage = e;
-            aaKeyField = aObjMPage[0].PrimaryKey;
-            aaTBKey = aObjMPage[0].TBKey;
-            localStorage.setItem("aaXKFX", aaKeyField);
-            localStorage.setItem("aaXTBX", aaTBKey);
-        })
-            .done(function (e) {
-                console.log("second success");
-                aObjMPage = e;
-                aaKeyField = aObjMPage[0].PrimaryKey;
-                aaTBKey = aObjMPage[0].TBKey;
-                localStorage.setItem("aaXKFX", aaKeyField);
-                localStorage.setItem("aaXTBX", aaTBKey);
-            })
-            .fail(function () {
-                console.log("error");
-            })
-            .always(function () {
-                console.log("complete");
-            });
-
-        // Function for Load Master Data for dropdown and others 
-        // "https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress","aaOBJDT"
-
-        async function aGetDataAPI(aDMZServer, aFullTableName, aFieldSelected, aOBJsName) {
-            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-            let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
-
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-            var raw = JSON.stringify({
-                "@": aFullBody
-            });
-
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: raw,
-                redirect: 'follow'
-            };
-
-            let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
-
-            await fetch(aURL, requestOptions)
-                .then(response => response.json())
-                //
-                .then(aData => {
-                    aaObjData = aData;
-                    localStorage.setItem(aOBJsName, JSON.stringify(aaObjData));
-                })
-            //.catch(error => {
-            //    console.error('Error:', error);
-            //    DevExpress.ui.dialog.alert({
-            //        showTitle: false,
-            //        messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
-            //    });
-            //});
-
-            return 1
-        }
-
-        function aGetDataDirect(aServerURL, aKey, aFullSQL) {
-            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-
-            //let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;    
-            let aURL = aServerURL + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
-            //let aURL = aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/all'; 
-            //let aaFul = { "@": aFullBody }  
-            let aStore01 = new DevExpress.data.CustomStore({
-                key: aKey,
-                loadMode: "raw",
-                load: function () {
-                    return $.post(aURL, { "@": aFullSQL }) //aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "dca3e8a0-8533-45a4-96ce-28aeddefab72" + '/all'
-                        .fail(function () { throw "Data loading error" });
-                },
-            })
-            //console.log(jQuery.type(aStore01))
-            //console.log(aStore01)
-            return aStore01
-        }
-
-        function aGetDataModel(aServerURL, aPUBToken, aTBToken, aKey) {
-            let aURL = aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/all';
-            //let aaFul = { "@": aFullBody }  
-            let aStore01 = new DevExpress.data.CustomStore({
-                key: aKey,
-                loadMode: "raw",
-                load: function () {
-                    return $.post(aURL) //aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "dca3e8a0-8533-45a4-96ce-28aeddefab72" + '/all'
-                        .fail(function () { throw "Data loading error" });
-                },
-            })
-            //console.log(jQuery.type(aStore01))
-            //console.log(aStore01)
-            return aStore01
-        }
-
-        //aGet4DataModel(aaPFDMI,atob(aaXToX),"dca3e8a0-8533-45a4-96ce-28aeddefab72","","aaBenefit")
-*/        
-    </script>
+   </script>
 </head>
 
 <body class="dx-viewport">
@@ -372,8 +179,62 @@
             aDBServerName = "[WIKRAN-W10]"
             aDBEMPServerName = "[lockthbnk-ap14]"
             aEMPPDFI = "https://cbsdev2.locktonwattana.com";
-        }       
+        }
         var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+
+        var aDatabasea = "ExtraOnLine.dbo.TRVREQF";
+        var aKeyField = "HeadRefNo"
+        var aKeyIDa = "T2408152724" //aaiHeadRef //
+        var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+
+        async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
+            //let aDataBasea = "ExtraOnLine.dbo.EXPREIM";
+            //let aKeyfield = "HeadRefNo";
+            let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+            console.log("Inside aaLoadData aKeya = ", aKeya);
+            let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
+            console.log("Inside aaLoadData axqr2S = ", axqr2S)
+            //let axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+            let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
+
+            let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "@": btoa(axFullBody) }),
+                redirect: "follow"
+            });
+
+            let acData = await response.json();
+            //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
+            console.log("record ", acData.length);
+            console.log(acData);
+            const filteredArray = acData.filter(condition);
+            //console.log(filteredArray);
+            //console.log(filteredArray.length);
+
+            let abc;
+            if (filteredArray.length === 0) { //pass                
+                abc = 0;
+            } else { // not pass
+                // Extract and log the field name that caused the condition to fail
+                /*let failedFields = [];
+                acData.forEach(item => {
+                    for (let key in item) {
+                        let tempItem = { ...item };
+                        delete tempItem[key];
+                        //console.log("Temp item after deleting key", key, ":", tempItem); // Log tempItem after deletion                        
+                        if (condition(tempItem)) {
+                            failedFields.push(key);
+                        }
+                    }
+                });*/
+                //console.log("Failed fields: ", failedFields);
+                console.log("not found ",filteredArray.length)
+                console.log("Filter Array ",filteredArray)
+                abc = 1;
+            }
+            return filteredArray;
+        }
 
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -391,7 +252,10 @@
                 var aaKeyField = aObjMPage[0].PrimaryKey;
                 var aaTBKey = aObjMPage[0].TBKey;
                 //console.log(aaTBKey) 63971412-c4e4-4d35-8e79-3293fe59dac8
-        //$(function () { TOP PRG 
+        
+        
+        
+                //$(function () { TOP PRG 
         $(() => {
 
             let aqr2S = "Where Status != 'Resigned'"
@@ -403,17 +267,21 @@
                 //
                 .then(aData => {
                     var aaEmployee = aData;
-                    console.log(aaEmployee)
+                    console.log("aaEmployee ",aaEmployee)
                     let aqr2S1 = "Where IDNO <> ''" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                     let aFieldSelected1 = "IDNO,BenefitLevel,FamilyReimbursement,AllowSSO,OPDLimitperrequest,OPDLimitperyear,MaternityLimitperyear,IPDLimitpercase,FleetLimit,PositionGroup,NOTE,EntryBy,EntryDate"
                     let aFullBody1 = "Select " + aFieldSelected1 + " From " + aDBServerName + ".ExtraOnLine.dbo.PositionBenefitLevel " + aqr2S1;
                     console.log(aFullBody1)
+                    let achecktt = "170005         ".trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); //"170005         "
+                    console.log("xResultxx ",xResultxx, xResultxx[0].Position)
+                    //let rst = xResultxx[0].Position; 
+                    //console.log("Search ",rst)
                     fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody1 }), redirect: "follow" })
                         .then(response => response.json())
                         //
                         .then(aData => {
                             var aaBenefitLevel = aData;
-
+                            console.log("aaBenefitLevel ",aaBenefitLevel)
                             const aaExpGroup = [{ "ExpGroupCode": "100", "ExpGroupDescEng": "General", "ExpGroupDescOth": "ค่าใช้จ่ายทั่วไป", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "200", "ExpGroupDescEng": "Fleet Card", "ExpGroupDescOth": "Fleet Card", "ExpAccCode": "5102300001", "ExpAccDesc": "ยานพาหนะ - ค่าน้ำมัน" }, { "ExpGroupCode": "300", "ExpGroupDescEng": "Medical", "ExpGroupDescOth": "ค่ารักษาพยาบาล", "ExpAccCode": "5204100003", "ExpAccDesc": "ค่ารักษาพยาบาล" }, { "ExpGroupCode": "400", "ExpGroupDescEng": "Entertainment", "ExpGroupDescOth": "Entertainment", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "500", "ExpGroupDescEng": "Overseas", "ExpGroupDescOth": "ต่างประเทศ", "ExpAccCode": "", "ExpAccDesc": "" }]
                             
                             console.log(aaExpGroup)
@@ -457,7 +325,7 @@
                                     key: "IDNO",
                                     loadMode: "omit",
                                     load: function () {
-                                            return $.post(settings).done(function (response) { console.log(response); });
+                                            return $.post(settings).done(function (response) { var xDatax = response; console.log("xDatax ",xDatax); });
                                         },
                                     insert: function (values) {
 
@@ -528,7 +396,7 @@
                                 },
                                 pager: {
                                     showPageSizeSelector: true,
-                                    allowedPageSizes: [5, 10, 20, 50],
+                                    allowedPageSizes: [5, 10, 20, 50, 100],
                                     showInfo: true
                                 },
                                 showBorders: true,
@@ -593,8 +461,8 @@
                                         title: "Limitation Setup",
                                         fullScreen: false,
                                         showTitle: true,
-                                        width: 1200,
-                                        height: 625,
+                                        width: 1250,
+                                        height: 705,
                                         position: { offset: "0 -140" },
                                         /*position: {
                                             my: "top",
@@ -808,6 +676,22 @@
                                         editorOptions: { format: "#,##0.00", width: 150 },
                                         width: 150,
                                     },
+                                    {
+                                        dataField: "TEXTTEST2", //aaEmployee
+                                        caption: "NEW POSITION",
+                                        calculateCellValue: function(data) {let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); return xResultxx.length === 0 ? "RESIGNED" : xResultxx[0].Position.trim()  },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
+                                        editorType: "dxTextBox",
+                                        width: 100,
+                                        visible: false,
+                                    },                                    
+                                    {
+                                        dataField: "TEXTTEST", //aaEmployee
+                                        caption: "STATUS",
+                                        calculateCellValue: function(data) {let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); console.log(xResultxx, xResultxx.length); return xResultxx.length === 0 ? "RESIGNED" : (xResultxx[0].Position.trim() === data.EmpPosition.trim() ? "SAME" : "CHANGE") },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
+                                        editorType: "dxTextBox",
+                                        width: 100,
+                                    },
+                       
                                     /*{
                                         dataField: "ExpGroupCode",
                                         caption: "Expenses Group Code",
@@ -1064,7 +948,7 @@
                              */
                             function dropDownBoxEMP(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
-                                    dropDownOptions: { width: 600 },
+                                    dropDownOptions: { width: 900 },
                                     dataSource: aaEmployee,
                                     value: [cellInfo.value],
                                     valueExpr: "EMPCode",
@@ -1073,7 +957,13 @@
                                         return $("<div>").dxDataGrid({
                                             dataSource: aaEmployee,
                                             //remoteOperations: true, // EMPCode,FullNameThai
-                                            columns: [{ dataField: "EMPCode", caption: "ID", width: 100 }, { dataField: "AccDeptCode", caption: "Dept.", width: 100 },{ dataField: "FullNameEng", caption: "ENG.Name", width: 200 },{ dataField: "FullNameThai", caption: "THI.Name", width: 200 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                                            columns: [
+                                                { dataField: "EMPCode", caption: "ID", width: 100 },
+                                                { dataField: "AccDeptCode", caption: "Dept.", width: 100 },
+                                                { dataField: "FullNameEng", caption: "ENG.Name", width: 200 },
+                                                { dataField: "FullNameThai", caption: "THI.Name", width: 200 },
+                                                { dataField: "Position", caption: "Position", width: 300 },
+                                            ], //"EMPCode,FullNameThai,FullNameEng,Dept,DivCode,EmailAddress,Position,AccDeptCode,AccDivCode"
                                             hoverStateEnabled: true,
                                             searchPanel: { visible: true },
                                             headerFilter: { visible: true },

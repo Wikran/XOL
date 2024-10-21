@@ -24,38 +24,24 @@
     <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
 
     <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
-    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
-        data-active="false">
+    <!-- 16 Themes -->
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css" data-active="false">
     <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
-        data-active="true">
-    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.orange.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.purple.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.lime.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
-
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css" data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+    <!-- 16 Themes -->
     <!-- Export Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
@@ -78,7 +64,8 @@
             --dgBG: #f4d2fce5;
             --dgColor: black;
             --dgSelBar: #d2f2fc4c;
-            --dgSelText: blue;            
+            --dgSelText: blue; 
+            --stBgcolor: #F5F5F5;           
         }
 
         /*-----------------------------*/
@@ -116,7 +103,26 @@
         #gridContainer .dx-datagrid-filter-panel {
             background-color: var(--dgBG) !important;
         }
-
+        .dx-form .dx-field-item-label-text {
+            color: black;
+            font-style: bold;
+        }
+        /*-----------------------------*/
+        #popupContainerAdd .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-dxDataGrid .dx-datagrid-rowsview .dx-scrollable-content {
+            background-color: var(--stBgcolor);
+        }
+        #Add-dxDataGrid .dx-datagrid-header-panel {
+            background-color: var(--stBgcolor);
+        }   
+        #Add-dxDataGrid .dx-toolbar-items-container { 
+            background-color: var(--stBgcolor);
+        }               
+        #Add-dxDataGrid .dx-datagrid {
+            background-color: var(--stBgcolor);
+        }
         /*-----------------------------*/
         .title-bg {
             background-color: rgba(191, 191, 191, 0.15);
@@ -330,21 +336,39 @@
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
         console.clear();
-
+        //
+        const aaPurposeTable = [
+            { "Purpose": "Conference", "TPurpose": "ประชุม" },
+            { "Purpose": "Training", "TPurpose": "อบรม" },
+            { "Purpose": "Traveling", "TPurpose": "การเดินทาง" },
+            //{ "Purpose": "Others", "TPurpose": "อื่นๆ" }
+        ]
+        const aaPurposeTableaa = [
+            { "Purpose": "Conference", "TPurpose": "ประชุม" },
+            { "Purpose": "Training", "TPurpose": "อบรม" },
+            { "Purpose": "Traveling", "TPurpose": "การเดินทาง" },
+            { "Purpose": "Client visit", "TPurpose": "เยี่ยมลูกค้า" },
+            { "Purpose": "Product launch", "TPurpose": "เปิดตัวผลิตภัณฑ์" },
+            { "Purpose": "Site visit", "TPurpose": "ศึกษาดูงาน" },
+            { "Purpose": "Negotiation", "TPurpose": "เจรจาต่อรอง" },
+            { "Purpose": "Troubleshooting", "TPurpose": "แก้ไขปัญหา" },
+            { "Purpose": "Exhibition", "TPurpose": "เข้าร่วมงานแสดงสินค้า" },
+            { "Purpose": "Market research", "TPurpose": "วิจัยตลาด" },
+            { "Purpose": "Others", "TPurpose": "อื่นๆ" }
+        ]
+        const aaYesNoList = [
+            { "Code": "YES" },
+            { "Code": "NO" },
+        ]        
+        //
         var aaXToX = localStorage["aaXXoX"];
         var aaXNoX = localStorage["aaXXuX"];
-        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // Master Page
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492";
         var aaPXXI = localStorage["aPXIXD"];
         var aaMXXT = localStorage["aDXMenuTitle"];
 
         var aaERTYPE = "800"
-        const aaRunPre = "R"  // Running No Prefix
-        // General    = "100"
-        // Fleet Card = "200"
-        // Medical    = "300"
-        // Entertain  = "400"
-        // Overseas   = "500"
-        // Requisition Form = "800"
+        const aaRunPre = "R"  
 
         const aTranTextJson = (aText, aFMark, aLMark) => { // very Important** 
             var axHODFtext = aText;
@@ -388,48 +412,7 @@
             doc.save('myPDF.pdf');
 
         }
-/*
-        function aPDFFromHTMLXX(source) {
-            var pdf = new jsPDF();
 
-            // Get the HTML element you want to convert to a PDF
-            //var source = document.getElementById("my-html-div");
-
-            // Set the margins for the PDF
-            var margins = {
-                top: 10,
-                bottom: 10,
-                left: 10,
-                width: 200
-            };
-
-            // Convert the HTML to a PDF
-            pdf.fromHTML(
-                source,
-                margins.left,
-                margins.top,
-                {
-                    'width': margins.width
-                },
-                function (dispose) {
-                    pdf.save('Test.pdf');
-                },
-                margins
-            );
-
-        }
-*/            
-/*
-        function printPage() {
-            // Remove elements with "display: none"
-            var elements = document.querySelectorAll("[style*='display: none']");
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].style.display = "block";
-            }
-            // Call the print method
-            window.print();
-        }
-*/
         function aTestUploadFile() {
             var fileInput = document.createElement("INPUT");
             fileInput.setAttribute("type", "file");
@@ -467,7 +450,7 @@
                 ];
 
                 // Create a dxPopup widget with a list selection
-                var popup = $("#popup").dxPopup({
+                var apopup1 = $("#popup").dxPopup({
                     title: "Please Select Year",
                     width: 250,
                     height: "auto",
@@ -498,8 +481,8 @@
                                 callback(aNowDte);
                             }
                         }).appendTo(contentElement);
-                    }
-                }).dxPopup("instance");
+                    }              
+                 }).dxPopup("instance");
 
                 // Show the pop-up when a button is clicked
                 $("#showPopupButton").dxButton({
@@ -509,9 +492,10 @@
                     type: "default",
                     visible: isAfterMay3,
                     onClick: function () {
-                        popup.show();
+                        apopup1.show();
                     }
                 });
+
             } else {
                 // If the current date is after May 3, hide the button
                 var aNowDte = new Date();
@@ -519,142 +503,7 @@
                 callback(aNowDte);
             }
         }
-/*
-        function generateTableXX(data, aMSetup) {
-            var aTableFontSize = aMSetup.aTableFontSize; //font-size:80%  aTableSize aMulSet01.aTableFontSize
-            var aaHHeight = aMSetup.aHHeight;
-            var aaRHeight = aMSetup.aRHeight;
-            var aaFHeight = aMSetup.aFHeight;
-            var aaFLabel = aMSetup.aFLabel;
-            var table = "<table  style = 'border: 1px solid grey; border-collapse: collapse; font-size: " + aTableFontSize + ";'><tr  style = 'border: 1px solid grey; border-collapse: collapse;'>";
-            var header = Object.keys(data[0]);
-            var aaWidth = "100px"
-            var aaType = "string"
-            var aHCol = 0;
-            var aHeaderLabel = "";
-            var aaVisible = 1;
 
-            // Generate the header row
-            header.forEach(function (column) {
-                aHeaderLabel = aMSetup.aHeader[aHCol];
-                aaVisible = aMSetup.aVisible[aHCol]
-                aaWidth = aMSetup.aWidth[aHCol]
-                if (aaVisible === 1) {
-                    table += "<th style = 'width: " + aaWidth + "px; height: " + aaHHeight + "px; background-color: black; color: white; border: 1px solid grey; border-collapse: collapse;'>" + aHeaderLabel + "</th>";
-                }
-                aHCol += 1;
-            });
-            table += "</tr>";
-
-            // Generate the data rows
-            var aHCol = 0;
-            var aHRow = 0;
-            var aValueD = "";
-            var aRL = "margin-left: 5px;"
-            var aaDAte;
-            var aaformattedDate;
-            var aaFLen = 0;
-            var aaSum = [];
-            var aaNumberV = 0;
-            var aaColspan = [];
-            var aaSubFooter;
-
-            data.forEach(function (row) {
-                aHCol = 0;
-                table += "<tr style = ' height: " + aaRHeight + "px; border: 1px solid grey; border-collapse: collapse;'>";
-                header.forEach(function (column) {
-                    aaType = aMSetup.aFType[aHCol]
-                    aaVisible = aMSetup.aVisible[aHCol]
-                    aaWidth = aMSetup.aWidth[aHCol]
-                    aaFooter = aMSetup.aFooter[aHCol]
-                    if (aaVisible === 1) {
-                        if (aaType === "number") {
-                            aValueD = row[column].toLocaleString('en-US', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                                useGrouping: true
-                            });
-                            if (aaFooter === "sum") {
-                                aaNumberV = +row[column];
-                                //console.log(typeof row[column], typeof aaNumberV, aaNumberV)
-                                if (aaSum[aHCol] === undefined) { aaSum[aHCol] = 0; }
-                                //console.log(aaSum[aHCol], typeof aaSum[aHCol])
-                                aaSum[aHCol] += aaNumberV;
-
-                                aaColspan[aHCol] = aHCol
-
-                            }
-                            aRL = "float: right;" //"margin-right: " + aaFLen + "px;"
-                        } else if (aaType === "date") {
-                            aaDate = new Date(row[column]);
-                            aaformattedDate = aaDate.toLocaleDateString("en-GB", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric"
-                            });
-                            aValueD = aaformattedDate //.replace(/\//g, "-");
-                        } else {
-                            aValueD = row[column]
-                            aRL = "margin-left: 5px;"
-                        }
-                        table += "<td style = 'border: 1px solid grey; border-collapse: collapse;'><div style = '" + aRL + "'>" + aValueD + "</div></td>";
-                    }
-                    aHCol += 1;
-                });
-                table += "</tr>";
-                aHRow += 1;
-            });
-            //console.log(aaSum, aaColspan, aaSum.length)
-            table += "<tr style='height: " + aaFHeight + "px;'><td><div style = 'font-weight:bold; margin-left: 20px;'>" + aaFLabel + "</div>" //<div style = 'float: right;'>" + aValueD + "</div></td></tr>"
-            for (let i = 0; i < aaSum.length; i++) {
-                if (aaSum[i] !== undefined) {
-                    console.log(aaSum[i], aaColspan[i]);
-                    table += "<td colspan='" + aaColspan[i] + "'><div style = 'font-weight:bold; float: right;'>" + aaSum[i].toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                        useGrouping: true
-                    }); + "</div></td>"
-                }
-            }
-            table += "</tr>"
-            table += "</table>";
-            return table;
-        }
-*/
-/*
-        function generateTable(data) {
-            var table = "<table><tr>";
-            var header = Object.keys(data[0]);
-
-            // Generate the header row
-            header.forEach(function (column) {
-                table += "<th>" + column + "</th>";
-            });
-            table += "</tr>";
-            table += "</table>";
-            return table;
-        }
-/*
-/*
-        function objectToArray(jsonObject) {
-            var result = [];
-            for (var key in jsonObject) {
-                result.push([key, jsonObject[key]]);
-            }
-            return result;
-        }
-        var aNowDte = new Date();
-*/
-/*
-        const aaGetBusYear = (aFM, aLM, aNowDatev) => { // get Business year 
-            let aCalYear = aNowDatev.getFullYear();
-            let aCalMonth = aNowDatev.getMonth() + 1;
-            if (aCalMonth >= aFM && aCalMonth <= aLM) {
-                aCalYear = aCalYear - 1
-            }
-            return aCalYear;
-        }
-*/
 
         const aaNowText = (aNowDatev) => { // use
             //let aNowDatev = new Date()
@@ -723,9 +572,7 @@
             sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
             sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
         }
-
     </script>
-
 </head>
 
 <body class="dx-viewport">
@@ -751,13 +598,13 @@
         var aaEnt = aaPXIXD.includes("X");       
         var aaUsrN = localStorage["aaXXuX"];
         
-        // First Loop
+        // FIRST PRG
         showPreviousYearPopup(function (aNowDte) {
             var aaPFDMI = isLocalHost(); 
             var aaPFDMZz = aAPIServer2; 
             //aaPFDMI = aaPFDMZz
             var afqrFull = "pageID='" + aaPXIXD + "' "
-            var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
+            var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaXTXB + '/all' //+ aaPXXI
             var afsettings = {
                 "url": afURL,
                 "method": "POST",
@@ -773,7 +620,6 @@
 
                     // TOP PRG
                     $(() => {
-
                         var aaPFDMI = isLocalHost()
                         var aaXToX = localStorage["aaXXoX"];
 
@@ -886,6 +732,7 @@
                                         //----- Variables for TRF dxForm ---------------
                                         var asERODesc02 = ""; //Destination	ERODesc02
                                         var asERODesc03 = ""; //Purpose of Trip
+                                        var asERORefNo1 = ""; //Purpose of Trip List
                                         var asEROCheck01 = false; //Overseas
                                         var asEROCheck02 = false; //Need Roaming                                        
                                         var asERODate02 = new Date() //Travel Start Date	
@@ -1357,7 +1204,7 @@
                                                     visible: true,
                                                 },
                                                 {
-                                                    dataField: "ERODesc03",
+                                                    dataField: "ERORefNo1", //ERODesc03
                                                     caption: "Purpose Of Trip",
                                                     dataType: "string",
                                                     width: 150,
@@ -1628,7 +1475,9 @@
                                                 let abodyleftm = "5px";
                                                 let abodylefts = "15px";
                                                 var aAppArr = iData.Vendor01Note
+                                                console.log("text ",aAppArr)
                                                 var xxChkNamexx = aTranTextJson(aAppArr, "NAME:", "MAIL:")
+                                                console.log("array ",xxChkNamexx)
                                                 var anNameLen = xxChkNamexx.length
                                                 var aChkApprove = 0;
                                                 var aDate00 = iData.ERODate02.toString();
@@ -1829,7 +1678,7 @@
                                                             visible: true,
                                                         },
                                                         {
-                                                            dataField: "ERODesc03",
+                                                            dataField: "ERORefNo1", //ERODesc03
                                                             caption: "Purpose",
                                                             dataType: "string",
                                                             width: 150,
@@ -1887,7 +1736,7 @@
                                                             caption: "Estimated Cost",
                                                             dataType: "number",
                                                             format: { type: "fixedPoint", precision: 2 },
-                                                            editorOptions: { format: "#,##0.00", width: 100 },
+                                                            editorOptions: { format: "#,##0.00", width: 100,},
                                                             width: 100,
                                                         },
 
@@ -2034,6 +1883,7 @@
                                                 var asERStatus = "Register";
                                                 var asERODesc02 = ""; //Destination	ERODesc02
                                                 var asERODesc03 = ""; //Purpose of Trip
+                                                var asERORefNo1 = ""; // Purpose of Trip List
                                                 var asEROCheck01 = false; //Overseas
                                                 var asEROCheck02 = false; //Need Roaming                                        
                                                 var asERODate02 = new Date() //Travel Start Date	
@@ -2048,7 +1898,7 @@
                                                     ,ERODesc02: asERODesc02, ERODesc03: asERODesc03, ERODesc04: asERODesc04, ERODesc05: asERODesc05, ERODate02: asERODate02, ERODate03: asERODate03,  Vendor01: asVendor01, Note: asNote, EROAmount1: asEROAmount1
                                                 */
 
-                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: aNowDte, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: asERStatus, ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 0, EROCheck02: 0, NeedPayment: 0, RefundedAmount: asRefundedAmount, LimitedAmount: 0, ERODesc02: asERODesc02, ERODesc03: asERODesc03, ERODesc04: asERODesc04, ERODesc05: asERODesc05, ERODate02: new Date(), ERODate03: new Date(), ERODate05: new Date(), ERODate06: new Date(), Vendor01: asVendor01, Note: asNote, EROAmount1: asEROAmount1 }
+                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: aNowDte, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: asERStatus, ERORefNo1: asERORefNo1, ERORefNo2: "", ERORefNo3: "", EROCheck01: 0, EROCheck02: 0, NeedPayment: 0, RefundedAmount: asRefundedAmount, LimitedAmount: 0, ERODesc02: asERODesc02, ERODesc03: asERODesc03, ERODesc04: asERODesc04, ERODesc05: asERODesc05, ERODate02: new Date(), ERODate03: new Date(), ERODate05: new Date(), ERODate06: new Date(), Vendor01: asVendor01, Note: asNote, EROAmount1: asEROAmount1 }
                                                 var ObjRowData = JSON.stringify(ObjKeyData);
                                                 console.log("ObjRowData = ", ObjRowData)
                                                 sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
@@ -2062,6 +1912,7 @@
                                                 asERStatus = iData.ERStatus;
                                                 asERODesc02 = iData.ERODesc02; //Destination	ERODesc02
                                                 asERODesc03 = iData.ERDesc03; //Purpose of Trip
+                                                asERORefNo1 = iData.ERORefNo1; //Purpose of Trip List
                                                 asEROCheck01 = iData.EROCheck01; //Overseas
                                                 asEROCheck02 = iData.EROCheck02; //Need Roaming                                        
                                                 asERODate02 = iData.ERODate02 //Travel Start Date	
@@ -2088,6 +1939,9 @@
                                                     width: '1300px',
                                                     position: { offset: "0 -140" }, //{offset: "0 -180"},
                                                     //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    //contentTemplate: function(contentElement) {
+                                                    //    contentElement.css("background-color", "#f5f5f5");
+                                                    //},
                                                     visible: true,
                                                     fullScreen: true,
                                                     showCloseButton: false,
@@ -2249,6 +2103,7 @@
                                                         //asERStatus = iData.ERStatus;
                                                         asERODesc02 = ""; //Destination	ERODesc02
                                                         asERODesc03 = ""; //Purpose of Trip
+                                                        asERORefNo1 = ""; //Purpose of Trip List
                                                         asEROCheck01 = false; //Overseas
                                                         asEROCheck02 = false; //Need Roaming                                        
                                                         asERODate02 = new Date() //Travel Start Date	
@@ -2348,6 +2203,7 @@
                                                             //asERStatus = iData.ERStatus;
                                                             asERODesc02 = ""; //Destination	ERODesc02
                                                             asERODesc03 = ""; //Purpose of Trip
+                                                            asERORefNo1 = ""; //Purpose of Trip List
                                                             asEROCheck01 = false; //Overseas
                                                             asEROCheck02 = false; //Need Roaming                                        
                                                             asERODate02 = new Date() //Travel Start Date	
@@ -2390,7 +2246,7 @@
                                                                         }
 
                                                                     }
-
+                                                                    console.log("aaHODApprover ",aaHODApprover)
                                                                     //console.log(aaHODApprover)                                                                
                                                                     var aaiFoundApp = false;
                                                                     var nnLno = 0;
@@ -2449,12 +2305,12 @@
                                                             
                                                                     if (aaCheckOverseas === 'TRFO') {
                                                                         var aaCondition = item =>
-                                                                            (item.ID === 1 && (item.ERODesc02 === "" || item.ERODesc03 === "" || item.RefundedAmount === 0 || item.EROCode03 === "" || item.Vendor02 === "" || (item.PSPvDate && new Date(item.PSPvDate).getTime() === new Date('01/01/1901').getTime())))
+                                                                            (item.ID === 1 && (item.ERODesc02 === "" || item.ERORefNo1 === "" || item.RefundedAmount === 0 || item.EROCode03 === "" || item.Vendor02 === "" || (item.PSPvDate && new Date(item.PSPvDate).getTime() === new Date('01/01/1901').getTime())))
                                                                             ||
                                                                             (item.ID > 1 && (item.EROCode03 === "" || item.Vendor02 === "" || (item.PSPvDate && new Date(item.PSPvDate).getTime() === new Date('01/01/1901').getTime())))
                                                                     } else {
                                                                         var aaCondition = item =>
-                                                                            (item.ID === 1 && (item.ERODesc02 === "" || item.ERODesc03 === "" || item.RefundedAmount === 0 || item.EROCode03 === "" || item.Vendor02 === ""))
+                                                                            (item.ID === 1 && (item.ERODesc02 === "" || item.ERORefNo1 === "" || item.RefundedAmount === 0 || item.EROCode03 === "" || item.Vendor02 === ""))
                                                                             ||
                                                                             (item.ID > 1 && (item.EROCode03 === "" || item.Vendor02 === ""))
                                                                     }
@@ -2528,6 +2384,9 @@
                                                     showColonAfterLabel: false,
                                                     labelLocation: "top",//"left", //"top",
                                                     readOnly: aViewF, //true e.row.data.Confirmed
+                                                    //elementAttr: {
+                                                    //    style: "background-color: #F5F5F5; color: black;"
+                                                    //},
                                                     //validationGroup: "formValidationGroup", // Define a validation group here
                                                     items: [
                                                         {
@@ -2535,7 +2394,7 @@
                                                             colCount: 5,
                                                             items: [{
                                                                 dataField: "HeadRefNo",
-                                                                label: { text: "REF NO" },
+                                                                label: { text: "REF NO" ,cssClass: "custom-label" },
                                                                 editorType: "dxTextBox",
                                                                 editorOptions: { width: 150, readOnly: true }, //value: aaiHeadRef,
                                                                 cssClass: "verylight-blue",
@@ -2588,20 +2447,39 @@
                                                                     colCount: 5,
                                                                     items: [
                                                                         {
-                                                                            dataField: "ERODesc03",
-                                                                            label: { text: "Purpose of Trip" }, //,cssClass: "bold-label" }, 
-                                                                            editorType: "dxTextArea",
+                                                                            dataField: "ERORefNo1",
+                                                                            label: { text: "Purpose of Trip." }, //,cssClass: "bold-label" }, 
+                                                                            editorType: "dxSelectBox", //dxSelectBox dxLookup
                                                                             editorOptions: {
-                                                                                width: 400, height: 80,
+                                                                                dataSource: aaPurposeTable,
+                                                                                searchExpr: "Purpose",
+                                                                                valueExpr: "Purpose",
+                                                                                displayExpr: "Purpose",
+                                                                                searchEnabled: true,
+                                                                                width: 180,
+                                                                                //value: aNewDiva,
                                                                                 onValueChanged: function (e) {
-                                                                                    asERODesc03 = e.value;
+                                                                                    asERORefNo1 = e.value;
                                                                                 }
+                                                                                /*onValueChanged: function(args) {
+                                                                                    
+                                                                                    let newDivision = args.value;
+                                                                                    let newDepartment = args.value.slice(0, 4) //calculateNewDepartment(newDivision);
+                                                                                    let formInstance = $("#PopupChangeDiv").dxForm("instance");
+                                                                                    asNewDept = args.value;
+                                                                                    var asNewDiv = args.value.slice(0, 4);
+                                                                                    gbNewDiv = args.value;
+                                                                                    gbNewDept = args.value.slice(0, 4);
+                                                                                    // Update NewDepartment in the form dynamically
+                                                                                    formInstance.updateData("EROCode03", newDepartment);
+                                                                                },*/
                                                                             },
                                                                             cssClass: "verylight-blue",
                                                                             visible: true,
                                                                             colSpan: 2,
-                                                                            validationRules: [{ type: "required", message: "Purpose of Trip is required" }]
+                                                                            validationRules: [{ type: "required", message: "Purpose of Trip is required" }]                                                                            
                                                                         },
+                                                                     
                                                                         {
                                                                             dataField: "ERODate02",
                                                                             label: { text: "Travel Start Date" },
@@ -2656,17 +2534,37 @@
                                                                             colSpan: 1,
                                                                             validationRules: [{ type: "required", message: "Travel End Date is required" }]
                                                                         },
-                                                                        {
+                                                                        /*{
                                                                             dataField: "EROCheck03",
                                                                             label: { text: "Conference" },
                                                                             editorType: "dxCheckBox",
-                                                                        },  
+                                                                        }, */ 
                                                                         {
-                                                                            dataField: "ERODesc02",
-                                                                            label: { text: "Destination" },
+                                                                             itemType: "Empty",
+                                                                             colSpan: 1,
+                                                                        }, 
+                                                                        {
+                                                                            dataField: "ERODesc03",
+                                                                            label: { text: "Purpose Of Trip Description" }, //,cssClass: "bold-label" }, Purpose of Trip
                                                                             editorType: "dxTextArea",
                                                                             editorOptions: {
-                                                                                width: 400, height: 80,
+                                                                                width: 400, 
+                                                                                height: 50,
+                                                                                onValueChanged: function (e) {
+                                                                                    asERODesc03 = e.value;
+                                                                                }
+                                                                            },
+                                                                            cssClass: "verylight-blue",
+                                                                            visible: true,
+                                                                            colSpan: 5,
+                                                                            //validationRules: [{ type: "required", message: "Purpose of Trip is required" }]
+                                                                        },                                                                                                                                              
+                                                                        {
+                                                                            dataField: "ERODesc02",
+                                                                            label: { text: "Destination/Country" },
+                                                                            editorType: "dxTextArea",
+                                                                            editorOptions: {
+                                                                                width: 400, height: 50,
                                                                                 onValueChanged: function (e) {
                                                                                     asERODesc02 = e.value;
                                                                                 }
@@ -2698,7 +2596,7 @@
                                                                                 //readOnly: asEROCheck01,
                                                                                 onValueChanged: function (e) {
                                                                                     asEROCheck02 = e.value;
-                                                                                    aAddStaff.columnOption("HR Arrange for Roaming", "visible", e.value);
+                                                                                    aAddStaff.columnOption("ROAMING INFORMATION", "visible", e.value); //HR Arrange for Roaming
                                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
                                                                                 }
 
@@ -2708,7 +2606,7 @@
                                                                         },
                                                                         {
                                                                             dataField: "RefundedAmount",
-                                                                            label: { text: "Estimated Cost" },
+                                                                            label: { text: "Estimated Costy" },
                                                                             dataType: "dxNumberBox",
                                                                             //format: { type: "fixedPoint", precision: 2 },
                                                                             hint: "Estimated Cost can not be zero !!!",
@@ -2944,7 +2842,7 @@
                                                             if (column.dataField === "PSPvDate") {
                                                                 column.visible = asEROCheck01; //false asEROCheck01
                                                             }
-                                                            if (column.caption === "HR Arrange for Roaming") {
+                                                            if (column.caption === "ROAMING INFORMATION") { //HR Arrange for Roaming
                                                                 column.visible = asEROCheck02;
                                                             }
                                                         });
@@ -3127,7 +3025,7 @@
                                                                                 let aaID = aData[0].NextID //JSON.stringify(aData); //aData[0].NextID //next no 
                                                                                 let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
                                                                                 //let aObjKeyData = { ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, EROAmount: 0, PBatchDate: aBlankDate,PSPvDate: aBlankDate,ERODate01: aBlankDate,ERODate02: aBlankDate,ERODate03: aBlankDate,ERODate04: aBlankDate,ERODate05: aBlankDate,ERODate06: aBlankDate} //{EntryBy: aaUsrN , EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };                                                                             
-                                                                                let aObjKeyData = { REFNO: axLineNo, ID: aaID, LocalAmount: 0, Amount: 0, RefundedAmount: 0, Note: "", ERORefNo1: "", ERORefNo3: "", ERORefNo4: "", ERODesc02: "", ERODesc03: "", ERODesc04: "", ExpensesCode: "", Currency: "THB", Xrate: 1, Vendor02: "", EROCode01: "", EROCode02: "", EROCode03: "", EROCode04: "", EROCode05: "" }
+                                                                                let aObjKeyData = { REFNO: axLineNo, ID: aaID, LocalAmount: 0, Amount: 0, RefundedAmount: 0, Note: "", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", ERORefNo4: "", ERODesc02: "", ERODesc03: "", ERODesc04: "", ExpensesCode: "", Currency: "THB", Xrate: 1, Vendor02: "", EROCode01: "", EROCode02: "", EROCode03: "", EROCode04: "", EROCode05: "" }
                                                                                 let aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //values 
                                                                                 //var clonedItem = $.extend({}, e.row.data, { REFNO: axRunRun }); //++maxID
                                                                                 //console.log("aObjKeyData = ",aObjKeyData)
@@ -3189,7 +3087,6 @@
                                                         {
                                                             dataField: "PSPvDate",
                                                             caption: "Send Passport Copy to Admin*",
-                                                            //cssClass: "colorRED",
                                                             dataType: "date",
                                                             format: "dd/MM/yyyy",
                                                             placeholder: '01/01/1901',
@@ -3280,19 +3177,12 @@
                                                             editorType: "dxTextBox",
                                                             width: 120,
                                                             editorOptions: { width: 120 },
-                                                            //validationRules: [{
-                                                            //    type: "custom",
-                                                            //    validationCallback: function (options) {
-                                                            //        return options.value !== "";
-                                                            //    },
-                                                            //    message: "Company's Movile Phone cannot be empty"
-                                                            // }],
                                                             visible: true,
                                                         },
                                                         {
-                                                            caption: 'HR Arrange for Roaming',
+                                                            caption: 'ROAMING INFORMATION',
                                                             visible: true,
-                                                            width: 220,
+                                                            width: 300,
                                                             headerCellTemplate: function (header, info) {
                                                                 $('<div>')
                                                                     .html(info.column.caption)
@@ -3311,9 +3201,16 @@
                                                                             .appendTo(header);
                                                                         header.parent().css("backgroundColor", "#e7d5ff");
                                                                     },
-                                                                    editorType: "dxTextBox",
+                                                                    editorType: "dxSelectBox",
                                                                     width: 100,
-                                                                    editorOptions: { width: 100, }, // readOnly: !aRoamL
+                                                                    editorOptions: { 
+                                                                        width: 100, 
+                                                                        dataSource: aaYesNoList,
+                                                                        searchExpr: "Code",
+                                                                        valueExpr: "Code",
+                                                                        displayExpr: "Code",
+                                                                        searchEnabled: true,
+                                                                    }, // readOnly: !aRoamL
                                                                     visible: true,
                                                                 },
                                                                 {
@@ -3326,11 +3223,33 @@
                                                                             .appendTo(header);
                                                                         header.parent().css("backgroundColor", "#e7d5ff");
                                                                     },
-                                                                    editorType: "dxTextBox",
+                                                                    editorType: "dxSelectBox",
                                                                     width: 100,
-                                                                    editorOptions: { width: 100, }, // readOnly: !aRoamL
+                                                                    editorOptions: { 
+                                                                        width: 100, 
+                                                                        dataSource: aaYesNoList,
+                                                                        searchExpr: "Code",
+                                                                        valueExpr: "Code",
+                                                                        displayExpr: "Code",
+                                                                        searchEnabled: true,
+                                                                    }, // readOnly: !aRoamL
                                                                     visible: true,
                                                                 },
+                                                                {
+                                                                    dataField: "ERORefNo2",
+                                                                    caption: "HR Arrangement",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    editorType: "dxTextBox",
+                                                                    width: 200,
+                                                                    editorOptions: { width: 200, }, // readOnly: !aRoamL
+                                                                    visible: true,
+                                                                },                                                                
                                                             ],
                                                         },
 
@@ -3602,19 +3521,19 @@
                                                 }).dxFileUploader('instance');
 
                                                 /*
-                                                                                                            var myHeaders = new Headers();
-                                                                                                            myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
-                                                                                                            myHeaders.append("Content-Type", "multipart/form-data");
-                                                                                                            var formdata = new FormData();
-                                                                                                            formdata.append("file", fileInput.files[0], "file:///C:/HTML/XOL/images/avatar.png");
-                                                                                                            //formdata.append("file", fileInput.files[0], "file:///C:/HTML/XOL/images/userw007.png");
-                                                                                                            formdata.append("FilePath", "๏ฟฝ๏ฟฝ๏ฟฝ?");
-                                                                                                            var requestOptions = { method: 'POST', headers: myHeaders, body: formdata, redirect: 'follow' };
-                                                                                                            fetch("https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx", requestOptions)
-                                                                                                                .then(response => response.text())
-                                                                                                                .then(result => console.log(result))
-                                                                                                                .catch(error => console.log('๏ฟฝ๏ฟฝ??๏ฟฝ๏ฟฝ?', error));
-                                                                                                */
+                                                    var myHeaders = new Headers();
+                                                    myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
+                                                    myHeaders.append("Content-Type", "multipart/form-data");
+                                                    var formdata = new FormData();
+                                                    formdata.append("file", fileInput.files[0], "file:///C:/HTML/XOL/images/avatar.png");
+                                                    //formdata.append("file", fileInput.files[0], "file:///C:/HTML/XOL/images/userw007.png");
+                                                    formdata.append("FilePath", "๏ฟฝ๏ฟฝ๏ฟฝ?");
+                                                    var requestOptions = { method: 'POST', headers: myHeaders, body: formdata, redirect: 'follow' };
+                                                    fetch("https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx", requestOptions)
+                                                        .then(response => response.text())
+                                                        .then(result => console.log(result))
+                                                        .catch(error => console.log('๏ฟฝ๏ฟฝ??๏ฟฝ๏ฟฝ?', error));
+                                                */
 
                                                 $("#fileUploader").dxFileUploader({
                                                     multiple: false,
@@ -3660,12 +3579,12 @@
                                                     name: 'LastName',
                                                 });
                                                 /*
-                                                                            $('#file-uploader').dxFileUploader({
-                                                                                selectButtonText: 'Select photo',
-                                                                                labelText: '',
-                                                                                accept: 'image/*',
-                                                                                uploadMode: 'useForm',
-                                                                            });
+                                                $('#file-uploader').dxFileUploader({
+                                                    selectButtonText: 'Select photo',
+                                                    labelText: '',
+                                                    accept: 'image/*',
+                                                    uploadMode: 'useForm',
+                                                });
                                                 */
                                                 $('#button').dxButton({
                                                     text: 'Update profile',

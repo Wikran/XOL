@@ -45,7 +45,7 @@ $(() => {
     var anPWDc = 0;
     var aMessErr = "";
     var aTtoChk = 2;
-   
+
     const popup = $("#popupContainer").dxPopup({
         height: '280px',
         width: '400px',
@@ -284,7 +284,7 @@ $(() => {
         fetch(aURL, requestOptions, { mode: 'no-cors'})
             .then(response => response.json())
             .then(aData => {
-                //console.log(aData)
+                console.log(aData)
                 if ((aUname === aData[0].IDUsr && aForgotPWD === 1) || (aPswd === aData[0].Pword && aForgotPWD === 0)) { //aPswd === aData[0].Pword
                     var aotpx = aData[0].otp; //need otp or not
                     var aLGName = aData[0].LGName; // English name
@@ -340,8 +340,8 @@ $(() => {
                             var encryptedData = CryptoJS.AES.encrypt(JSON.stringify(usrProperty), "sBxA017").toString();
                             //localStorage.setItem("myData", encryptedData);
                             localStorage.setItem("usrProperty", encryptedData);
-                    
-                        aGoTo(aMainPrj); 
+                            aGoTo(aMainPrj); 
+
                     } else if(aForgotPWD === 1){ 
                         aOTPph = "OTP for Forgotten Password"
                         aii++;
@@ -385,18 +385,8 @@ $(() => {
                     }
 
                 } else {
-                    //anPWDc++
-                    //DevExpress.ui.dialog.alert({
-                    //    showTitle: false,
-                    //    messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
-                    //});
-                    //if(anPWDc >= aTtoChk + 1){
-                        aErrorLG =  aIndexAlert4UnP01  //+ aIndexAlert4UnP11 //+ "\n(" + anPWDc + ")"
-                    //}else {
-                    //    aErrorLG =  aIndexAlert4UnP01  //+ "\n(" + anPWDc + ")" + aPswd
-                    //}                     
-                    //alert(aErrorLG);
-                    //DevExpress.ui.dialog.alert(aErrorLG);
+               
+                    aErrorLG =  aIndexAlert4UnP01  
                     DevExpress.ui.dialog.alert({
                         //title: aTitleError01,
                         showTitle: false,
@@ -408,11 +398,6 @@ $(() => {
             .catch(error => {
                 //anPWDc++
                 console.error('Error:', error);
-                //DevExpress.ui.dialog.alert({
-                //    showTitle: false,
-                //    messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
-                //});
-                //aErrorLG = "Please Try Again!! \n��س��ͧ�����ա���� �������;������촼Դ \n�������촷��س�������� " + aPswd
                 if(anPWDc >= aTtoChk + 1){
                     aErrorLG =  aIndexAlert4UnP01 // + aIndexAlert4UnP11 //+ "\n(" + anPWDc + ")" + aPswd 
                 }else {
@@ -429,43 +414,6 @@ $(() => {
     return aErrorLG
    }
 
-/*
-    // Not Use
-    function aaLoginGet(aaPFDMI, aUname, aPswd) {
-        var aReturnVal = [];
-        let aURL = aaPFDMI + "/pythonL/" + aUname + "/" + aPswd + "/true";
-        var settings = {
-            "url": aURL,
-            "method": "GET",
-            "timeout": 0,
-        };
-        $.ajax(settings).done(function (response) {
-            localStorage.setItem("aaXXoX", response.TokenKey);
-            aReturnVal = response;
-        });
-        return aReturnVal;
-    }
-
-    // Not Use
-    function aaGetjson4Api(aaPFDMI, aaXTGO, aaTBXX, aSearch) {
-        var aReturnVal1 = [];
-        let aURL = aaPFDMI + "/pythonLT/" + aaXTGO + "/" + aaTBXX + "/" + aSearch;
-        var settings = {
-            "url": aURL,
-            "method": "GET",
-            "timeout": 0,
-        };
-        $.ajax(settings).done(function (response) {
-            var aal = btoa(response[0].Gright);
-            localStorage.setItem("aaXrXgU", aal);
-            localStorage.setItem("aaXrXgT", response[0].Gright);
-            eraseCookie("aaCrCg")
-            setCookie("aaCrCg", aal, 1);
-            aReturnVal1 = response;
-        });
-        return aReturnVal1;
-    }
-*/
     $("#icon-cancel").dxButton({
         icon: "fas fa-door-open",
         type: "danger",

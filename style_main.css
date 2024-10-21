@@ -10,8 +10,12 @@
 body {
     font-family: 'Exo', sans-serif;
 }
-
-
+/*.context {
+    display: none;
+}
+.area {
+    display: none;
+}*/
 .context {
     width: 100%;
     position: absolute;
@@ -366,7 +370,7 @@ body {
     /* 0 10 10 top right bottom left*/
     color: rgb(145, 70, 17);
     /*margin-left: -8px;
-    /*rgb(153,101,21);*/
+    /*rgb(153,101,21); rgba(228, 228, 228, 0.15)*/
     background-color: rgba(228, 228, 228, 0.15);
     /*rgba(252, 252, 252, 0.753)*/
     /*rgba(252, 252, 252, 0.95);*/

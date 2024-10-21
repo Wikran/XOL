@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Email using Microsoft Graph API</title>
+    <script src="https://alcdn.msauth.net/browser/2.21.0/js/msal-browser.min.js"></script>
+</head>
+<body>
+    <h2>Send Email using Microsoft Graph API</h2>
+    <button onclick="signIn()">Sign In</button>
+    <button onclick="sendMail()">Send Mail</button>
+
+    <script>
+        // Step 1: Configure MSAL
+        const msalConfig = {
+            auth: {
+                clientId: '45887e5d-f593-4973-b957-4e80d32875c7', // Replace with your Azure AD app's client ID
+                redirectUri: 'http://localhost:8089',
+            }
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        let account;
+
+        // Step 2: Sign in function
+        async function signIn() {
+            try {
+                const loginResponse = await msalInstance.loginPopup({
+                    scopes: ["Mail.Send", "User.Read"]
+                });
+                account = loginResponse.account;
+                console.log('Login successful!', account);
+                alert('You are signed in as ' + account.username);
+            } catch (error) {
+                console.error('Login error:', error);
+            }
+        }
+
+        // Step 3: Send email function
+        async function sendMail() {
+            if (!account) {
+                alert('Please sign in first!');
+                return;
+            }
+
+            const accessToken = await getAccessToken();
+
+            const email = {
+                message: {
+                    subject: "Test Email from Graph API",
+                    body: {
+                        contentType: "Text",
+                        content: "Hello, this is a test email sent using Microsoft Graph API."
+                    },
+                    toRecipients: [
+                        {
+                            emailAddress: {
+                                address: "recipient@example.com" // Replace with the recipient's email address
+                            }
+                        }
+                    ]
+                },
+                saveToSentItems: "true"
+            };
+
+            fetch("https://graph.microsoft.com/v1.0/me/sendMail", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(email)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Email sent successfully!');
+                } else {
+                    console.error('Failed to send email:', response);
+                    alert('Failed to send email.');
+                }
+            });
+        }
+
+        // Step 4: Get access token function
+        async function getAccessToken() {
+            const tokenResponse = await msalInstance.acquireTokenSilent({
+                scopes: ["Mail.Send", "User.Read"],
+                account: account
+            });
+            return tokenResponse.accessToken;
+        }
+    </script>
+</body>
+</html>

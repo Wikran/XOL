@@ -116,7 +116,7 @@
         //var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-        var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+        var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
         var afqrFull = "pageID='" + aaPXIXD + "' "
         var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -170,7 +170,7 @@
 
                     var aqrFull = "IDNO != 0 " //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%"
                     var aurl = aaPFDMZz + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all'
-
+                    console.log(aurl)
                     var settings = {
                         "url": aurl,
                         "method": "POST",
@@ -182,7 +182,7 @@
                             "@": aqrFull //" Status!='Resigned' "
                         }),
                     };
-
+                    console.log(settings)
                     $("#gridContainer").dxDataGrid({
 
                         dataSource: new DevExpress.data.CustomStore({
