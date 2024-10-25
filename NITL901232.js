@@ -1,260 +1,149 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Limit - Staff Benefits</title>
-    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-    <META HTTP-EQUIV="Expires" CONTENT="-1">
-    <meta http-equiv="Content-Language" content="th">
-    <meta http-equiv="content-Type" content="text/html; charset=window-874">
-    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+//LImit Program
+window.onload = function () {
+    setTimeout(function () {
+        location.reload();
+    }, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
+}
 
-    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+$(document).ready(function () {
+    var aDXTheme = localStorage["aDXTheme"]
+    DevExpress.ui.themes.current(aDXTheme);
+});
+window.jsPDF = window.jspdf.jsPDF;
+applyPlugin(window.jsPDF);
+console.clear();
+/**
+ * Global variables
+ * aaPFDMI = URL for API (https://cbsdev2.locktonwattana.com)
+ * aaXToX = user public token key
+ * */
+var aaPFDMI = isLocalHost();
+var aaXToX = localStorage["aaXXoX"];
 
-    <!-- Icon -->
-    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
-    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
-    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
-    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
-    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+/**
+ * @param {array} Employee
+ * @param {string} "EMPID   "
+ * @param {string} "EMPNAME"
+ * @param {string} "Employee ID value"
+ * return string results
+ * example aArrfindValByKey(aaEmployee, "EMPCode", "EMPNAME", value) value = employee code value
+ * @copyright wikran 2023
+ */
+const aArrfindValByKey = (arr, searchKey, returnValue, searchValue) => {
+    const item = arr.find(e => e[searchKey] === searchValue); // Search for the object with the matching key-value pair
+    if (item) {
+        return item[returnValue]; // Return the value of the specified key if the object is found
+    } else {
+        return null; // Return null if the object is not found
+    }
+};
 
-    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
-    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
-        data-active="true">
-    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.orange.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.purple.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.lime.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
-
-    <!-- Export Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
-    <!-- Export Excel -->
-    <!-- Export to PDF -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
-    <!-- Export to PDF -->
-    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
-    <!-- <script src="aaTMain.js"></script> -->
-
-    <link rel="stylesheet" href="NITL901232.css">
-    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-    <script src="bundle.min.js"></script>
-    <script src="NITL901232.js"></script>
-<!--     <style>
-        .title-bg {
-            background-color: rgba(191, 191, 191, 0.15);
+/**
+ * @param {array} Employee
+ * @param {string} "NAME"
+ * @param {string} "name value"
+ * return json array results
+ * example aSearch2json(aaEmployee, "EMPCode", value) value = employee code value
+ * @copyright wikran 2023
+ */
+const aSearch2json = (arr, searchKey, searchValue) => {
+    const results = []; // Initialize an empty array to store the matching objects
+    for (const obj of arr) { // Loop through each object in the array
+        if (obj[searchKey] === searchValue) { // Check if the object has the matching search key
+            results.push(obj); // Add the matching object to the results array
         }
+    }
+    return results; // Return the array of matching objects
+}
 
-        .second-group {
-            background-color: rgba(191, 191, 191, 0.15);
-        }
+var xxchkxx = typeof param1 === "undefined" ? "NO" : param1;
+//var aaPXIXD = localStorage["aPXIXD"];
+var aaPXIXD = xxchkxx === "NO" ? localStorage["aPXIXD"] : param1;
+var aaEnt = aaPXIXD.includes("X");
+//var aaKeyField = localStorage["aaXKFX"];
+//var aaTBKey = localStorage["aaXTBX"];
+var aaUsrN = localStorage["aaXXuX"];
+var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
+var aDBServerName;
+var aDBEMPServerName;
+var aEMPPDFI = aaPFDMI;
+if (aaPFDMI === "https://webspace.locktonwattana.com") {
+    aDBServerName = "[lockthbnk-db02]"
+    aDBEMPServerName = aDBServerName;
+} else if (aaPFDMI === "https://cbsdev3.locktonwattana.com") {
+    aDBServerName = "[lockthbnk-db02]"
+    aDBEMPServerName = aDBServerName;
+} else if (aaPFDMI === "https://cbsdev2.locktonwattana.com") {
+    aDBServerName = "[lockthbnk-ap14]"
+    aDBEMPServerName = aDBServerName;
+} else {
+    aDBServerName = "[WIKRAN-W10]"
+    aDBEMPServerName = "[lockthbnk-ap14]"
+    aEMPPDFI = "https://cbsdev2.locktonwattana.com";
+}
+var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
-        .dx-datagrid-headers {
-            color: #000000 !important;
-            background-color: #dffdfbe5 !important;
-            /* #edfdfce5*/
-        }
+var aDatabasea = "ExtraOnLine.dbo.TRVREQF";
+var aKeyField = "HeadRefNo"
+var aKeyIDa = "T2408152724" //aaiHeadRef //
+var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
 
-        .dx-popup-title {
-            color: rgb(1, 6, 32);
-            background-color: rgb(249, 224, 252)
-        }
-    </style> -->
-<!--     <script>
-        window.onload = function() {
-			setTimeout(function() {
-				location.reload();
-			}, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-		}  
+async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
+    //let aDataBasea = "ExtraOnLine.dbo.EXPREIM";
+    //let aKeyfield = "HeadRefNo";
+    let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+    // console.log("Inside aaLoadData aKeya = ", aKeya);
+    let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
+    // console.log("Inside aaLoadData axqr2S = ", axqr2S)
+    //let axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+    let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
 
-        $(document).ready(function () {
-            var aDXTheme = localStorage["aDXTheme"]
-            DevExpress.ui.themes.current(aDXTheme);
-        });
-        window.jsPDF = window.jspdf.jsPDF;
-        applyPlugin(window.jsPDF);
-        console.clear();
-        /**
-         * Global variables
-         * aaPFDMI = URL for API (https://cbsdev2.locktonwattana.com)
-         * aaXToX = user public token key
-         * */
-        var aaPFDMI = isLocalHost(); 
-        var aaXToX = localStorage["aaXXoX"];
-        
-        /**
-         * @param {array} Employee
-         * @param {string} "EMPID   "
-         * @param {string} "EMPNAME"
-         * @param {string} "Employee ID value"
-         * return string results
-         * example aArrfindValByKey(aaEmployee, "EMPCode", "EMPNAME", value) value = employee code value
-         * @copyright wikran 2023
-         */
-        const aArrfindValByKey = (arr, searchKey, returnValue, searchValue) => {
-            const item = arr.find(e => e[searchKey] === searchValue); // Search for the object with the matching key-value pair
-            if (item) {
-                return item[returnValue]; // Return the value of the specified key if the object is found
-            } else {
-                return null; // Return null if the object is not found
-            }
-        };  
+    let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "@": btoa(axFullBody) }),
+        redirect: "follow"
+    });
 
-        /**
-         * @param {array} Employee
-         * @param {string} "NAME"
-         * @param {string} "name value"
-         * return json array results
-         * example aSearch2json(aaEmployee, "EMPCode", value) value = employee code value
-         * @copyright wikran 2023
-         */
-        const aSearch2json = (arr, searchKey, searchValue) => {
-        const results = []; // Initialize an empty array to store the matching objects
-        for (const obj of arr) { // Loop through each object in the array
-            if (obj[searchKey] === searchValue) { // Check if the object has the matching search key
-             results.push(obj); // Add the matching object to the results array
-            }
-        }
-        return results; // Return the array of matching objects
-        }
+    let acData = await response.json();
+    //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
+    // console.log("record ", acData.length);
+    // console.log(acData);
+    const filteredArray = acData.filter(condition);
+    //console.log(filteredArray);
+    //console.log(filteredArray.length);
+
+    let abc;
+    if (filteredArray.length === 0) { //pass                
+        abc = 0;
+    } else {
+        // console.log("not found ", filteredArray.length)
+        // console.log("Filter Array ", filteredArray)
+        abc = 1;
+    }
+    return filteredArray;
+}
+
+var afqrFull = "pageID='" + aaPXIXD + "' "
+var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
+var afsettings = {
+    "url": afURL,
+    "method": "POST",
+    "timeout": 0,
+    "headers": { "Content-Type": "application/json" },
+    "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+};
+var jqxhr = $.post(afsettings, function (e) { })
+    .done(function (e) {
+        //console.log("set aaTBKey");
+        aObjMPage = e;
+        var aaKeyField = aObjMPage[0].PrimaryKey;
+        var aaTBKey = aObjMPage[0].TBKey;
+        //console.log(aaTBKey) 63971412-c4e4-4d35-8e79-3293fe59dac8
 
 
-   </script> -->
-</head>
 
-<body class="dx-viewport">
-    <div class="container">
-        <div id="gridContainer"></div>
-    </div>
-<!--     <script>
-        var aaPXIXD = localStorage["aPXIXD"];
-        var aaEnt = aaPXIXD.includes("X");
-        //var aaKeyField = localStorage["aaXKFX"];
-        //var aaTBKey = localStorage["aaXTBX"];
-        var aaUsrN = localStorage["aaXXuX"];
-        var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
-        var aDBServerName;
-        var aDBEMPServerName;
-        var aEMPPDFI = aaPFDMI;
-        if (aaPFDMI === "https://webspace.locktonwattana.com" ){
-            aDBServerName = "[lockthbnk-db02]"
-            aDBEMPServerName = aDBServerName;
-        } else if (aaPFDMI === "https://cbsdev3.locktonwattana.com" ){
-            aDBServerName = "[lockthbnk-db02]"
-            aDBEMPServerName = aDBServerName;
-        } else if (aaPFDMI === "https://cbsdev2.locktonwattana.com") {
-            aDBServerName = "[lockthbnk-ap14]"
-            aDBEMPServerName = aDBServerName;
-        } else {
-            aDBServerName = "[WIKRAN-W10]"
-            aDBEMPServerName = "[lockthbnk-ap14]"
-            aEMPPDFI = "https://cbsdev2.locktonwattana.com";
-        }
-        var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
-
-        var aDatabasea = "ExtraOnLine.dbo.TRVREQF";
-        var aKeyField = "HeadRefNo"
-        var aKeyIDa = "T2408152724" //aaiHeadRef //
-        var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
-
-        async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
-            //let aDataBasea = "ExtraOnLine.dbo.EXPREIM";
-            //let aKeyfield = "HeadRefNo";
-            let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
-            console.log("Inside aaLoadData aKeya = ", aKeya);
-            let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
-            console.log("Inside aaLoadData axqr2S = ", axqr2S)
-            //let axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
-            let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
-
-            let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ "@": btoa(axFullBody) }),
-                redirect: "follow"
-            });
-
-            let acData = await response.json();
-            //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
-            console.log("record ", acData.length);
-            console.log(acData);
-            const filteredArray = acData.filter(condition);
-            //console.log(filteredArray);
-            //console.log(filteredArray.length);
-
-            let abc;
-            if (filteredArray.length === 0) { //pass                
-                abc = 0;
-            } else { // not pass
-                // Extract and log the field name that caused the condition to fail
-                /*let failedFields = [];
-                acData.forEach(item => {
-                    for (let key in item) {
-                        let tempItem = { ...item };
-                        delete tempItem[key];
-                        //console.log("Temp item after deleting key", key, ":", tempItem); // Log tempItem after deletion                        
-                        if (condition(tempItem)) {
-                            failedFields.push(key);
-                        }
-                    }
-                });*/
-                //console.log("Failed fields: ", failedFields);
-                console.log("not found ",filteredArray.length)
-                console.log("Filter Array ",filteredArray)
-                abc = 1;
-            }
-            return filteredArray;
-        }
-
-        var afqrFull = "pageID='" + aaPXIXD + "' "
-        var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
-        var afsettings = {
-            "url": afURL,
-            "method": "POST",
-            "timeout": 0,
-            "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
-        };
-        var jqxhr = $.post(afsettings, function (e) { })
-            .done(function (e) {
-                //console.log("set aaTBKey");
-                aObjMPage = e;
-                var aaKeyField = aObjMPage[0].PrimaryKey;
-                var aaTBKey = aObjMPage[0].TBKey;
-                //console.log(aaTBKey) 63971412-c4e4-4d35-8e79-3293fe59dac8
-        
-        
-        
-                //$(function () { TOP PRG 
+        //$(function () { TOP PRG 
         $(() => {
 
             let aqr2S = "Where Status != 'Resigned'"
@@ -266,13 +155,13 @@
                 //
                 .then(aData => {
                     var aaEmployee = aData;
-                    console.log("aaEmployee ",aaEmployee)
+                    // console.log("aaEmployee ", aaEmployee)
                     let aqr2S1 = "Where IDNO <> ''" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                     let aFieldSelected1 = "IDNO,BenefitLevel,FamilyReimbursement,AllowSSO,OPDLimitperrequest,OPDLimitperyear,MaternityLimitperyear,IPDLimitpercase,FleetLimit,PositionGroup,NOTE,EntryBy,EntryDate"
                     let aFullBody1 = "Select " + aFieldSelected1 + " From " + aDBServerName + ".ExtraOnLine.dbo.PositionBenefitLevel " + aqr2S1;
-                    console.log(aFullBody1)
+                    // console.log(aFullBody1)
                     let achecktt = "170005         ".trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); //"170005         "
-                    console.log("xResultxx ",xResultxx, xResultxx[0].Position)
+                    // console.log("xResultxx ", xResultxx, xResultxx[0].Position)
                     //let rst = xResultxx[0].Position; 
                     //console.log("Search ",rst)
                     fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody1 }), redirect: "follow" })
@@ -280,10 +169,10 @@
                         //
                         .then(aData => {
                             var aaBenefitLevel = aData;
-                            console.log("aaBenefitLevel ",aaBenefitLevel)
-                            const aaExpGroup = [{ "ExpGroupCode": "100", "ExpGroupDescEng": "General", "ExpGroupDescOth": "¤èÒãªé¨èÒÂ·ÑèÇä»", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "200", "ExpGroupDescEng": "Fleet Card", "ExpGroupDescOth": "Fleet Card", "ExpAccCode": "5102300001", "ExpAccDesc": "ÂÒ¹¾ÒË¹Ð - ¤èÒ¹éÓÁÑ¹" }, { "ExpGroupCode": "300", "ExpGroupDescEng": "Medical", "ExpGroupDescOth": "¤èÒÃÑ¡ÉÒ¾ÂÒºÒÅ", "ExpAccCode": "5204100003", "ExpAccDesc": "¤èÒÃÑ¡ÉÒ¾ÂÒºÒÅ" }, { "ExpGroupCode": "400", "ExpGroupDescEng": "Entertainment", "ExpGroupDescOth": "Entertainment", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "500", "ExpGroupDescEng": "Overseas", "ExpGroupDescOth": "µèÒ§»ÃÐà·È", "ExpAccCode": "", "ExpAccDesc": "" }]
-                            
-                            console.log(aaExpGroup)
+                            // console.log("aaBenefitLevel ", aaBenefitLevel)
+                            const aaExpGroup = [{ "ExpGroupCode": "100", "ExpGroupDescEng": "General", "ExpGroupDescOth": "????????????????", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "200", "ExpGroupDescEng": "Fleet Card", "ExpGroupDescOth": "Fleet Card", "ExpAccCode": "5102300001", "ExpAccDesc": "???????? - ?????????" }, { "ExpGroupCode": "300", "ExpGroupDescEng": "Medical", "ExpGroupDescOth": "??????????????", "ExpAccCode": "5204100003", "ExpAccDesc": "??????????????" }, { "ExpGroupCode": "400", "ExpGroupDescEng": "Entertainment", "ExpGroupDescOth": "Entertainment", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "500", "ExpGroupDescEng": "Overseas", "ExpGroupDescOth": "??????????", "ExpAccCode": "", "ExpAccDesc": "" }]
+
+                            // console.log(aaExpGroup)
                             var aMMaMx = localStorage["MMaMx"];
                             var aRRgRs = aMMaMx.split('0');
                             var aDDeDx = aRRgRs[0];
@@ -316,7 +205,7 @@
 
                             var aqrFull = "IDNO != '' " //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%"
                             var aurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all' //aaPFDMZz  aaPFDMI
-                            var settings = {"url": aurl,"method": "POST","timeout": 0,"headers": {"Content-Type": "application/json" },"data": JSON.stringify({"@": aqrFull  }),};//" Status!='Resigned' "
+                            var settings = { "url": aurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": aqrFull }), };//" Status!='Resigned' "
 
                             $("#gridContainer").dxDataGrid({
 
@@ -324,8 +213,8 @@
                                     key: "IDNO",
                                     loadMode: "omit",
                                     load: function () {
-                                            return $.post(settings).done(function (response) { var xDatax = response; console.log("xDatax ",xDatax); });
-                                        },
+                                        return $.post(settings).done(function (response) { var xDatax = response;  });//console.log("xDatax ", xDatax);
+                                    },
                                     insert: function (values) {
 
                                         if (aaEnt) {
@@ -383,7 +272,7 @@
                                     },
                                     height: 500,
                                     width: 1000,
-                                },                                
+                                },
                                 grouping: {
                                     autoExpandAll: true,
                                 },
@@ -554,8 +443,8 @@
                                             valueExpr: "EMPCode",
                                             displayExpr: "EMPCode",
                                         },*/
-                                        editCellTemplate: dropDownBoxEMP, 
-                                        setCellValue: function (newData, value, currentRowData) {                                          
+                                        editCellTemplate: dropDownBoxEMP,
+                                        setCellValue: function (newData, value, currentRowData) {
                                             let aResult = aSearch2json(aaEmployee, "EMPCode", value)
                                             newData.EmpID = value;
                                             newData.EmpName = $.trim(aResult[0].FullNameThai);
@@ -584,23 +473,23 @@
                                         width: 150,
                                         visible: false,
                                     },
-                                    /*{
-                                        dataField: "ExpGroupDesc",
-                                        caption: "Expenses Group Desc",
-                                        lookup: {
-                                            dataSource: aaExpGroup,
-                                            valueExpr: "ExpGroupDescEng",
-                                            displayExpr: "ExpGroupDescEng" //ExpGroupDescEng
-                                        },
-                                        setCellValue: function (newData, value, currentRowData) {
-                                            newData.ExpGroupDesc = value;
-                                            let aResult = getExpGroup(value) //aSearchjson2(aaExpGroup, value); //words.filter(word => word.length > 6); aaExpGroup.fliter(data => data.ExpGroupDescEng === value) 
-                                            newData.ExpGroupCode = aResult[0].ExpGroupCode;
-                                            newData.ExpCode = aResult[0].ExpAccCode;
-                                            newData.ExpDesc = aResult[0].ExpAccDesc; //ExpAccCode,ExpAccDesc
-                                        },
-                                        visible: false,
-                                    },*/
+                                    // /*{
+                                    //     dataField: "ExpGroupDesc",
+                                    //     caption: "Expenses Group Desc",
+                                    //     lookup: {
+                                    //         dataSource: aaExpGroup,
+                                    //         valueExpr: "ExpGroupDescEng",
+                                    //         displayExpr: "ExpGroupDescEng" //ExpGroupDescEng
+                                    //     },
+                                    //     setCellValue: function (newData, value, currentRowData) {
+                                    //         newData.ExpGroupDesc = value;
+                                    //         let aResult = getExpGroup(value) //aSearchjson2(aaExpGroup, value); //words.filter(word => word.length > 6); aaExpGroup.fliter(data => data.ExpGroupDescEng === value) 
+                                    //         newData.ExpGroupCode = aResult[0].ExpGroupCode;
+                                    //         newData.ExpCode = aResult[0].ExpAccCode;
+                                    //         newData.ExpDesc = aResult[0].ExpAccDesc; //ExpAccCode,ExpAccDesc
+                                    //     },
+                                    //     visible: false,
+                                    // },*/
                                     {
                                         dataField: "RefNo03", //aaBenefitLevel ,AllowFamily,AllowSSO,FleetLimit,MedicalLimit,MaternityLimit,LimitPerCase
                                         caption: "Benefit Level",
@@ -615,14 +504,14 @@
                                             newData.RefNo03 = value;
                                             newData.AllowFamily = aResult[0].FamilyReimbursement;
                                             newData.AllowSSO = aResult[0].AllowSSO;
-                                            newData.FleetLimit = aResult[0].FleetLimit; 
+                                            newData.FleetLimit = aResult[0].FleetLimit;
                                             newData.MedicalLimit = aResult[0].OPDLimitperyear;
                                             newData.MaternityLimit = aResult[0].MaternityLimitperyear;
                                             newData.LimitPerCase = aResult[0].OPDLimitperrequest;
                                         },
                                         width: 280,
                                         //visible: false,
-                                    }, 
+                                    },
                                     {
                                         dataField: "AllowFamily",
                                         caption: "Family Allow",
@@ -678,19 +567,19 @@
                                     {
                                         dataField: "TEXTTEST2", //aaEmployee
                                         caption: "NEW POSITION",
-                                        calculateCellValue: function(data) {let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); return xResultxx.length === 0 ? "RESIGNED" : xResultxx[0].Position.trim()  },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
+                                        calculateCellValue: function (data) { let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); return xResultxx.length === 0 ? "RESIGNED" : xResultxx[0].Position.trim() },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
                                         editorType: "dxTextBox",
                                         width: 100,
                                         visible: false,
-                                    },                                    
+                                    },
                                     {
                                         dataField: "TEXTTEST", //aaEmployee
                                         caption: "STATUS",
-                                        calculateCellValue: function(data) {let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); console.log(xResultxx, xResultxx.length); return xResultxx.length === 0 ? "RESIGNED" : (xResultxx[0].Position.trim() === data.EmpPosition.trim() ? "SAME" : "CHANGE") },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
+                                        calculateCellValue: function (data) { let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); /* console.log(xResultxx, xResultxx.length); */ return xResultxx.length === 0 ? "RESIGNED" : (xResultxx[0].Position.trim() === data.EmpPosition.trim() ? "SAME" : "CHANGE") },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
                                         editorType: "dxTextBox",
                                         width: 100,
                                     },
-                       
+
                                     /*{
                                         dataField: "ExpGroupCode",
                                         caption: "Expenses Group Code",
@@ -874,70 +763,70 @@
                                     );
                                 }
                             }).dxDataGrid("instance");
-/*
-                            function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
-                                let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
-                                console.log('Goal...Repuest Web API : ' + Data);
-                                var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
-                                $.ajax(settings).done(function (response) { console.log(response); });
-                            }
+                            /*
+                                                function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+                                                    let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+                                                    console.log('Goal...Repuest Web API : ' + Data);
+                                                    var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
+                                                    $.ajax(settings).done(function (response) { console.log(response); });
+                                                }
+                                                
+                                                function aSearchEmp(asSearch) {
+                                                    return aaEmployee.filter( //aaEmployee
+                                                        function (data) {
+                                                            return data.EMPCode == asSearch
+                                                        }
+                                                    );
+                                                }
                             
-                            function aSearchEmp(asSearch) {
-                                return aaEmployee.filter( //aaEmployee
-                                    function (data) {
-                                        return data.EMPCode == asSearch
-                                    }
-                                );
-                            }
-
-                            function aSearchBNF(asSearch) {
-                                return aaBenefitLevel.filter( //aaEmployee
-                                    function (data) {
-                                        return data.BenefitLevel == asSearch
-                                    }
-                                );
-                            }
-
-                            function getExpGroup(aSearch) {
-                                return aaExpGroup.filter(
-                                    function (data) {
-                                        return data.ExpGroupDescEng == aSearch
-                                    }
-                                );
-                            }
-                            function getaaBenefit(aSearch) {
-                                return aaBenefitLevel.filter(
-                                    function (data) {
-                                        return data.BenefitLevel == aSearch
-                                    }
-                                );
-                            }
-                            function aSearchjsonB(aObjArr, asID) {
-                                return Object.values(aObjArr).filter( //aaEmployee
-                                    function (data) {
-                                        return data.BenefitLevel == asID
-                                    }
-                                );
-                            }
-
-                            function getTaxRates(state) {
-                                var promise = $.ajax({
-                                    // The URL returns { State: 1, Tax: 10 }
-                                    url: "https://www.mywebsite.com/api/getTaxRates",
-                                    dataType: "json",
-                                    data: { BenefitLevel: state }
-                                });
-                                return promise;
-                            }
-
-                            function aSearchjson(aObjArr, asID) {
-                                return Object.values(aObjArr).filter( //aaEmployee
-                                    function (data) {
-                                        return data.EMPCode == asID
-                                    }
-                                );
-                            }
-*/              
+                                                function aSearchBNF(asSearch) {
+                                                    return aaBenefitLevel.filter( //aaEmployee
+                                                        function (data) {
+                                                            return data.BenefitLevel == asSearch
+                                                        }
+                                                    );
+                                                }
+                            
+                                                function getExpGroup(aSearch) {
+                                                    return aaExpGroup.filter(
+                                                        function (data) {
+                                                            return data.ExpGroupDescEng == aSearch
+                                                        }
+                                                    );
+                                                }
+                                                function getaaBenefit(aSearch) {
+                                                    return aaBenefitLevel.filter(
+                                                        function (data) {
+                                                            return data.BenefitLevel == aSearch
+                                                        }
+                                                    );
+                                                }
+                                                function aSearchjsonB(aObjArr, asID) {
+                                                    return Object.values(aObjArr).filter( //aaEmployee
+                                                        function (data) {
+                                                            return data.BenefitLevel == asID
+                                                        }
+                                                    );
+                                                }
+                            
+                                                function getTaxRates(state) {
+                                                    var promise = $.ajax({
+                                                        // The URL returns { State: 1, Tax: 10 }
+                                                        url: "https://www.mywebsite.com/api/getTaxRates",
+                                                        dataType: "json",
+                                                        data: { BenefitLevel: state }
+                                                    });
+                                                    return promise;
+                                                }
+                            
+                                                function aSearchjson(aObjArr, asID) {
+                                                    return Object.values(aObjArr).filter( //aaEmployee
+                                                        function (data) {
+                                                            return data.EMPCode == asID
+                                                        }
+                                                    );
+                                                }
+                            */
                             /**
                              * @param cellElement (datagrid)
                              * @param cellinfo (datagrid)
@@ -989,13 +878,13 @@
                                 });
                             }
 
-                           /**
-                             * @param cellElement (datagrid)
-                             * @param cellinfo (datagrid)
-                             * @return Benefits Code
-                             * 
-                             * Dropdown Benefits array for DataGrid
-                            */
+                            /**
+                              * @param cellElement (datagrid)
+                              * @param cellinfo (datagrid)
+                              * @return Benefits Code
+                              * 
+                              * Dropdown Benefits array for DataGrid
+                             */
                             function dropDownBoxBNF(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
                                     dropDownOptions: { width: 800 },
@@ -1038,7 +927,4 @@
         });
         // TOP PRG
     });  // ajax          
-    </script> -->
-</body>
 
-</html>

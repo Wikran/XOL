@@ -190,7 +190,11 @@ body {
     }
 
 }
-
+@media (max-width: 768px) {
+    #version {
+      right: 5px; /* Adjust the right margin for smaller screens */
+    }
+  }
 /*----------------------------------------------------*/
 
 #list,

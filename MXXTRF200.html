@@ -3126,7 +3126,7 @@
                                         hint: "Confirm and send to HOD",
                                         icon: "fas fa-check-circle",
                                         type: "success",
-                                        text: "CONFIRM",
+                                        text: "APPROVE",
                                         //width: "120px",
                                         visible: true,
                                         onClick: function (e) {
@@ -3135,7 +3135,7 @@
                                             aHODApproveSS(iData)
                                             $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
                                             $("#gridContainer").dxDataGrid("instance").refresh();
-                                            popup.hide()
+                                            //popup.hide()
                                         }
                                     });      
                                             

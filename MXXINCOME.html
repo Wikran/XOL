@@ -247,7 +247,11 @@
 
         //aaSubGroup01[aaSubGroupNM01
         //import { aaSubGroup01 , aaSubGroupNM01 } from 'MasterData.js';
-
+        const aaLimitedAmt = [
+            {code: "Overseas", lmtamt: 10000},
+            {code: "Entertainment", lmtamt: 40000},
+            {code: "Gift", lmtamt: 40000}
+        ]
 
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
@@ -4534,6 +4538,13 @@
                                                         editorType: "dxNumberBox",
                                                         editorOptions: { format: "#,##0.00", width: 130 },
                                                         width: 130,
+                                                        validationRules: [{ type: "required" },
+                                                        {
+                                                            type: "range",
+                                                            min: 1, 
+                                                            max: 40000, 
+                                                            message: "Please ensure that the Amount is between 0-40,000",
+                                                        }],
                                                         visible: true,
                                                     },
                                                     /*

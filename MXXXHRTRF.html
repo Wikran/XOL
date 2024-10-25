@@ -1438,7 +1438,7 @@
                                                     visible: true,
                                                 },
                                                 {
-                                                    dataField: "ERODesc03",
+                                                    dataField: "ERORefNo1", //ERODesc03
                                                     caption: "Purpose Of Trip",
                                                     dataType: "string",
                                                     width: 150,
@@ -2570,7 +2570,7 @@
                                                             visible: true,
                                                         },
                                                         {
-                                                            dataField: "ERODesc03",
+                                                            dataField: "ERODesc03", //ERODesc03
                                                             caption: "Purpose",
                                                             dataType: "string",
                                                             width: 150,
@@ -3109,7 +3109,7 @@
                                                                 var aKeyField = "HeadRefNo" //"HeadRefNo"; "REFNO"
                                                                 var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724" +"-001" 
                                                                 var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";  
-                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.ERODesc03 === "" || item.RefundedAmount === 0 )) || ( item.ID > 1 && ( item.EROCode03 === "" || item.Vendor02 === ""))
+                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.RefundedAmount === 0 )) || ( item.ID > 1 && ( item.EROCode03 === "" || item.Vendor02 === "" ))
                                                                 var condition = aaCondition     
                                                                 
                                                                 let aApproverName = aaHODAppName // ADMIN Name
@@ -3134,7 +3134,7 @@
                                                             aaLoadData(isLocalHost(),aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
                                                                 .then(atestCehcka => { 
                                                                 //console.log("xx",atestCehcka); // Logs the actual message
-                                                                if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTravelEnAlert01, "INPUT ERROR"); }    //  " + aaCheckOverseas + "                                                                                                                                                                                                                                                    
+                                                                if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aTravelEnAlert02, "INPUT ERROR"); }    //  " + aaCheckOverseas + "                                                                                                                                                                                                                                                    
                                                                 else {                                                                                                                                                                                                                                                         //xxChkLenxx                                                                     
                                                                     let result = DevExpress.ui.dialog.confirm(aaAlertMessage + " " + aaRecpName + " (" + aaRecpEmail + ") ? <br>" + aaaFAMess + " <br>" + aaaADMess + "<p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'>" + "</p>", aaTitMess); //
                                                         

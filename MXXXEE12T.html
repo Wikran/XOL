@@ -3023,7 +3023,7 @@
                                                                 },
                                                                 {
                                                                     dataField: "EROCode01",
-                                                                    label: { text: "TRF Trip" },
+                                                                    label: { text: "TRF Destination" },
                                                                     editorType: "dxTextBox",
                                                                     editorOptions: { width: 130, readOnly: true, },
                                                                     visible: [aTravelSC],
@@ -3247,9 +3247,21 @@
                                                                 } else {     //PSPvNO,PSPvDate
                                                                     if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERStatus" || e.dataField === "PSPvNO" || e.dataField === "PSPvDate" || e.dataField === "LocalAmount" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department")) {
                                                                         e.editorOptions.disabled = true;
-                                                                    }
+                                                                     } else if (e.parentType === "dataRow" && (e.dataField === "EROAmount3" || e.dataField === "EROAmount4")) {
+                                                                         var rowData = e.row && e.row.data;
+                                                                         if (rowData && rowData.EROCode01 === "Overseas") {
+                                                                            e.editorOptions.visible = true;
+                                                                            // e.editorOptions.disabled = false;
+                                                                            //e.label.visible = true;
+                                                                        } else {
+                                                                             e.editorOptions.visible = false;
+                                                                             //e.editorOptions.disabled = true;
+                                                                             //e.label.visible = false;
+                                                                         }
+                                                                 }
                                                                                                                                    
                                                                 }
+                                                              
                                                             },
                                                             onCellPrepared: function(e) {
                                                                 if (e.rowType === "data") {
@@ -3424,7 +3436,7 @@
                                                                                             
                                                                                             {
                                                                                                 dataField: "EROCode01",
-                                                                                                label: { text: "TRF Overseas" },
+                                                                                                label: { text: "TRF Destination" },
                                                                                                 editorType: "dxTextBox",
                                                                                                 editorOptions: { width: 150, readOnly: true },
                                                                                                 colSpan: 1,
@@ -3502,6 +3514,12 @@
                                                                                                     let aResult = aSearch2json(xxxSubGroup01, "EDESC", value)
                                                                                                     newData.ERORefNo3 = value;
                                                                                                     newData.ExpensesCode = aResult[0].ACCCODE
+                                                                                                    // if (value.trim() === "O/Seas Trav-Accom."){
+                                                                                                    //     aAddGrid.columnOption("EROAmount3", "visible", true);
+                                                                                                    //     aAddGrid.columnOption("EROAmount4", "visible", true);
+                                                                                                    //     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                                    //     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                                    // }
                                                                                                 },
                                                                                                 validationRules: [{ type: "required", message: "Type of Reimbursement is required" }],
                                                                                                 colSpan: 2,
@@ -3642,6 +3660,7 @@
                                                                                             //let anewX = 1; //anewX = currentRowData.Amount; //newData.Xrate = value
                                                                                             newData.RefundedAmount = value;
                                                                                             newData.EROAmount2 = (value) / currentRowData.EROAmount1;
+                                                                                            newData.EROAmount4 = ((currentRowData.RefundedAmount)/(currentRowData.EROAmount1)) / currentRowData.EROAmount3;
                                                                                         },
                                                                                         validationRules: [
                                                                                             { type: "required" },
@@ -3683,9 +3702,32 @@
                                                                                         format: { type: "fixedPoint", precision: 2 },
                                                                                         editorType: "dxNumberBox",
                                                                                         editorOptions: { format: "#,##0.00", width: 120, elementAttr: { class: "right-align-number" }, readOnly: true },
-                                                                                        
                                                                                         colSpan: 1,
                                                                                     },
+                                                                                    {
+                                                                                        dataField: "EROAmount3", // O/Seas Trav-Accom. ERORefNo3  "EROAmount4"
+                                                                                        label: {text: "Night (Overseas)"},
+                                                                                        dataType: "number",
+                                                                                        format: { type: "fixedPoint", precision: 0 },
+                                                                                        setCellValue: function (newData, value, currentRowData) {
+                                                                                            newData.EROAmount3 = value;
+                                                                                            newData.EROAmount4 = ((currentRowData.RefundedAmount)/(currentRowData.EROAmount1)) / value;
+                                                                                        },
+                                                                                        editorType: "dxNumberBox",
+                                                                                        editorOptions: { format: "#,##0", width: 80, elementAttr: { class: "right-align-number" },readOnly: [!aaOverseasxx]}, // readOnly: function (e) {return (e.data.ERORefNo3.trim() === "O/Seas Trav-Accom." ? false : true )}
+                                                                                        visible: [aaOverseasxx], //[aaOverseasxx], //true, ERORefNo3 O/Seas Trav-Accom.
+                                                                                        colSpan: 1,
+                                                                                    },
+                                                                                    {
+                                                                                        dataField: "EROAmount4",
+                                                                                        label: {text: "Average/Night(Overseas)" },
+                                                                                        dataType: "number",
+                                                                                        format: { type: "fixedPoint", precision: 2 },
+                                                                                        editorType: "dxNumberBox",
+                                                                                        editorOptions: { format: "#,##0.00", width: 120, elementAttr: { class: "right-align-number" },readOnly: true },
+                                                                                        colSpan: 1,
+                                                                                        visible: true, //[aaOverseasxx], //[aaOverseasxx],
+                                                                                    },                                                                                   
                                                                                     ],
                                                                                 }, //group 2
                                                                                 
@@ -4009,6 +4051,12 @@
                                                                         let aResult = aSearch2json(xxxSubGroup01, "EDESC", value)
                                                                         newData.ERORefNo3 = value;
                                                                         newData.ExpensesCode = aResult[0].ACCCODE
+                                                                        // if (value.trim() === "O/Seas Trav-Accom."){
+                                                                        //     aAddGrid.columnOption("EROAmount3", "visible", true);
+                                                                        //     aAddGrid.columnOption("EROAmount4", "visible", true);
+                                                                        //     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                        //     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                        // }
                                                                         //aaTypeOfRa = value;
                                                                     },
                                                                     visible: true,
@@ -4043,6 +4091,7 @@
                                                                         newData.RefundedAmount = value * (currentRowData.Xrate);
                                                                         aaRefunda = value * (currentRowData.Xrate);
                                                                         newData.EROAmount2 = (value * (currentRowData.Xrate)) / currentRowData.EROAmount1;
+
                                                                     },
                                                                     editorType: "dxNumberBox",
                                                                     editorOptions: { format: "#,##0.00", width: 85, elementAttr: { class: "custom-editor" } },
@@ -4105,6 +4154,7 @@
                                                                         } else {
                                                                             newData.RefundedAmount = value;
                                                                             newData.EROAmount2 = (value) / currentRowData.EROAmount1;
+                                                                            newData.EROAmount4 = ((currentRowData.RefundedAmount)/(currentRowData.EROAmount1)) / currentRowData.EROAmount3;
                                                                         }
                                                                     },
                                                                     validationRules: [
@@ -4131,6 +4181,7 @@
                                                                     setCellValue: function (newData, value, currentRowData) {
                                                                         newData.EROAmount1 = value;
                                                                         newData.EROAmount2 = (currentRowData.RefundedAmount) / value;
+                                                                        newData.EROAmount4 = ((currentRowData.RefundedAmount)/(currentRowData.EROAmount1)) / currentRowData.EROAmount3;
                                                                     },
                                                                     editorType: "dxNumberBox",
                                                                     editorOptions: { format: "#,##0", width: 50, elementAttr: { class: "custom-editor" } },
@@ -4151,20 +4202,60 @@
                                                                         {
                                                                             type: "custom",
                                                                             validationCallback: function (e) { //EROCode01
-                                                                                if (e.data.EROCode01  === "Overseas") {
-                                                                                    let aResultxxx = aSearch2json(aaLimitedAmt, "code", "Overseas");
+                                                                                let aaChkCodexx = (e.data.ERORefNo3  === "Entertainment In Town" ? "Entertainment" : "NONE") //e.data.EROCode01  === "Overseas" ? "Overseas" : 
+                                                                                console.log(aaChkCodexx)
+                                                                                if ( e.data.ERORefNo3  === "Entertainment In Town" ) { //e.data.EROCode01  === "Overseas" ||
+                                                                                    let aResultxxx = aSearch2json(aaLimitedAmt, "code", aaChkCodexx); //"Overseas"
                                                                                     let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
+                                                                                    console.log(aLimitAmtaa)
                                                                                     return e.value <= (aLimitAmtaa);
-                                                                                } else if (e.data.ERORefNo3  === "Entertainment In Town" ) {
-                                                                                   let aResultxxx = aSearch2json(aaLimitedAmt, "code", "Entertainment");
-                                                                                   let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
-                                                                                   return e.value <= (aLimitAmtaa);
                                                                                 } else { return true}
                                                                             },
-                                                                            message: "Over Limited"
+                                                                            message: "Entertainment Over Limited"
                                                                         }
                                                                     ],
                                                                 },
+                                                                {
+                                                                    dataField: "EROAmount3",
+                                                                    caption: "Night (Overseas)",
+                                                                    dataType: "number",
+                                                                    format: { type: "fixedPoint", precision: 0 },
+                                                                    setCellValue: function (newData, value, currentRowData) {
+                                                                        newData.EROAmount3 = value;
+                                                                        newData.EROAmount4 = (currentRowData.EROAmount2) / value;
+                                                                    },
+                                                                    editorType: "dxNumberBox",
+                                                                    editorOptions: { format: "#,##0", width: 50, elementAttr: { class: "custom-editor" },readOnly: [!aaOverseasxx] },
+                                                                    width: 50,
+                                                                    visible: [aaOverseasxx], //[aaOverseasxx], //function (e) {e.data.ERORefNo3 === "O/Seas Trav-Accom." ? true : false }, //true, ERORefNo3 O/Seas Trav-Accom.
+                                                                },
+                                                                {
+                                                                    dataField: "EROAmount4",
+                                                                    caption: "Average/Night(Overseas)",
+                                                                    dataType: "number",
+                                                                    format: { type: "fixedPoint", precision: 2 },
+                                                                    editorType: "dxNumberBox",
+                                                                    editorOptions: { format: "#,##0.00", width: 90, elementAttr: { class: "custom-editor" },readOnly: true },
+                                                                    width: 90,
+                                                                    visible: [aaOverseasxx], //[aaOverseasxx]
+                                                                    validationRules: [
+                                                                        { type: "required" },
+                                                                        {
+                                                                            type: "custom",
+                                                                            validationCallback: function (e) { //EROCode01
+                                                                                let aaChkCodexx = (e.data.ERORefNo3  === "O/Seas Trav-Accom." ? "Overseas" : "NONE")
+                                                                                //console.log(aaChkCodexx)
+                                                                                if (e.data.ERORefNo3  === "O/Seas Trav-Accom." ) {
+                                                                                    let aResultxxx = aSearch2json(aaLimitedAmt, "code", aaChkCodexx); //"Overseas"
+                                                                                    let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
+                                                                                    console.log(aLimitAmtaa)
+                                                                                    return e.value <= (aLimitAmtaa);
+                                                                                } else { return true}
+                                                                            },
+                                                                            message: "Overseas/Night Over Limited"
+                                                                        }
+                                                                    ],
+                                                                },                                                                
                                                                 {
                                                                     dataField: "ERODesc05",
                                                                     caption: "FA NOTE",
@@ -4175,7 +4266,7 @@
                                                                     editorOptions: { width: 60, height: 100, readOnly: true, elementAttr: { class: "custom-editor" } },
                                                                     width: 60,
                                                                     height: 100,
-                                                                    visible: true,
+                                                                    visible: [aaOverseasxx],
                                                                 },
 
                                                                 /* 

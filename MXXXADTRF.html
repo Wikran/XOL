@@ -1476,7 +1476,7 @@
                                                     visible: true,
                                                 },
                                                 {
-                                                    dataField: "ERODesc03",
+                                                    dataField: "ERORefNo1", // ERODesc03
                                                     caption: "Purpose Of Trip",
                                                     dataType: "string",
                                                     width: 150,
@@ -3158,7 +3158,7 @@
                                                                 var aKeyField = "HeadRefNo" //"HeadRefNo"; "REFNO"
                                                                 var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724" +"-001" 
                                                                 var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";  
-                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.ERODesc03 === "" || item.RefundedAmount === 0 || item.Vendor01 === "" || item.ERODesc04 === "")) || ( item.ID > 1 && ( item.Vendor02 === "")) //item.EROCode03 === "" ||
+                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === ""  || item.RefundedAmount === 0 || item.Vendor01 === "" || item.ERODesc04 === "")) || ( item.ID > 1 && ( item.Vendor02 === "")) //item.EROCode03 === "" ||
                                                                 var condition = aaCondition  //|| (item.ERODate06 && !isNaN(new Date(item.ERODate05).getTime()))
                                                                 //|| item.Xrate === 0 || (item.Xrate === 1 && item.Currency !== "THB") || (item.Xrate !== 1 && item.Currency === "THB"); !isNaN(item.ERODate01);    
                                                                 
@@ -3729,7 +3729,7 @@
                                                             if (column.dataField === "PSPvDate") {
                                                                 column.visible = asEROCheck01; //false asEROCheck01
                                                             }
-                                                            if (column.caption === "HR Arrange for Roaming") {
+                                                            if (column.caption === "ROAMING INFORMATION") { //ROAMING INFORMATION HR Arrange for Roaming
                                                                 column.visible = asEROCheck02;
                                                             }
                                                         });
@@ -4045,7 +4045,7 @@
                                                             visible: true,
                                                         },                            
                                                         {
-                                                            caption: 'HR Arrange for Roaming',
+                                                            caption: 'ROAMING INFORMATION', //HR Arrange for Roaming
                                                             visible: true,
                                                             width: 220,
                                                             headerCellTemplate: function(header, info) {
@@ -4086,6 +4086,21 @@
                                                                         editorOptions: { width: 100, }, // readOnly: !aRoamL
                                                                         visible: true,
                                                                     },
+                                                                    {
+                                                                    dataField: "ERORefNo2",
+                                                                    caption: "HR Arrangement",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    editorType: "dxTextBox",
+                                                                    width: 200,
+                                                                    editorOptions: { width: 200, }, // readOnly: !aRoamL
+                                                                    visible: true,
+                                                                }, 
                                                                 ],
                                                         },
                                                        
