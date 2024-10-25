@@ -55,18 +55,39 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
     <!-- Export to PDF -->
     <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
-    <link rel="stylesheet" href="NITL901232.css">
+    <link rel="stylesheet" href="NITL901232.css"> 
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="bundle.min.js"></script>
     <script>     
+        // const timestamps = Date.now(); // Adding timestamp to make it unique
+        // const link = document.createElement('link');
+        // link.rel  = 'stylesheet';
+        // link.href = `NITL901232.css?t=${timestamps}`;
+        // document.head.appendChild(link);
+
+        const timestamp = Date.now(); // Adding timestamp to make it unique
+        // const axbxndxe = `bundle.min.js?t=${timestamp}`
+        // const scriptElement1 = document.createElement("script");
+        // scriptElement1.src = axbxndxe;
+        // document.head.appendChild(scriptElement1);
+
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const param1 = urlParams.get('param1');
-        const jsfiletoload = param1 + ".js";
-        const scriptElement = document.createElement("script");
-        scriptElement.src = jsfiletoload;
-        document.head.appendChild(scriptElement);
+        
+        const jsfiletoload = param1 + `.js?t=${timestamp}`;
+        const scriptElement2 = document.createElement("script");
+        scriptElement2.src = jsfiletoload;
+        document.head.appendChild(scriptElement2);
     </script>
+       <!--  <script>
+            document.getElementById('loadScript').addEventListener('click', function() {
+                fetch('example.js')
+                    .then(response => response.text())
+                    .then(code => eval(code))
+                    .catch(error => console.error('Error loading script:', error));
+            });
+        </script> -->
 </head>
 <body class="dx-viewport">
     <div id="gridContainer"></div>
