@@ -68,8 +68,22 @@
     <link rel="stylesheet" href="NITL901232.css">
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="bundle.min.js"></script>
-    <script src="SRAE120.js"></script>
-
+    <!-- <script src="./dist/SRAE120.js"></script> -->
+    <script>     
+        const path = window.location.pathname;
+        const fullName = path.substring(path.lastIndexOf('/') + 1);
+        const jsFileName = fullName.split('.')[0];
+        //alert("file name is: " + fileNameWithoutExtension);
+        const timestamp = Date.now();
+        //const queryString = window.location.search;
+        //const urlParams = new URLSearchParams(queryString);
+        //const param1 = urlParams.get('param1');
+        
+        const jsfiletoload = "./dist/" + jsFileName + `.js?t=${timestamp}`;
+        const scriptElement2 = document.createElement("script");
+        scriptElement2.src = jsfiletoload;
+        document.head.appendChild(scriptElement2);
+    </script>
 </head>
 
 <body class="dx-viewport">

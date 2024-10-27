@@ -26,24 +26,15 @@
     <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css" data-active="false">
     <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css" data-active="false">
     <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.orange.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.purple.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.lime.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
     <!-- Export Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
@@ -75,7 +66,7 @@
         const urlParams = new URLSearchParams(queryString);
         const param1 = urlParams.get('param1');
         
-        const jsfiletoload = param1 + `.js?t=${timestamp}`;
+        const jsfiletoload = "./dist/" + param1 + `.js?t=${timestamp}`;
         const scriptElement2 = document.createElement("script");
         scriptElement2.src = jsfiletoload;
         document.head.appendChild(scriptElement2);
