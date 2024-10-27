@@ -17,7 +17,7 @@ var decryptedData = CryptoJS.AES.decrypt(storedJsonString, "sBxA017").toString(C
 // Parse the JSON string back into a JavaScript array
 var ausrProperty = JSON.parse(decryptedData);
 // Access the values in the array
-console.log(ausrProperty)
+// console.log(ausrProperty)
 
 window.addEventListener('load', function (e) {
     localStorage.removeItem("aDXTheme");
@@ -109,8 +109,8 @@ const aRuniFrame = (aPageUrl, aTMessage) => {
 const achkdate = new Date();
 var adayx = achkdate.getDate();
 var amonthx = achkdate.getMonth();
-//console.log(adayx)
-//console.log(amonthx)
+//// console.log(adayx)
+//// console.log(amonthx)
 if (adayx <= 10 && amonthx === 0) {
     var aimages = ['xmas01.jpg', 'xmas02.jpg', 'xmas03.jpg', 'xmas04.jpg', 'xmas05.jpg', 'chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg'];
 } else if ((adayx > 10 && amonthx === 0) || amonthx >= 1) {
@@ -146,7 +146,7 @@ var aaXrgX = ausrProperty[0].aaXrXg //localStorage["aaXrXg"]; // getCookie("aaCr
 if (jQuery.type(aaXrgX) === "undefined") {
     //aRunLogin();     //parent.history.back();    //alert("aaXrgX = undefined");
 }
-var aaXXrgX = atob(aaXrgX); //console.log( aaXXrgX );
+var aaXXrgX = atob(aaXrgX); //// console.log( aaXXrgX );
 var aRGarray = aaXXrgX.split(',');
 
 const aaProgramName = "Expenses Reimbursement"
@@ -154,9 +154,9 @@ const aaProgramName = "Expenses Reimbursement"
 //$(function () { TOP PRG
 $(() => {
     var aPwdNoChange = ausrProperty[0].asAct  //localStorage["asAct"]
-    console.log("asAct = ",aPwdNoChange)
-    //console.log(aPwdNoChange, "PWD NO CHG")
-    //console.log(jQuery.type(aPwdNoChange))
+    // console.log("asAct = ",aPwdNoChange)
+    //// console.log(aPwdNoChange, "PWD NO CHG")
+    //// console.log(jQuery.type(aPwdNoChange))
     if (aPwdNoChange === false) {
         
         aaCnfBody = "<div style = 'color: red; font-size: 14px;'>Please change your default password to new password <br>first<br> To change password select MENU [ <i class='fas fa-user-edit'></i> User Information ] <br><div style = 'background: #fff0ff;'><hr>second<br>If you have not changed your password yet The program will not work. <hr></div><br><center><p style = 'font-size: 13px;'>VDO - How To Change Password</p><video style='margin-top:-20px;' width='320' height='240' controls><source src='./images/ChangePassword.mp4' type='video/mp4'></video></center>"
@@ -200,8 +200,8 @@ $(() => {
     fetch(aURL, requestOptions)
         .then(response => response.json())
         .then(e => {
-            //console.log('fetch Success'); //, e
-            //console.log(e);
+            //// console.log('fetch Success'); //, e
+            //// console.log(e);
             aObjMenuV = e;
             $.each(aObjMenuV, function (i) {
                 if (!e[i].categoryid) {
@@ -211,16 +211,16 @@ $(() => {
 
             $.each(aObjMenuV, function (i) {
                 var aaMenuS = e[i].rightsgroup;
-                //console.log(aaMenuS);
+                //// console.log(aaMenuS);
                 var aaMenuAr = aaMenuS.split(',');
-                //console.log(jQuery.type(aaMenuAr));   
+                //// console.log(jQuery.type(aaMenuAr));   
                 var aPassRg = aArrayCompare(aaMenuAr, aRGarray);
                 if (!aPassRg && aaMenuS != "") {
                     var ObjVSData = { visible: false };
                     $.extend(aObjMenuV[i], ObjVSData);
                     //delete aObjMenuV[i];
-                    //console.log(aObjMenuV[i].ID);
-                    //console.log(aObjMenuV[i].visible);
+                    //// console.log(aObjMenuV[i].ID);
+                    //// console.log(aObjMenuV[i].visible);
                 }
 
             });
@@ -238,7 +238,7 @@ $(() => {
                     { ID: '[999999]', name: 'Logout', icon: 'fas fa-sign-out-alt', alabel: 'Logout', url: 'aaLOGOUT()', rightsgroup: '', PageID: '' },
                 ]
             }
-            console.log(aObjMenuV)
+            // console.log(aObjMenuV)
             var drawer = $("#drawer").dxDrawer({
                 opened: true, //false,
                 height: 1000,
@@ -398,7 +398,7 @@ function aArrayCompare(a, b) {
         var result = $.inArray(aval2s, a); //var result=$.inArray(val,b);
 
         if (result != -1) {
-            //console.log('Exit');
+            //// console.log('Exit');
             aPass = true;
             return false;
         } else {
@@ -419,7 +419,7 @@ function aArrayMatch(a, b) {
         }
         var result = $.inArray(aval2s, a);
         if (result != -1) {
-            //console.log('Exit');       
+            //// console.log('Exit');       
             aPass = val;
             //alert(aPass)
             return false;

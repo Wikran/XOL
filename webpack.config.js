@@ -1,10 +1,20 @@
 const path = require('path');
+const glob = require('glob');
 
 module.exports = {
-  entry: './src/NISD456.js', // Entry point
+  entry: glob.sync('./src/**/*.js').reduce((entries, file) => {
+    const entry = path.basename(file, path.extname(file));
+    entries[entry] = './' + file.replace(/\\/g, '/');
+    return entries;
+  }, {}),
   output: {
-    filename: 'NISD456s.js', // Output file name
-    path: path.resolve(__dirname, 'dist'), // Output directory
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
   },
-  mode: 'development', // Mode can be 'development' or 'production'
+  mode: 'development',
+  stats: {
+    errorDetails: true
+  }
 };
+
+

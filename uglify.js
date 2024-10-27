@@ -6,8 +6,8 @@ const options = {
   compress: true
 };
 
-const inputFilePath = './src/ajQjsLib.js';
-const outputFilePath = './dist/bundle.min.js';
+const inputFilePath = './src/EMOE701.js';
+const outputFilePath = './dist/EMOE701.js';
 
 const input = fs.readFileSync(inputFilePath, 'utf8');
 const output = uglify.minify(input, options);
