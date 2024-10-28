@@ -331,23 +331,23 @@
         console.clear();
         //
         const aaPurposeTable = [
-            { "Purpose": "Conference", "TPurpose": "»ÃÐªØÁ" },
-            { "Purpose": "Training", "TPurpose": "ÍºÃÁ" },
-            { "Purpose": "Traveling", "TPurpose": "¡ÒÃà´Ô¹·Ò§" },
-            //{ "Purpose": "Others", "TPurpose": "Í×è¹æ" }
+            { "Purpose": "Conference", "TPurpose": "ï¿½ï¿½Ðªï¿½ï¿½" },
+            { "Purpose": "Training", "TPurpose": "Íºï¿½ï¿½" },
+            { "Purpose": "Traveling", "TPurpose": "ï¿½ï¿½ï¿½ï¿½Ô¹ï¿½Ò§" },
+            //{ "Purpose": "Others", "TPurpose": "ï¿½ï¿½ï¿½ï¿½" }
         ]
         const aaPurposeTableaa = [
-            { "Purpose": "Conference", "TPurpose": "»ÃÐªØÁ" },
-            { "Purpose": "Training", "TPurpose": "ÍºÃÁ" },
-            { "Purpose": "Traveling", "TPurpose": "¡ÒÃà´Ô¹·Ò§" },
-            { "Purpose": "Client visit", "TPurpose": "àÂÕèÂÁÅÙ¡¤éÒ" },
-            { "Purpose": "Product launch", "TPurpose": "à»Ô´µÑÇ¼ÅÔµÀÑ³±ì" },
-            { "Purpose": "Site visit", "TPurpose": "ÈÖ¡ÉÒ´Ù§Ò¹" },
-            { "Purpose": "Negotiation", "TPurpose": "à¨Ã¨ÒµèÍÃÍ§" },
-            { "Purpose": "Troubleshooting", "TPurpose": "á¡éä¢»Ñ­ËÒ" },
-            { "Purpose": "Exhibition", "TPurpose": "à¢éÒÃèÇÁ§Ò¹áÊ´§ÊÔ¹¤éÒ" },
-            { "Purpose": "Market research", "TPurpose": "ÇÔ¨ÑÂµÅÒ´" },
-            { "Purpose": "Others", "TPurpose": "Í×è¹æ" }
+            { "Purpose": "Conference", "TPurpose": "ï¿½ï¿½Ðªï¿½ï¿½" },
+            { "Purpose": "Training", "TPurpose": "Íºï¿½ï¿½" },
+            { "Purpose": "Traveling", "TPurpose": "ï¿½ï¿½ï¿½ï¿½Ô¹ï¿½Ò§" },
+            { "Purpose": "Client visit", "TPurpose": "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¡ï¿½ï¿½ï¿½" },
+            { "Purpose": "Product launch", "TPurpose": "ï¿½Ô´ï¿½ï¿½Ç¼ï¿½Ôµï¿½Ñ³ï¿½ï¿½" },
+            { "Purpose": "Site visit", "TPurpose": "ï¿½Ö¡ï¿½Ò´Ù§Ò¹" },
+            { "Purpose": "Negotiation", "TPurpose": "ï¿½Ã¨Òµï¿½ï¿½ï¿½Í§" },
+            { "Purpose": "Troubleshooting", "TPurpose": "ï¿½ï¿½ä¢»Ñ­ï¿½ï¿½" },
+            { "Purpose": "Exhibition", "TPurpose": "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¹ï¿½Ê´ï¿½ï¿½Ô¹ï¿½ï¿½ï¿½" },
+            { "Purpose": "Market research", "TPurpose": "ï¿½Ô¨ï¿½Âµï¿½Ò´" },
+            { "Purpose": "Others", "TPurpose": "ï¿½ï¿½ï¿½ï¿½" }
         ]
         const aaYesNoList = [
             { "Code": "YES" },
@@ -4036,7 +4036,24 @@
                                                                     width: 200,
                                                                     editorOptions: { width: 200, }, // readOnly: !aRoamL
                                                                     visible: true,
-                                                                },                                                                
+                                                                },  
+                                                                {
+                                                                    dataField: "EROAmount5",
+                                                                    caption: "Amount",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    dataType: "number",
+                                                                    format: { type: "fixedPoint", precision: 2 },
+                                                                    editorType: "dxNumberBox",
+                                                                    editorOptions: { format: "#,##0.00", width: 120 },
+                                                                    width: 120,                                                                    
+                                                                    visible: true,
+                                                                },                                                               
                                                             ],
                                                         },
 

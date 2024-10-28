@@ -13,7 +13,7 @@ const aTitleError01 = "LOGIN ERROR";
 const aIndexAlert4Emp = "<div style='color: red; font-family: Tahoma, sans-serif;'><center>Username and Password cannot be blank</center></div>";
 const aEmailTRF = [
     "<div>เรียน คุณ",
-    ",<br>ÿÿÿÿกรุณาตรวจสอบ และอนุมัติรายการ ",
+    ",<br> กรุณาตรวจสอบ และอนุมัติรายการ ",
     " สำหรับ REFNO = [",
     "]<br> สามารถเข้าใช้โปรแกรมได้ที่ ",
     " (หัวข้อ Approve --> HOD Approve) <br><br>ขอแสดงความนับถือ<br>",

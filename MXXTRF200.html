@@ -191,7 +191,7 @@
 
         const arSTATUS = ["Please send the Document to ADMIN", "Please contact back asap", "Please check your limit", "Please Check the Record"];
         //const arSTANOTE = ["��س����͡�������Ἱ��ѭ�շѹ��", "��سҵԴ��͡�Ѻ�´�ǹ", "��سҵ�Ǩ�ͺǧ�Թ", "��سҵ�Ǩ�ͺ��¡�� "]
-        const arSTANOTE = ["��سҵ�Ǩ�ͺἹ��÷ѹ��", "��سҵԴ��͡�Ѻ�´�ǹ", "��سҵ�Ǩ�ͺǧ�Թ", "��سҵ�Ǩ�ͺ������"];
+        const arSTANOTE = ["��سҵ�Ǩ�ͺἹ��÷ѹ��", "��سҵԴ��͡�Ѻ�´�ǹ", "��سҵ�Ǩ�ͺǧ�Թ", "��سҵ�Ǩ�ͺ������"];
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
         console.clear();
@@ -4207,6 +4207,23 @@
                                                                     editorType: "dxTextBox",
                                                                     width: 200,
                                                                     editorOptions: { width: 200, }, // readOnly: !aRoamL
+                                                                    visible: true,
+                                                                }, 
+                                                                {
+                                                                    dataField: "EROAmount5",
+                                                                    caption: "Amount",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    dataType: "number",
+                                                                    format: { type: "fixedPoint", precision: 2 },
+                                                                    editorType: "dxNumberBox",
+                                                                    editorOptions: { format: "#,##0.00", width: 120 },
+                                                                    width: 120,                                                                    
                                                                     visible: true,
                                                                 },                                                                
                                                             ],

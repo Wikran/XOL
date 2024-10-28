@@ -2892,7 +2892,7 @@
                                                                                 //readOnly: asEROCheck01,
                                                                                 onValueChanged: function (e) {
                                                                                     asEROCheck02 = e.value;
-                                                                                    aAddStaff.columnOption("HR Arrange for Roaming", "visible", e.value);
+                                                                                    aAddStaff.columnOption("ROAMING INFORMATION", "visible", e.value);
                                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
                                                                                 }
 
@@ -3099,7 +3099,7 @@
                                                             if (column.dataField === "PSPvDate") {
                                                                 column.visible = asEROCheck01; //false asEROCheck01
                                                             }
-                                                            if (column.caption === "HR Arrange for Roaming") {
+                                                            if (column.caption === "ROAMING INFORMATION") {
                                                                 column.visible = asEROCheck02;
                                                             }
                                                         });
@@ -3416,7 +3416,7 @@
                                                             visible: true,
                                                         },                            
                                                         {
-                                                            caption: 'HR Arrange for Roaming',
+                                                            caption: 'ROAMING INFORMATION', // HR Arrange for
                                                             visible: true,
                                                             width: 220,
                                                             headerCellTemplate: function(header, info) {
@@ -3457,6 +3457,38 @@
                                                                         editorOptions: { width: 100, }, // readOnly: !aRoamL
                                                                         visible: true,
                                                                     },
+                                                                    {
+                                                                    dataField: "ERORefNo2",
+                                                                    caption: "HR Arrangement",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    editorType: "dxTextBox",
+                                                                    width: 200,
+                                                                    editorOptions: { width: 200, }, // readOnly: !aRoamL
+                                                                    visible: true,
+                                                                },    
+                                                                {
+                                                                    dataField: "EROAmount5",
+                                                                    caption: "Amount",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    dataType: "number",
+                                                                    format: { type: "fixedPoint", precision: 2 },
+                                                                    editorType: "dxNumberBox",
+                                                                    editorOptions: { format: "#,##0.00", width: 120 },
+                                                                    width: 120,                                                                    
+                                                                    visible: true,
+                                                                },  
                                                                 ],
                                                         },
 

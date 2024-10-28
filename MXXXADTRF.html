@@ -4101,6 +4101,23 @@
                                                                     editorOptions: { width: 200, }, // readOnly: !aRoamL
                                                                     visible: true,
                                                                 }, 
+                                                                {
+                                                                    dataField: "EROAmount5",
+                                                                    caption: "Amount",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#e1cbf5");
+                                                                    },
+                                                                    dataType: "number",
+                                                                    format: { type: "fixedPoint", precision: 2 },
+                                                                    editorType: "dxNumberBox",
+                                                                    editorOptions: { format: "#,##0.00", width: 120 },
+                                                                    width: 120,                                                                    
+                                                                    visible: true,
+                                                                }, 
                                                                 ],
                                                         },
                                                        

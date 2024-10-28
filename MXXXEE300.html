@@ -8,6 +8,7 @@
     <meta http-equiv="Content-Language" content="th">
     <meta http-equiv="content-Type" content="text/html; charset=window-874">
     <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -1250,7 +1251,7 @@
                                             //.addClass("informer")
                                             .append(
                                                 $("<span style='font-size: 13px; font-weight: bold; color: white; background-color: LightSeaGreen; border-radius: 3px; border: 0px; padding: 1px 30px; ' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
-                                                    .text("MEDICAL APPROVAL"),
+                                                    .text("HR MEDICAL APPROVAL"),
                                                 $("<br><center />"),
                                                 $("<i class= 'fas fa-user-circle''><span />")   //; style='color: DarkGreen;
                                                     //.addClass("name")
@@ -1973,12 +1974,12 @@
                                                 valueExpr: "CODE",
                                                 displayExpr: "CODE",
                                             },
-                                            /*setCellValue: function(newData, value, currentRowData) {
-                                                 //newData.ERStatus = value;
-                                                 //newData.Note = arSTANOTE[$.inArray(value, arSTATUS)]
-                                                 console.log(value)
-                                                 alert("test")
-                                            },*/
+                                            // /*setCellValue: function(newData, value, currentRowData) {
+                                            //      //newData.ERStatus = value;
+                                            //      //newData.Note = arSTANOTE[$.inArray(value, arSTATUS)]
+                                            //      console.log(value)
+                                            //      alert("test")
+                                            // },*/
                                         },
                                         {
                                             itemType: "empty"
@@ -2025,15 +2026,15 @@
                                             messageHtml: "<center style='color:LightRed;'> Please Select Subject before !! </center>"
                                         });
                                     } else {
-                                        console.log("----x-----")
-                                        console.log(aaHRAppEmail)
-                                        console.log(aaHRAppName)
-                                        console.log(asFullName)
-                                        console.log(asStaffEmail)
-                                        console.log(iData.ERStatus)
-                                        console.log(iData.Note)
-                                        console.log(aanewSTChangeTo)
-                                        console.log("----x-----")
+                                        // console.log("----x-----")
+                                        // console.log(aaHRAppEmail)
+                                        // console.log(aaHRAppName)
+                                        // console.log(asFullName)
+                                        // console.log(asStaffEmail)
+                                        // console.log(iData.ERStatus)
+                                        // console.log(iData.Note)
+                                        // console.log(aanewSTChangeTo)
+                                        // console.log("----x-----")
                                         /*
                                             aanewSTChangeTo = arSTchangeTo[aaDataRowNo]
                                             aanewButtonText = arButtonText[aaDataRowNo]
@@ -2129,13 +2130,13 @@
                                                 // Reject ----------------------------------  
 
                                                 //send Email -------------------------------
-                                                console.log("----x-----")
-                                                console.log("HR Name   " + aaHRAppName)
-                                                console.log("HR Email  " + aaHRAppEmail)
-                                                console.log("Requester Name " + asFullName)
-                                                console.log("Requester Email " + asStaffEmail)
-                                                console.log(iData.Note)
-                                                console.log("----x-----")
+                                                // console.log("----x-----")
+                                                // console.log("HR Name   " + aaHRAppName)
+                                                // console.log("HR Email  " + aaHRAppEmail)
+                                                // console.log("Requester Name " + asFullName)
+                                                // console.log("Requester Email " + asStaffEmail)
+                                                // console.log(iData.Note)
+                                                // console.log("----x-----")
                                                 var aaMailTitle = iData.ERStatus.toUpperCase();
                                                 //var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " REIMBURSEMENT REJECT"; // REIMBURSEMENT
                                                 var aApproverName = aaHRAppName //+ " [HR]"         //aaHRAppName //"Wikran" + " [HR]"         // HR Approver Name
