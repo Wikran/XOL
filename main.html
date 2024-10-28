@@ -43,7 +43,21 @@
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>    
     <script src="bundle.min.js?v=1.0.1"></script>
     <script src="mains.js"></script>
+    <!-- <script>     
+        const timestamps = Date.now(); // Adding timestamp to make it unique
+        const link = document.createElement('link');
+        link.rel  = 'stylesheet';
+        link.href = `style_main.css?t=${timestamps}`;
+        document.head.appendChild(link);
 
+        const timestamp = Date.now(); 
+        const scripts = ['./src/bundle.min.js' , `main.js?t=${timestamp}`]; 
+        scripts.forEach(function(file) {
+            const scriptElement = document.createElement('script'); //
+            scriptElement.src = file;
+            document.head.appendChild(scriptElement);
+        });
+    </script> -->
 </head>
 
 <body class="dx-viewport">
@@ -56,7 +70,7 @@
         <!--<span class="tright" id="version" 
                 style="vertical-align:middle; margin: 27px 65px; color:lightcyan; position:absolute; right:0;">version 24.10.04</span>-->  
         <span class="tright" id="version" 
-                style="vertical-align:middle; margin: -10px 28px; color:lightcyan; position:absolute; right:1;">version 24.10.24</span>                 
+                style="vertical-align:middle; margin: -10px 28px; color:lightcyan; position:absolute; right:1;">version 24.10.28</span>                 
 
     </div>
     <div class="area">

@@ -22,13 +22,10 @@
     <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
 
     <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
-    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
-        data-active="false">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css" data-active="false">
     <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
-        data-active="true">
-    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
-        data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css" data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css" data-active="false">
     <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
         data-active="false">
     <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
@@ -55,190 +52,26 @@
         href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
+    <link rel="stylesheet" href="index.css">
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="bundle.min.js?v=1.0.2"></script>
-    <!-- <script src="ajQjsLib.js"></script> <script src="index.min.js"></script> <script src="yourScript.js?v=1.0.1"></script> -->
     <script src="aThaiWord.js?v=1.0.2"></script>
     <script src="index.js?v=1.0.2"></script>
+   <!-- <script>     
+        const timestamps = Date.now(); // Adding timestamp to make it unique
+        const link = document.createElement('link');
+        link.rel  = 'stylesheet';
+        link.href = `index.css?t=${timestamps}`;
+        document.head.appendChild(link);
 
-    <style>
-        body {
-            margin: 0;
-        }
-
-        #tophead {
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-
-        .container {
-            top: 0;
-            left: 0;
-            width: 100%
-        }
-
-        #toolbar {
-            background-color: rgba(191, 191, 191, .15);
-            font-size: 16px;
-            padding: 5px 10px;
-            width: 100%;
-        }
-
-        .dx-toolbar-button>.dx-toolbar-item-content {
-            margin-left: 0px;
-        }
-
-        .dx-treeview {
-            font-size: 16px;
-        }
-
-        .left-content {
-            display: inline-block;
-            width: 180px;
-            padding: 0 10px 10px;
-            background-color: rgba(191, 191, 191, 0.15);
-            box-shadow: -5px 0px 14px -8px rgba(0, 0, 0, 0.25) inset;
-        }
-
-        .logostyle {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            padding-top: 20px;
-            width: 180px;
-        }
-
-        .logobarblack {
-            background-color: white;
-            /* For browsers that do not support gradients */
-            background-image: linear-gradient(to right, black, white 50%, black 80%);
-            width: 100%;
-        }
-
-        .logobarwhite {
-            background-color: white;
-            /* For browsers that do not support gradients */
-            background-image: linear-gradient(to right, grey, black 50%, grey 80%);
-            width: 100%;
-        }
-
-        .headtitleleft {
-            color: white;
-            font-size: 12px;
-            margin-left: 20px;
-        }
-
-        .title {
-            padding: 20px 15px 15px 20px;
-            color: white;
-            font-size: 16px;
-        }
-
-        .title .tright {
-            float: right;
-        }
-
-        .title .tleft {
-            float: left;
-        }
-
-        .form-avatar {
-            height: 23px;
-            width: 23px;
-            margin-right: 10px;
-            border: 1px solid #d2d3d5;
-            border-radius: 50%;
-            background-image: url('images/user.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .alert {
-            padding: 20px;
-            background-color: #f44336;
-            color: white;
-        }
-
-        .closebtn {
-            margin-left: 15px;
-            color: white;
-            font-weight: bold;
-            float: right;
-            font-size: 22px;
-            line-height: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .closebtn:hover {
-            color: black;
-        }
-        #popupContainer .dx-popup-title {
-            height: 55px;
-            color: rgb(1, 6, 32);
-            background-color: rgba(209, 239, 252, 0.555);
-        } 
-
-        .forgotpwd .dx-button-text{
-            font-size: 12px;
-            margin-top: -1px;
-            float: right;
-        }                  
-        /*  
-        .dx-button {
-            background-color: rgba(191, 191, 191, -0.15);
-            font-size: 16px;
-            border-radius: 6%;
-        }   
-        */ 
-        
-        /* Style the entire dialog container */
-
-
-        /* Style the content area of the dialog */
-        .dx-dialog-content {
-            border-radius: 15px;       /* Ensure inner content has rounded corners */
-            padding: 20px;             /* Optional: Padding for the content */
-        }
-        
-        .dx-dialog-buttons .dx-button {
-            background-color: #daf8ff;
-            border: 0px solid #000000;
-            color: #17013b;
-            border-radius: 10px;
-            /*padding: 10px 20px;*/
-        }   
-
-        #popupContainer .dx-button  {
-           /* color: rgb(6, 36, 189);
-            background-color: rgba(155, 253, 253, 0.801);*/
-            border: 10px;
-            border-radius: 10px; /* Border-radius: 3px 3px 0 0  10px*/
-            font-size: 14px;   
-        }   
-        #username .dx-texteditor-input[type="text"] {
-            font-size: 16px;
-            font-weight: bold;
-            color: darkblue;          
-        }
-        #password .dx-texteditor-input[type="password"]{
-            font-size: 18px;
-            font-weight: bold;
-            color: darkblue;
-        }
-        .custom-dialog-title {
-            color: blue; /* Change this to your desired color */
-            background-color: rgb(208, 231, 252);
-            font-weight: bold;
-        }
-
-        .custom-dialog-message {
-            color: red; /* Change this to your desired color */
-            font-size: 16px;
-        }
-    </style>
+        const timestamp = Date.now(); 
+        const scripts = ['./src/bundle.min.js' ,`aThaiWord.js?t=${timestamp}`, `index.js?t=${timestamp}`]; 
+        scripts.forEach(function(file) {
+            const scriptElement = document.createElement('script'); //
+            scriptElement.src = file;
+            document.head.appendChild(scriptElement);
+        });
+    </script> -->
 </head>
 
 <body class="dx-viewport">

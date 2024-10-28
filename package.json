@@ -5,12 +5,11 @@
     "main": "index.js",
     "scripts": {
         "build": "webpack --config webpack.config.js"
-    },   
+    },
     "devDependencies": {
         "glob": "^7.2.0",
+        "javascript-obfuscator": "^4.1.1",
         "webpack": "^5.38.1",
         "webpack-cli": "^4.7.2"
     }
-      
-      
 }
