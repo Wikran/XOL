@@ -190,8 +190,8 @@
         });
 
         const arSTATUS = ["Please send the Document to ADMIN", "Please contact back asap", "Please check your limit", "Please Check the Record"];
-        //const arSTANOTE = ["ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¼¹ï¿½ï¿½Ñ­ï¿½Õ·Ñ¹ï¿½ï¿½", "ï¿½ï¿½Ø³ÒµÔ´ï¿½ï¿½Í¡ï¿½Ñºï¿½Â´ï¿½Ç¹", "ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½ÍºÇ§ï¿½Ô¹", "ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íºï¿½ï¿½Â¡ï¿½ï¿½ "]
-        const arSTANOTE = ["ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íºá¼¹ï¿½ï¿½Ã·Ñ¹ï¿½ï¿½", "ï¿½ï¿½Ø³ÒµÔ´ï¿½ï¿½Í¡ï¿½Ñºï¿½Â´ï¿½Ç¹", "ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½ÍºÇ§ï¿½Ô¹", "ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"];
+        //const arSTANOTE = ["¡ÃØ³ÒÊè§àÍ¡ÊÒÃä»ãËéá¼¹¡ºÑ­ªÕ·Ñ¹·Õ", "¡ÃØ³ÒµÔ´µèÍ¡ÅÑºâ´Â´èÇ¹", "¡ÃØ³ÒµÃÇ¨ÊÍºÇ§à§Ô¹", "¡ÃØ³ÒµÃÇ¨ÊÍºÃÒÂ¡ÒÃ "]
+        const arSTANOTE = ["¡ÃØ³ÒÊè§àÍ¡ÊÒÃä»ãËéá¼¹¡ ADMIN ·Ñ¹·Õ", "¡ÃØ³ÒµÔ´µèÍ¡ÅÑºâ´Â´èÇ¹", "¡ÃØ³ÒµÃÇ¨ÊÍºÇ§à§Ô¹", "¡ÃØ³ÒµÃÇ¨ÊÍºÃÒÂ¡ÒÃ "]
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
         console.clear();
@@ -616,7 +616,7 @@
                                                         var aERStatus = ""; //"Register" // Confirmed wait for HOD // "HOD Approved wait for FA";
                                                         //var aApprovalDateFN = "ERODate02";
                                                         //var aNowDateT = aNowText()
-
+                                                        console.log(xxChkNamexx.length)
                                                         var anLno;
                                                         for (let i = 0; i < xxChkNamexx.length; i++) {
                                                             if (asFullName === xxChkNamexx[i]) {
@@ -634,7 +634,7 @@
                                                             aApprovalDateFN = "HODApprovedDate"; //ERoDate02
                                                             if (xxNofChk === 1) { //1 Approver
                                                                 aaCnfTitle = "APPROVE ?"
-                                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                                                 aTrueORFalse = "1"; // approval date = ERODate02
                                                                 aTrueORFalseB = true;
                                                                 aERStatus = "HOD Approved wait for ADMIN";
@@ -7666,7 +7666,7 @@
                                             aApprovalDateFN = "HODApprovedDate"; //ERoDate02
                                             if (xxNofChk === 1) { //1 Approver
                                                 aaCnfTitle = "APPROVE ?"
-                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                                 aTrueORFalse = "1"; // approval date = ERODate02
                                                 aTrueORFalseB = true;
                                                 aERStatus = "HOD Approved wait for ADMIN";
@@ -7685,7 +7685,7 @@
                                             aApprovalDateFN = "ERODate04"; //EORDate03
                                             if (xxNofChk === 2) { // 2 Approvers
                                                 aaCnfTitle = "APPROVE ?"
-                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                                 aTrueORFalse = "1"; // approval date = ERODate03
                                                 aTrueORFalseB = true;
                                                 aERStatus = "HOD Approved wait for ADMIN";
@@ -7703,7 +7703,7 @@
                                         } else if (anLno === 2) {       // found in 3 
                                             aApprovalDateFN = "PBatchDate"; //ERODate04
                                             aaCnfTitle = "APPROVE ?"
-                                            aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                            aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                             aTrueORFalse = "1"; // approval date = ERODate04
                                             aTrueORFalseB = true;
                                             aERStatus = "HOD Approved wait for ADMIN";
@@ -7827,7 +7827,7 @@
                                         var aERStatus = ""; //"Register" // Confirmed wait for HOD // "HOD Approved wait for FA";
                                         //var aApprovalDateFN = "ERODate02";
                                         //var aNowDateT = aNowText()
-
+                                        console.log(xxChkNamexx.length)
                                         var anLno;
                                         for (let i = 0; i < xxChkNamexx.length; i++) {
                                             if (asFullName === xxChkNamexx[i]) {
@@ -7836,6 +7836,7 @@
                                                 break;
                                             }
                                         }
+                                        console.log(asFullName)
                                         var aaCnfTitle = "ERROR !!";
                                         var aaCnfBody = "ERROR - Approval Process, this is not your approval record please contact administrator <br> Approver should be " + xxChkNamexx[0];
                                         console.log("found=", anLno, "No of Arr=", xxNofChk)
@@ -7845,7 +7846,7 @@
                                             aApprovalDateFN = "HODApprovedDate"; //ERoDate02
                                             if (xxNofChk === 1) { //1 Approver
                                                 aaCnfTitle = "APPROVE ?"
-                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                                 aTrueORFalse = "1"; // approval date = ERODate02
                                                 aTrueORFalseB = true;
                                                 aERStatus = "HOD Approved wait for ADMIN";
@@ -7864,7 +7865,7 @@
                                             aApprovalDateFN = "ERODate04"; //EORDate03
                                             if (xxNofChk === 2) { // 2 Approvers
                                                 aaCnfTitle = "APPROVE ?"
-                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                                aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                                 aTrueORFalse = "1"; // approval date = ERODate03
                                                 aTrueORFalseB = true;
                                                 aERStatus = "HOD Approved wait for ADMIN";
@@ -7882,7 +7883,7 @@
                                         } else if (anLno === 2) {       // found in 3 
                                             aApprovalDateFN = "PBatchDate"; //ERODate04
                                             aaCnfTitle = "APPROVE ?"
-                                            aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept."
+                                            aaCnfBody = "Press 'YES' to Approve and Send Mail to " + aRequesterName + " Email " + aRequesterEmail + "<br> and Send Mail to ADMIN Dept." + aaFAAppName + `[${aaFAAppEmail}]`
                                             aTrueORFalse = "1"; // approval date = ERODate04
                                             aTrueORFalseB = true;
                                             aERStatus = "HOD Approved wait for ADMIN";

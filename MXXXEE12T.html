@@ -2591,7 +2591,8 @@
                                                 const aPopUpAddForm = (aRecNo, iData, idDate, aSetTravel) => {    
                                                     var aaOverseasxx;
                                                     var aaConferencexx; 
-                                                    var aaPurposexx = "";                                               
+                                                    var aaPurposexx = ""; 
+                                                    var aaLocalTC = false;                                              
                                                     var aaPFDMI = isLocalHost();
                                                     var aTravelSC = aSetTravel;
                                                     var editingMode = aTravelSC ? "popup" : "cell";
@@ -3511,7 +3512,7 @@
 
                                                                                             {
                                                                                                 dataField: "ERORefNo3",
-                                                                                                label: { text: "Type of Reimbursements" },
+                                                                                                label: { text: "Type of Reimbursement" },
                                                                                                 editorType: "dxTextBox",
                                                                                                 editorOptions: { width: 250, showClearButton: true },
                                                                                                 editCellTemplate: dropDownBoxACC,
@@ -3523,10 +3524,11 @@
                                                                                                 validationRules: [{ type: "required", message: "." }],
                                                                                                 colSpan: 2,
                                                                                             },
-                                                                                            // {
+                                                                                            //  {
                                                                                             //     itemType: "empty",
                                                                                             //     colSpan: 2,
-                                                                                            // },
+                                                                                            //     visible: true,
+                                                                                            //  },
                                                                                             {
                                                                                                 dataField: "EROCode03",
                                                                                                 label: { text: "Sub Code" },
@@ -3542,9 +3544,14 @@
                                                                                                     elementAttr: { class: "custom-editor" },
                                                                                                 },                                                                                    
                                                                                                 width: 120,
-                                                                                                visible: true, 
+                                                                                                visible: [aaLocalTC], 
                                                                                                 colSpan: 2,                                                                                                
-                                                                                            },      
+                                                                                            },    
+                                                                                            {
+                                                                                                itemType: "empty",
+                                                                                                colSpan: 2,
+                                                                                                visible: [!aaLocalTC],
+                                                                                            },    
                                                                                             {
                                                                                                 itemType: "empty",
                                                                                                 colSpan: 3,
@@ -3738,7 +3745,7 @@
                                                                                     },
                                                                                     {
                                                                                         dataField: "EROAmount4",
-                                                                                        label: {text: "Average/Night" },
+                                                                                        label: {text: "per Night" },
                                                                                         dataType: "number",
                                                                                         format: { type: "fixedPoint", precision: 2 },
                                                                                         width: 120,
@@ -4054,6 +4061,7 @@
                                                                         newData.EROAmount2 = 0; //Average
                                                                         newData.EROAmount3 = 0; //Night
                                                                         newData.EROAmount4 = 0; //Per Night
+                                                                        aaLocalTC = !aaOverseasxx;
                                                                     },
                                                                     visible: false,
                                                                 },
@@ -4069,7 +4077,7 @@
                                                                 },                                                                
                                                                 {
                                                                     dataField: "ERORefNo3",
-                                                                    caption: "Type of Reimbursement*",
+                                                                    caption: "Type of Reimbursement",
                                                                     width: 250,
                                                                     editorType: "dxTextBox",
                                                                     cssClass: "custom-editor",
@@ -4083,7 +4091,8 @@
                                                                         newData.EROAmount1 = 1;
                                                                         newData.EROAmount2 = 0;
                                                                         newData.EROAmount3 = 0;
-                                                                        newData.EROAmount4 = 0;                                                                                                                                   
+                                                                        newData.EROAmount4 = 0;  
+                                                                        aaLocalTC = (value === "Local Travel" ? true : false)
                                                                     },
                                                                     visible: true,
                                                                 },
@@ -4108,7 +4117,7 @@
                                                                         newData.EROAmount4 = 0;                                                                                                                                   
                                                                     },    
                                                                     width: 120,
-                                                                    visible: true,
+                                                                    visible: [aaLocalTC],
                                                                     validationRules: [                                                                      
                                                                         {
                                                                             type: "custom",
@@ -4264,7 +4273,7 @@
                                                                 },
                                                                 {
                                                                     dataField: "EROAmount4",
-                                                                    caption: "Per Night",
+                                                                    caption: "per Night",
                                                                     dataType: "number",
                                                                     format: { type: "fixedPoint", precision: 2 },
                                                                     editorType: "dxNumberBox",
