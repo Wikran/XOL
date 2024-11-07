@@ -68,30 +68,11 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
     <!-- Export to PDF -->
     <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <link rel="stylesheet" href="EAEM7311.css">
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-    <script src="aaTMain.js"></script>
     <script src="bundle.min.js"></script>
-    <!-- <script src="ajQjsLib.js"></script> -->
-    <style>
-        .title-bg {
-            background-color: rgba(191, 191, 191, 0.15);
-        }
-
-        .dx-datagrid-headers {
-            color: #000000 !important;
-            background-color: #acd4fce5 !important;
-        }
-
-        #gridContainer .dx-scrollable-scroll {
-            height: 180px !important;
-        }
-
-        #popupContainerAdd .dx-popup-title {
-            color: rgb(1, 6, 32);
-            background-color: rgb(173, 250, 224)
-        }
-    </style>    
-    <script>
+    <script src="./src/EAEM7311.js"></script>    
+    <!-- <script>
         window.onload = function() {
 			setTimeout(function() {
 				location.reload();
@@ -112,18 +93,18 @@
         console.log(atest1);
         var attst2 = vigenereDecode(atest1, "key");
         console.log(attst2);
-    </script>
+    </script> -->
 </head>
 
 <body class="dx-viewport">
     <div class="container">
         <div id="gridContainer"></div>
     </div>
-    <script>
+    <!-- <script>
         var aaPXIXD = localStorage["aPXIXD"];
         var aaEnt = aaPXIXD.includes("X");
         var aaUsrN = localStorage["aaXXuX"];
-
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492";
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
         var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
@@ -134,7 +115,7 @@
             "method": "POST",
             "timeout": 0,
             "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+            "data": JSON.stringify({ "@": afqrFull }), //"ï¿½pageID='Resigned'ï¿½"
         };
         // var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/' + aaPXXI, function (e) {
         var jqxhr = $.post(afsettings, function (e) { })
@@ -188,7 +169,7 @@
                             "Content-Type": "application/json"
                         },
                         "data": JSON.stringify({
-                            "@": aqrFull //" Status!='Resigned' "
+                            "@": aqrFull //"ï¿½Status!='Resigned'ï¿½"
                         }),
                     };
 
@@ -424,7 +405,7 @@
                 });
                 // TOP PRG
             });  // ajax        
-    </script>
+    </script> -->
 </body>
 
 </html>

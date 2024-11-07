@@ -68,6 +68,7 @@
     <!-- Export to PDF -->
     <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <!-- <link rel="stylesheet" href="MXXXEE200.css"> -->
     <script src="aaTMain.js"></script>
     <script src="bundle.min.js"></script>
     <!-- <script src="ajQjsLib.js"></script> -->
@@ -96,6 +97,24 @@
         .dx-datagrid-table {
             border-left: 4px solid var(--dgBG);
             border-right: 4px solid var(--dgBG);
+        }
+        /* #gridContainer {
+            height: 100px; 
+            margin-top: 20px; 
+            
+        }  */
+              
+        .dx-datagrid .dx-data-row .dx-datagrid-cell {
+            vertical-align: top;
+        }
+        .dx-datagrid .dx-data-row .dx-datagrid-cell {
+            vertical-align: top;
+        } 
+        .dx-datagrid-content .dx-datagrid-table .dx-row .dx-editor-cell {
+            vertical-align: top;
+        }    
+        #Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-text-content {
+            text-align: top;
         }
 
         /*.dx-datagrid-total-footer {
@@ -394,7 +413,7 @@
                                 allowColumnResizing: true,
                                 columnMinWidth: 10,
                                 columnChooser: {
-                                    enabled: true
+                                    enabled: false
                                 },
                                 showBorders: true,
                                 sorting: {
@@ -444,7 +463,7 @@
                                 showColumnLines: true,
                                 showRowLines: true,
                                 rowAlternationEnabled: false, //true,
-
+                                wordWrapEnabled: true,
                                 // Export to Excel 		
                                 export: {
                                     enabled: arExcelEx,
@@ -522,15 +541,15 @@
                                 },
                                 // column list
                                 columns: [
-                                    /*{  dataField: "REFNO",
-                                       caption:"REF NO Line",
-                                       sortOrder:"asc", 
-                                       editorOptions: {width: 150},
-                                       //allowHiding: false,
-                                       //visible: false,
-                                       editorOptions: {disabled: true},
-                                       width: 100,
-                                    },*/
+                                    // /*{  dataField: "REFNO",
+                                    //    caption:"REF NO Line",
+                                    //    sortOrder:"asc", 
+                                    //    editorOptions: {width: 150},
+                                    //    //allowHiding: false,
+                                    //    //visible: false,
+                                    //    editorOptions: {disabled: true},
+                                    //    width: 100,
+                                    // },*/
 
                                     {
                                         type: "buttons",
@@ -556,8 +575,8 @@
                                                 },
                                                 onClick: function (e) {
                                                     // mark Confirmed field
-                                                    console.log(e.row.data.Vendor01Note, e.row.data.ERORef6, e.row.data.ExpGroupCode)
-                                                    console.log(asFullName)
+                                                    //console.log(e.row.data.Vendor01Note, e.row.data.ERORef6, e.row.data.ExpGroupCode)
+                                                    //console.log(asFullName)
                                                     var aRequesterName = e.row.data.PayToName //"Wikran Intaraprajaks" e.row.data.HeadRefNo
                                                     var aRequesterEmail = e.row.data.ERODesc06 //"wikran@asia.lockton.com"
                                                     var aaHODAll4Chk = e.row.data.Vendor01Note
@@ -758,14 +777,14 @@
                                             },
                                         ]
                                     },
-                                    /*
-                                    {
-                                        type: "buttons",
-                                        width: 60,
-                                        visible: false,
-                                        buttons: ["edit"]
-                                    },
-                                    */
+                                    // /*
+                                    // {
+                                    //     type: "buttons",
+                                    //     width: 60,
+                                    //     visible: false,
+                                    //     buttons: ["edit"]
+                                    // },
+                                    // */
                                     {
                                         dataField: "HeadRefNo",
                                         caption: "REF NO",
@@ -786,7 +805,7 @@
                                         dataType: "date",
                                         format: "dd/MM/yyyy",
                                         editorOptions: { width: 100 },
-                                        validationRules: [{ type: "required" }],
+                                        //validationRules: [{ type: "required" }],
                                         //editorType:"dxCalendar",
                                         width: 100,
                                         visible: false,
@@ -830,6 +849,7 @@
                                         dataType: "string",
                                         editorType: "dxTextBox",
                                         width: 100,
+                                        //height: 80,
                                         visible: true,
                                     },
                                     {
@@ -837,7 +857,19 @@
                                         caption: "Account Name",
                                         dataType: "string",
                                         width: 220,
+                                        //height: 80,
                                     },
+                                    {
+                                        dataField: "ERODesc02",
+                                        caption: "Description..",
+                                        width: 200,
+                                        height: 180,
+                                        dataType: "string",
+                                        editorType: "dxTextBox",
+                                        //cssClass: "wrap-text",
+                                        editorOptions: { width: 200,height: 80,readOnly: true },
+                                        visible: true,
+                                    },                                    
                                     {
                                         dataField: "Amount",
                                         caption: "Bill Amount",
@@ -866,114 +898,22 @@
                                         caption: "Status",
                                         width: 180,
                                     },
-                                    {
-                                        dataField: "ERODesc02",
-                                        caption: "Description",
-                                        width: 200,
-                                        visible: true,
-                                    },
-                                    {
-                                        dataField: "Division",
-                                        caption: "Division",
-                                        editorOptions: { width: 150 },
-                                        width: 80,
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "Vendor01Note",
-                                        caption: "Approvers",
-                                        editorOptions: { width: 200 },
-                                        width: 200,
-                                        visible: false,
-                                    },
-                                    /*
-                                                                                    {
-                                                                                        dataField: "LocalAmount",
-                                                                                        caption: "Bill Amount",
-                                                                                        dataType: "number",
-                                                                                        format: { type: "fixedPoint", precision: 2 },
-                                                                                        editorOptions: { format: "#,##0.00", width: 120 },
-                                                                                        width: 120,
-                                                                                        visible: false,
-                                                                                    },                    
-                                                                                    
-                                                                                    {
-                                                                                        dataField: "ERODesc06",//"Email",
-                                                                                        caption: "Email",
-                                                                                        width: 200,
-                                                                                        visible: false,
-                                                                                    },                    
-                                                                                    {
-                                                                                        dataField: "Confirmed",
-                                                                                        caption: "Confirm",
-                                                                                        width: 30,
-                                                                                        visible: false,
-                                                                                    },                    
-                                                                                    {
-                                                                                        dataField: "Note",
-                                                                                        caption: "Note",
-                                                                                        width: 200,
-                                                                                        visible: false,
-                                                                                    },
-                                                                                    {
-                                                                                        dataField: "PSPvNO",
-                                                                                        caption: "PS PVNO",
-                                                                                        //editorType:"dxTextArea",
-                                                                                        editorOptions: { width: 120 },
-                                                                                        width: 120,
-                                                                                        visible: false,
-                                                                                    },
-                                                                                    {
-                                                                                        dataField: "PSPvDate",
-                                                                                        caption: "PS PV Date",
-                                                                                        dataType: "date",
-                                                                                        format: "dd/MM/yyyy",
-                                                                                        width: 120,
-                                                                                        editorOptions: { width: 120 },
-                                                                                        visible: false,
-                                                                                    },
-                                                                
-                                                                                    {
-                                                                                        dataField: "EntryBy",
-                                                                                        caption: "Entry By",
-                                                                                        value: [aaUsrN],
-                                                                                        editorOptions: { width: 150 },
-                                                                                        visible: false,
-                                                                                    },
-                                                                                    {
-                                                                                        dataField: "Approved",
-                                                                                        caption: "Approve",
-                                                                                        //width: 10,
-                                                                                        visible: false,
-                                                                                    },
-                                                                                    {
-                                                                                        dataField: "EntryDate",
-                                                                                        caption: "Entry Date",
-                                                                                        value: [aNowDatev],
-                                                                                        dataType: "date",
-                                                                                        format: "dd/MM/yyyy",
-                                                                                        editorOptions: { width: 150 },
-                                                                                        visible: false,
-                                                                                    },
-                                                                                    {
-                                                                                        dataField: "Currency",
-                                                                                        caption: "Currency",
-                                                                                        editorType: "dxTextBox",
-                                                                                        editorOptions: { ReadOnly: true, width: 100 },                        
-                                                                                        width: 100,
-                                                                                        visible: false,
-                                                                                    },
-                                                                                    {
-                                                                                        dataField: "Xrate",
-                                                                                        caption: "X-Rate",
-                                                                                        dataType: "number",
-                                                                                        editorType: "dxNumberBox",
-                                                                                        format: { type: "fixedPoint", precision: 6 },
-                                                                                        editorOptions: { format: "#,##0.000000", width: 100 },
-                                                                                        width: 100,
-                                                                                        visible: false,
-                                                                                    },
-                                    */
+
+                                    // {
+                                    //     dataField: "Division",
+                                    //     caption: "Division",
+                                    //     editorOptions: { width: 150 },
+                                    //     width: 80,
+                                    //     visible: false,
+                                    // },
+                                    // {
+                                    //     dataField: "Vendor01Note",
+                                    //     caption: "Approvers",
+                                    //     editorOptions: { width: 200 },
+                                    //     width: 200,
+                                    //     visible: false,
+                                    // },
+                                   
                                 ],
                                 // summary
                                 summary: {
@@ -1120,17 +1060,10 @@
                                 }
 
                             }).dxDataGrid("instance");
-                            /*
-                            function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
-                                let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
-                                console.log('Goal...Repuest Web API : ' + Data);
-                                var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
-                                $.ajax(settings).done(function (response) { console.log(response); });
-                            }
-                            */
-                            function aDataGridRF() {
-                                dataGrid.refresh();
-                            }
+      
+                            // function aDataGridRF() {
+                            //     dataGrid.refresh();
+                            // }
 
                             function aSearchjson(aObjArr, asID) {
                                 return aObjArr.filter( //aaEmployee
@@ -2443,7 +2376,7 @@
                                                 dataField: "HeadRefNo",
                                                 caption: "REF NO",
                                                 sortOrder: "desc",
-                                                groupIndex: 0,
+                                                //groupIndex: 0,
                                                 width: 180,
                                             },
                                             {
@@ -3813,6 +3746,7 @@
                                                 caption: "Description",
                                                 editorType: "dxTextArea",
                                                 width: 200,
+                                                height: 80,
                                                 editorOptions: { width: 200, height: 80 },
                                                 //validationRules: [{ type: "required" }],
                                                 visible: true,

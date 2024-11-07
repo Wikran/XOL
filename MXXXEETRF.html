@@ -2582,8 +2582,16 @@
                                                                                 //value: false, // Initial value
                                                                                 onValueChanged: function (e) {
                                                                                     asEROCheck01 = e.value;
+                                                                                    console.log("asEROCheck01 " , asEROCheck01)
                                                                                     aAddStaff.columnOption("PSPvDate", "visible", e.value);
                                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    if (asEROCheck02 && !e.value){
+                                                                                       aMessageAlert("<b><p style=font-size: 20px;>Roaming just for Overseas Only !! ", "Red")
+                                                                                       var formInstance = $("#Add-form").dxForm("instance");
+                                                                                       formInstance.updateData("EROCheck02", false);
+                                                                                       asEROCheck02 = false;
+                                                                                    } 
+                                                                                    //$("#Add-form").dxDataGrid("instance").refresh();
                                                                                 }
                                                                             }
                                                                         },
@@ -2593,14 +2601,22 @@
                                                                             label: { text: "Need Roaming" },
                                                                             editorType: "dxCheckBox",
                                                                             editorOptions: {
-                                                                                //readOnly: asEROCheck01,
-                                                                                onValueChanged: function (e) {
-                                                                                    asEROCheck02 = e.value;
-                                                                                    aAddStaff.columnOption("ROAMING INFORMATION", "visible", e.value); //HR Arrange for Roaming
-                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                //readOnly: function (e){return (asEROCheck01 === true ? false : true)},
+                                                                                onValueChanged: function (e) {                                    
+                                                                                    if (!asEROCheck01 && e.value){
+                                                                                       aMessageAlert("<b><p style=font-size: 20px;>Roaming just for Overseas Only !! ", "Red")
+                                                                                       var formInstance = $("#Add-form").dxForm("instance");
+                                                                                       formInstance.updateData("EROCheck02", false);
+                                                                                       asEROCheck02 = false;
+                                                                                       
+                                                                                    } else {
+                                                                                
+                                                                                asEROCheck02 =e.value; 
+                                                                                aAddStaff.columnOption("ROAMING INFORMATION", "visible", e.value); //HR Arrange for Roaming
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh(); 
+                                                                                    }                                                                              
                                                                                 }
-
-
+                                                                                
                                                                             }, //readOnly: !aRoamL // Initial value, can be true or false
                                                                             visible: true, //true // Initially hidden
                                                                         },

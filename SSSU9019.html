@@ -65,15 +65,17 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
     <!-- Export to PDF -->
     <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <link rel="stylesheet" href="SSSU9019.css">
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-    <script src="aaTMain.js"></script>
+    <!-- <script src="aaTMain.js"></script> -->
     <script src="bundle.min.js"></script>
     <!-- <script src="ajQjsLib.js"></script> -->
     <script src="UserStd.js"></script>
     <script src="Avatar.js"></script>
+    <script src="./src/SSSU9019.js"></script>
     <!--<script src="ThemesList.js"></script>
         <script src="RightsAccess.js"></script>-->
-    <style>
+    <!-- <style>
         .title-bg {
             background-color: rgba(191, 191, 191, 0.15);
         }
@@ -120,11 +122,11 @@
         }
     </style>
     <script>
-        window.onload = function () {
-            setTimeout(function () {
-                location.reload();
-            }, 24000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-        }
+        window.onload = function() {
+			setTimeout(function() {
+				location.reload();
+			}, 24000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
+		}         
         $(document).ready(function () {
             var aDXTheme = localStorage["aDXTheme"]
             DevExpress.ui.themes.current(aDXTheme);
@@ -155,13 +157,9 @@
                 "Description": "Fleet Card",
             },
             {
-                "FullRightsName": "nusertrf",
-                "Description": "Travel Requisition Form",
-            },            
-            {
                 "FullRightsName": "nuserm,nusert,nusero",
                 "Description": "Standard Expenses Reimbursement",
-            },
+            },            
             {
                 "FullRightsName": "nuserm,nusert,nusero,nuserf",
                 "Description": "All Expenses Reimbursement",
@@ -177,15 +175,11 @@
             {
                 "FullRightsName": "faStaff",
                 "Description": "FA Staff",
-            },
+            },            
             {
                 "FullRightsName": "HODApp",
                 "Description": "HOD Approver",
             },
-            {
-                "FullRightsName": "HODRpt",
-                "Description": "HOD Report",
-            },            
             {
                 "FullRightsName": "*DEL*",
                 "Description": "Delete Group Rights",
@@ -236,75 +230,61 @@
         const afilterObj = (arr, searchKey) => {
             return arr.filter(obj => Object.keys(obj).some(key => obj[key].includes(searchKey)));
         }
-        const aSelectFreeKey = (arr, searchKey) => {
+        const aSelectFreeKey = (arr, searchKey) =>{
             var cckk = arr.filter(obj => Object.keys(obj).some(key => obj[key].includes(searchKey)));
-            if (cckk.length === 0) {
+            if(cckk.length === 0) { 
                 return "531ccded-9b9d-472e-9608-bc76554899c0" //U013
             } else {
                 return cckk[0].TokenKey
             }
         }
         //console.log(afilterObj(UserStd,"xxx")) //"Wikran I."
-        // Function for Load Master Data for dropdown and others
+        // Function for Load Master Data for dropdown and others 
         // "https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress","aaOBJDT"
-        /*
-                const aGetDataAPI = (aDMZServer, aFullTableName, aFieldSelected, aOBJsName) => {
-                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
-                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
-                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
-                    
-                    //var aDMZServer = "https://cbsdev2.locktonwattana.com";
-                    //var aOBJsName = "aaOBJDT"
-                    //var aSQLServerName ="[lockthbnk-ap14]"
-                    //var aSQLDatabaseName = ".ExtraOnLine.dbo."
-                    //var aSQLTableName = "XOLStaff"
-                    //var aFullTableName = aSQLServerName + aSQLDatabaseName + aSQLTableName ;
-                    //var aFieldSelected = "EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" ;
-                    //var aWhereCause = "Where " 
-                    
-                    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
-        
-                    var myHeaders = new Headers();
-                    myHeaders.append("Content-Type", "application/json");
-                    var raw = JSON.stringify({
-                        "@": aFullBody
-                    });
-        
-                    var requestOptions = {
-                        method: 'POST',
-                        headers: myHeaders,
-                        body: raw,
-                        redirect: 'follow'
-                    };
-        
-                    let aURL = aDMZServer + "/DMQ/" + acPRJ + "/" + aaXPUB + "/" + aLocalSQLToken;
-        
-                    fetch(aURL, requestOptions)
-                        .then(response => response.json())
-                        //
-                        .then(aData => {
-                            //var aal = btoa(aData[0].Gright); 
-                            //Console.log(aData) // works
-                            //aaObjData = aData;
-                            localStorage.setItem(aOBJsName, JSON.stringify(aData));
-                        })
-                }
-        */
-        var aAUserStandard;
-        fetch('UserStd.json')
-            .then(function (response) {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Network response was not ok.');
-            })
-            .then(aAUserStandard =>  {
-                console.log("UserStd: ", aAUserStandard);
-            })
-            .catch(function (error) {
-                console.log('There was a problem with the fetch operation:', error.message);
+/*
+        const aGetDataAPI = (aDMZServer, aFullTableName, aFieldSelected, aOBJsName) => {
+            let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+            let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+            let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+            
+            //var aDMZServer = "https://cbsdev2.locktonwattana.com";
+            //var aOBJsName = "aaOBJDT"
+            //var aSQLServerName ="[lockthbnk-ap14]"
+            //var aSQLDatabaseName = ".ExtraOnLine.dbo."
+            //var aSQLTableName = "XOLStaff"
+            //var aFullTableName = aSQLServerName + aSQLDatabaseName + aSQLTableName ;
+            //var aFieldSelected = "EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" ;
+            //var aWhereCause = "Where " 
+            
+            let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify({
+                "@": aFullBody
             });
-    </script>
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+
+            let aURL = aDMZServer + "/DMQ/" + acPRJ + "/" + aaXPUB + "/" + aLocalSQLToken;
+
+            fetch(aURL, requestOptions)
+                .then(response => response.json())
+                //
+                .then(aData => {
+                    //var aal = btoa(aData[0].Gright); 
+                    //Console.log(aData) // works
+                    //aaObjData = aData;
+                    localStorage.setItem(aOBJsName, JSON.stringify(aData));
+                })
+        }
+*/
+    </script> -->
 
 </head>
 
@@ -313,23 +293,23 @@
     <div id="gridContainer"></div>
     <div id="ChangeProfilePopUp"></div>
 
-    <script>
+    <!-- <script>
         var aaPXIXD = localStorage["aPXIXD"];
         var aaEnt = aaPXIXD.includes("X");
         var aaKeyField = localStorage["aaXKFX"];
         var aaTBKey = localStorage["aaXTBX"];
         var aaUsrN = localStorage["aaXXuX"];
         var aaPFDMI = isLocalHost();
-        var aaPFDMZz = aaPFDMI; //"https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
+        var aaPFDMZz = "https://cbsdev2.locktonwattana.com"; //"https://cbsdev2.locktonwattana.com"; // API for DMZ only
 
         var afqrFull = "pageID = '" + aaPXIXD + "' "
-        var afURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + atob(aaXToX) + '/' + aaXTXB + '/all' //+ aaPXXI aaXTXB "326459ff-7ea6-4465-a946-9326b783d492"
+        var afURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + atob(aaXToX) + '/' + aaXTXB  + '/all' //+ aaPXXI aaXTXB "326459ff-7ea6-4465-a946-9326b783d492"
         var afsettings = {
             "url": afURL,
             "method": "POST",
             "timeout": 0,
             "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
         };
         var jqxhr = $.post(afsettings, function (e) { })
             .done(function (e) {
@@ -427,24 +407,8 @@
                                 dataSource: new DevExpress.data.CustomStore({
                                     key: "IDUsr", //aaKeyField, //
                                     loadMode: "omit",
-                                    //load: function () { return $.post(settings).done();  },// function (response) { console.log(response);}
                                     load: function () {
-                                        return fetch(aurl, {
-                                            method: "POST",
-                                            headers: { "Content-Type": "application/json" },
-                                            body: JSON.stringify({ "@": aqrFull }), //
-                                        })
-                                            .then(response => {
-                                                if (!response.ok) {
-                                                    throw new Error('Network response was not ok');
-                                                }
-                                                return response.json();
-                                            })
-                                            .then(data => {
-                                                console.log(data);
-                                                // Process the data and populate the datagrid here
-                                                return data;
-                                            })
+                                        return $.post(settings).done();// function (response) { console.log(response);}
                                     },
                                     insert: function (values) {
                                         if (aaEnt) {
@@ -490,8 +454,7 @@
                                     applyFilter: "auto"
                                 },
                                 headerFilter: {
-                                    visible: true,
-                                    allowSearch: true,
+                                    visible: true
                                 },
                                 grouping: {
                                     autoExpandAll: true,
@@ -536,7 +499,7 @@
                                         e.editorOptions.disabled = true;
                                     } else {
                                         if (ahrSuperEdit) {
-                                            if (e.parentType === "dataRow" && (e.dataField === "IDUsr")) {
+                                            if (e.parentType === "dataRow" && ( e.dataField === "IDUsr")) {
                                                 e.editorOptions.disabled = true;
                                             }
                                         }
@@ -624,7 +587,7 @@
                                         caption: "Staff ID",
                                         editCellTemplate: dropDownBoxEMP,
                                         setCellValue: function (newData, value, currentRowData) {
-                                            if (arDataU === 1) { //&& ahrSuperEdit === false
+                                            if (arDataU === 1 ) { //&& ahrSuperEdit === false
                                                 let aResult = aSearchjson(aaEmployee, value);
                                                 let aEmailAdd = $.trim(aResult[0].EmailAddress);
                                                 let aNickArray = aResult[0].EmailAddress.split('@');
@@ -644,11 +607,11 @@
                                                 newData.Nickname = aResult[0].FullNameThai;
                                                 newData.LGName = aResult[0].FullNameEng;
                                                 newData.IDUsr = aaUserNa.toLowerCase();
-                                                newData.Description = $.trim(aResult[0].Position);
+                                                newData.Description = $.trim(aResult[0].Position); 
                                                 newData.Kright = "material.blue.light.compact";
                                                 newData.PictureLoc = "./images/userss.png";
                                                 newData.otp = aSendOTP;
-                                                newData.Tkey = aSelectFreeKey(UserStd, aResult[0].FullNameEng)
+                                                newData.Tkey = aSelectFreeKey(UserStd,aResult[0].FullNameEng)                                               
                                             }
                                         },
 
@@ -668,7 +631,7 @@
                                         dataField: "Nickname",
                                         caption: "Thai Name",
                                         dataType: "string",
-                                        editorOptions: { width: 450, readOnly: ahrSuperEdit },
+                                        editorOptions: { width: 450 , readOnly: ahrSuperEdit},
                                         width: 300,
                                     },
                                     {
@@ -679,7 +642,7 @@
                                         allowHiding: false,
                                         validationRules: [{ type: 'required', message: 'Department is required' }],
                                         groupIndex: 0,
-                                        editorOptions: { width: 450, },//readOnly: ahrSuperEdit 
+                                        editorOptions: { width: 450, readOnly: ahrSuperEdit },
                                         width: 120,
                                         //visible: false,
                                     },
@@ -705,7 +668,7 @@
                                         dataField: "Division",
                                         caption: "Division (ACC)",
                                         dataType: "string",
-                                        editorOptions: { width: 450, }, //readOnly: ahrSuperEdit 
+                                        editorOptions: { width: 450, readOnly: ahrSuperEdit },
                                         width: 150,
                                         //visible: false,
                                     },
@@ -750,7 +713,7 @@
                                         dataField: "Pword",
                                         caption: "Password",
                                         dataType: "string",
-                                        editorOptions: { width: 450, readOnly: ahrSuperEdit, mode: "password", }, //mode: "password",
+                                        editorOptions: { mode: "password", width: 450, readOnly: ahrSuperEdit },
                                         width: 450,
                                         visible: false,
                                     },
@@ -772,7 +735,7 @@
                                     },
                                     {
                                         dataField: "Description",
-                                        caption: "Position",
+                                        caption: "Description",
                                         dataType: "string",
                                         editorOptions: { width: 450, readOnly: ahrSuperEdit },
                                         width: 450,
@@ -967,11 +930,19 @@
                                     );
                                 }
                             }).dxDataGrid("instance");
-                            
+                            /*
+                            function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+                                let Url = domain + "/DMP/" + acPRJ + "/" + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+                                console.log('Goal...Repuest Web API : ' + Data);
+                                var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
+                                $.ajax(settings).done(function (response) { console.log(response); });
+                            }
+                            */
+
                             function EditUserProfiles(iData) { //,aaSS,nOfRec
                                 //console.log(aaSS)
                                 var aOldPwd = iData.Pword
-
+                                
                                 jQuery(function ($) {
                                     // ...
                                     //var gbxRateV = 1;
@@ -1169,15 +1140,15 @@
                                                                 }, //'password',
                                                                 //validationGroup: "loginGrup",
                                                                 setCellValue: function (newData, value, currentRowData) {
-                                                                    console.log("--pwd--")
-                                                                    console.log(currentRowData.Active)
-                                                                    console.log(value)
-                                                                    console.log(currentRowData.Pword)
-                                                                    if (currentRowData.Pword !== value) {
-                                                                        newData.Active = 1;
-                                                                    } else {
-                                                                        newData.Active = 0;
-                                                                    }
+                                                                        console.log("--pwd--")
+                                                                        console.log(currentRowData.Active)
+                                                                        console.log(value)
+                                                                        console.log(currentRowData.Pword)
+                                                                        if(currentRowData.Pword !== value){
+                                                                            newData.Active = 1;
+                                                                        } else {
+                                                                            newData.Active = 0;
+                                                                        }
                                                                 },
                                                                 validationRules: [{
                                                                     type: 'required',
@@ -1299,8 +1270,8 @@
                                             //console.log(iData.Active)
                                             //console.log(iData.Pword)
                                             //console.log(aOldPwd)
-                                            if (iData.Pword !== aOldPwd) {
-                                                iData.Active = 1
+                                            if (iData.Pword !== aOldPwd){
+                                               iData.Active = 1
                                             }
                                             if (anLen >= 6) {
                                                 let ObjRowD = JSON.stringify(iData)
@@ -1378,7 +1349,7 @@
                             // DataGrid > Editing > Custome Editor
                             function dropDownBoxEMP(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
-                                    dropDownOptions: { width: 1000 },
+                                    dropDownOptions: { width: 600 },
                                     dataSource: aaEmployee,
                                     value: [cellInfo.value],
                                     valueExpr: "EMPCode",
@@ -1387,7 +1358,7 @@
                                         return $("<div>").dxDataGrid({
                                             dataSource: aaEmployee,
                                             //remoteOperations: true, // EMPCode,FullNameThai
-                                            columns: [{ dataField: "AccDeptCode", caption: "Dept", width: 100 }, { dataField: "EMPCode", caption: "ID", width: 80 }, { dataField: "FullNameThai", caption: "Thai Name", width: 200 }, { dataField: "FullNameEng", caption: "Eng Name", width: 200 }, { dataField: "Position", caption: "Position", width: 200 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                                            columns: [{ dataField: "AccDeptCode", caption: "Dept", width: 100 }, { dataField: "EMPCode", caption: "ID", width: 80 }, { dataField: "FullNameThai", caption: "Thai Name", width: 200 }, { dataField: "FullNameEng", caption: "Eng Name", width: 200 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
                                             hoverStateEnabled: true,
                                             searchPanel: { visible: true },
                                             headerFilter: { visible: true },
@@ -1459,7 +1430,7 @@
                 });
                 // TOP PRG
             });  // ajax        
-    </script>
+    </script> -->
 </body>
 
 </html>
