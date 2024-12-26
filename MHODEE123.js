@@ -281,6 +281,11 @@ var jqxhr = $.post(afsettings, function (e) { })
                         }
                     }
                 },
+                onCellPrepared: function (e) {
+                    if (e.rowType === "data") {
+                        e.cellElement.css("vertical-align", "top");
+                    }
+                },                
                 //
                 //
                 // Editing

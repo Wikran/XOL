@@ -392,7 +392,43 @@ body {
     /*18*/
     width: 140px;
 }
-
+.logo-disappear { display: none; /* Initially hide the image */}
+.logo-container {  
+    position: absolute; 
+    top: 6px; /* Adjust the top value to control the overlap */ 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 1; /* Ensure the logo is above other elements */
+}
+.logo-containerxx { 
+    position: absolute; top: -20px; /* Adjust the top value to control the overlap */ 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 1; /* Ensure the logo is above other elements */ 
+    background-image: url('./images/locktonlogo70mmwhite.png'); 
+    background-size: 20%; /* Adjust the size as needed */
+     background-repeat: no-repeat; 
+     background-position: center; 
+     width: 100%; /* Adjust the width as needed */
+     height: 100px; /* Adjust the height as needed */
+ }
+.logo-toolbar {
+    display: block;
+    /*inline-block;*/
+    margin-left: auto;
+    /*54px;*/
+    margin-right: auto;
+    padding-top: 0px;
+    /*18*/
+    width: 82px;
+}
+.logo-toolbar11 { 
+    position: absolute; 
+    left: 50%; 
+    transform: translateX(-50%);
+    padding-top: -2px;
+    width: 80px;; 
+}
 .logobarblack {
     background-color: black;
     /* For browsers that do not support gradients
@@ -561,3 +597,5 @@ span.bb {
 .dx-popup-wrapper>.dx-overlay-content {
     border-radius: 9px
 }
+
+

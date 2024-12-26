@@ -1,9 +1,9 @@
 // MENU.js (index03) 
-window.onload = function() {
-    setTimeout(function() {
+window.onload = function () {
+    setTimeout(function () {
         location.reload();
     }, 24000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-} 
+}
 
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
@@ -17,7 +17,9 @@ var decryptedData = CryptoJS.AES.decrypt(storedJsonString, "sBxA017").toString(C
 // Parse the JSON string back into a JavaScript array
 var ausrProperty = JSON.parse(decryptedData);
 // Access the values in the array
-// console.log(ausrProperty)
+console.log(ausrProperty)
+//var aDeptNamea = ausrProperty[0].asDEPT; // department
+//var aRightsa = atob(ausrProperty[0].aaXrXg).includes("HOD");; // rights admin,nusert,nusero,nuserf,HODApp .include("HOD")
 
 window.addEventListener('load', function (e) {
     localStorage.removeItem("aDXTheme");
@@ -42,18 +44,28 @@ $(document).ready(function () {
     $(".dx-icon").removeClass("dx-theme-accent-as-text-color").addClass("dx-theme-accent-as-text-color");
     //$(".context").hide();
     let aUserNamea = ausrProperty[0].aaXXuX //localStorage["aaXXuX"];
+
     document.getElementById("aUsrName").innerHTML = aUserNamea;
     //let aaIMGaa = "/images/" + aUserNamea + ".png";
     let aaIMGaa = ausrProperty[0].aaXpXt //localStorage["aaXpXt"];
-    
+
     if (jQuery.type(aaIMGaa) === "undefined" || aaIMGaa === "") {
         aaIMGaa = "/images/userss.png"
     }
-    
+
     document.getElementById("avatar").src = aaIMGaa;
+    document.querySelector(".logo-container").style.display = "none";
+    // Function to hide the header 
+    // Attach click event handlers to the buttons 
+    //$("#hideButton").click(function() { hideHeader(); }); 
+    //$("#showButton").click(function() { showHeader(); });
 });
 //$(".dx-icon").addClass("dx-theme-accent-as-text-color");
 //const aGoTo = function (newW) {
+//function hideHeader() { $("#header").hide(); } 
+// Function to show the header 
+//function showHeader() { $("#header").show(); } 
+
 const aGoTo = (newW) => {
     //window.open('','_self').close();
     window.location.assign(newW);
@@ -85,39 +97,126 @@ const aaLOGOUT = () => {
 var aaXToX = ausrProperty[0].aaXXoX //localStorage["aaXXoX"];
 var aaXTBM = "d1a42aa7-349e-477c-8f26-75781206caeb";
 var aaPFDMI = isLocalHost();
+//var aaHeadShow = true;
 
 var aOptionMenu = [{
     id: "01",
     icon: "fas fa-bullseye", // fa-cog
     text: "",
     items: [
-        { ID: "101", text: "GEN OTP (TEXT & NUM)  ", type: "normal", icon: "fi fi-sr-rocket", visible: false, onClick: function () { var xxOTPxx = generateLOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } }, //aMessageAlert("ERROR","red"); 
+        { ID: "101", text: "GEN OTP (TEXT & NUM)  ", type: "normal", icon: "fi fi-sr-rocket", visible: false, onClick: function () { var xxOTPxx = generateLOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } },
         { ID: "102", text: "GEN OTP (NUM ONLY)    ", type: "normal", icon: "fi fi-br-rocket", visible: false, onClick: function () { var xxOTPxx = generateOTP(); aMessageAlert('OTP =' + xxOTPxx, 'Teal'); } },
         { ID: "103", text: "LOGIN (OTP)           ", type: "normal", icon: "fas fa-lock", visible: false, onClick: function () { aRunLogin(1) } },
         { ID: "104", text: "New Login             ", type: "normal", icon: "fas fa-key", visible: false, onClick: function () { aRunLogin() } },
         { ID: "105", text: "Help                  ", type: "danger", icon: "help", visible: true, onClick: () => { aRuniFrame("./Help.html", "Help") } },
-        { ID: "105", text: "Logout                ", type: "danger", icon: "fas fa-sign-out-alt", visible: true, onClick: () => { aaGOTO('index.html') } },
-        { ID: "106", text: "Themes                ", type: "normal", badge: "12", icon: "fas fa-palette", visible: true, onClick: () => { aThemeSelect() } },
+        { ID: "106", text: "Help (Phase 2)        ", type: "normal", icon: "help", visible: true, onClick: () => { aPopupHelp("HELP",`${aaPFDMI}/temp/uploads/upload.pdf`) } },
+        { ID: "107", text: "Chatbot               ", type: "normal", icon: "fas fa-robot", visible: true, onClick: () => { aRuniFrame("./TCHATBOT.html", "Chatbot") } },
+        { ID: "108", text: "Logout                ", type: "danger", icon: "fas fa-sign-out-alt", visible: true, onClick: () => { aaGOTO('index.html') } },
+        { ID: "109", text: "Themes                ", type: "normal", badge: "12", icon: "fas fa-palette", visible: true, onClick: () => { aThemeSelect() } },
+        { ID: "110", text: "Header Hide           ", type: "normal", icon: "fas fa-toggle-off", visible: true, onClick: () => { aHeaderHide() } },
+        { ID: "111", text: "Header Show           ", type: "normal", icon: "fas fa-toggle-on", visible: true, onClick: () => { aHeaderShow() } },
+        
     ]
 }];
 
+// function createLogoContainer() { 
+//     var logoContainerHTML = ` <div class="logo-container"> <img src=".\images\locktonlogo70mmwhite.png" class="logo-toolbar"> </div> `; 
+//     document.getElementById("toolbar").innerHTML = logoContainerHTML; 
+// }
+// function removeLogoContainer() { 
+//     var aToolbar = document.getElementById("toolbar"); 
+//     var logoContainer = document.querySelector(".logo-container"); 
+//     if (logoContainer) {aToolbar.removeChild(logoContainer);}
+//  }
+const achkdate = new Date();
+var adayx = achkdate.getDate();
+var amonthx = achkdate.getMonth();
+
+async function a4LoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, aReturnField) {
+    let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+    //console.log(aKeya);
+    let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
+    //console.log(axqr2S)
+    let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
+
+    let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "@": btoa(axFullBody) }),
+        redirect: "follow"
+    });
+
+    let acData = await response.json();
+    let abc = acData;
+    return abc;
+}
+
+async function axLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
+    let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+    console.log("Inside axLoadData condition = ", condition);
+    let axqr2S = condition //`Where ${aKeyfield} LIKE '%${aKeya}%'`;
+    let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
+    console.log("Inside axLoadData condition = ", "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S);
+    let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "@": btoa(axFullBody) }),
+        redirect: "follow"
+    });
+
+    let acData = await response.json();
+    //console.log("record ", acData.length);
+    //console.log(acData);
+    const filteredArray = acData //.filter(condition);
+    //console.log(filteredArray);
+    //console.log(filteredArray.length);
+
+    let abc;
+    if (filteredArray.length === 0) { //pass                
+        abc = 0;
+    } else { // not pass
+        console.log("not found ", filteredArray.length)
+        console.log("Filter Array ", filteredArray)
+        abc = 1;
+    }
+    return abc;
+}
+
+
+const updateLogoClasses = () => {
+    //$("#toolbar").removeClass("logo-disappear").addClass("logo-toolbar");
+    var logoImage = document.querySelector(".logo-disappear");
+    if (logoImage) {
+        logoImage.classList.add("logo-toolbar");
+        logoImage.classList.remove("logo-disappear");
+    }
+}
+const aHeaderShow = () => {
+    document.getElementById("header").style.display = "block";
+    document.getElementById("setb").style.display = "block";
+    document.querySelector(".logo-container").style.display = "none";
+    //createLogoContainer();
+}
+const aHeaderHide = () => {
+    document.getElementById("header").style.display = "none";
+    document.getElementById("setb").style.display = "none";
+    updateLogoClasses();
+    document.querySelector(".logo-container").style.display = "block";
+    //removeLogoContainer();
+}
 const aRuniFrame = (aPageUrl, aTMessage) => {
     $("#tframe").attr("src", aPageUrl);
     $("#workinglabel").text(aTMessage);
 }
 
-const achkdate = new Date();
-var adayx = achkdate.getDate();
-var amonthx = achkdate.getMonth();
-//// console.log(adayx)
-//// console.log(amonthx)
+
+
 if (adayx <= 10 && amonthx === 0) {
     var aimages = ['xmas01.jpg', 'xmas02.jpg', 'xmas03.jpg', 'xmas04.jpg', 'xmas05.jpg', 'chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg'];
 } else if ((adayx > 10 && amonthx === 0) || amonthx >= 1) {
     var aimages = ['chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg'];
 } else { var aimages = []; }
 
-//var aRgsValue = localStorage["aDXTheme"];
 var aThemeList = [
     { thid: "generic.light", text: "light", icon: "fas fa-paint-roller", Category: "Generic", visible: true },
     { thid: "generic.dark", text: "dark", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
@@ -151,213 +250,368 @@ var aRGarray = aaXXrgX.split(',');
 
 const aaProgramName = "Expenses Reimbursement"
 
-//$(function () { TOP PRG
+// TOP PRG
 $(() => {
-    var aPwdNoChange = ausrProperty[0].asAct  //localStorage["asAct"]
-    // console.log("asAct = ",aPwdNoChange)
-    //// console.log(aPwdNoChange, "PWD NO CHG")
-    //// console.log(jQuery.type(aPwdNoChange))
-    if (aPwdNoChange === false) {
-        
-        aaCnfBody = "<div style = 'color: red; font-size: 14px;'>Please change your default password to new password <br>first<br> To change password select MENU [ <i class='fas fa-user-edit'></i> User Information ] <br><div style = 'background: #fff0ff;'><hr>second<br>If you have not changed your password yet The program will not work. <hr></div><br><center><p style = 'font-size: 13px;'>VDO - How To Change Password</p><video style='margin-top:-20px;' width='320' height='240' controls><source src='./images/ChangePassword.mp4' type='video/mp4'></video></center>"
-        DevExpress.ui.dialog.alert({
-            position: { offset: "0 -90" },
-            title: "PLEASE CHANGE DEFAULT PASSWORD",
-            messageHtml: aaCnfBody
-        });
-        localStorage["aDXMenuTitle"] = "User Information"; // Parameters for Blankpage
-        localStorage["aPXIXD"] = "SSSU9019";     // Parameters  
-        aRuniFrame("./SSSU9019.html", "User Information")
-       
-        //aiFrameWOTP("./SSSU9019.html", "SSSU9019", "User Information")   
-        //aRunLoginOTP()
-        //runiFOTP();
-        //alert("OTP")
-    }
-    // ---chk            
-    //alert(aimages[Math.floor(Math.random() * aimages.length)])
-    if (amonthx <= 1) {
-        //$('body').css({ 'background-image': 'url(./images/' + aimages[Math.floor(Math.random() * aimages.length)] + ')' }); // random background Image
-    }
-    var aUserNamex = ausrProperty[0].aaXXuX //localStorage["aaXXuX"];
-    var aaIMGax = "/images/" + aUserNamex + ".png";
-
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    var raw = JSON.stringify({
-        // "@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
-    });
-
-    var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        //body: raw,
-        redirect: 'follow'
-    };
-
-    let aURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + atob(aaXToX) + "/" + aaXTBM + "/all" 
-
-    fetch(aURL, requestOptions)
-        .then(response => response.json())
-        .then(e => {
-            //// console.log('fetch Success'); //, e
-            //// console.log(e);
-            aObjMenuV = e;
-            $.each(aObjMenuV, function (i) {
-                if (!e[i].categoryid) {
-                    delete aObjMenuV[i].categoryid;
-                };
-            });
-
-            $.each(aObjMenuV, function (i) {
-                var aaMenuS = e[i].rightsgroup;
-                //// console.log(aaMenuS);
-                var aaMenuAr = aaMenuS.split(',');
-                //// console.log(jQuery.type(aaMenuAr));   
-                var aPassRg = aArrayCompare(aaMenuAr, aRGarray);
-                if (!aPassRg && aaMenuS != "") {
-                    var ObjVSData = { visible: false };
-                    $.extend(aObjMenuV[i], ObjVSData);
-                    //delete aObjMenuV[i];
-                    //// console.log(aObjMenuV[i].ID);
-                    //// console.log(aObjMenuV[i].visible);
+    var aDatabasea = "ExtraOnLine.dbo.TaskControl";
+    var aKeyField = "TaskGroup";
+    var aKeyIDa = "main"; //aaPXIXD;
+    var axFieldSelected = "IDNO,TaskName,TaskProgram,TaskGroup";
+    var aVARs = {};
+    var aArrays = {};
+    var aObjects = {};
+    //var aaEmailArr;
+    //var aaMessage2Show;
+    //var aaMess2Show;
+    //var aaMess3Show;
+    LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
+        .then(result => {
+            for (let ii = 0; ii < result.length; ii++) {
+                //console.log(result[ii]); 
+                let aMatch = result[ii].TaskName.match(/\[(.*?)\]/);
+                if (aMatch) {
+                    //
+                } else {
+                    // Skip this iteration and move to the next one
+                    continue;
                 }
-
-            });
-
-            aObjMenuV.sort(function (a, b) {
-                var a1 = a.ID, b1 = b.ID;
-                if (a1 == b1) return 0;
-                return a1 > b1 ? 1 : -1;
-            });
-
-            if (aPwdNoChange === false) {
-                aObjMenuV = [
-                    { ID: '[990]', name: 'User Information', icon: 'fas fa-user-edit', alabel: 'User Information', url: './SSSU9019.html', rightsgroup: '', PageID: 'SSSU9019' },
-                    { ID: '[99900]', name: 'Help', icon: 'help', alabel: 'Help', url: './Help.html', rightsgroup: '', PageID: '' },
-                    { ID: '[999999]', name: 'Logout', icon: 'fas fa-sign-out-alt', alabel: 'Logout', url: 'aaLOGOUT()', rightsgroup: '', PageID: '' },
-                ]
-            }
-            // console.log(aObjMenuV)
-            var drawer = $("#drawer").dxDrawer({
-                opened: true, //false,
-                height: 1000,
-                closeOnOutsideClick: true,
-                template: function () {
-                    var $list = $("<div class = 'left-content'>")//.addClass("dx-theme-accent-as-text-color");//.width(250).addClass("dx-icon"); //id='leftbar' .addClass("dx-theme-accent-as-text-color").addClass("dx-icon")
-                    //$(".dx-icon").addClass("dx-theme-accent-as-text-color");
-                    return $list.dxTreeView({
-                        items: aObjMenuV,
-                        //items: aTreeViewMenus,
-                        keyExpr: "ID",
-                        parentIdExpr: "categoryid",
-                        dataStructure: "plain",
-                        searchEnabled: false,
-                        expandEvent: "click",
-                        displayExpr: "name",
-                        focusStateEnabled: false,
-                        //rootValue: -1,
-                        //expandedRowKeys: [1],
-                        //columns: ["name"],         
-                        //width: 220,
-                        height: 1000,
-                        onItemClick: function (e) {
-                            $(".dx-icon").addClass("dx-theme-accent-as-text-color");
-                            var item = e.itemData;
-                            //alert( jQuery.type(item))
-                            localStorage["aDXMenuTitle"] = item.name; // Parameters for Blankpage
-                            localStorage["aPXIXD"] = item.PageID;     // Parameters
-                            var aaMnuSa = item.rightsgroup;
-                            var aaMArr = aaMnuSa.split(',');
-                            var aaMTg = aArrayMatch(aaMArr, aRGarray);
-                            localStorage["MMaMx"] = aaMTg;
-                            if (item.url) {
-                                var aiU = item.url;
-                                var aFchk = aiU.substring(0, 2);
-                                if (aFchk === "./") {
-                                    $("#tframe").attr("src", item.url);
-                                    $("#workinglabel").text(item.alabel); //"<i class=<'" + item.icon + "'></i>" + " " +
-                                } else {
-                                    //item.url;
-                                    //alert(jQuery.type(e.itemData.url))
-                                    eval(item.url);
-                                }
-                            } else {
-                                $("#tframe").attr("src", "");
-                                $("#workinglabel").text(item.alabel); //""
-                            }
-
+                //console.log("aMatch ", aMatch[1])
+                if (result[ii].TaskName.includes("{ARRAY}")) {
+                    aArrays[aMatch[1]] = result[ii].TaskProgram
+                    .replace(/`/g, "'") // Replace backticks with single quotes
+                    .split('\n')
+                    .map(item => {
+                        let trimmedItem = item.trim(); // Remove extra spaces
+                        if (trimmedItem === "") {
+                            return ""; // Keep blanks as blank
+                        } else if (!isNaN(trimmedItem)) {
+                            return +trimmedItem; // Convert numeric strings to numbers
+                        } else {
+                            return trimmedItem; // Keep non-numeric text unchanged
                         }
                     });
-
-                }
-            }).dxDrawer("instance");
-
-            $("#toolbar").dxToolbar({  //elementAttr: { class: "dx-theme-text-color" },
-
-                items: [{
-                    widget: "dxButton",
-                    location: "before",
-                    options: {
-                        icon: "menu",
-                        stylingMode: "text", //"outlined",
-                        elementAttr: { class: "xmenu" },
-                        onClick: function () {
-                            drawer.toggle();
+                    console.log("aArrays.", aMatch[1], aArrays[aMatch[1]]);
+                } else if (result[ii].TaskName.includes("{T2O}")) {
+                    let lines = result[ii].TaskProgram
+                    .replace(/`/g, "'") // Replace backticks with single quotes
+                    .split('\n')
+                    aObjects[aMatch[1]] = lines.map(line => { //aObjects[aMatch[1]]
+                        // Remove the trailing comma and extra spaces
+                        line = line.trim().replace(/,$/, "");
+                        // Add quotes around keys and values to make it JSON-compliant
+                        line = line.replace(/(\w+):/g, '"$1":').replace(/:\s*([\w]+)/g, ': "$1"');
+                        // Parse the cleaned line into an object
+                        return JSON.parse(line);
+                    });
+                    // Iterate through the array and modify the objects
+                    aObjects[aMatch[1]] = aObjects[aMatch[1]].map(obj => {
+                        for (let key in obj) {
+                            // Check if the key includes 'amt' and the value is a string
+                            if (key.includes('amt') && typeof obj[key] === 'string') {
+                                obj[key] = +obj[key]; // Convert the value to a number
+                            }
                         }
-                    }
-                }, {
-                    widget: "dxMenu", //"dxDropDownBox", //dxSelectBox", .dxDropDownButton, dxMenu
-                    location: 'after',
-                    options: {
-                        dataSource: aOptionMenu, //actionSheetItems,
-                        hideSubmenuOnMouseLeave: true,
-                        cssClass: "toolsmenu",
-                        showFirstSubmenuMode: {
-                            delay: { hide: 300, show: 50 },
-                            name: "onHover"
-                        },
-                        displayExpr: "text",
-                        valueExpr: "ID",
-                        //placeholder:"OPTIONS",
-                        showTitle: true, //true,
-                        stylingMode: "text", //"filled",
-                        //value: null,
-                        width: 10,
-                        onItemClick: function (value) {
-                            //var str = value.itemData.text;
-                            //var res = str.substring(0, 1);
-                            var aResult = value.itemData.onClick;
-                        }
-                    }
-                    /*locateInMenu: 'never',
-                    template: function() {
-                        aSetupList();
-                    } */
-                },
-                {
-                    location: 'before',
-                    locateInMenu: 'never',
-                    template: function () {
-                        return $("<div id='workinglabel' class='toolbar-label'></div>").text(aaProgramName);
-                    }
-                }
+                        return obj;
+                    });
+                    console.log(aObjects[aMatch[1]])
 
-                ]
+                } else if (result[ii].TaskName.includes("{OBJ}")) {
+                    //console.log(result[ii].TaskProgram.split('\n'))
+                    aObjects[aMatch[1]] = result[ii].TaskProgram
+                    .replace(/`/g, "'") // Replace backticks with single quotes
+                    .split('\n')
+                    .reduce((obj, item) => {
+                        let trimmedItem = item.trim(); // Remove extra spaces
+                        if (trimmedItem === "") {
+                            return obj; // Skip blank lines
+                        }
+                        // Split the line by colon (:) to get key and value
+                        let [key, value] = trimmedItem.split(':').map(part => part.trim());
+
+                        if (key && value !== undefined) {
+                            // Check if value is numeric and convert it, otherwise keep as string
+                            obj[key] = isNaN(value) ? value : +value;
+                        }
+                        return obj; // Return the accumulated object
+                    }, {});
+                    
+                } else {
+                    if (result[ii].TaskName.includes("{num}")) {
+                        aVARs[aMatch[1]] = +(result[ii].TaskProgram.replace(/`/g, "'"));
+                    } else {
+                        aVARs[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
+                    }
+                    console.log("aVARs ", aVARs[aMatch[1]])
+                }
+            }
+
+            var aPwdNoChange = ausrProperty[0].asAct  //localStorage["asAct"]
+            var aDeptNamea = ausrProperty[0].asDEPT; // department
+            var aRightsa = atob(ausrProperty[0].aaXrXg).includes(aVARs.ACHKRIGHTS);; // rights admin,nusert,nusero,nuserf,HODApp .include("HOD")
+            if (aPwdNoChange === false) {
+                //aaCnfBody = "<div style = 'color: red; font-size: 14px;'>Please change your default password to new password <br>first<br> To change password select MENU [ <i class='fas fa-user-edit'></i> User Information ] <br><div style = 'background: #fff0ff;'><hr>second<br>If you have not changed your password yet The program will not work. <hr></div><br><center><p style = 'font-size: 13px;'>VDO - How To Change Password</p><video style='margin-top:-20px;' width='320' height='240' controls><source src='./images/ChangePassword.mp4' type='video/mp4'></video></center>"
+                aaCnfBody = aArrays.ACHGPWDS[0]
+                DevExpress.ui.dialog.alert({
+                    position: { offset: "0 -90" },
+                    title: aArrays.ACHGPWDS[1], //"PLEASE CHANGE DEFAULT PASSWORD",
+                    messageHtml: aaCnfBody
+                });
+                localStorage["aDXMenuTitle"] = "User Information"; // Parameters for Blankpage
+                localStorage["aPXIXD"] = "SSSU9019";     // Parameters  
+                aRuniFrame("./SSSU9019.html", "User Information")
+
+                //aiFrameWOTP("./SSSU9019.html", "SSSU9019", "User Information")   
+                //aRunLoginOTP()
+                //runiFOTP();
+                //alert("OTP")
+            }
+
+            //console.log(aRightsa)
+            //console.log("check day=", adayx, "today > ",aVARs.ACHKDAYS," =", adayx > aVARs.ACHKDAYS)
+            //console.log('have to check ', aRightsa)
+            if (aPwdNoChange === true && aRightsa && aVARs.ACHKDAYS > 0) {
+                var aDatabasea = "ExtraOnLine.dbo.GIFTREC";
+                var aKeyField = "ExpGroupCode" //"HeadRefNo"; "REFNO"
+                var aKeyIDa = "700" //  T2408177541 "T2408152724" +"-001" 
+                var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+                var aaCondition = ` where ${aKeyField} = '${aKeyIDa}' and Department = '${aDeptNamea}' and ERStatus LIKE '%finish%' and (MONTH(ReqDate) = MONTH(GETDATE()) AND YEAR(ReqDate) = YEAR(GETDATE()));`
+                var condition = aaCondition
+                axLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
+                    .then(atestCehcka => {
+
+                        if (atestCehcka === 1) {
+                            //DevExpress.ui.dialog.alert("Have Gift/Receive Data for this month", "OK"); 
+                        } else {
+                            if (adayx > aVARs.ACHKDAYS) {
+                                //let result = DevExpress.ui.dialog.alert("<p style='color: darkblue; font-size: 20px;' ><i class='fas fa-info-circle custom-icon-size'></i> No Gift/Receive Data for your Department this month!! <br></b></p><span style='color: red; font-size: 40px;'>&#x275D;</span><span style='color: darkgreen; font-size: 14px;'>You must [ADD NEW] Gift/Receive transaction for this month, If you have no Gift/Receive transaction<br>you must select &#x275D;NO Gift/Receive&#x275E; for Type Of Receive/Gift</span><br><center><video style='margin-top:-20px;' width='320' height='240' controls><source src='./images/GiftReceive.mp4' type='video/mp4'></video></center>", "MUST ADD NEW RECORD FOR Gift/Receive");
+                                let result = DevExpress.ui.dialog.alert(aArrays.ALERT01[0], aArrays.ALERT01[1]);
+                                //alert("run")
+                                //localStorage["aDXTheme"] = aDXTheme;
+                                localStorage["aDXMenuTitle"] = "Gift / Receive"; // Parameters for Blankpage
+                                localStorage["aPXIXD"] = "MXXINCOME";     // Parameters                          
+                                aRuniFrame("./MXXINCOME.html", "Gift / Receive")
+
+                                //alert("run")
+                            } else if (adayx <= aVARs.ACHKDAYS) { //
+                                //console.log(aArrays.ALERT02[0])
+                                //let result = DevExpress.ui.dialog.confirm("<p style='color: darkblue; font-size: 18px;' ><i class='fas fa-info-circle custom-icon-size'></i> No Gift/Receive Data for your Department this month!! <br></b></p><p style='color: darkgreen; font-size: 14px;'>Please [ADD NEW] Gift/Receive transaction for this month</p>", "PLEASE ADD NEW RECORD FOR Gift/Receive");
+                                let result = DevExpress.ui.dialog.confirm(aArrays.ALERT02[0], aArrays.ALERT02[1]);
+                                result.done(function (dresult) {//                                                                                                                                                                                                                    
+                                    if (dresult) {
+                                        //aMessageAlert("There are no Gift/Receive, Please Input", "DarkGreen")
+                                        //localStorage["aDXTheme"] = aDXTheme;
+                                        localStorage["aDXMenuTitle"] = "Gift / Receive"; // Parameters for Blankpage
+                                        localStorage["aPXIXD"] = "MXXINCOME";     // Parameters  
+                                        aRuniFrame("./MXXINCOME.html", "Gift / Receive")
+                                        //popup.hide();  
+                                    }
+                                });
+
+                            }
+                            //1
+                        } //axLoadData
+                    }); // then check           
+            }
+
+            // ---chk            
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() returns 0-11, so add 1 to get 1-12 
+            const currentYear = currentDate.getFullYear();
+            //alert(aimages[Math.floor(Math.random() * aimages.length)])
+            //if (amonthx <= 1) {
+            //$('body').css({ 'background-image': 'url(./images/' + aimages[Math.floor(Math.random() * aimages.length)] + ')' }); // random background Image
+            //$('body').css({ 'background-image': 'url(./images/LWT40Years.png)' });
+            if ((currentYear === 2024 && currentMonth >= 12) || (currentYear === 2025 && currentMonth <= 4)) {
+                $(document).ready(function () {
+                    $('body').css({
+                        'background-image': 'url(./images/LWT40Years.png)',
+                        'background-position': 'center', // Center horizontally and vertically
+                        'background-repeat': 'no-repeat', // Prevent tiling
+                        'background-size': '27%', // Resize the image to 40% of the viewport
+                        'background-attachment': 'fixed', // Keep the background fixed
+                        'opacity': '1' // Ensure the background is fully visible
+                    });
+                });
+            }
+
+            var aUserNamex = ausrProperty[0].aaXXuX //localStorage["aaXXuX"];
+            var aaIMGax = "/images/" + aUserNamex + ".png";
+
+            var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+            var raw = JSON.stringify({
+                // "@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
             });
 
-        }) //load MENU
-        .catch(error => {
-            console.error('Error:', error);
-            //DevExpress.ui.dialog.alert({
-            //showTitle: false,
-            //messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"});
-        });
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                //body: raw,
+                redirect: 'follow'
+            };
 
+            let aURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + atob(aaXToX) + "/" + aaXTBM + "/all"
+
+            fetch(aURL, requestOptions)
+                .then(response => response.json())
+                .then(e => {
+                    //// console.log('fetch Success'); //, e
+                    //// console.log(e);
+                    aObjMenuV = e;
+                    $.each(aObjMenuV, function (i) {
+                        if (!e[i].categoryid) {
+                            delete aObjMenuV[i].categoryid;
+                        };
+                    });
+
+                    $.each(aObjMenuV, function (i) {
+                        var aaMenuS = e[i].rightsgroup;
+                        //// console.log(aaMenuS);
+                        var aaMenuAr = aaMenuS.split(',');
+                        //// console.log(jQuery.type(aaMenuAr));   
+                        var aPassRg = aArrayCompare(aaMenuAr, aRGarray);
+                        if (!aPassRg && aaMenuS != "") {
+                            var ObjVSData = { visible: false };
+                            $.extend(aObjMenuV[i], ObjVSData);
+                            //delete aObjMenuV[i];
+                            //// console.log(aObjMenuV[i].ID);
+                            //// console.log(aObjMenuV[i].visible);
+                        }
+
+                    });
+
+                    aObjMenuV.sort(function (a, b) {
+                        var a1 = a.ID, b1 = b.ID;
+                        if (a1 == b1) return 0;
+                        return a1 > b1 ? 1 : -1;
+                    });
+
+                    if (aPwdNoChange === false) {
+                        aObjMenuV = [
+                            { ID: '[990]', name: 'User Information', icon: 'fas fa-user-edit', alabel: 'User Information', url: './SSSU9019.html', rightsgroup: '', PageID: 'SSSU9019' },
+                            { ID: '[99900]', name: 'Help', icon: 'help', alabel: 'Help', url: './Help.html', rightsgroup: '', PageID: '' },
+                            { ID: '[999999]', name: 'Logout', icon: 'fas fa-sign-out-alt', alabel: 'Logout', url: 'aaLOGOUT()', rightsgroup: '', PageID: '' },
+                        ]
+                    }
+                    // console.log(aObjMenuV)
+                    var drawer = $("#drawer").dxDrawer({
+                        opened: true, //false,
+                        height: 1000,
+                        closeOnOutsideClick: true, //true,
+                        template: function () {
+                            var $list = $("<div class = 'left-content'>")//.addClass("dx-theme-accent-as-text-color");//.width(250).addClass("dx-icon"); //id='leftbar' .addClass("dx-theme-accent-as-text-color").addClass("dx-icon")
+                            //$(".dx-icon").addClass("dx-theme-accent-as-text-color");
+                            return $list.dxTreeView({
+                                items: aObjMenuV,
+                                //items: aTreeViewMenus,
+                                keyExpr: "ID",
+                                parentIdExpr: "categoryid",
+                                dataStructure: "plain",
+                                searchEnabled: false,
+                                expandEvent: "click",
+                                displayExpr: "name",
+                                focusStateEnabled: false,
+                                //rootValue: -1,
+                                //expandedRowKeys: [1],
+                                //columns: ["name"],         
+                                //width: 220,
+                                height: 1000,
+                                onItemClick: function (e) {
+                                    $(".dx-icon").addClass("dx-theme-accent-as-text-color");
+                                    var item = e.itemData;
+                                    //alert( jQuery.type(item))
+                                    localStorage["aDXMenuTitle"] = item.name; // Parameters for Blankpage
+                                    localStorage["aPXIXD"] = item.PageID;     // Parameters
+                                    var aaMnuSa = item.rightsgroup;
+                                    var aaMArr = aaMnuSa.split(',');
+                                    var aaMTg = aArrayMatch(aaMArr, aRGarray);
+                                    localStorage["MMaMx"] = aaMTg;
+                                    if (item.url) {
+                                        var aiU = item.url;
+                                        var aFchk = aiU.substring(0, 2);
+                                        if (aFchk === "./") {
+                                            $("#tframe").attr("src", item.url);
+                                            $("#workinglabel").text(item.alabel); //"<i class=<'" + item.icon + "'></i>" + " " +
+                                        } else {
+                                            //item.url;
+                                            //alert(jQuery.type(e.itemData.url))
+                                            eval(item.url);
+                                        }
+                                    } else {
+                                        $("#tframe").attr("src", "");
+                                        $("#workinglabel").text(item.alabel); //""
+                                    }
+
+                                }
+                            });
+
+                        }
+                    }).dxDrawer("instance");
+
+                    $("#toolbar").dxToolbar({  //elementAttr: { class: "dx-theme-text-color" },
+
+                        items: [{
+                            widget: "dxButton",
+                            location: "before",
+                            options: {
+                                icon: "menu",
+                                stylingMode: "text", //"outlined",
+                                elementAttr: { class: "xmenu" },
+                                onClick: function () {
+                                    drawer.toggle();
+                                }
+                            }
+                        }, {
+                            widget: "dxMenu", //"dxDropDownBox", //dxSelectBox", .dxDropDownButton, dxMenu
+                            location: 'after',
+                            options: {
+                                dataSource: aOptionMenu, //actionSheetItems,
+                                hideSubmenuOnMouseLeave: true,
+                                cssClass: "toolsmenu",
+                                showFirstSubmenuMode: {
+                                    delay: { hide: 300, show: 50 },
+                                    name: "onHover"
+                                },
+                                displayExpr: "text",
+                                valueExpr: "ID",
+                                //placeholder:"OPTIONS",
+                                showTitle: true, //true,
+                                stylingMode: "text", //"filled",
+                                //value: null,
+                                width: 10,
+                                onItemClick: function (value) {
+                                    //var str = value.itemData.text;
+                                    //var res = str.substring(0, 1);
+                                    var aResult = value.itemData.onClick;
+                                }
+                            }
+                            /*locateInMenu: 'never',
+                            template: function() {
+                                aSetupList();
+                            } */
+                        },
+                        {
+                            location: 'before',
+                            locateInMenu: 'never',
+                            template: function () {
+                                return $("<div id='workinglabel' class='toolbar-label'></div>").text(aaProgramName);
+                            }
+                        }
+
+                        ]
+                    });
+
+                }) //load MENU
+                .catch(error => {
+                    console.error('Error:', error);
+                    //DevExpress.ui.dialog.alert({
+                    //showTitle: false,
+                    //messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"});
+                });
+
+        }); // load content
 
 });
 // TOP PRG
-
 /* All Functions */
 /*
 function aSendMailDMZ(aRecipient, aRCPeMail, aSendereMail, aCCeMail, aBcceMail, aSubject, aMessage) {
@@ -433,7 +687,8 @@ function aArrayMatch(a, b) {
 const aThemeSelect = () => {
     //var aTItemNo = 2;
     var aRgsValue = localStorage["aDXTheme"];
-    jQuery(function ($) {
+    //jQuery(function ($) {
+    $(() => {
         $("#popupSelect").dxPopup({
             title: "THEMES",
             height: '140px',

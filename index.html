@@ -59,22 +59,22 @@
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="bundle.min.js?v=1.0.2"></script>
     <script src="aThaiWord.js?v=1.0.2"></script>
-    <script src="index.js?v=1.0.2"></script>
-    <!-- <script>     
-        const timestamps = Date.now(); // Adding timestamp to make it unique
-        const link = document.createElement('link');
-        link.rel  = 'stylesheet';
-        link.href = `index.css?t=${timestamps}`;
-        document.head.appendChild(link);
+    <!-- <script src="index.js?v=1.0.2"></script> -->
+    <script>     
+        // const timestamps = Date.now(); // Adding timestamp to make it unique
+        // const link = document.createElement('link');
+        // link.rel  = 'stylesheet';
+        // link.href = `index.css?t=${timestamps}`;
+        // document.head.appendChild(link);
 
         const timestamp = Date.now(); 
-        const scripts = ['./src/bundle.min.js' ,`aThaiWord.js?t=${timestamp}`, `index.js?t=${timestamp}`]; 
+        const scripts = [`./src/index.js?t=${timestamp}`]; //'./src/bundle.min.js' ,`aThaiWord.js?t=${timestamp}`, 
         scripts.forEach(function(file) {
             const scriptElement = document.createElement('script'); //
             scriptElement.src = file;
             document.head.appendChild(scriptElement);
         });
-    </script> -->
+    </script>
 </head>
 
 <body class="dx-viewport">

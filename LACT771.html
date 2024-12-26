@@ -1,381 +1,767 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>TaskControl</title>
-<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
-<META HTTP-EQUIV="Expires" CONTENT="-1">
-<meta http-equiv="Content-Language" content="th">
-<meta http-equiv="content-Type" content="text/html; charset=window-874">
-<meta http-equiv="content-Type" content="text/html; charset=tis-620">
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>TaskControl</title>
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
-<script src="vendor/jquery/3.5.1/jquery.min.js"></script> 
-<script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
 
-<!-- Icon -->
-<link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
-<link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
-<link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
-<link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
-<link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
 
-<link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
-<link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"  data-active="true">
-<link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css"  data-active="false">
-<link rel="dx-theme" data-theme="generic.darkviolet.compact" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css"  data-active="false">
-<link rel="dx-theme" data-theme="material.blue.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
-<link rel="dx-theme" data-theme="material.blue.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
-<link rel="dx-theme" data-theme="material.teal.dark.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
-<link rel="dx-theme" data-theme="material.orange.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false"> 
-<link rel="dx-theme" data-theme="material.purple.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
-<link rel="dx-theme" data-theme="material.teal.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
-<link rel="dx-theme" data-theme="material.lime.light.compact" href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
 
-<!-- Export Excel -->
+    <!-- Export Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
-	<!-- Export Excel -->
-	<!-- Export to PDF -->
+    <!-- Export Excel -->
+    <!-- Export to PDF -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
-<!-- Export to PDF -->	
-<!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->	
-<script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-<script src="aaTMain.js"></script>
-<script src="ajQjsLib.js"></script>
-<script>
-        window.onload = function() {
-			setTimeout(function() {
-				location.reload();
-			}, 3000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-		}     
-$(document).ready(function () {
-var aDXTheme = localStorage["aDXTheme"]
-DevExpress.ui.themes.current(aDXTheme);
-});
-      window.jsPDF = window.jspdf.jsPDF;
-      applyPlugin(window.jsPDF);
-      console.clear();
-      var aaXToX = localStorage["aaXXoX"]; 
-      var aaXNoX = localStorage["aaXXuX"];
-      var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // MasterPage
-      var aaPXXI = localStorage["aPXIXD"];
-      var jqxhr = $.post( aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/'+ aaXTXB + '/'+ aaPXXI, function(e) {
-console.log( "success" );
-aObjMPage = e;
-aaKeyField = aObjMPage[0].PrimaryKey;
-aaTBKey = aObjMPage[0].TBKey;
-localStorage.setItem("aaXKFX", aaKeyField);
-localStorage.setItem("aaXTBX", aaTBKey);
-})
-.done(function(e) {
-console.log( "second success" );
-aObjMPage = e;
-aaKeyField = aObjMPage[0].PrimaryKey; 
-aaTBKey = aObjMPage[0].TBKey;
-localStorage.setItem("aaXKFX", aaKeyField);
-localStorage.setItem("aaXTBX", aaTBKey);
-})
-.fail(function() {
-          console.log( "error" );
-})
-.always(function() {
-console.log( "complete" );
-});	
-</script>
-</head>
-<body class="dx-viewport">
-<div class="container">
-<div id="gridContainer"></div>
-</div>
-<script>
-var aaPXIXD = localStorage["aPXIXD"];
-var aaEnt = aaPXIXD.includes("X");
-var aaKeyField = localStorage["aaXKFX"];
-var aaTBKey = localStorage["aaXTBX"];
-var aaUsrN = localStorage["aaXXuX"];
-
-$(function(){
-var aMMaMx = localStorage["MMaMx"];
-var aRRgRs = aMMaMx.split('0');
-var aDDeDx = aRRgRs[0];
-var aRrgSx = aRRgRs[1]; 
-if ( jQuery.type(aRrgSx) === "undefined"){
-    aRrgSx = "377B";
-}
-let nDataPos = 1;
-let nExcelPos = 2;
-let nPDFPos = 3;
-let nRPTPos = 4;
-var arDataC = aRolesAction(aRrgSx,nDataPos,1);
-var arDataU = aRolesAction(aRrgSx,nDataPos,2);
-if (arDataU === 1){
-   var aUpdateText = "Update";
-   var aSaveVisible = 1;
-   var aCancelText = "Cancel";
-   var aCancelicon = "close"; 
-var aCancelType = "danger"; 
-} else {
-   var aUpdateText = "xxx";
-   var aSaveVisible = 0;
-   var aCancelText = "EXIT";
-   var aCancelicon = "fas fa-sign-out-alt";   
-var aCancelType = "success"; 
-}
-var arDataD = aRolesAction(aRrgSx,nDataPos,3);
-var arExcelEx = aRolesAction(aRrgSx,nExcelPos,2);
-var arPDFEx = aRolesAction(aRrgSx,nPDFPos,2);
-
-	 function logEvent(eventName) {
-var logList = $("#events ul"),
-newItem = $("<li>", { text: eventName });
-logList.prepend(newItem);
-}
-
-$("#gridContainer").dxDataGrid({
-
-dataSource: new DevExpress.data.CustomStore({
-key: "IDNO",
-loadMode: "omit", 
-load: function() {
-return $.post(aaPFDMI + '/DMQ/XOL/'+ atob(aaXToX) +'/' + aaTBKey + '/all')
-.fail(function() { throw "Data loading error" });
-},
-insert: function(values) {
-
-if (aaEnt) {
-var ObjKeyData = {EntryBy: aaUsrN , EntryDate: new Date()};
-var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
-}
-else {
- var ObjRowData = JSON.stringify(values);
-}
-sendRequestNew("Insert",ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
-},	
-update: function (key, values) {
-//console.log( aaKeyField );
-var ObjKeyData = {"IDNO": $.trim(key)};   //[aaKeyField] key.trim
-var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
-sendRequestNew(aUpdateText,ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
-},
-remove: function(key) {
-var ObjKeyData = {"IDNO": $.trim(key)};   //[aaKeyField] key.trim
-var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
-sendRequestNew("Delete",ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));
-}
-}),
-
-allowColumnReordering: true,
-allowColumnResizing: true,
-columnMinWidth: 100,
-columnChooser: {
-enabled: true
-},		
-showBorders: true,
-sorting: {
-mode: "multiple"
-},
-selection: {
-mode: 'multiple'
-},
-groupPanel: {
-visible: true
-},
-filterRow: {
-visible: true,
-applyFilter: "auto"
-},
-headerFilter: {
-visible: true
-},
-grouping: {
-autoExpandAll: true,
-},
-searchPanel: {
-visible: true
-},
-paging: {
-pageSize: 10
-},
-pager: {
-showPageSizeSelector: true,
-allowedPageSizes: [5, 10, 20, 50],
-showInfo: true
-},	
-showBorders: true,			
-groupPaging: true,		
-showColumnLines: true,
-showRowLines: true,
-rowAlternationEnabled: true,
-				
-// Export to Excel 		
-export: {
-enabled: arExcelEx,
-allowExportSelectedData: true
-},
-onExporting: function(e) {
-const workbook = new ExcelJS.Workbook();
-const worksheet = workbook.addWorksheet('DATA');
-DevExpress.excelExporter.exportDataGrid({
-worksheet: worksheet,
-component: e.component
-}).then(function() {
-workbook.xlsx.writeBuffer().then(function(buffer) {
-saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TaskControl' + '.xlsx');
-});
-});
-e.cancel = true;
-},
-onEditorPreparing: function (e) {
-    if(e.parentType === "dataRow" && arDataU === 0){  
-        e.editorOptions.disabled = true;
-    } else {     
-        if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate")) {
-        e.editorOptions.disabled = true;
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <!-- Export to PDF -->
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <link rel="stylesheet" href="UEM9001.css">
+    <script src="bundle.min.js"></script>
+    <script>
+        window.onload = function () {
+            setTimeout(function () {
+                location.reload();
+            }, 3000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
         }
-    }
-},			
-//
-//
-// Editing
-editing: {
-       mode: "popup",
-       useIcons: true,
-       allowUpdating: true,
-       allowDeleting: arDataD,
-       allowAdding: arDataC,
-       form: {
-       labelLocation: 'left',
-       showColonAfterLabel: false,
-       colCount:2,
-       },
-       popup: {
-           title: "Task Control Info" ,
-           fullScreen: false,
-           showTitle: true,
-           width: 1000,
-           height: 525,
-                    position: {
-                   my: "top",
-                   at: "top",
-                   of: "window"
-          },
-          onContentReady:function(e){
-                    e.component.option('toolbarItems[0].visible', aSaveVisible);
-                    e.component.option('toolbarItems[0].options.icon', 'save');
-                    e.component.option('toolbarItems[0].options.type', 'success');
-                    e.component.option('toolbarItems[1].options.text', aCancelText);
-                    e.component.option('toolbarItems[1].options.icon', aCancelicon);
-           e.component.option('toolbarItems[1].options.type', aCancelType);
-          }
-       }
-  },
-// column list
- columns: [
-{  dataField: "IDNO",
-   caption:"ID NO",
-   sortOrder:"asc",
-   allowHiding: false,
-},
-{  dataField: "TaskName",
-   caption:"Task Name",
-},
-{  dataField: "TaskProgram",
-   caption:"Task Program",
-},
-{  dataField: "TaskGroup",
-   caption:"Task Group",
-},
- { type: "buttons",
-     width: 110,
-     buttons: ["edit", "delete"]
- }
-],
-// summary
-  summary: {
-      recalculateWhileEditing: true,
-      skipEmptyValues: false,
-      totalItems: [
-         { column: "IDNO",
-            summaryType: "count",
-            displayFormat: "{0} Items",
-         },
-      ],
-      groupItems: [
-         { column: "TaskGroup",
-            summaryType: "count",
-            displayFormat: "{0} Items",
-         },
-      ],
-  }, 
-// Tool Bar
-onToolbarPreparing: function(e) {
-var dataGrid = e.component;
-e.toolbarOptions.items.unshift(
-{
-location: "after",
-widget: "dxButton",
-type: "success",
-options: {
-icon: 'collapse',
-text: 'Collapse All',
-width: 140,
-onClick: function(e) {
-var expanding = e.component.option("text") === "Expand All";
-dataGrid.option("grouping.autoExpandAll", expanding);
-e.component.option("text", expanding ? "Collapse All" : "Expand All");
-e.component.option("icon", expanding ? "collapse" : "expand");
-}
-}
-},			
-{
-location: "after",
-widget: "dxButton",
-visible: arPDFEx,
-options: {
-icon: "exportpdf",
-text: "Export to PDF",
-onClick: function() {
-const doc = new jsPDF();
-DevExpress.pdfExporter.exportDataGrid({
-jsPDFDocument: doc,
-component: dataGrid
-}).then(function() {
-doc.save( 'TaskControl' + '.pdf');
-});
-}
-}
-},
-{
-location: "after",
-widget: "dxButton",
-options: {
-icon: "refresh",
-onClick: function() {
-dataGrid.refresh();
-}
-}
-			}				
-);
-}
-}).dxDataGrid("instance");
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        window.jsPDF = window.jspdf.jsPDF;
+        applyPlugin(window.jsPDF);
+        console.clear();
+        var aaXToX = localStorage["aaXXoX"];
+        var aaXNoX = localStorage["aaXXuX"];
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; 
+        var aaPXXI = localStorage["aPXIXD"];
+    </script>
+</head>
 
-	function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
-let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
-console.log('Goal...Repuest Web API : ' + Data);
-var settings = {"url": Url,"method": "POST","timeout": 0,"headers": {"Content-Type": "application/json"},"data":Data,};
-$.ajax(settings).done(function (response) {console.log(response);});
-}
-});
+<body class="dx-viewport">
+    <div class="container">
+        <div id="gridContainer"></div>
+        <div id="popupHelp"></div>
+    </div>
+    <script>
+        var aaPXIXD = localStorage["aPXIXD"];
+        var aaEnt = aaPXIXD.includes("X");
+        // var aaKeyField = localStorage["aaXKFX"];
+        // var aaTBKey = localStorage["aaXTBX"];
+        var aaUsrN = localStorage["aaXXuX"];
+        var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
+        var afqrFull = "pageID='" + aaPXIXD + "' "
+        var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
+        var afsettings = {
+            "url": afURL,
+            "method": "POST",
+            "timeout": 0,
+            "headers": { "Content-Type": "application/json" },
+            "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+        };
+        var jqxhr = $.post(afsettings, function (e) { })
+            .done(function (e) {
+                //console.log("set aaTBKey");
+                aObjMPage = e;
+                var aaKeyField = aObjMPage[0].PrimaryKey;
+                var aaTBKey = aObjMPage[0].TBKey;
+                console.log(aaTBKey, aaKeyField)
 
-</script>	
+                //$(function () { TOP PRG
+                $(() => {
+                    var aDatabasea = "ExtraOnLine.dbo.TaskControl";
+                    var aKeyField = "TaskGroup";
+                    var aKeyIDa = aaPXIXD; //"main"; //aaPXIXD;
+                    var axFieldSelected = "IDNO,TaskName,TaskProgram,TaskGroup";
+                    var aVARs = {};
+                    var aArrays = {};
+                    var aObjects = {};
+                    var aaEmailArr;
+                    var aaMessage2Show;
+                    var aaMess2Show;
+                    var aaMess3Show;
+                    LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
+                        .then(result => {
+                            for (let ii = 0; ii < result.length; ii++) {
+                                //console.log(result[ii]); 
+                                let aMatch = result[ii].TaskName.match(/\[(.*?)\]/);
+                                if (aMatch) {
+                                    //
+                                } else {
+                                    // Skip this iteration and move to the next one
+                                    continue;
+                                }
+                                //console.log("aMatch ", aMatch[1])
+                                if (result[ii].TaskName.includes("{ARRAY}")) {
+                                    aArrays[aMatch[1]] = result[ii].TaskProgram
+                                        .replace(/`/g, "'") // Replace backticks with single quotes
+                                        .split('\n')
+                                        .map(item => {
+                                            let trimmedItem = item.trim(); // Remove extra spaces
+                                            if (trimmedItem === "") {
+                                                return ""; // Keep blanks as blank
+                                            } else if (!isNaN(trimmedItem)) {
+                                                return +trimmedItem; // Convert numeric strings to numbers
+                                            } else {
+                                                return trimmedItem; // Keep non-numeric text unchanged
+                                            }
+                                        });
+                                    //console.log("aArrays.", aMatch[1], aArrays[aMatch[1]]);
+                                } else if (result[ii].TaskName.includes("{T2O}")) {
+                                    let lines = result[ii].TaskProgram
+                                        .replace(/`/g, "'") // Replace backticks with single quotes
+                                        .split('\n')
+                                    aObjects[aMatch[1]] = lines.map(line => { //aObjects[aMatch[1]]
+                                        // Remove the trailing comma and extra spaces
+                                        line = line.trim().replace(/,$/, "");
+                                        // Add quotes around keys and values to make it JSON-compliant
+                                        line = line.replace(/(\w+):/g, '"$1":').replace(/:\s*([\w]+)/g, ': "$1"');
+                                        // Parse the cleaned line into an object
+                                        return JSON.parse(line);
+                                    });
+                                    // Iterate through the array and modify the objects
+                                    aObjects[aMatch[1]] = aObjects[aMatch[1]].map(obj => {
+                                        for (let key in obj) {
+                                            // Check if the key includes 'amt' and the value is a string
+                                            if (key.includes('amt') && typeof obj[key] === 'string') {
+                                                obj[key] = +obj[key]; // Convert the value to a number
+                                            }
+                                        }
+                                        return obj;
+                                    });
+                                    console.log(aObjects[aMatch[1]])
+
+                                } else if (result[ii].TaskName.includes("{OBJ}")) {
+                                    //console.log(result[ii].TaskProgram.split('\n'))
+                                    aObjects[aMatch[1]] = result[ii].TaskProgram
+                                        .replace(/`/g, "'") // Replace backticks with single quotes
+                                        .split('\n')
+                                        .reduce((obj, item) => {
+                                            let trimmedItem = item.trim(); // Remove extra spaces
+                                            if (trimmedItem === "") {
+                                                return obj; // Skip blank lines
+                                            }
+
+                                            // Split the line by colon (:) to get key and value
+                                            let [key, value] = trimmedItem.split(':').map(part => part.trim());
+
+                                            if (key && value !== undefined) {
+                                                // Check if value is numeric and convert it, otherwise keep as string
+                                                obj[key] = isNaN(value) ? value : +value;
+                                            }
+
+                                            return obj; // Return the accumulated object
+                                        }, {});
+                                } else {
+                                    if (result[ii].TaskName.includes("{num}")) {
+                                        aVARs[aMatch[1]] = +(result[ii].TaskProgram.replace(/`/g, "'"));
+                                    } else {
+                                        aVARs[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
+                                    }
+                                    //console.log("aVARs ", aVARs[aMatch[1]])
+                                }
+                            }
+                            //console.log(aObjects.aaLIMITed) //
+                            //console.log(aObjects.aaTypeOfGift)
+                            //let aVcheck = "Gift"
+                            //console.log(aObjects.aaLIMITed.find(item => item.code === aVcheck) ? aObjects.aaLIMITed.find(item => item.code === aVcheck).lmtamt : null );
+
+                            var aMMaMx = localStorage["MMaMx"];
+                            var aRRgRs = aMMaMx.split('0');
+                            var aDDeDx = aRRgRs[0];
+                            var aRrgSx = aRRgRs[1];
+                            var asTaskProgram;
+                            if (jQuery.type(aRrgSx) === "undefined") {
+                                aRrgSx = "377B";
+                            }
+                            let nDataPos = 1;
+                            let nExcelPos = 2;
+                            let nPDFPos = 3;
+                            let nRPTPos = 4;
+                            var arDataC = aRolesAction(aRrgSx, nDataPos, 1);
+                            var arDataU = aRolesAction(aRrgSx, nDataPos, 2);
+                            if (arDataU === 1) {
+                                var aUpdateText = "Update";
+                                var aSaveVisible = 1;
+                                var aCancelText = "Cancel";
+                                var aCancelicon = "close";
+                                var aCancelType = "danger";
+                            } else {
+                                var aUpdateText = "xxx";
+                                var aSaveVisible = 0;
+                                var aCancelText = "EXIT";
+                                var aCancelicon = "fas fa-sign-out-alt";
+                                var aCancelType = "success";
+                            }
+                            var arDataD = aRolesAction(aRrgSx, nDataPos, 3);
+                            var arExcelEx = aRolesAction(aRrgSx, nExcelPos, 2);
+                            var arPDFEx = aRolesAction(aRrgSx, nPDFPos, 2);
+
+
+                            var aqrFull = `${aaKeyField} != '' ` //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%"
+                            var aurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all' //aaPFDMZz  aaPFDMI
+
+                            var settings = {
+                                "url": aurl,
+                                "method": "POST",
+                                "timeout": 0,
+                                "headers": {
+                                    "Content-Type": "application/json"
+                                },
+                                "data": JSON.stringify({
+                                    "@": aqrFull //" Status!='Resigned' "
+                                }),
+                            };
+
+                            $("#gridContainer").dxDataGrid({
+
+                                dataSource: new DevExpress.data.CustomStore({
+                                    key: aaKeyField,
+                                    loadMode: "omit",
+
+                                    load: function () { return $.post(settings).done(); }, //function (response) {//console.log(response)};           
+                                    insert: function (values) {
+                                        if (aaEnt) {
+                                            var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date() };
+                                            var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                        }
+                                        else {
+                                            var ObjRowData = JSON.stringify(values);
+                                        }
+                                        sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                    },
+                                    update: function (key, values) {
+                                        //console.log(aaKeyField);
+                                        var ObjKeyData = { [aaKeyField]: $.trim(key) }; //key.trim
+                                        var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                        sendRequestNew("Update", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                    },
+                                    remove: function (key) {
+                                        var ObjKeyData = { [aaKeyField]: $.trim(key) }; //key.trim
+                                        var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                                        sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                    }
+                                }),
+                                allowColumnReordering: true,
+                                allowColumnResizing: true,
+                                columnMinWidth: 40,
+                                columnChooser: {
+                                    enabled: true
+                                },
+                                showBorders: true,
+                                sorting: {
+                                    mode: "multiple"
+                                },
+                                selection: {
+                                    mode: 'single',//'multiple'
+                                },
+                                groupPanel: {
+                                    visible: true
+                                },
+                                filterRow: {
+                                    visible: true,
+                                    applyFilter: "auto"
+                                },
+                                headerFilter: {
+                                    visible: true
+                                },
+                                grouping: {
+                                    autoExpandAll: true,
+                                },
+                                searchPanel: {
+                                    visible: true
+                                },
+                                paging: {
+                                    pageSize: 5
+                                },
+                                pager: {
+                                    showPageSizeSelector: true,
+                                    allowedPageSizes: [5, 10, 20, 50],
+                                    showInfo: true
+                                },
+                                showBorders: true,
+                                groupPaging: true,
+                                showColumnLines: true,
+                                showRowLines: true,
+                                rowAlternationEnabled: true,
+                                wordWrapEnabled: true,
+                                // Export to Excel 		
+                                export: {
+                                    enabled: arExcelEx,
+                                    allowExportSelectedData: true
+                                },
+                                onExporting: function (e) {
+                                    const workbook = new ExcelJS.Workbook();
+                                    const worksheet = workbook.addWorksheet('DATA');
+                                    DevExpress.excelExporter.exportDataGrid({
+                                        worksheet: worksheet,
+                                        component: e.component
+                                    }).then(function () {
+                                        workbook.xlsx.writeBuffer().then(function (buffer) {
+                                            saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'TaskControl' + '.xlsx');
+                                        });
+                                    });
+                                    e.cancel = true;
+                                },
+                                onInitNewRow: function (e) {
+                                    let aaID = 1
+                                    let axRunRun = aGetDateRef("T").substring(1, 11); // generateUniqueId(); //
+                                    console.log(axRunRun)
+                                    e.data.IDNO = axRunRun
+                                },
+                                onEditorPreparing: function (e) {
+                                    if (e.parentType === "dataRow" && arDataU === 0) {
+                                        e.editorOptions.disabled = true;
+                                    } else {
+                                        if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate")) {
+                                            e.editorOptions.disabled = true;
+                                        }
+                                        // if (e.parentType === "dataRow" && (e.dataField === "TaskProgram" )) {
+                                        //     asTaskProgram = e.data.TaskProgram
+                                        // }
+                                    }
+
+                                },
+                                onCellPrepared: function (e) {
+                                    if (e.rowType === "data") {
+                                        e.cellElement.css("vertical-align", "top");
+                                        //asTaskProgram = e.data.TaskProgram
+                                    }
+                                },
+                                //
+                                //
+                                // Editing
+                                editing: {
+                                    mode: "popup",
+                                    useIcons: true,
+                                    allowUpdating: true,
+                                    allowDeleting: arDataD,
+                                    allowAdding: arDataC,
+                                    form: {
+                                        showColonAfterLabel: false,
+                                        labelLocation: "left",//"left", //"top",
+                                        //labelMode: 'floating',
+                                        colCount: 2,
+                                        items: [
+                                            {
+                                                dataField: "IDNO",
+                                                label: { text: "ID NO" },
+                                                width: 100,
+                                                editorType: "dxTextBox",
+                                                editorOptions: { width: 100, readOnly: true },
+                                                colSpan: 1,
+                                            },
+                                            {
+                                                dataField: "TaskGroup",
+                                                label: { text: "Group" },
+                                                editorType: "dxTextBox",
+                                                editorOptions: { width: 200, },
+                                                colSpan: 1,
+                                            },
+                                            {
+                                                dataField: "TaskDescription",
+                                                caption: "Description",
+                                                width: 250,
+                                                editorType: "dxTextArea",
+                                                editorOptions: { width: 750, height: 100 },
+                                                colSpan: 2,
+                                            },
+                                            {
+                                                dataField: "TaskName",
+                                                label: { text: "Variable" },
+                                                width: 200,
+                                                editorType: "dxTextBox",
+                                                editorOptions: { width: 400 },
+                                                colSpan: 2,
+                                            },
+                                            // {
+                                            //     itemType: "empty",
+                                            //     colSpan: 1,
+                                            // },
+                                            {
+                                                dataField: "TaskProgram",
+                                                label: { text: "Program/Text" },
+                                                width: 700,
+                                                editorType: "dxTextArea",
+                                                editorOptions: { width: 750, height: 320 },
+                                                setCellValue: function (newData, value, currentRowData) {
+                                                    newData.asTaskProgram = value; //value.slice(0, 4);                                                
+                                                    asTaskProgram = value
+
+                                                },
+                                                colSpan: 2,
+                                            },
+
+                                        ]
+                                    },
+                                    popup: {
+                                        title: "Task Control Info",
+                                        fullScreen: false,
+                                        showTitle: true,
+                                        width: 900,
+                                        height: 720,
+                                        position: {
+                                            my: "top",
+                                            at: "top",
+                                            of: "window",
+                                            offset: "-350 50"
+                                        },
+                                        // onShowing: function (e) {
+                                        //     const rowData = e.component.getSelectedRowsData()[0]; // Get selected row data
+                                        //     initializeHtmlEditor(rowData.TaskProgram, (updatedValue) => {
+                                        //         rowData.TaskProgram = updatedValue; // Update field with new value
+                                        //         e.component.refresh(); // Refresh grid after editing
+                                        //     });
+                                        // },
+                                        toolbarItems: [
+                                            {
+                                                widget: "dxButton",
+                                                toolbar: "bottom",
+                                                location: "after",
+                                                options: {
+                                                    text: "Save",
+                                                    onClick: function (e) {
+                                                        const popup = e.component;
+                                                        $("#gridContainer").dxDataGrid("instance").saveEditData();
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                widget: "dxButton",
+                                                toolbar: "bottom",
+                                                location: "after",
+                                                options: {
+                                                    text: "Cancel",
+                                                    onClick: function (e) {
+                                                        const popup = e.component;
+                                                        $("#gridContainer").dxDataGrid("instance").cancelEditData();
+                                                    }
+                                                }
+                                            },
+                                            // {
+                                            //     widget: "dxButton",
+                                            //     toolbar: "bottom",
+                                            //     location: "after",
+                                            //     options: {
+                                            //         text: "VIEW Program/Text",
+                                            //         onClick: function (e) {
+                                            //             //DevExpress.ui.alert("Custom action executed!", "info", 2000);
+                                            //             DevExpress.ui.dialog.alert({ showTitle: true, title: "Program/Text VIEW", messageHtml: asTaskProgram });
+                                            //         }
+                                            //     }
+                                            // }
+                                        ],
+                                        onContentReady: function (e) {
+                                            e.component.option('toolbarItems[0].visible', aSaveVisible);
+                                            e.component.option('toolbarItems[0].options.icon', 'save');
+                                            e.component.option('toolbarItems[0].options.type', 'success');
+                                            e.component.option('toolbarItems[1].options.text', aCancelText);
+                                            e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                                            e.component.option('toolbarItems[1].options.type', aCancelType);
+                                        }
+                                    }
+                                },
+
+                                // column list
+                                columns: [
+                                    {
+                                        type: "buttons",
+                                        width: 120,
+                                        buttons: ["edit", "delete",
+                                            {
+                                                hint: "Template/Program VIEW",
+                                                icon: "fas fa-file-code", //"fas fa-trash-alt", //fa-trash
+                                                /*elementAttr: { class: "custom-icon-size"}, // Apply the custom icon size class
+                                                cssClass: "custom-icon-size",*/
+                                                visible: true,
+                                                onClick: function (e) {
+                                                    if (e.row.data.TaskName.includes("HELP")) {
+                                                        aPopupHelp("Template/Program [VIEW]", e.row.data.TaskProgram.replace(/`/g, "'"))
+                                                    } else {
+                                                        DevExpress.ui.dialog.alert({ showTitle: true, title: "Template/Program [VIEW]", messageHtml: e.row.data.TaskProgram.replace(/`/g, "'") });
+                                                    }
+                                                    //                                                    
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        dataField: "IDNO",
+                                        caption: "ID NO",
+
+                                        width: 100,
+                                        //allowHiding: false,
+                                        editorType: "dxTextBox",
+                                        editorOptions: { width: 100, readOnly: true },
+                                        visible: false,
+                                    },
+                                    {
+                                        dataField: "TaskGroup",
+                                        caption: "Group",
+                                        sortOrder: "asc",
+                                        width: 150,
+                                    },
+                                    {
+                                        dataField: "TaskDescription",
+                                        caption: "Description",
+                                        width: 250,
+                                        editorType: "dxTextBox",
+                                        editorOptions: { width: 250 },
+                                    },
+                                    {
+                                        dataField: "TaskName",
+                                        caption: "Variables",
+                                        width: 250,
+                                        editorType: "dxTextBox",
+                                        editorOptions: { width: 250 },
+                                    },
+                                    {
+                                        dataField: "TaskProgram",
+                                        caption: "Template/Program",
+                                        width: 500,
+                                    },
+                                ],
+                                // summary
+                                summary: {
+                                    recalculateWhileEditing: true,
+                                    skipEmptyValues: false,
+                                    totalItems: [
+                                        {
+                                            column: "IDNO",
+                                            summaryType: "count",
+                                            displayFormat: "{0} Items",
+                                        },
+                                    ],
+                                    groupItems: [
+                                        {
+                                            column: "TaskGroup",
+                                            summaryType: "count",
+                                            displayFormat: "{0} Items",
+                                        },
+                                    ],
+                                },
+                                // Tool Bar
+                                onToolbarPreparing: function (e) {
+                                    var dataGrid = e.component;
+                                    e.toolbarOptions.items.unshift(
+                                        {
+                                            location: "before",
+                                            widget: "dxButton",
+                                            options: {
+                                                icon: "fas fa-info",
+                                                text: "HELP",
+                                                type: "default",
+                                                stylingMode: "contained", // "outlined" contained
+                                                onClick: function () {
+                                                    aPopupHelp("HELP", aVARs.APOPUPHELP) //"./images/All Slide-Training Expense Reimbursement System.pdf#view=FitH" //"./Help.html" "https://cbsdev2.locktonwattana.com/xol/index.html"
+                                                }
+                                            }
+                                        },
+                                        {
+                                            location: "after",
+                                            widget: "dxButton",
+                                            type: "success",
+                                            options: {
+                                                icon: 'collapse',
+                                                text: 'Collapse All',
+                                                width: 140,
+                                                onClick: function (e) {
+                                                    var expanding = e.component.option("text") === "Expand All";
+                                                    dataGrid.option("grouping.autoExpandAll", expanding);
+                                                    e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                                                    e.component.option("icon", expanding ? "collapse" : "expand");
+                                                }
+                                            }
+                                        },
+                                        {
+                                            location: "after",
+                                            widget: "dxButton",
+                                            visible: arPDFEx,
+                                            options: {
+                                                icon: "exportpdf",
+                                                text: "Export to PDF",
+                                                onClick: function () {
+                                                    const doc = new jsPDF();
+                                                    DevExpress.pdfExporter.exportDataGrid({
+                                                        jsPDFDocument: doc,
+                                                        component: dataGrid
+                                                    }).then(function () {
+                                                        doc.save('TaskControl' + '.pdf');
+                                                    });
+                                                }
+                                            }
+                                        },
+                                        {
+                                            location: "after",
+                                            widget: "dxButton",
+                                            options: {
+                                                icon: "refresh",
+                                                onClick: function () {
+                                                    dataGrid.refresh();
+                                                }
+                                            }
+                                        }
+                                    );
+                                }
+                            }).dxDataGrid("instance");
+
+                            // function initializeHtmlEditor(initialValue, onSave) {
+                            //     // Create the HTML Editor
+                            //     $("#htmlEditorContainer").dxHtmlEditor({
+                            //         height: 300,
+                            //         width: "100%",
+                            //         value: initialValue, // Set the initial value
+                            //         toolbar: {
+                            //             items: [
+                            //                 "undo", "redo", "separator",
+                            //                 "bold", "italic", "underline", "separator",
+                            //                 "alignLeft", "alignCenter", "alignRight", "alignJustify",
+                            //                 "orderedList", "bulletList", "separator",
+                            //                 "link", "image", "separator",
+                            //                 {
+                            //                     widget: "dxButton",
+                            //                     options: {
+                            //                         text: "Save",
+                            //                         stylingMode: "contained",
+                            //                         type: "success",
+                            //                         onClick: function () {
+                            //                             const editor = $("#htmlEditorContainer").dxHtmlEditor("instance");
+                            //                             const updatedValue = editor.option("value");
+                            //                             onSave(updatedValue); // Save the new value
+                            //                             DevExpress.ui.notify("Changes saved!", "success", 2000); // Optional notification
+                            //                         },
+                            //                     },
+                            //                 },
+                            //             ],
+                            //         },
+                            //     });
+                            // }
+
+                            // function generateUniqueId() { 
+                            //     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; 
+                            //     let uniqueId = '';
+                            //     for (let i = 0; i < 10; i++) { 
+                            //         const randomIndex = Math.floor(Math.random() * characters.length); 
+                            //         uniqueId += characters[randomIndex]; 
+                            //     } 
+                            //     return uniqueId;  
+                            // }
+
+                            function generateUniqueId() {
+                                let timestamp = Date.now().toString(36);
+                                let randomString = Math.random().toString(36).substring(2, 8);
+                                let uniqueId = timestamp + randomString;
+                                return uniqueId.substring(0, 10);
+                            }
+
+                            const aPopupHelp = (aHTitle, aHelpMessageOrFile, useFullScreen = false) => {
+                                const isPdf = typeof aHelpMessageOrFile === "string" && aHelpMessageOrFile.includes(".pdf");
+                                const isHtml = typeof aHelpMessageOrFile === "string" && aHelpMessageOrFile.includes(".html");
+                                const isPpt = typeof aHelpMessageOrFile === "string" && aHelpMessageOrFile.includes(".pptx");
+
+                                const popup = $("#popupHelp").dxPopup({
+                                    title: aHTitle,
+                                    height: 750,
+                                    width: 1200,
+                                    position: { offset: "-40 -100" },
+                                    fullScreen: useFullScreen, // Toggle full-screen mode based on the parameter
+                                    visible: true,
+                                    showCloseButton: true,
+                                    focusStateEnabled: false, // disable focusing of popup overlay
+                                    toolbarItems: [
+                                        {
+                                            widget: "dxButton",
+                                            location: "after",
+                                            options: {
+                                                //text: "Toggle Fullscreen",
+                                                icon: "fas fa-expand", // Use font-expand icon for fullscreen toggle <i class="fas fa-window-maximize"></i>
+                                                onClick: function () {
+                                                    const currentState = popup.option("fullScreen");
+                                                    popup.option("fullScreen", !currentState);
+                                                },
+                                            },
+                                        },
+                                    ],
+                                    contentTemplate: function (contentElement) {
+                                        const container = $("<div>").css({ height: "100%", overflowY: "auto" });
+
+                                        if (isPdf || isHtml || isPpt) {
+                                            const embedUrl = isPpt
+                                                ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(aHelpMessageOrFile)}`
+                                                : aHelpMessageOrFile;
+
+                                            const iframe = $("<iframe>")
+                                                .attr("src", embedUrl)
+                                                .css({ width: "100%", height: "100%", border: "none" });
+                                            container.append(iframe);
+                                        } else {
+                                            container.append(aHelpMessageOrFile);
+                                        }
+
+                                        container.appendTo(contentElement);
+                                    },
+                                }).dxPopup("instance");
+                            };
+
+                            // Example usage
+                            //aPopupHelp("./images/All Slide-Training Expense Reimbursement System.pdf#view=FitH", false); // Default size with real-time fullscreen toggle
+                            //aPopupHelp("./example.html", false); // Default size with real-time fullscreen toggle
+                        }); // load content
+
+                }); // TOP PRG
+                //
+            });  // ajax   
+    </script>
 </body>
+
 </html>

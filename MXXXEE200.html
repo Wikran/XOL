@@ -160,7 +160,8 @@
         });
 
         const arSTATUS = ["Please send the Document to FA", "Please contact back asap", "Please check your limit", "Please Check the Record"];
-        const arSTANOTE = ["¡ÃØ³ÒÊè§àÍ¡ÊÒÃä»ãËéá¼¹¡ºÑ­ªÕ·Ñ¹·Õ", "¡ÃØ³ÒµÔ´µèÍ¡ÅÑºâ´Â´èÇ¹", "¡ÃØ³ÒµÃÇ¨ÊÍºÇ§à§Ô¹", "¡ÃØ³ÒµÃÇ¨ÊÍºÃÒÂ¡ÒÃ "]
+        const arSTANOTE = ["ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½á¼¹ï¿½ï¿½Ñ­ï¿½Õ·Ñ¹ï¿½ï¿½", "ï¿½ï¿½Ø³ÒµÔ´ï¿½ï¿½Í¡ï¿½Ñºï¿½Â´ï¿½Ç¹", "ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½ÍºÇ§ï¿½Ô¹", "ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íºï¿½ï¿½Â¡ï¿½ï¿½ "]
+        
 
         window.jsPDF = window.jspdf.jsPDF;
         applyPlugin(window.jsPDF);
@@ -221,7 +222,7 @@
             "method": "POST",
             "timeout": 0,
             "headers": { "Content-Type": "application/json" },
-            "data": JSON.stringify({ "@": btoa(afqrFull) }), //" pageID='Resigned' "
+            "data": JSON.stringify({ "@": btoa(afqrFull) }), //"ï¿½pageID='Resigned'ï¿½"
         };
         var jqxhr = $.post(afsettings, function (e) { })
             .done(function (e) {
@@ -328,7 +329,7 @@
                                                 "Content-Type": "application/json"
                                             },
                                             "data": JSON.stringify({
-                                                "@": aqrFull //" Status!='Resigned' "
+                                                "@": aqrFull //"ï¿½Status!='Resigned'ï¿½"
                                             }),
                                         };
                             
@@ -367,7 +368,7 @@
                                     "Content-Type": "application/json"
                                 },
                                 "data": JSON.stringify({
-                                    "@": aqrFull //" Status!='Resigned' "
+                                    "@": aqrFull //"ï¿½Status!='Resigned'ï¿½"
                                 }),
                             };
                             /*
@@ -506,6 +507,11 @@
                                         if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERODate01" || e.dataField === "Currency" || e.dataField === "Xrate" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "ID" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department" || e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "LocalAmount" || e.dataField === "ERStatus" || e.dataField === "ERORefNo3")) {
                                             e.editorOptions.disabled = true;
                                         } //|| e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "LocalAmount" || e.dataField === "ERStatus" || e.dataField === "ERORefNo3"
+                                    }
+                                },
+                                onCellPrepared: function (e) {
+                                    if (e.rowType === "data") {
+                                        e.cellElement.css("vertical-align", "top");
                                     }
                                 },
                                 //
@@ -829,8 +835,8 @@
                                         dataField: "Department",
                                         caption: "Department",
                                         dataType: "string",
-                                        editorOptions: { width: 150 },
-                                        width: 150,
+                                        editorOptions: { width: 80 },
+                                        width: 80,
                                         visible: true,
                                     },
                                     {
@@ -850,24 +856,24 @@
                                         editorType: "dxTextBox",
                                         width: 100,
                                         //height: 80,
-                                        visible: true,
+                                        visible: false,
                                     },
                                     {
                                         dataField: "ERORefNo3",//"ExpensesDescription",
                                         caption: "Account Name",
                                         dataType: "string",
-                                        width: 220,
+                                        width: 200,
                                         //height: 80,
                                     },
                                     {
                                         dataField: "ERODesc02",
                                         caption: "Description..",
-                                        width: 200,
+                                        width: 250,
                                         height: 180,
                                         dataType: "string",
                                         editorType: "dxTextBox",
                                         //cssClass: "wrap-text",
-                                        editorOptions: { width: 200,height: 80,readOnly: true },
+                                        editorOptions: { width: 250,height: 180,readOnly: true },
                                         visible: true,
                                     },                                    
                                     {
@@ -899,20 +905,7 @@
                                         width: 180,
                                     },
 
-                                    // {
-                                    //     dataField: "Division",
-                                    //     caption: "Division",
-                                    //     editorOptions: { width: 150 },
-                                    //     width: 80,
-                                    //     visible: false,
-                                    // },
-                                    // {
-                                    //     dataField: "Vendor01Note",
-                                    //     caption: "Approvers",
-                                    //     editorOptions: { width: 200 },
-                                    //     width: 200,
-                                    //     visible: false,
-                                    // },
+                      
                                    
                                 ],
                                 // summary
@@ -922,11 +915,7 @@
                                     totalItems: [
                                         {
                                             column: "REFNO",
-                                            summaryType: "count",
-                                            //          summaryType: "max",
-                                            //          valueFormat: "currency",
-                                            //          showInGroupFooter: false,
-                                            //          alignByColumn: true            
+                                            summaryType: "count",                                                 
                                             displayFormat: "{0} Items",
                                         },
                                         {
@@ -2909,7 +2898,7 @@
                                                             let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
                                                             let aSubject = aaOnInitExpGroupDesc + " Reimbursement Requested"
                                                             let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                            let aMessage = "<div>à¸–à¸¶à¸ÿ à¸ÿà¸¸à¸“" + $.trim(aApproverName) + ",<br>Please verify and approve " + aaOnInitExpGroupDesc + " à¸ªà¸³à¸«à¸£à¸±à¸ÿ REFNO = [" + e.row.data.HeadRefNo + "]<br> at (" + aAddress2Do + "). <br><br>Regards,<br>" + aRequesterName + "</div>"
+                                                            let aMessage = "<div>à¸–à¸¶ï¿½ï¿½ ï¿½ï¿½à¸¸à¸“" + $.trim(aApproverName) + ",<br>Please verify and approve " + aaOnInitExpGroupDesc + " à¸ªà¸³à¸«à¸£à¸±ï¿½ï¿½ REFNO = [" + e.row.data.HeadRefNo + "]<br> at (" + aAddress2Do + "). <br><br>Regards,<br>" + aRequesterName + "</div>"
 
                                                             //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
 
@@ -3251,7 +3240,7 @@
                                         onClick: function (e) {
                                             $("#gridContainer").dxDataGrid("instance").refresh();
                                             if (aRecNo === 1) {
-                                                let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?"); // "<br>¡´ 'YES' à¾×èÍºÑ¹·Ö¡" +
+                                                let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?"); // "<br>ï¿½ï¿½ 'YES' ï¿½ï¿½ï¿½ÍºÑ¹ï¿½Ö¡" +
                                                 result.done(function (dresult) {
                                                     if (dresult) {
                                                         // not delete 
@@ -3341,7 +3330,7 @@
                                     
                                                                                 console.log(aaHODAppEmail)
                                     
-                                                                                let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > áÅÐ ¡ÃØ³ÒµÃÇ¨ÊÍº¡ÒÃºÑ¹·Ö¡ÃÒÂ¡ÒÃãËé¤Ãº·Ø¡ªèÍ§ã¹·Ø¡ºÃÃ·Ñ´** <br><b><u>äÁèàªè¹¹Ñé¹</u> ¨Ð·ÓãËéÃÒÂ¡ÒÃ¹ÕéàºÔ¡¨èÒÂäÁèä´é </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>¡´ 'YES' à¾×èÍºÑ¹·Ö¡" +
+                                                                                let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > ï¿½ï¿½ï¿½ ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íºï¿½ï¿½ÃºÑ¹ï¿½Ö¡ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½Ãºï¿½Ø¡ï¿½ï¿½Í§ã¹·Ø¡ï¿½ï¿½Ã·Ñ´** <br><b><u>ï¿½ï¿½ï¿½ï¿½è¹¹ï¿½ï¿½</u> ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ï¿½Ã¹ï¿½ï¿½ï¿½Ô¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>ï¿½ï¿½ 'YES' ï¿½ï¿½ï¿½ÍºÑ¹ï¿½Ö¡" +
                                                                                 result.done(function (dresult) {
                                                                                     if (dresult) {
                                                                                         //if (aContinueChk !== true) {
@@ -3373,7 +3362,7 @@
                                                                                         var aSubject = aaMailTitle
                                                                                         let aRefNoa = aaiHeadRef //iData.HeadRefNo
                                                                                         let aAddress2Do = "<a href='https://cbsdev2.locktonwattana.com/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                        let aMessage01 = "<div>àÃÕÂ¹ ¤Ø³" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;¡ÃØ³ÒµÃÇ¨ÊÍº áÅÐÍ¹ØÁÑµÔÃÒÂ¡ÒÃ " + aaOnInitExpGroupDesc + " Expenses ÊÓËÃÑº REFNO = [" + aRefNoa + "]<br> ÊÒÁÒÃ¶à¢éÒãªéâ»Ãá¡ÃÁä´é·Õè " + aAddress2Do + " (ËÑÇ¢éÍ Approve --> HOD Approve) <br><br>¢ÍáÊ´§¤ÇÒÁ¹Ñº¶×Í<br>" + aRequesterName + "</div>"
+                                                                                        let aMessage01 = "<div>ï¿½ï¿½ï¿½Â¹ ï¿½Ø³" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íº ï¿½ï¿½ï¿½Í¹ï¿½ï¿½Ñµï¿½ï¿½ï¿½Â¡ï¿½ï¿½ " + aaOnInitExpGroupDesc + " Expenses ï¿½ï¿½ï¿½ï¿½Ñº REFNO = [" + aRefNoa + "]<br> ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ " + aAddress2Do + " (ï¿½ï¿½Ç¢ï¿½ï¿½ Approve --> HOD Approve) <br><br>ï¿½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½<br>" + aRequesterName + "</div>"
                                                                                         //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                                                         var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                                         aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
@@ -3555,6 +3544,11 @@
                                                 if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERStatus" || e.dataField === "PSPvNO" || e.dataField === "PSPvDate" || e.dataField === "LocalAmount" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department")) {
                                                     e.editorOptions.disabled = true;
                                                 }
+                                            }
+                                        },
+                                        onCellPrepared: function (e) {
+                                            if (e.rowType === "data") {
+                                                e.cellElement.css("vertical-align", "top");
                                             }
                                         },
                                         //
@@ -3810,7 +3804,7 @@
                                                 allowEditing: false,
                                                 editorOptions: { width: 100, readOnly: true },
                                                 width: 100,
-                                                visible: true,
+                                                visible: false,
                                             },
                                             {
                                                 dataField: "PayToCode",
@@ -4341,11 +4335,11 @@
                                             showCloseButton: true,
                                             contentTemplate:
                                                 "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
-                                                "<p style = 'color: green; font-size: 14px;'><ul><li>¡´·Õè icon " + "<i class='fas fa-plus'></i>" + " à¾×èÍà¾ÔèÁ ÃÒÂ¡ÒÃ </li><li>¨Ðà»ç¹ÃÒÂ¡ÒÃ à»ÅèÒäÁèÁÕ¢éÍÁÙÅ Â¡àÇé¹ ËÑÇ¢éÍÇÑ¹·Õè ¨ÐáÊ´§à»ç¹ÇÑ¹¹Õé</li></ul></br></p>" +
+                                                "<p style = 'color: green; font-size: 14px;'><ul><li>ï¿½ï¿½ï¿½ï¿½ï¿½ icon " + "<i class='fas fa-plus'></i>" + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¡ï¿½ï¿½ </li><li>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¢ï¿½ï¿½ï¿½ï¿½ï¿½ Â¡ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¢ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½</li></ul></br></p>" +
                                                 "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
-                                                "<p style = 'color: green; font-size: 14px;'><ul><li>¡´·Õè icon " + "<i class='fas fa-trash'></i>" + " à¾×èÍÅºÃÒÂ¡ÒÃã¹ºÃÃ·Ñ´·ÕèàÅ×Í¡</li><li>áµè¶éÒàÅ×Í¡Åº ºÃÃ·Ñ´·Õè 1 ¨Ð¶×ÍÇèÒà»ç¹¡ÒÃÅº¢éÍÁÙÅ·Ñé§ËÁ´ ** µéÍ§ÃÐÁÑ´ÃÐÇÑ§ </ul></li></br></p>" +
+                                                "<p style = 'color: green; font-size: 14px;'><ul><li>ï¿½ï¿½ï¿½ï¿½ï¿½ icon " + "<i class='fas fa-trash'></i>" + " ï¿½ï¿½ï¿½ï¿½Åºï¿½ï¿½Â¡ï¿½ï¿½ã¹ºï¿½Ã·Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡</li><li>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¡Åº ï¿½ï¿½Ã·Ñ´ï¿½ï¿½ï¿½ 1 ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç¹¡ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½Å·ï¿½ï¿½ï¿½ï¿½ï¿½ ** ï¿½ï¿½Í§ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½Ñ§ </ul></li></br></p>" +
                                                 "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-redo'></i>" + " REFRESH</div>" +
-                                                "<p style = 'color: green; font-size: 14px;'><ul><li>¡´·Õè icon " + "<i class='fas fa-plus'></i>" + " à¾×èÍà¾ÔèÁ ÃÒÂ¡ÒÃ </li><li>¨Ðà»ç¹ÃÒÂ¡ÒÃ à»ÅèÒäÁèÁÕ¢éÍÁÙÅ Â¡àÇé¹ ËÑÇ¢éÍÇÑ¹·Õè ¨ÐáÊ´§à»ç¹ÇÑ¹¹Õé</li></ul></br></p>" +
+                                                "<p style = 'color: green; font-size: 14px;'><ul><li>ï¿½ï¿½ï¿½ï¿½ï¿½ icon " + "<i class='fas fa-plus'></i>" + " ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¡ï¿½ï¿½ </li><li>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¢ï¿½ï¿½ï¿½ï¿½ï¿½ Â¡ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¢ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½ï¿½Ñ¹ï¿½ï¿½ï¿½</li></ul></br></p>" +
                                                 "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " INPUT VDO</div>" +
                                                 "<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
                                         }).dxPopup("instance");
@@ -4588,7 +4582,7 @@
 
                                                     console.log(aaHODAppEmail, aaHODAppName)
 
-                                                    let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > áÅÐ ¡ÃØ³ÒµÃÇ¨ÊÍº¡ÒÃºÑ¹·Ö¡ÃÒÂ¡ÒÃãËé¤Ãº·Ø¡ªèÍ§ã¹·Ø¡ºÃÃ·Ñ´** <br><b><u>äÁèàªè¹¹Ñé¹</u> ¨Ð·ÓãËéÃÒÂ¡ÒÃ¹ÕéàºÔ¡¨èÒÂäÁèä´é </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>¡´ 'YES' à¾×èÍºÑ¹·Ö¡" +
+                                                    let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm & send mail to " + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > ï¿½ï¿½ï¿½ ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íºï¿½ï¿½ÃºÑ¹ï¿½Ö¡ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½Ãºï¿½Ø¡ï¿½ï¿½Í§ã¹·Ø¡ï¿½ï¿½Ã·Ñ´** <br><b><u>ï¿½ï¿½ï¿½ï¿½è¹¹ï¿½ï¿½</u> ï¿½Ð·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¡ï¿½Ã¹ï¿½ï¿½ï¿½Ô¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>ï¿½ï¿½ 'YES' ï¿½ï¿½ï¿½ÍºÑ¹ï¿½Ö¡" +
                                                     result.done(function (dresult) {
                                                         if (dresult) {
                                                             //if (aContinueChk !== true) {
@@ -4624,7 +4618,7 @@
                                                             var aSubject = aaMailTitle
                                                             let aRefNoa = aaiHeadRef //iData.HeadRefNo
                                                             let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                            let aMessage01 = "<div>àÃÕÂ¹ ¤Ø³" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;¡ÃØ³ÒµÃÇ¨ÊÍº áÅÐÍ¹ØÁÑµÔÃÒÂ¡ÒÃ " + aaOnInitExpGroupDesc + " Expenses ÊÓËÃÑº REFNO = [" + aRefNoa + "]<br> ÊÒÁÒÃ¶à¢éÒãªéâ»Ãá¡ÃÁä´é·Õè " + aAddress2Do + " (ËÑÇ¢éÍ Approve --> HOD Approve) <br><br>¢ÍáÊ´§¤ÇÒÁ¹Ñº¶×Í<br>" + aRequesterName + "</div>"
+                                                            let aMessage01 = "<div>ï¿½ï¿½ï¿½Â¹ ï¿½Ø³" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;ï¿½ï¿½Ø³Òµï¿½Ç¨ï¿½Íº ï¿½ï¿½ï¿½Í¹ï¿½ï¿½Ñµï¿½ï¿½ï¿½Â¡ï¿½ï¿½ " + aaOnInitExpGroupDesc + " Expenses ï¿½ï¿½ï¿½ï¿½Ñº REFNO = [" + aRefNoa + "]<br> ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ " + aAddress2Do + " (ï¿½ï¿½Ç¢ï¿½ï¿½ Approve --> HOD Approve) <br><br>ï¿½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñºï¿½ï¿½ï¿½<br>" + aRequesterName + "</div>"
                                                             //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                             var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                             aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)

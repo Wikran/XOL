@@ -2006,6 +2006,7 @@ var jqxhr = $.post(afsettings, function (e) { })
                     }).dxPopup('instance');
 
                 });
+           
             }
 
         });

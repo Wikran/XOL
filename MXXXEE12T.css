@@ -1,0 +1,365 @@
+
+:root {
+    --dgBG: #d2f2fce5;
+    --dgColor: black;
+    --dgSelBar: #d2f2fc4c;
+    --dgSelText: blue;
+    --stBgcolor: #F5F5F5;
+}
+
+/*-----------------------------*/
+#scversion {
+    color: darkgreen;
+    font-size: 12px;
+}
+
+#gridContainer .dx-datagrid-headers {
+    color: var(--dgColor) !important;
+    background-color: var(--dgBG) !important;
+}
+
+#gridContainer .dx-datagrid-borders>.dx-datagrid-total-footer {
+    border-top: 4px solid var(--dgBG);
+    border-bottom: 4px solid var(--dgBG);
+}
+
+#gridContainer .dx-datagrid-borders>.dx-datagrid-headers {
+    border-top: 4px solid var(--dgBG);
+    border-bottom: 4px solid var(--dgBG);
+}
+
+#gridContainer .dx-datagrid-table {
+    border-left: 4px solid var(--dgBG);
+    border-right: 4px solid var(--dgBG);
+}
+
+#gridContainer .dx-datagrid .dx-data-row .dx-datagrid-cell {
+    vertical-align: top;
+}
+
+.dx-datagrid .dx-data-row .dx-datagrid-cell {
+    vertical-align: top;
+}
+
+/*.dx-datagrid-total-footer {
+    background-color: var(--dgBG) !important;
+} */
+#gridContainer .dx-datagrid-filter-panel {
+    background-color: var(--dgBG) !important;
+}
+
+.dx-form .dx-field-item-label-text {
+    color: black;
+    font-style: bold;
+}
+
+/*-----------------------------*/
+.dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#popupContainerAdd .dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-form .dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-form01 .dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-dxDataGrid .dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-dxDataGrid .dx-datagrid-rowsview .dx-scrollable-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-dxDataGrid .dx-datagrid-header-panel {
+    background-color: var(--stBgcolor);
+}
+
+#Add-dxDataGrid .dx-toolbar-items-container {
+    background-color: var(--stBgcolor);
+}
+
+#Add-dxDataGrid .dx-datagrid {
+    background-color: var(--stBgcolor);
+}
+
+/*-----------------------------*/
+.title-bg {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+.second-group {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+.colorRED {
+    color: #9e030b !important;
+}
+
+.colorBGlightgrey {
+    height: 80px;
+    width: 300px;
+    /*padding-top: 30px;*/
+    padding: 15px;
+    background-color: #f5f4f4 !important;
+    border-radius: 15px;
+}
+
+.colorRBGlightgrey {
+    /*border: 1px solid rgb(163, 162, 162);*/
+    height: 120px;
+    width: 300px;
+    padding-top: 2px;
+    padding: 2px;
+    color: rgb(0, 0, 0);
+    background-color: #f5f4f4fa !important;
+    display: inline-block;
+    /*border-radius: 5px;*/
+}
+
+#gridContainer .dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: var(--dgBG) !important;
+}
+
+#Add-dxDataGrid .dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: var(--dgBG) !important;
+    /*height: 80px;*/
+}
+
+.dx-datagrid .dx-editor-cell .dx-checkbox {
+    display: flex;
+    align-items: flex-start;
+}
+
+.dx-datagrid-content .dx-datagrid-table .dx-row .dx-editor-cell {
+    vertical-align: top;
+}
+
+#Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-text-content {
+    text-align: top;
+}
+
+#gridContainer .dx-scrollable-scroll {
+    height: 380px !important;
+}
+
+.dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
+    height: 380px;
+}
+
+.dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:vertical {
+    width: 380px;
+}
+
+#popupHelp .dx-popup-title {
+    color: rgb(1, 6, 32);
+    background-color: rgb(136, 255, 205)
+}
+
+#ACCChart-dxDataGrid .dx-datagrid-headers {
+    color: white !important;
+    background-color: rgb(48, 47, 47) !important;
+}
+
+#ACCChart-dxDataGrid .dx-row {
+    height: 10px;
+}
+
+#detail-dxDataGrid .dx-datagrid-headers {
+    color: white !important;
+    background-color: rgb(48, 47, 47) !important;
+}
+
+#detail-dxDataGrid .dx-row {
+    height: 10px;
+}
+
+.dx-popup-title {
+    color: rgb(1, 6, 32);
+    background-color: rgb(190, 237, 243)
+}
+
+#popupContainerAdd .dx-popup-title {
+    color: rgb(1, 6, 32);
+    background-color: rgb(243, 235, 255)
+        /*rgb(199, 243, 190)*/
+}
+
+#popupPrintPDF .dx-popup-title {
+    color: whitesmoke;
+    background-color: black;
+}
+
+#gridContainer .vertical-grid {
+    display: flex;
+    flex-direction: column;
+    /* This makes the items stack vertically */
+    align-items: flex-start;
+    /* Align items to the start of the container */
+}
+
+.custom-group {
+    color: blue;
+    font-weight: bold;
+    /* background-color: #dceef990; Change this to your desired background color */
+
+}
+
+.custom-group-header {
+    color: blue;
+    font-weight: bold;
+    /*background-color: #f0f0f061;  Change this to your desired background color */
+    background: linear-gradient(to bottom, white, #f5f5f5b4);
+    /*border-top: 1px solid blue; 
+    border-bottom: 1px solid blue;  Change this to your desired line color */
+    border: 1.5px solid blue;
+    border-radius: 10px;
+    padding: 10px;
+    /* Optional: Add some padding */
+}
+
+.custom-datagrid .dx-datagrid {
+    font-size: 11.5px;
+    font-family: Tahoma, Segoe UI, Geneva, Verdana, sans-serif;
+}
+
+.custom-datagridicon .dx-datagrid .fas {
+    font-size: 12px;
+    /* Adjust the size as needed */
+}
+
+.custom-editor {
+    font-size: 11.5px;
+    font-family: Tahoma, Segoe UI, Geneva, Verdana, sans-serif;
+}
+
+/* Custom CSS for the editing area IT is working */
+#Add-dxDataGrid .dx-datagrid .dx-editor-cell .dx-texteditor-input {
+    height: 100%;
+    /* Set the height to 400px */
+    line-height: normal;
+    /* Ensure normal line height */
+    padding: 0;
+    /* Remove any padding */
+    margin: 0;
+    /* Remove any margin */
+}
+
+.dx-icon {
+    font-size: 10px;
+    /* Adjust the size as needed */
+}
+
+.custom-popup-content {
+    overflow: auto;
+    /* Ensures scroll bars appear */
+}
+
+.custom-icon-size {
+    font-size: 30px;
+    color: green;
+}
+
+.dx-scrollbar-horizontal {
+    height: 200px;
+    /* Adjust the height as needed */
+}
+
+.dx-popup-fullscreen {
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.dx-dialog-content {
+    border-radius: 15px;
+    /* Adjust the value as needed */
+}
+
+.dx-tab {
+    border-radius: 15px 15px 0 0;
+    /* Top-left and top-right corners rounded */
+    overflow: hidden;
+}
+
+.dx-tab-selected {
+    border-radius: 15px 15px 0 0;
+    /* Ensure selected tab also has rounded corners */
+}
+
+.dx-tab .dx-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+    /* Adjust as needed */
+}
+
+.dx-tab-selected {
+    background-color: rgb(230, 237, 254) !important;
+}
+
+.no-wrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.verylight-blue .dx-texteditor-input {
+    /*background-color: #deedf8; /* Replace with your desired shade of light blue */
+    background: linear-gradient(to bottom, #fcfcfc, #d6dff7);
+}
+
+.right-align-number .dx-texteditor-input {
+    text-align: right;
+}
+
+.dx-datagrid .dx-row.dx-selection {
+    /*rgb(227, 120, 7); rgba(255, 87, 34, 1); rgba(239, 0, 0, 0.994);*/
+    color: var(--dgSelText);
+    /*font-weight: bold;*/
+}
+
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
+    /*not change the color*/
+    /*background-color: rgba(248, 219, 187, 0.312); rgba(253, 242, 238, 0.626);*/
+    background-color: var(--dgSelBar);
+    color: unset;
+}
+
+/*.dx-popup-fullscreen .dx-popup-bottom {
+    /*float: left;         
+    margin-top: -240px; Adjust this value as needed 
+    position: absolute;
+    left: -1400px;
+    top: 650px;
+}*/
+/* Custom CSS to change the color and background color of the buttons 
+.dx-popup-fullscreen .dx-popup-bottom .dx-button {
+    background-color: #c7fec9d4; Change this to your desired background color 
+    color: rgb(4, 4, 4); /* Change this to your desired text color */
+/* border: 1px; Optional: Remove border 
+    /*padding: 10px 20px;  Optional: Adjust padding 
+    font-size: 12px;  Optional: Adjust font size 
+    font-weight: bold;
+}*/
+
+/* Optional: Add hover effect 
+.dx-popup-fullscreen .dx-popup-bottom .dx-button:hover {
+    background-color: #dbfcdce8; Change this to your desired hover background color 
+}
+*/
+/*
+.dx-datagrid .dx-row.dx-selection .dx-icon {
+    color:rgba(239, 0, 0, 0.994); 
+}        
+.dx-datagrid .dx-row.dx-selection:hover .dx-icon {
+    color: rgba(252, 137, 6, 0.82); 
+}*/

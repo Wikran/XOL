@@ -1532,7 +1532,14 @@
                                                     dataType: "string",
                                                     width: 140,
                                                     visible: false,
-                                                },                                                                                                                                              
+                                                }, 
+                                                {
+                                                    dataField: "ERODesc06",
+                                                    caption: "Req Email",
+                                                    dataType: "string",
+                                                    width: 150,
+                                                    visible: false,
+                                                },                                                                                                                                                                                             
                                                 /*                                                   
                                                 {
                                                     dataField: "LocalAmount",
@@ -1544,13 +1551,7 @@
                                                     visible: false,
                                                 },
                                              
-                                                {
-                                                    dataField: "PayToCode",
-                                                    caption: "Code",
-                                                    dataType: "string",
-                                                    width: 150,
-                                                    visible: false,
-                                                },
+
                                                 {
                                                     dataField: "PayToName",
                                                     caption: "Name",
@@ -3163,9 +3164,9 @@
                                                                 // Check empty fields
                                                                 var aDatabasea = "ExtraOnLine.dbo.TRVREQF";
                                                                 var aKeyField = "HeadRefNo" //"HeadRefNo"; "REFNO"
-                                                                var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724" +"-001" 
+                                                                var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724" +"-001" item.EROCode03 === "" ||
                                                                 var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
-                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.ERODesc03 === "" || item.RefundedAmount === 0)) || (item.ID > 1 && (item.EROCode03 === "" || item.Vendor02 === ""))
+                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.ERODesc03 === "" || item.RefundedAmount === 0)) || (item.ID > 1 && ( item.Vendor02 === ""))
                                                                 var condition = aaCondition  //|| (item.ERODate06 && !isNaN(new Date(item.ERODate05).getTime()))
                                                                 //|| item.Xrate === 0 || (item.Xrate === 1 && item.Currency !== "THB") || (item.Xrate !== 1 && item.Currency === "THB"); !isNaN(item.ERODate01);    
 
