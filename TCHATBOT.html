@@ -70,29 +70,6 @@
     <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="bundle.min.js"></script>
-    <!-- <style>
-        #chatbot {
-            width: 300px;
-            height: 400px;
-            border: 1px solid #0e0e0e;
-            padding: 10px;
-            overflow-y: auto;
-        }
-
-        .message {
-            margin: 5px 0;
-        }
-
-        .user {
-            text-align: right;
-            color: blue;
-        }
-
-        .bot {
-            text-align: left;
-            color: green;
-        }
-    </style> -->
 
     <!-- Google Fonts: Sarabun -->
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;700&display=swap" rel="stylesheet">
@@ -180,6 +157,7 @@
     <h1>CHATBOT</h1>
     <!-- Chatbot container -->
     <div id="chatbot"></div>
+    <div id="popupHelp"></div>
     <input type="text" id="userInput" placeholder="Type a message" />
     <button id="sendButton">Send</button>
 
@@ -194,25 +172,30 @@
         var aaXToX = localStorage["aaXXoX"];
         //var aaXNoX = localStorage["aaXXuX"];
         //var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492";
-       // var aaPXXI = localStorage["aPXIXD"];
+        //var aaPXXI = localStorage["aPXIXD"];
         //var aaPXIXD = localStorage["aPXIXD"];
         //var aaEnt = aaPXIXD.includes("X");
-        //var aaUsrN = localStorage["aaXXuX"];
+        var aaUsrN = localStorage["aaXXuX"];
+        const [axfirstName, axlastName] = localStorage["asFTNAME"].split(" ");
+        console.log("name ", axfirstName," ",axlastName)
+
         var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
+        //let getvalues = { aApproverName: aApproverName, aApproverEmail: aApproverEmail, aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aRefNoa: aRefNoa, aAddress2Do: aAddress2Do, aRequesterName: aRequesterName }
+        let getvalues = { aServer: aaPFDMI, aaUsrN: aaUsrN, axfirstName: axfirstName, axlastName: axlastName}
 
         //TOP
         $(() => {
             var aDatabasea = "ExtraOnLine.dbo.TaskControl";
             var aKeyField = "TaskGroup";
-            var aKeyIDa = "TCHATBOT"; //aaPXIXD; //"main";
+            var aKeyIDa = "TCHATBOT"; //TaskGroup;
             var axFieldSelected = "IDNO,TaskName,TaskProgram,TaskGroup";
             var aVARs = {};
             var aArrays = {};
             var aObjects = {};
-            var aaEmailArr;
-            var aaMessage2Show;
-            var aaMess2Show;
-            var aaMess3Show;
+            // var aaEmailArr;
+            // var aaMessage2Show;
+            // var aaMess2Show;
+            // var aaMess3Show;
             LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
                 .then(result => {
                     for (let ii = 0; ii < result.length; ii++) {
@@ -322,16 +305,21 @@
 
                     function getResponse(input) {
                         const isThai = /[\u0E00-\u0E7F]/.test(input);
+                        //let getvalues = { aServer: aaPFDMI, aaUsrN: aaUsrN}
+                        //let getvalues = { aServer: aaPFDMI, aaUsrN: aaUsrN, axfirstName: axfirstName, axlastName: axlastName}
+                        
                         input = input.toLowerCase();
                         for (let key in responses) {
                             if (input.includes(key.toLowerCase())) {
-                                return responses[key];
+                                //key = key.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
+                                //console.log(responses[key].replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match))
+                                return responses[key].replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
                             }
                         }
                         if (isThai) {
-                            return "ขอโทษด้วย ยังไม่ค่อยเข้าใจ"; // Response for unmatched Thai input
+                            return aArrays.CBUNMATCH[0] //"ขอโทษด้วย ยังไม่ค่อยเข้าใจ, ลองถามว่า 'หัวข้อการถาม' ดูซิ"; // Response for unmatched Thai input
                         }
-                        return "I'm sorry, I don't understand that.";
+                        return aArrays.CBUNMATCH[1] //"I'm sorry, I don't understand that.";
                     }
 
                     $('#sendButton').click(function () {

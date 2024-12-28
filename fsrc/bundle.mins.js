@@ -7,66 +7,66 @@ const acGMailAPI = "https://golfmagic99-001-site1.dtempurl.com/send-email/false/
 const aServerNamea = "[lockthbnk-ap14]"; // [lockthbnk-db02] [lockthbnk-ap14]
 const aAPIServer2 = "https://cbsdev2.locktonwattana.com"; // with Crystal Report API
 const aAPIServer3 = "https://cbsdev3.locktonwattana.com";
-const aWebSpaceAPI = "https://webspace.locktonwattana.com";  
+const aWebSpaceAPI = "https://webspace.locktonwattana.com";
 const aWebSpaceRptAPI = "https://webspace.locktonwattana.com";
 const aDefaultWebServer = "https://webspace.locktonwattana.com";
 const aDefaultLocalServer = "http://desktop-e67v9h7:8999";  //"http://dev.bkwwin.com"; //"http://wikran-w10:8081"; 
 const aSetVal = 22; //10 20 30 11 22 33 [use 10 local-local,11 local-real,22 local-test] (10,22)
 
 function vigenereEncode(str, keyword) {
-    let encoded = '';
-    let keywordIndex = 0;
+	let encoded = '';
+	let keywordIndex = 0;
 
-    for (let i = 0; i < str.length; i++) {
-        const charCode = str.charCodeAt(i);
-        const keywordCharCode = keyword.charCodeAt(keywordIndex % keyword.length);
+	for (let i = 0; i < str.length; i++) {
+		const charCode = str.charCodeAt(i);
+		const keywordCharCode = keyword.charCodeAt(keywordIndex % keyword.length);
 
-        const encodedCharCode = ((charCode + keywordCharCode) % 256); // Using modulo 256 for all characters
-        encoded += String.fromCharCode(encodedCharCode);
+		const encodedCharCode = ((charCode + keywordCharCode) % 256); // Using modulo 256 for all characters
+		encoded += String.fromCharCode(encodedCharCode);
 
-        keywordIndex++;
-    }
+		keywordIndex++;
+	}
 
-    return encoded;
+	return encoded;
 }
 
 function vigenereDecode(encodedStr, keyword) {
-    let decoded = '';
-    let keywordIndex = 0;
+	let decoded = '';
+	let keywordIndex = 0;
 
-    for (let i = 0; i < encodedStr.length; i++) {
-        const encodedCharCode = encodedStr.charCodeAt(i);
-        const keywordCharCode = keyword.charCodeAt(keywordIndex % keyword.length);
+	for (let i = 0; i < encodedStr.length; i++) {
+		const encodedCharCode = encodedStr.charCodeAt(i);
+		const keywordCharCode = keyword.charCodeAt(keywordIndex % keyword.length);
 
-        const decodedCharCode = ((encodedCharCode - keywordCharCode + 256) % 256); // Ensure non-negative result
-        decoded += String.fromCharCode(decodedCharCode);
+		const decodedCharCode = ((encodedCharCode - keywordCharCode + 256) % 256); // Ensure non-negative result
+		decoded += String.fromCharCode(decodedCharCode);
 
-        keywordIndex++;
-    }
-    return decoded;
+		keywordIndex++;
+	}
+	return decoded;
 }
 
 function isLocalHost() {
 	let aLSrv;
 	let aRSrv;
-	if(aSetVal === 10){
+	if (aSetVal === 10) {
 		aLSrv = aDefaultLocalServer; //wikran-10
 		aRSrv = aDefaultWebServer; // web space
-	} else if(aSetVal === 20){
+	} else if (aSetVal === 20) {
 		aLSrv = aDefaultLocalServer;
 		aRSrv = aAPIServer2;
-	} else if(aSetVal === 30){
+	} else if (aSetVal === 30) {
 		aLSrv = aDefaultLocalServer;
 		aRSrv = aAPIServer3;
-	} else if(aSetVal === 11){
+	} else if (aSetVal === 11) {
 		aLSrv = aDefaultWebServer;
 		aRSrv = aDefaultWebServer; // web space
-	} else if(aSetVal === 22){
+	} else if (aSetVal === 22) {
 		aLSrv = aAPIServer2;
-		aRSrv = aAPIServer2;		
-	} else if(aSetVal === 33){
+		aRSrv = aAPIServer2;
+	} else if (aSetVal === 33) {
 		aLSrv = aAPIServer3;
-		aRSrv = aAPIServer3;		
+		aRSrv = aAPIServer3;
 	}
 	//alert(`aLSrv=${aDefaultLocalServer},aRSrv=${aRSrv}`);
 	let aHostName = window.location.href  //$(location).attr('host');
@@ -74,7 +74,7 @@ function isLocalHost() {
 		return aLSrv; //return "http://wikran-w10:8081"; 
 	}
 	else {
-		
+
 		return aRSrv; //return "https://webspace.locktonwattana.com";
 	};
 };
@@ -83,9 +83,9 @@ function generateOTP(anL) {
 	// Declare a digits variable
 	// which stores all digits
 	let nL = 6;
-	if(anL) {
+	if (anL) {
 		nL = anL;
-	}	
+	}
 	var digits = '0123456789';
 	let OTP = '';
 	let aG = 0;
@@ -100,7 +100,7 @@ function generateLOTP(anL) {
 	// Declare a string variable 
 	// which stores all string  
 	let nL = 6;
-	if(anL) {
+	if (anL) {
 		nL = anL;
 	}
 	var string = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -150,7 +150,7 @@ const aNowText = () => {
 	return aDateNow2;
 }
 
-const  changeTheme = (newTheme) => {
+const changeTheme = (newTheme) => {
 	const currentTheme = DevExpress.ui.themes.current();
 	DevExpress.ui.themes.current(newTheme);
 }
@@ -158,39 +158,39 @@ const  changeTheme = (newTheme) => {
 //
 // parameters : key value, <key field> ?, <assignment operator> ?, API Server, Master Report file name, Popup Title
 // 
-function aRPTPrint2Pdf(aKeyValue, aHServer, aMasterReport, aTitle, aRptSrv, aPublic, aKeyF, aOper) { 
-	var aHRefNo = aKeyValue; 
+function aRPTPrint2Pdf(aKeyValue, aHServer, aMasterReport, aTitle, aRptSrv, aPublic, aKeyF, aOper) {
+	var aHRefNo = aKeyValue;
 	var aKeyField;
 	var aOperator;
 	var aPublicK;
 	var aReportSrv;
-	if(!aRptSrv){
+	if (!aRptSrv) {
 		aReportSrv = "https://cbsdev2.locktonwattana.com";
 	} else {
 		aReportSrv = aRptSrv;
 	}
-	if(!aPublic){
+	if (!aPublic) {
 		aPublicK = "44095B6C-CC17-47FD-895B-649E0EAA2BAE";
 	} else {
 		aPublicK = aPublic;
 	}
-    if(!aKeyF){
+	if (!aKeyF) {
 		aKeyField = "REFNO";  /// 'REFNO=T23054666'
 	} else {
 		aKeyField = aKeyF;
 	}
-	if(!aOper){
+	if (!aOper) {
 		aOperator = "=";
 	} else {
 		aOperator = aOper;
 	}
-	var aSearchT = aKeyField + aOperator + aHRefNo 
+	var aSearchT = aKeyField + aOperator + aHRefNo
 	var aMasterRPT = aMasterReport + ".rpt"
 	var aResultFilePDF = aHRefNo + ".pdf"
 	var aDBTokenXX = "Extraonline-db02"
 	if (aHServer === "https://cbsdev3.locktonwattana.com") {
 		aDBTokenXX = "Extraonline-db02"
-	} else if (aHServer === "https://webspace.locktonwattana.com"){
+	} else if (aHServer === "https://webspace.locktonwattana.com") {
 		aDBTokenXX = "Extraonline-db02"
 	} else {
 		aDBTokenXX = "Extraonline-ap14"
@@ -227,7 +227,7 @@ function aPopupPDFReport(aText, aResultFilePDF, aaTitle) {
 			dragEnabled: true,
 			closeOnOutsideClick: false,
 			resizeEnabled: true,
-			contentTemplate: function () { 
+			contentTemplate: function () {
 				return $("<iframe>").attr("src", "https://cbsdev2.locktonwattana.com/temp/uploads/reports/" + aResultFilePDF + "#view=FitH").css("width", "100%").css("height", "100%");
 			},
 			toolbarItems: [
@@ -255,7 +255,7 @@ function aPopupPDFReport(aText, aResultFilePDF, aaTitle) {
 		}).dxPopup("instance");
 
 	});
-} 
+}
 
 function aMessageAlert(aaMessage, aaColor) {
 	DevExpress.ui.dialog.alert({
@@ -265,56 +265,56 @@ function aMessageAlert(aaMessage, aaColor) {
 }
 
 const nMessageAlert = (aaMessage, aaColor, aaTitle) => {
-    DevExpress.ui.dialog.alert({
-        title: aaTitle,
-        showTitle: aaTitle !== "",
-        messageHtml: `<center style='color:${aaColor};'>${aaMessage}</center>`
-    });
+	DevExpress.ui.dialog.alert({
+		title: aaTitle,
+		showTitle: aaTitle !== "",
+		messageHtml: `<center style='color:${aaColor};'>${aaMessage}</center>`
+	});
 };
 
 
 function APIPOST(Action, Data, aKeyToken, Domain, AccessKey, aPJCode) {
-	let Url = Domain + '/DMP/'+ aPJCode +'/' + AccessKey + '/' + Action + '/' + aKeyToken + '/true/true';
+	let Url = Domain + '/DMP/' + aPJCode + '/' + AccessKey + '/' + Action + '/' + aKeyToken + '/true/true';
 	//console.log('API: ' + Data);
 	var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
 	$.ajax(settings).done(function (response) { console.log(response); });
 }
 
 const nAPIPOST = (Action, Data, aKeyToken, Domain, AccessKey, aPJCode) => {
-    let Url = `${Domain}/DMP/${aPJCode}/${AccessKey}/${Action}/${aKeyToken}/true/true`;
-    //console.log('API: ' + Data);
-    const settings = {
-        url: Url,
-        method: "POST",
-        timeout: 0,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        data: Data
-    };
-    $.ajax(settings).done(response => {
-        console.log(response);
-    });
+	let Url = `${Domain}/DMP/${aPJCode}/${AccessKey}/${Action}/${aKeyToken}/true/true`;
+	//console.log('API: ' + Data);
+	const settings = {
+		url: Url,
+		method: "POST",
+		timeout: 0,
+		headers: {
+			"Content-Type": "application/json"
+		},
+		data: Data
+	};
+	$.ajax(settings).done(response => {
+		console.log(response);
+	});
 };
 
 const nfAPIPOST = async (Action, Data, aKeyToken, Domain, AccessKey, aPJCode) => {
-    const Url = `${Domain}/DMP/${aPJCode}/${AccessKey}/${Action}/${aKeyToken}/true/true`;
-    // console.log('API: ' + Data);
+	const Url = `${Domain}/DMP/${aPJCode}/${AccessKey}/${Action}/${aKeyToken}/true/true`;
+	// console.log('API: ' + Data);
 
-    try {
-        const response = await fetch(Url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(Data)
-        });
+	try {
+		const response = await fetch(Url, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify(Data)
+		});
 
-        const result = await response.json();
-        console.log(result);
-    } catch (error) {
-        console.error('Error:', error);
-    }
+		const result = await response.json();
+		console.log(result);
+	} catch (error) {
+		console.error('Error:', error);
+	}
 };
 
 
@@ -393,29 +393,29 @@ function aSendMailDMZ(aRecipient, aRCPeMail, aSendereMail, aCCeMail, aBcceMail, 
 // }
 
 const sendRequestNew = async (Action, Data, TokenKey, domain, AccessKey, retries = 3) => {
-    const Url = `${domain}/DMP/${acPRJ}/${AccessKey}/${Action}/${TokenKey}/true/true`;
-    //console.log('Goal...Request Web API:', Data);
+	const Url = `${domain}/DMP/${acPRJ}/${AccessKey}/${Action}/${TokenKey}/true/true`;
+	//console.log('Goal...Request Web API:', Data);
 
-    const settings = {
-        url: Url,
-        method: "POST",
-        timeout: 0,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        data: Data
-    };
+	const settings = {
+		url: Url,
+		method: "POST",
+		timeout: 0,
+		headers: {
+			"Content-Type": "application/json"
+		},
+		data: Data
+	};
 
-    for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-            const response = await $.ajax(settings);
-            //console.log(response);
-            return response;
-        } catch (error) {
-            console.error(`Attempt ${attempt} failed:`, error);
-            if (attempt === retries) throw error;
-        }
-    }
+	for (let attempt = 1; attempt <= retries; attempt++) {
+		try {
+			const response = await $.ajax(settings);
+			//console.log(response);
+			return response;
+		} catch (error) {
+			console.error(`Attempt ${attempt} failed:`, error);
+			if (attempt === retries) throw error;
+		}
+	}
 };
 
 
@@ -453,32 +453,32 @@ const aSQLAction = (aDMZServer, aCommands) => {  //aFullTableName,aFieldSelected
 
 }
 
-function aRolesAction(aRoles,anPos,anChkPos){
+function aRolesAction(aRoles, anPos, anChkPos) {
 	// aRoles = All of Roles "277B", anPos 1=Data,2=Excel,3=PDF,4=REPORT , anChk = Position of Roles 1 from "000" 
-    // 1ReadOnly  2CRU 3CRUD  4Disable   5Import   6Export   7Import and Export  8Printable    9Export2PDF  AExport2Excel    BReport Full Rights 
-	let aRolesM = ["0","ReadOnly","CRU","CRUD","Disable","Import","Export","Import and Export","Printable","Export2PDF","Export2Excel","Report Full Rights"];
-	let aRolesD = ["0","000","110","111","0","10","01","11","100","110","101","111"];
-	let aFR = ["Data:","Excel:","PDF:","REPORT:"];
+	// 1ReadOnly  2CRU 3CRUD  4Disable   5Import   6Export   7Import and Export  8Printable    9Export2PDF  AExport2Excel    BReport Full Rights 
+	let aRolesM = ["0", "ReadOnly", "CRU", "CRUD", "Disable", "Import", "Export", "Import and Export", "Printable", "Export2PDF", "Export2Excel", "Report Full Rights"];
+	let aRolesD = ["0", "000", "110", "111", "0", "10", "01", "11", "100", "110", "101", "111"];
+	let aFR = ["Data:", "Excel:", "PDF:", "REPORT:"];
 	let aPass = 0;
 	let nP = anChkPos - 1;
-	let i = anPos -1;
-	let arRoles = aRoles.substring(i,i+1);
-	if (arRoles === "A"){
+	let i = anPos - 1;
+	let arRoles = aRoles.substring(i, i + 1);
+	if (arRoles === "A") {
 		aCC = 10;
-	}  else if (arRoles === "B"){
-		aCC = 11;   
+	} else if (arRoles === "B") {
+		aCC = 11;
 	} else {
 		aCC = Number(arRoles);
 	}
 	let arRRR = aRolesD[aCC];
-	let arLast = arRRR.substring(nP,nP + 1);
-		aPass = Number(arLast);
+	let arLast = arRRR.substring(nP, nP + 1);
+	aPass = Number(arLast);
 	return aPass;
 }
 
 async function LoadSQLData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected) {
 	let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
-	let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;           
+	let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
 	let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
 	let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
 		method: "POST",
@@ -500,7 +500,7 @@ const aPopUpUpLoad = (aRefNoForName) => {
 			title: `File Attachment [${aaNewNamePF}]`,
 			height: 280,
 			width: 600,
-			position: { offset: "-50 -80" },                                                     
+			position: { offset: "-50 -80" },
 			visible: true,
 			fullScreen: false,
 			showCloseButton: true,
@@ -508,10 +508,10 @@ const aPopUpUpLoad = (aRefNoForName) => {
 			dragEnabled: true,
 			closeOnOutsideClick: false,
 			resizeEnabled: true,
-			
+
 			contentTemplate: () => {
-				return $("<div />").append(                                                          
-					$("<div style='border: 1px solid grey; padding: 10px; display: inline-block; margin-left: 20px; margin-right: 10px;' id='fileUploaderContainer'><div id='fileUploader'></div></div>").appendTo("body"),                                                          
+				return $("<div />").append(
+					$("<div style='border: 1px solid grey; padding: 10px; display: inline-block; margin-left: 20px; margin-right: 10px;' id='fileUploaderContainer'><div id='fileUploader'></div></div>").appendTo("body"),
 					$("<div style='position: fixed; left: 440px; top: 240px;' id='scbutton'></div>").appendTo("body"),
 				)
 			},
@@ -527,7 +527,7 @@ const aPopUpUpLoad = (aRefNoForName) => {
 			uploadedMessage: "Uploaded",
 			uploadFailedMessage: "Upload failed",
 			accept: ".pdf",
-			allowedFileExtensions: [".pdf", ".PDF"],                                    
+			allowedFileExtensions: [".pdf", ".PDF"],
 			//uploadUrl: "https://cbsdev2.locktonwattana.com/temp/uploads",
 		});
 
@@ -732,49 +732,49 @@ const aPopupHelp = (aHTitle, aHelpMessageOrFile, useFullScreen = false) => {
 
 /*
 function aMSGraphSendMail() {
-    var MSTOKEN = "EwCoA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAb1Iq5zj9N/z60ayQeG0kexRFswacO07OXN4JeH2h0o6W2N3P8y+3M3oKkdQOAW5J0tRaNMAxFSnru6FGs6lpH9ncLnycG6P4UKXWY8OTpDYl5BbVFpd2PfoGQwyu/L4HGESbO4q8caSvKlRtinreVEwHi0nVFHMen+ruSmrTvej7aaPqdgBqmsQwkbZABlJU//5/EkrOUghc2S8PFr+ozEVJb5mCkuynlUiLSOnBAScYCXdsh6+36PQGnbWjcra9uV9FNz79wu1RJihYnc7P6BTDMAwbJSlOYA06Rqn0VO/DF0uSLNxsfXd+3dR8Q4EyYBu5pJ8O03sR8sGp4iimU8QZgAAECsgT26ugqiVgYOQeAzNiOpwAhPi+xUD+olXcirlTk1abi9bC24GphLGm4fEgfGEtbTDfJ5Fvqzo1zeZYGxG4gBvTqTD9Px/vmIHLzY1qPFX86LI8Qgiw06RaxqvhHr21tN0MPfM1VXpyv8crEqec2reP/E0Z/+MLxgKo6dtyiJgXx3HjGSnb4C19pPBJUAzTZuaWVmPVpOTFzLg0Du9gZhvEcsEcQngXrgOO0fSAvi2pQTUqYcsHPiBgHfoR3gxLzdftmnzybv9yRh4exDYeQ63prQBQ2GQ7RcUnMgmJq7/0YOU2Sz4moMel8iu98lLK7Le1MIIg/rzfEbS6s3ihctBQHgGKpCbeV7fxElzBgBXbELhLDYy+1dUJTQnkzpTQOmwkgMfXlLbYOjTNeUtJrA+L/c5yFPKZU9mt6RSIZsqsmu1T2JPvUX5ezefPXR65NN5WLs4tJite621eSbQ3tDcZG4IERr3r/CkXuTYOApj/gUAEOUmOww7XPUaFfwdd6gS2Nj4528bmv93bklNUKtXNzWs9ONu6uufRWm0ExOrtRLR6dP9S6ItnMY+tN66iEuV6e7qchdPd1E5UB2vwFYqgqDtADTKONs51BBfSOHF/DXoNWV4MMbV86hYk3F7rVf6rpC7IL2fvGGJZ6+zlYX1h3d+bujmuSu5vHFMXhXRS3PfH7Gm0jxwB+kqMuXbwoPveZXKzlYWundn1nkNujygHIfHWQmQm5Z5HgtXTpW35wzYWJiDDFSBG/ZcUuxgNBt39EdNYZrkw4dSwmSNoVBFV0Ql3HAx8xwldk17D5LJC5ecCGlb3f/wzEcej81PACQpwH6ZqfG4QEphxA5t39sDZ4AC"; // Replace with your actual token
-    const accessToken = MSTOKEN;
-    const email = {
-        message: {
-            subject: 'Test email',
-            body: {
-                contentType: 'Text',
-                content: 'This is a test email sent using the Microsoft Graph API'
-            },
-            toRecipients: [{
-                emailAddress: {
-                    address: 'wikran@hotmail.com',
-                    name: "�ԡ�ҹ�� �Թ�û�Шѡ��"
-                }
-            }]
-        },
-        saveToSentItems: true
-    };
+	var MSTOKEN = "EwCoA8l6BAAUbDba3x2OMJElkF7gJ4z/VbCPEz0AAb1Iq5zj9N/z60ayQeG0kexRFswacO07OXN4JeH2h0o6W2N3P8y+3M3oKkdQOAW5J0tRaNMAxFSnru6FGs6lpH9ncLnycG6P4UKXWY8OTpDYl5BbVFpd2PfoGQwyu/L4HGESbO4q8caSvKlRtinreVEwHi0nVFHMen+ruSmrTvej7aaPqdgBqmsQwkbZABlJU//5/EkrOUghc2S8PFr+ozEVJb5mCkuynlUiLSOnBAScYCXdsh6+36PQGnbWjcra9uV9FNz79wu1RJihYnc7P6BTDMAwbJSlOYA06Rqn0VO/DF0uSLNxsfXd+3dR8Q4EyYBu5pJ8O03sR8sGp4iimU8QZgAAECsgT26ugqiVgYOQeAzNiOpwAhPi+xUD+olXcirlTk1abi9bC24GphLGm4fEgfGEtbTDfJ5Fvqzo1zeZYGxG4gBvTqTD9Px/vmIHLzY1qPFX86LI8Qgiw06RaxqvhHr21tN0MPfM1VXpyv8crEqec2reP/E0Z/+MLxgKo6dtyiJgXx3HjGSnb4C19pPBJUAzTZuaWVmPVpOTFzLg0Du9gZhvEcsEcQngXrgOO0fSAvi2pQTUqYcsHPiBgHfoR3gxLzdftmnzybv9yRh4exDYeQ63prQBQ2GQ7RcUnMgmJq7/0YOU2Sz4moMel8iu98lLK7Le1MIIg/rzfEbS6s3ihctBQHgGKpCbeV7fxElzBgBXbELhLDYy+1dUJTQnkzpTQOmwkgMfXlLbYOjTNeUtJrA+L/c5yFPKZU9mt6RSIZsqsmu1T2JPvUX5ezefPXR65NN5WLs4tJite621eSbQ3tDcZG4IERr3r/CkXuTYOApj/gUAEOUmOww7XPUaFfwdd6gS2Nj4528bmv93bklNUKtXNzWs9ONu6uufRWm0ExOrtRLR6dP9S6ItnMY+tN66iEuV6e7qchdPd1E5UB2vwFYqgqDtADTKONs51BBfSOHF/DXoNWV4MMbV86hYk3F7rVf6rpC7IL2fvGGJZ6+zlYX1h3d+bujmuSu5vHFMXhXRS3PfH7Gm0jxwB+kqMuXbwoPveZXKzlYWundn1nkNujygHIfHWQmQm5Z5HgtXTpW35wzYWJiDDFSBG/ZcUuxgNBt39EdNYZrkw4dSwmSNoVBFV0Ql3HAx8xwldk17D5LJC5ecCGlb3f/wzEcej81PACQpwH6ZqfG4QEphxA5t39sDZ4AC"; // Replace with your actual token
+	const accessToken = MSTOKEN;
+	const email = {
+		message: {
+			subject: 'Test email',
+			body: {
+				contentType: 'Text',
+				content: 'This is a test email sent using the Microsoft Graph API'
+			},
+			toRecipients: [{
+				emailAddress: {
+					address: 'wikran@hotmail.com',
+					name: "�ԡ�ҹ�� �Թ�û�Шѡ��"
+				}
+			}]
+		},
+		saveToSentItems: true
+	};
 
-    fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
-        method: 'POST',
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(email)
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log("Email sent successfully");
-        } else {
-            return response.json().then(error => {
-                console.error("Error sending email:", error);
-            });
-        }
-    })
-    .catch(error => {
-        console.error("Network error:", error);
-    });
+	fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${accessToken}`,
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(email)
+	})
+	.then(response => {
+		if (response.ok) {
+			console.log("Email sent successfully");
+		} else {
+			return response.json().then(error => {
+				console.error("Error sending email:", error);
+			});
+		}
+	})
+	.catch(error => {
+		console.error("Network error:", error);
+	});
 }
 
 function aMSGraphSendMail(){
-	
+
 	const accessToken = MSPTOKEN;
 	const email = {
 	  message: {
@@ -788,7 +788,7 @@ function aMSGraphSendMail(){
 			address: 'wikran@hotmail.com',
 			name: "�?�?�?�� �?�?�??��"
 		  }
-		}]	
+		}]
 	  },
 	  saveToSentItems: true,
 	  from: {
@@ -796,9 +796,9 @@ function aMSGraphSendMail(){
 		  address: 'wikran@hotmail.com',
 		  name: '�?�?��'
 		}
-	  }  
+	  }
 	};
-	
+
 	fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
 	  method: 'POST',
 	  headers: {
@@ -813,7 +813,7 @@ function aMSGraphSendMail(){
 	.catch(error => {
 	  console.error(error);
 	});
-	
+
 	}
 	*/
 // MSTOKEN = "EwCQA8l6BAAUAOyDv0l6PcCVu89kmzvqZmkWABkAAaD6tzE0+4P3jV4DYfPJABZq+XmISZOF9S3BASvPGz/wuCUnCHPtEhp01laZj1x5FEs08gZBSucjVpr5DTRW14V8nezhOHYnMx+dZM+7Za2M2PwPmrhQfHYaerLAbsNE3zeUBaethulnrZjp9SVa9t1EsqYhyr/axk+/K9gowxVJxqpv98dMGCsw7rGVAg0rDO7MJvGHDT64mgcj1FyjYI7zbDxZGFK9RnT9Q/0nfQ+fy0p6xJPu/6hR5JDC/xPNwEzsOrlOBac8tPEeggXIPzLCbQLm+CONtDUGwrl0AQroUluAHGuX1OGOx9Rz0q4yjbuchwMmcf6+jCbht8rNycMDZgAACKV/d8f4RhRUYAKj7lMnBhR7St9fQz2x9Km3DKNF47PLil7q39BojliLuwR1neW2Nx7okL/c7RzNdk2rpGg9VqlNRFZ09D3oKJ5hJBMzi/l0B/KkcnN1fftkay/X5vCWG3YYZaNNtPwXVf+WwpwP3V3nqKj3Ok2RkkoE4/0rlk42KII91VOyHSnGCOGSm20E5sFjyOFGYAT+BOBtOR6pzZHJaj9uyvApWV7rgHmEuUS59hO8+xtwXO6myK6p6YBFlB7flW03FPRvg/AWv+s3Nnu/N/UGymw83f72zeCUoDmGdGJeXM4OfYNfp0U+Dv7/0xKts9AQMzPFIIoAJWmuYsZ7HDpG9rdvJM7oS1mcQgQfBr+2tbToTN623kMFK4mO6jIa3pMWP5XL2NiQXE8NCdgTz0HzCTFbIzi2InsGoVCoRpGB6uU1SPxD5k2ck4c8HSX5vIo4cIjeE49K4olDDo1vySEI1NY08aevMfg8lB5KhVHMXpMfAU5Rtbvm+QWjnRTwG3vfkZpAdLIVT4eyqXb9v49bqKPER9ad1H+i4zQpa3lyMogovoJy+i7fCj9XybkePuI4zvupPOs6SLVoFjB+p9oZUqBuUmqXmEebRFSLN4Sx2LAuPreSFLBrcm6/vO3gmvAXwpTpj20G4bG2XQv61cs29PX89w67ACxzAbttW4PJtrIM1y8l8qWfjtyEP5T/DHVIOXGDRzQkSypBunmM5ePR+HYUfjtD3pRSAfNFlu5RYafxcicJFUL/731a440MqA3qyOVyycUy6uayxGbdk75LMG9iXm52oDbWQShkOioV5iWzxYDoWnwC"
@@ -878,37 +878,37 @@ function jqClearAllCookie() {
 
 
 function aMSGraphSendMail(){
-const MSPTOKEN =  "EwCQA8l6BAAUAOyDv0l6PcCVu89kmzvqZmkWABkAAaD6tzE0+4P3jV4DYfPJABZq+XmISZOF9S3BASvPGz/wuCUnCHPtEhp01laZj1x5FEs08gZBSucjVpr5DTRW14V8nezhOHYnMx+dZM+7Za2M2PwPmrhQfHYaerLAbsNE3zeUBaethulnrZjp9SVa9t1EsqYhyr/axk+/K9gowxVJxqpv98dMGCsw7rGVAg0rDO7MJvGHDT64mgcj1FyjYI7zbDxZGFK9RnT9Q/0nfQ+fy0p6xJPu/6hR5JDC/xPNwEzsOrlOBac8tPEeggXIPzLCbQLm+CONtDUGwrl0AQroUluAHGuX1OGOx9Rz0q4yjbuchwMmcf6+jCbht8rNycMDZgAACKV/d8f4RhRUYAKj7lMnBhR7St9fQz2x9Km3DKNF47PLil7q39BojliLuwR1neW2Nx7okL/c7RzNdk2rpGg9VqlNRFZ09D3oKJ5hJBMzi/l0B/KkcnN1fftkay/X5vCWG3YYZaNNtPwXVf+WwpwP3V3nqKj3Ok2RkkoE4/0rlk42KII91VOyHSnGCOGSm20E5sFjyOFGYAT+BOBtOR6pzZHJaj9uyvApWV7rgHmEuUS59hO8+xtwXO6myK6p6YBFlB7flW03FPRvg/AWv+s3Nnu/N/UGymw83f72zeCUoDmGdGJeXM4OfYNfp0U+Dv7/0xKts9AQMzPFIIoAJWmuYsZ7HDpG9rdvJM7oS1mcQgQfBr+2tbToTN623kMFK4mO6jIa3pMWP5XL2NiQXE8NCdgTz0HzCTFbIzi2InsGoVCoRpGB6uU1SPxD5k2ck4c8HSX5vIo4cIjeE49K4olDDo1vySEI1NY08aevMfg8lB5KhVHMXpMfAU5Rtbvm+QWjnRTwG3vfkZpAdLIVT4eyqXb9v49bqKPER9ad1H+i4zQpa3lyMogovoJy+i7fCj9XybkePuI4zvupPOs6SLVoFjB+p9oZUqBuUmqXmEebRFSLN4Sx2LAuPreSFLBrcm6/vO3gmvAXwpTpj20G4bG2XQv61cs29PX89w67ACxzAbttW4PJtrIM1y8l8qWfjtyEP5T/DHVIOXGDRzQkSypBunmM5ePR+HYUfjtD3pRSAfNFlu5RYafxcicJFUL/731a440MqA3qyOVyycUy6uayxGbdk75LMG9iXm52oDbWQShkOioV5iWzxYDoWnwC" 
+const MSPTOKEN =  "EwCQA8l6BAAUAOyDv0l6PcCVu89kmzvqZmkWABkAAaD6tzE0+4P3jV4DYfPJABZq+XmISZOF9S3BASvPGz/wuCUnCHPtEhp01laZj1x5FEs08gZBSucjVpr5DTRW14V8nezhOHYnMx+dZM+7Za2M2PwPmrhQfHYaerLAbsNE3zeUBaethulnrZjp9SVa9t1EsqYhyr/axk+/K9gowxVJxqpv98dMGCsw7rGVAg0rDO7MJvGHDT64mgcj1FyjYI7zbDxZGFK9RnT9Q/0nfQ+fy0p6xJPu/6hR5JDC/xPNwEzsOrlOBac8tPEeggXIPzLCbQLm+CONtDUGwrl0AQroUluAHGuX1OGOx9Rz0q4yjbuchwMmcf6+jCbht8rNycMDZgAACKV/d8f4RhRUYAKj7lMnBhR7St9fQz2x9Km3DKNF47PLil7q39BojliLuwR1neW2Nx7okL/c7RzNdk2rpGg9VqlNRFZ09D3oKJ5hJBMzi/l0B/KkcnN1fftkay/X5vCWG3YYZaNNtPwXVf+WwpwP3V3nqKj3Ok2RkkoE4/0rlk42KII91VOyHSnGCOGSm20E5sFjyOFGYAT+BOBtOR6pzZHJaj9uyvApWV7rgHmEuUS59hO8+xtwXO6myK6p6YBFlB7flW03FPRvg/AWv+s3Nnu/N/UGymw83f72zeCUoDmGdGJeXM4OfYNfp0U+Dv7/0xKts9AQMzPFIIoAJWmuYsZ7HDpG9rdvJM7oS1mcQgQfBr+2tbToTN623kMFK4mO6jIa3pMWP5XL2NiQXE8NCdgTz0HzCTFbIzi2InsGoVCoRpGB6uU1SPxD5k2ck4c8HSX5vIo4cIjeE49K4olDDo1vySEI1NY08aevMfg8lB5KhVHMXpMfAU5Rtbvm+QWjnRTwG3vfkZpAdLIVT4eyqXb9v49bqKPER9ad1H+i4zQpa3lyMogovoJy+i7fCj9XybkePuI4zvupPOs6SLVoFjB+p9oZUqBuUmqXmEebRFSLN4Sx2LAuPreSFLBrcm6/vO3gmvAXwpTpj20G4bG2XQv61cs29PX89w67ACxzAbttW4PJtrIM1y8l8qWfjtyEP5T/DHVIOXGDRzQkSypBunmM5ePR+HYUfjtD3pRSAfNFlu5RYafxcicJFUL/731a440MqA3qyOVyycUy6uayxGbdk75LMG9iXm52oDbWQShkOioV5iWzxYDoWnwC"
 
 const accessToken = MSPTOKEN;
 const email = {
   message: {
-    subject: 'Test email',
-    body: {
-      contentType: 'Text',
-      content: 'This is a test email sent using the Microsoft Graph API'
-    },
-    toRecipients: [{
-      emailAddress: {
-        address: 'wikran@lockton.com',
+	subject: 'Test email',
+	body: {
+	  contentType: 'Text',
+	  content: 'This is a test email sent using the Microsoft Graph API'
+	},
+	toRecipients: [{
+	  emailAddress: {
+		address: 'wikran@lockton.com',
 		name: "�?�?�?�� �?�?�??��"
-      }
-    }]	
+	  }
+	}]
   },
   saveToSentItems: true,
   from: {
-    emailAddress: {
-      address: 'wikran@hotmail.com',
+	emailAddress: {
+	  address: 'wikran@hotmail.com',
 	  name: '�?�?��'
-    }
-  }  
+	}
+  }
 };
 
 fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
   method: 'POST',
   headers: {
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
+	Authorization: `Bearer ${accessToken}`,
+	'Content-Type': 'application/json'
   },
   body: JSON.stringify(email)
 })
@@ -931,22 +931,22 @@ function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
 }*/
 /*
 const sendRequestNew = (Action, Data, TokenKey, domain, AccessKey) => {
-    const Url = `${domain}/DMP/${acPRJ}/${AccessKey}/${Action}/${TokenKey}/true/true`;
-    console.log('Goal...Request Web API:', Data);
+	const Url = `${domain}/DMP/${acPRJ}/${AccessKey}/${Action}/${TokenKey}/true/true`;
+	console.log('Goal...Request Web API:', Data);
 
-    const settings = {
-        url: Url,
-        method: "POST",
-        timeout: 0,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        data: Data
-    };
+	const settings = {
+		url: Url,
+		method: "POST",
+		timeout: 0,
+		headers: {
+			"Content-Type": "application/json"
+		},
+		data: Data
+	};
 
-    $.ajax(settings).done(response => {
-        //console.log(response);
-    });
+	$.ajax(settings).done(response => {
+		//console.log(response);
+	});
 };
 */
 /*

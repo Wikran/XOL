@@ -375,28 +375,28 @@
         var aaHostName = window.location.href
         var aaCheckON = aaHostName.includes("localhost")
         //
-        const aaPurposeTable = [
-            { "Purpose": "Conference", "TPurpose": "��Ъ��" },
-            { "Purpose": "Training", "TPurpose": "ͺ��" },
-            { "Purpose": "Traveling", "TPurpose": "����Թ�ҧ" },
-        ]
-        const aaPurposeTableaa = [
-            { "Purpose": "Conference", "TPurpose": "��Ъ��" },
-            { "Purpose": "Training", "TPurpose": "ͺ��" },
-            { "Purpose": "Traveling", "TPurpose": "����Թ�ҧ" },
-            { "Purpose": "Client visit", "TPurpose": "�������١���" },
-            { "Purpose": "Product launch", "TPurpose": "�Դ��Ǽ�Ե�ѳ��" },
-            { "Purpose": "Site visit", "TPurpose": "�֡�Ҵ٧ҹ" },
-            { "Purpose": "Negotiation", "TPurpose": "�èҵ���ͧ" },
-            { "Purpose": "Troubleshooting", "TPurpose": "��䢻ѭ��" },
-            { "Purpose": "Exhibition", "TPurpose": "��������ҹ�ʴ��Թ���" },
-            { "Purpose": "Market research", "TPurpose": "�Ԩ�µ�Ҵ" },
-            { "Purpose": "Others", "TPurpose": "����" }
-        ]
-        const aaYesNoList = [
-            { "Code": "YES" },
-            { "Code": "NO" },
-        ]
+        // const aaPurposeTable = [
+        //     { "Purpose": "Conference", "TPurpose": "��Ъ��" },
+        //     { "Purpose": "Training", "TPurpose": "ͺ��" },
+        //     { "Purpose": "Traveling", "TPurpose": "����Թ�ҧ" },
+        // ]
+        // const aaPurposeTableaa = [
+        //     { "Purpose": "Conference", "TPurpose": "��Ъ��" },
+        //     { "Purpose": "Training", "TPurpose": "ͺ��" },
+        //     { "Purpose": "Traveling", "TPurpose": "����Թ�ҧ" },
+        //     { "Purpose": "Client visit", "TPurpose": "�������١���" },
+        //     { "Purpose": "Product launch", "TPurpose": "�Դ��Ǽ�Ե�ѳ��" },
+        //     { "Purpose": "Site visit", "TPurpose": "�֡�Ҵ٧ҹ" },
+        //     { "Purpose": "Negotiation", "TPurpose": "�èҵ���ͧ" },
+        //     { "Purpose": "Troubleshooting", "TPurpose": "��䢻ѭ��" },
+        //     { "Purpose": "Exhibition", "TPurpose": "��������ҹ�ʴ��Թ���" },
+        //     { "Purpose": "Market research", "TPurpose": "�Ԩ�µ�Ҵ" },
+        //     { "Purpose": "Others", "TPurpose": "����" }
+        // ]
+        // const aaYesNoList = [
+        //     { "Code": "YES" },
+        //     { "Code": "NO" },
+        // ]
         //
         var aaXToX = localStorage["aaXXoX"];
         var aaXNoX = localStorage["aaXXuX"];
@@ -540,7 +540,6 @@
                 callback(aNowDte);
             }
         }
-
 
         const aaNowText = (aNowDatev) => { // use
             //let aNowDatev = new Date()
@@ -1183,7 +1182,7 @@
                                                                         return (e.row.data.ID === 1 && e.row.data.Confirmed === true && e.row.data.ERStatus.includes("(finished)")) //false; && e.row.data.Confirmed === true aGenPDF4HTML
                                                                     },
                                                                     onClick: async function (e) {
-                                                                        var aUriV = `https://cbsdev2.locktonwattana.com/temp/uploads/${e.row.data.HeadRefNo}.pdf`
+                                                                        var aUriV = `${aaPFDMI}/temp/uploads/${e.row.data.HeadRefNo}.pdf`
                                                                         const cacheBusterUrl = aUriV + "?t=" + new Date().getTime();
                                                                         const fileAvailable = await isFileAvailable(aUriV);
                                                                         //alert(fileAvailable ? "Found" : "Not found")
@@ -2098,7 +2097,7 @@
                                                             hint: "View Attach File",
                                                             visible: true,
                                                             onClick: async function (e) {
-                                                                var aUriV = `https://cbsdev2.locktonwattana.com/temp/uploads/${iData.HeadRefNo}.pdf`
+                                                                var aUriV = `${aaPFDMI}/temp/uploads/${iData.HeadRefNo}.pdf`
                                                                 const cacheBusterUrl = aUriV + "?t=" + new Date().getTime();
                                                                 const fileAvailable = await isFileAvailable(aUriV);
                                                                 //alert(fileAvailable ? "Found" : "Not found")
@@ -2604,7 +2603,7 @@
                                                                                     label: { text: "Purpose of Trip." }, //,cssClass: "bold-label" }, 
                                                                                     editorType: "dxSelectBox", //dxSelectBox dxLookup
                                                                                     editorOptions: {
-                                                                                        dataSource: aaPurposeTable,
+                                                                                        dataSource: aObjects.aaPurposeTable, //aaPurposeTable
                                                                                         searchExpr: "Purpose",
                                                                                         valueExpr: "Purpose",
                                                                                         displayExpr: "Purpose",
@@ -3415,7 +3414,7 @@
                                                                             width: 100,
                                                                             editorOptions: {
                                                                                 width: 100,
-                                                                                dataSource: aaYesNoList,
+                                                                                dataSource: aObjects.aaYesNoList, //aaYesNoList
                                                                                 searchExpr: "Code",
                                                                                 valueExpr: "Code",
                                                                                 displayExpr: "Code",
@@ -3437,7 +3436,7 @@
                                                                             width: 100,
                                                                             editorOptions: {
                                                                                 width: 100,
-                                                                                dataSource: aaYesNoList,
+                                                                                dataSource: aObjects.aaYesNoList, //aaYesNoList
                                                                                 searchExpr: "Code",
                                                                                 valueExpr: "Code",
                                                                                 displayExpr: "Code",

@@ -87,7 +87,7 @@ var jqxhr = $.post(afsettings, function (e) { })
                     "Content-Type": "application/json"
                 },
                 "data": JSON.stringify({
-                    "@": aqrFull //" Status!='Resigned' "
+                    "@": aqrFull //"ï¿½Status!='Resigned'ï¿½"
                 }),
             };
 
@@ -303,6 +303,7 @@ var jqxhr = $.post(afsettings, function (e) { })
                         dataField: "IDNO",
                         caption: "IDNO",
                         width: 180,
+                        visible: false,
                     },                            
 
                 ],
