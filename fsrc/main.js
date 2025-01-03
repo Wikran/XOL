@@ -17,9 +17,10 @@ var decryptedData = CryptoJS.AES.decrypt(storedJsonString, "sBxA017").toString(C
 // Parse the JSON string back into a JavaScript array
 var ausrProperty = JSON.parse(decryptedData);
 // Access the values in the array
-console.log(ausrProperty)
+//console.log(ausrProperty)
 //var aDeptNamea = ausrProperty[0].asDEPT; // department
 //var aRightsa = atob(ausrProperty[0].aaXrXg).includes("HOD");; // rights admin,nusert,nusero,nuserf,HODApp .include("HOD")
+
 
 window.addEventListener('load', function (e) {
     localStorage.removeItem("aDXTheme");
@@ -60,6 +61,53 @@ $(document).ready(function () {
     //$("#hideButton").click(function() { hideHeader(); }); 
     //$("#showButton").click(function() { showHeader(); });
 });
+
+// Ensure the theme is applied immediately after the page loads
+// window.addEventListener('load', function () {
+//     // Set and store the theme
+//     let aDXTheme = ausrProperty[0].aaDXtm || 'generic.light';
+//     localStorage["aDXTheme"] = aDXTheme;
+
+//     // Apply the theme
+//     DevExpress.ui.themes.current(aDXTheme);
+
+//     // Wait for the theme to be fully applied
+//     DevExpress.ui.themes.ready(function () {
+//         console.log(`Theme '${aDXTheme}' applied successfully.`);
+//     });
+// });
+
+// $(document).ready(function () {
+//     // Retrieve the stored theme
+//     let aDXTheme = localStorage["aDXTheme"];
+//     if (!aDXTheme || aDXTheme === "") {
+//         aDXTheme = 'generic.light';
+//         localStorage["aDXTheme"] = aDXTheme;
+//     }
+
+//     // Apply the theme
+//     DevExpress.ui.themes.current(aDXTheme);
+
+//     // Wait for the theme to fully load before updating UI components
+//     DevExpress.ui.themes.ready(function () {
+//         console.log(`Theme '${aDXTheme}' applied successfully.`);
+
+//         // Update UI elements
+//         $(".dx-icon").removeClass("dx-theme-accent-as-text-color").addClass("dx-theme-accent-as-text-color");
+
+//         let aUserName = ausrProperty[0].aaXXuX;
+//         document.getElementById("aUsrName").innerHTML = aUserName;
+
+//         let userImage = ausrProperty[0].aaXpXt || "/images/userss.png";
+//         document.getElementById("avatar").src = userImage;
+
+//         // Optional: Hide the logo container
+//         document.querySelector(".logo-container").style.display = "none";
+//     });
+// });
+
+
+
 //$(".dx-icon").addClass("dx-theme-accent-as-text-color");
 //const aGoTo = function (newW) {
 //function hideHeader() { $("#header").hide(); } 
@@ -153,10 +201,10 @@ async function a4LoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected
 
 async function axLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
     let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
-    console.log("Inside axLoadData condition = ", condition);
+    //console.log("Inside axLoadData condition = ", condition);
     let axqr2S = condition //`Where ${aKeyfield} LIKE '%${aKeya}%'`;
     let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
-    console.log("Inside axLoadData condition = ", "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S);
+    //console.log("Inside axLoadData condition = ", "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S);
     let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -176,7 +224,7 @@ async function axLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected
         abc = 0;
     } else { // not pass
         console.log("not found ", filteredArray.length)
-        console.log("Filter Array ", filteredArray)
+        //console.log("Filter Array ", filteredArray)
         abc = 1;
     }
     return abc;
@@ -289,7 +337,7 @@ $(() => {
                             return trimmedItem; // Keep non-numeric text unchanged
                         }
                     });
-                    console.log("aArrays.", aMatch[1], aArrays[aMatch[1]]);
+                    //console.log("aArrays.", aMatch[1], aArrays[aMatch[1]]);
                 } else if (result[ii].TaskName.includes("{T2O}")) {
                     let lines = result[ii].TaskProgram
                     .replace(/`/g, "'") // Replace backticks with single quotes
@@ -312,7 +360,7 @@ $(() => {
                         }
                         return obj;
                     });
-                    console.log(aObjects[aMatch[1]])
+                    //console.log(aObjects[aMatch[1]])
 
                 } else if (result[ii].TaskName.includes("{OBJ}")) {
                     //console.log(result[ii].TaskProgram.split('\n'))
@@ -340,7 +388,7 @@ $(() => {
                     } else {
                         aVARs[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
                     }
-                    console.log("aVARs ", aVARs[aMatch[1]])
+                    //console.log("aVARs ", aVARs[aMatch[1]])
                 }
             }
 

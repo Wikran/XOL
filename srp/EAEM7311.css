@@ -1,0 +1,17 @@
+.title-bg {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+.dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: #acd4fce5 !important;
+}
+
+#gridContainer .dx-scrollable-scroll {
+    height: 180px !important;
+}
+
+#popupContainerAdd .dx-popup-title {
+    color: rgb(1, 6, 32);
+    background-color: rgb(173, 250, 224)
+}

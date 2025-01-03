@@ -535,36 +535,107 @@
         //aNowDte = showPreviousYearPopup()
         //console.log("second: ", aNowDte) 
         showPreviousYearPopup(function (aNowDte) {
-            console.log("Selected date: " + aNowDte);
+            //console.log("Selected date: " + aNowDte);
             var aDatabasea = "ExtraOnLine.dbo.TaskControl";
             var aKeyField = "TaskGroup";
-            var aKeyIDa = aaPXIXD;
-            //var aKeyIDa = "aMedicalAlert01" //  T2408177541 "T2408152724" EROCode02 ERODesc02
+            var aKeyIDa = aaPXIXD; //"main"; //aaPXIXD;
             var axFieldSelected = "IDNO,TaskName,TaskProgram,TaskGroup";
-            var arMessages = {};
-            var condition = "TaskProgram";
+            var aVARs = {};
+            var aArrays = {};
+            var aObjects = {};
+            var aaEmailArr;
+            var aaMessage2Show;
+            var aaMess2Show;
+            var aaMess3Show;
 
             LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
-                .then(result => {                  
-                    for (let ii = 0; ii < result.length; ii++) { 
+                .then(result => {
+                    for (let ii = 0; ii < result.length; ii++) {
                         //console.log(result[ii]); 
-                        if (result[ii].TaskName.includes("[ARRAY]")){
-                            aaEmailArr = result[ii][condition].split(',');
-                            //console.log(aaEmailArr)
+                        let aMatch = result[ii].TaskName.match(/\[(.*?)\]/);
+                        if (aMatch) {
+                            //
                         } else {
-                            let aMatch = result[ii].TaskName.match(/\[(.*?)\]/);
-                            //console.log("aMatch ", aMatch[1])
-                            arMessages[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
-                            //console.log(arMessages.ALERT01)            
-                            arMessages[`message${ii}`] = result[ii].TaskProgram.replace(/`/g, "'");
-                        }                        
+                            // Skip this iteration and move to the next one
+                            continue;
+                        }
+                        //console.log("aMatch ", aMatch[1])
+                        if (result[ii].TaskName.includes("{ARRAY}")) {
+                            aArrays[aMatch[1]] = result[ii].TaskProgram
+                                .replace(/`/g, "'") // Replace backticks with single quotes
+                                .split('\n')
+                                .map(item => {
+                                    let trimmedItem = item.trim(); // Remove extra spaces
+                                    if (trimmedItem === "") {
+                                        return ""; // Keep blanks as blank
+                                    } else if (!isNaN(trimmedItem)) {
+                                        return +trimmedItem; // Convert numeric strings to numbers
+                                    } else {
+                                        return trimmedItem; // Keep non-numeric text unchanged
+                                    }
+                                });
+                            console.log("aArrays.", aMatch[1], aArrays[aMatch[1]]);
+                        } else if (result[ii].TaskName.includes("{T2O}")) {
+                            let lines = result[ii].TaskProgram
+                                .replace(/`/g, "'") // Replace backticks with single quotes
+                                .split('\n')
+                            aObjects[aMatch[1]] = lines.map(line => { //aObjects[aMatch[1]]
+                                // Remove the trailing comma and extra spaces
+                                line = line.trim().replace(/,$/, "");
+                                // Add quotes around keys and values to make it JSON-compliant
+                                line = line.replace(/(\w+):/g, '"$1":').replace(/:\s*([\w]+)/g, ': "$1"');
+                                // Parse the cleaned line into an object
+                                return JSON.parse(line);
+                            });
+                            // Iterate through the array and modify the objects
+                            aObjects[aMatch[1]] = aObjects[aMatch[1]].map(obj => {
+                                for (let key in obj) {
+                                    // Check if the key includes 'amt' and the value is a string
+                                    if (key.includes('amt') && typeof obj[key] === 'string') {
+                                        obj[key] = +obj[key]; // Convert the value to a number
+                                    }
+                                }
+                                return obj;
+                            });
+                            console.log(aObjects[aMatch[1]])
+
+                        } else if (result[ii].TaskName.includes("{OBJ}")) {
+                            //console.log(result[ii].TaskProgram.split('\n'))
+                            aObjects[aMatch[1]] = result[ii].TaskProgram
+                                .replace(/`/g, "'") // Replace backticks with single quotes
+                                .split('\n')
+                                .reduce((obj, item) => {
+                                    let trimmedItem = item.trim(); // Remove extra spaces
+                                    if (trimmedItem === "") {
+                                        return obj; // Skip blank lines
+                                    }
+
+                                    // Split the line by colon (:) to get key and value
+                                    let [key, value] = trimmedItem.split(':').map(part => part.trim());
+
+                                    if (key && value !== undefined) {
+                                        // Check if value is numeric and convert it, otherwise keep as string
+                                        obj[key] = isNaN(value) ? value : +value;
+                                    }
+
+                                    return obj; // Return the accumulated object
+                                }, {});
+                        } else {
+                            if (result[ii].TaskName.includes("{num}")) {
+                                aVARs[aMatch[1]] = +(result[ii].TaskProgram.replace(/`/g, "'"));
+                            } else {
+                                aVARs[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
+                            }
+                            //console.log("aVARs ", aVARs[aMatch[1]])
+                        }
                     }
-                    const aaMessage2Show = result[0][condition];  //aMedicalAlert01
-                    const aaMess2Show = aaMessage2Show.replace(/`/g, "'");
+                    //const aaMessage2Show = result[0][condition];  //aMedicalAlert01
+                    //const aaMess2Show = aaMessage2Show.replace(/`/g, "'");
                     //const aaEmailArr = result[1][condition].split(',');
-                    console.log("ALERT01 ",arMessages.ALERT01)
-                    console.log("ACONFIRM ", arMessages.ACONFIRM)
-                    
+                    //console.log("ALERT01 ", aVARs.ALERT01)
+                    //console.log("ALERT02 ", aVARs.ALERT02)
+                    //console.log("ACONFIRM ", aVARs.ACONFIRM)
+
                     var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
                     var aaPFDMZz = "https://cbsdev3.locktonwattana.com"; //"https://cbsdev3.locktonwattana.com"; // API for DMZ only
 
@@ -617,9 +688,9 @@
                                         //alert(aProbation)
                                         if (aProbation) {
                                             DevExpress.ui.dialog.alert({
-                                                //showTitle: false,
-                                                title: "ACCESS DENIED!!",
-                                                messageHtml: "<div>You are not entitled to reimburse medical expense since you are in probation period<br>��ҹ�������ö�ԡ����ѡ�Ҿ�Һ���� ���ͧ�ҡ��ҹ������������ҷ��ͧ�ҹ</div>"
+                                                //showTitle: false, aArrays.APROBATION[1]
+                                                title: aArrays.APROBATION[1], //"ACCESS DENIED!!",
+                                                messageHtml: aArrays.APROBATION[0], //"<div>You are not entitled to reimburse medical expense since you are in probation period<br>��ҹ�������ö�ԡ����ѡ�Ҿ�Һ���� ���ͧ�ҡ��ҹ������������ҷ��ͧ�ҹ</div>"
                                             });
                                             System.exit(0);
                                         }
@@ -637,9 +708,9 @@
                                                 var aaLimited = aData;
                                                 if (jQuery.type(aaLimited[0]) === "undefined") {
                                                     DevExpress.ui.dialog.alert({
-                                                        //showTitle: false,
-                                                        title: "ACCESS DENIED!!",
-                                                        messageHtml: "<div>Un-completed system setup, please contact Administrator <br> �к��Դ����������ó� ��سҵԴ��ͼ������к� </div>"
+                                                        //showTitle: false, aArrays.ADENIED[1]
+                                                        title: aArrays.ADENIED[1], //"ACCESS DENIED!!",
+                                                        messageHtml: aArrays.ADENIED[0], //"<div>Un-completed system setup, please contact Administrator <br> �к��Դ����������ó� ��سҵԴ��ͼ������к� </div>"
                                                     });
                                                     System.exit(0);
                                                 }
@@ -671,8 +742,8 @@
                                                         if (jQuery.type(aaHRApprover[0]) === "undefined") {
                                                             DevExpress.ui.dialog.alert({
                                                                 //showTitle: false,
-                                                                title: "ACCESS DENIED!!",
-                                                                messageHtml: "<div>Un-completed system setup, please contact Administrator <br> �к��Դ����������ó� ��سҵԴ��ͼ������к� </div>"
+                                                                title: aArrays.ADENIED[1], //"ACCESS DENIED!!",
+                                                                messageHtml: aArrays.ADENIED[0], // "<div>Un-completed system setup, please contact Administrator <br> �к��Դ����������ó� ��سҵԴ��ͼ������к� </div>"
                                                             });
                                                             System.exit(0);
                                                         }
@@ -766,7 +837,7 @@
                                                                     //
                                                                     .then(gData => {
                                                                         var arResult2 = gData;
-                                                                        console.log("Result ARR = ", arResult2[0])
+                                                                        //console.log("Result ARR = ", arResult2[0])
                                                                         //alert(jQuery.type(arResult2[0]))
                                                                         if (jQuery.type(arResult2[0]) === "undefined") {
                                                                             var aaMMAmt2 = 0//Total Amount 
@@ -1784,7 +1855,19 @@
                                                                                                     }
                                                                                                 }
                                                                                             },
-
+                                                                                            {
+                                                                                                location: "after",
+                                                                                                widget: "dxButton",
+                                                                                                options: {
+                                                                                                    icon: "fas fa-info",
+                                                                                                    text: "HELP",
+                                                                                                    type: "default",
+                                                                                                    stylingMode: "contained", // "outlined" contained
+                                                                                                    onClick: function () {
+                                                                                                        aPopupHelp("HELP", aVARs.HELP01)
+                                                                                                    }
+                                                                                                }
+                                                                                            },
                                                                                             //aPopUpAddForm
                                                                                             { // Add Popup
                                                                                                 location: "after",
@@ -2644,8 +2727,8 @@
                                                                                                                 }
                                                                                                             } else {
                                                                                                                 // Overlimited
-                                                                                                                let getvalues = {aTRem: aTRem }
-                                                                                                                let aaAMessage = arMessages.ALERT02.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
+                                                                                                                let getvalues = { aTRem: aTRem }
+                                                                                                                let aaAMessage = aVARs.ALERT02.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
                                                                                                                 //let aaAMessage2 = "<div  style='color:Tomato; font-size: 16px;'><center><b><i class='fas fa-exclamation-triangle'></i> OVER LIMITATION - �Թǧ�Թ</b></center><hr></div> �ʹ�Թ������� (The Remaining amount) = " + aTRem + "</br>�ѧ�������ö�ԡ����§ (The Reimbursement Amount will be) " + aTRem + " ��ҹ��</div>";
                                                                                                                 DevExpress.ui.dialog.alert({
                                                                                                                     showTitle: false,
@@ -2990,88 +3073,88 @@
                                                                                                 //var condition = "TaskProgram";
                                                                                                 //aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
                                                                                                 //    .then(abc => {
-                                                                                                        //console.log(abc[0][condition])
-                                                                                                        //console.log(abc[1][condition])
-                                                                                                        //let aMessage2Show = abc[0][condition];  //aMedicalAlert01
-                                                                                                        //let aMess2Show = aMessage2Show.replace(/`/g, "'");
-                                                                                                        //let aEmailArr = abc[1][condition].split(',');
-                                                                                                        //aEmailArr = aEmailArr.join('');
-                                                                                                        //console.log(aaEmailArr) aaMess2Show arMessages.ALERT01
-                                                                                                        let result = DevExpress.ui.dialog.confirm(arMessages.ALERT01, "CONFIRM TO HR"); // "<br>�� 'YES' ���ͺѹ�֡" +
-                                                                                                        result.done(function (dresult) {
-                                                                                                            if (dresult) {
+                                                                                                //console.log(abc[0][condition])
+                                                                                                //console.log(abc[1][condition])
+                                                                                                //let aMessage2Show = abc[0][condition];  //aMedicalAlert01
+                                                                                                //let aMess2Show = aMessage2Show.replace(/`/g, "'");
+                                                                                                //let aEmailArr = abc[1][condition].split(',');
+                                                                                                //aEmailArr = aEmailArr.join('');
+                                                                                                //console.log(aaEmailArr) aaMess2Show aVARs.ALERT01
+                                                                                                let result = DevExpress.ui.dialog.confirm(aArrays.ALERT01[0], aArrays.ALERT01[1]); // "<br>�� 'YES' ���ͺѹ�֡" +
+                                                                                                result.done(function (dresult) {
+                                                                                                    if (dresult) {
 
-                                                                                                                //if (aContinueChk !== true) {
-                                                                                                                let aFREF = aaiHeadRef + "-001"
-                                                                                                                console.log("--- Inside ---")
-                                                                                                                //console.log(iData)
-                                                                                                                //console.log(iData.HeadRefNo)
-                                                                                                                //console.log(iData.EROCheck06)
-                                                                                                                //console.log(aRecNo)
-                                                                                                                //let aYeara = iData.HRApprovedDate.getFullYear()
-                                                                                                                //console.log(aYeara)
-                                                                                                                //let aCheck2Time = (iData.HRApprovedDate.getFullYear() === 1900 && iData.HRApprovedDate.getHours() === 11 && iData.HRApprovedDate.getMinutes() === 11);
+                                                                                                        //if (aContinueChk !== true) {
+                                                                                                        let aFREF = aaiHeadRef + "-001"
+                                                                                                        console.log("--- Inside ---")
+                                                                                                        //console.log(iData)
+                                                                                                        //console.log(iData.HeadRefNo)
+                                                                                                        //console.log(iData.EROCheck06)
+                                                                                                        //console.log(aRecNo)
+                                                                                                        //let aYeara = iData.HRApprovedDate.getFullYear()
+                                                                                                        //console.log(aYeara)
+                                                                                                        //let aCheck2Time = (iData.HRApprovedDate.getFullYear() === 1900 && iData.HRApprovedDate.getHours() === 11 && iData.HRApprovedDate.getMinutes() === 11);
 
-                                                                                                                //let aCheck2Time = false;
-                                                                                                                //console.log(aaiHeadRef)
-                                                                                                                //console.log(aFREF)
-                                                                                                                //console.log(aCheck2Time)
-                                                                                                                let aERStatus = "Confirmed wait for HR" //"Register"
-                                                                                                                let aTrueORFalse = '1'
-                                                                                                                let aTrueORFalseB = true
-                                                                                                                let aBlankDate = "1900-01-01T00:00:00" //new Date('1900-01-01T00:00') 
-                                                                                                                let aNowDateT = aaNowText(aNowDte)
-                                                                                                                //alert(aNowDateT)
-                                                                                                                //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
-                                                                                                                //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
-                                                                                                                var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus, ReqDate: aNowDte };
-                                                                                                                var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
-                                                                                                                //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+                                                                                                        //let aCheck2Time = false;
+                                                                                                        //console.log(aaiHeadRef)
+                                                                                                        //console.log(aFREF)
+                                                                                                        //console.log(aCheck2Time)
+                                                                                                        let aERStatus = "Confirmed wait for HR" //"Register"
+                                                                                                        let aTrueORFalse = '1'
+                                                                                                        let aTrueORFalseB = true
+                                                                                                        let aBlankDate = "1900-01-01T00:00:00" //new Date('1900-01-01T00:00') 
+                                                                                                        let aNowDateT = aaNowText(aNowDte)
+                                                                                                        //alert(aNowDateT)
+                                                                                                        //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
+                                                                                                        //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
+                                                                                                        var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus, ReqDate: aNowDte };
+                                                                                                        var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+                                                                                                        //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
 
-                                                                                                                //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
-                                                                                                                let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                                                                                aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
-                                                                                                                aSQLAction(aaPFDMI, aSQLCommand)
-                                                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                                        //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
+                                                                                                        let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                                        aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                                                                                                        aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                                        aSQLAction(aaPFDMI, aSQLCommand)
 
-                                                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();  // Refresh GridData
-                                                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                                                                //console.log("aRecNo ", aRecNo)
-                                                                                                                //console.log("iData.EROCheck06", iData.EROCheck06)
-                                                                                                                if (aRecNo !== 1) {
-                                                                                                                    let aCheck2Time = iData.EROCheck06;
-                                                                                                                    if (aCheck2Time) {
-                                                                                                                        //send Email
-                                                                                                                        var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " EXPENSES REIMBURSEMENT";
-                                                                                                                        let aApproverName = aaHRAppName + ", [HR]"     //aaHRAppName //"Wikran" + " [HOD]"         // HOD Approver Name
-                                                                                                                        let aApproverEmail = $.trim(aaHRAppEmail)      // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
-                                                                                                                        let aRequesterName = asFullName //e.data.PayToName //"Wikran Intaraprajaks"
-                                                                                                                        let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
-                                                                                                                        //let aSubject = aaOnInitExpGroupDesc + " Expewnses Reimbursement Requested"
-                                                                                                                        var aSubject = aaMailTitle + " - " + "Request For Approve"
-                                                                                                                        let aRefNoa = aaiHeadRef //iData.HeadRefNo
-                                                                                                                        let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
+                                                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                                        //console.log("aRecNo ", aRecNo)
+                                                                                                        //console.log("iData.EROCheck06", iData.EROCheck06)
+                                                                                                        if (aRecNo !== 1) {
+                                                                                                            let aCheck2Time = iData.EROCheck06;
+                                                                                                            if (aCheck2Time) {
+                                                                                                                //send Email
+                                                                                                                var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " EXPENSES REIMBURSEMENT";
+                                                                                                                let aApproverName = aaHRAppName + ", [HR]"     //aaHRAppName //"Wikran" + " [HOD]"         // HOD Approver Name
+                                                                                                                let aApproverEmail = $.trim(aaHRAppEmail)      // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                                                                                                                let aRequesterName = asFullName //e.data.PayToName //"Wikran Intaraprajaks"
+                                                                                                                let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                                                                                                                //let aSubject = aaOnInitExpGroupDesc + " Expewnses Reimbursement Requested"
+                                                                                                                var aSubject = aaMailTitle + " - " + "Request For Approve"
+                                                                                                                let aRefNoa = aaiHeadRef //iData.HeadRefNo
+                                                                                                                let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
 
-                                                                                                                        let getvalues = {aApproverName: aApproverName,aaOnInitExpGroupDesc: aaOnInitExpGroupDesc,aRefNoa: aRefNoa, aAddress2Do: aAddress2Do,aRequesterName: aRequesterName }
-                                                                                                                        let aMessage01 = arMessages.ACONFIRM.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
-                                                                                                                        //let aMessage01 = aaEmailArr[0] + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��سҵ�Ǩ�ͺ ���͹��ѵ���¡�� " + aaOnInitExpGroupDesc + " Expenses Reimbursement ����Ѻ REFNO = [" + aRefNoa + "] ��������������� <br> ����ö�������������� " + aAddress2Do + " (��Ǣ�� HR Approve) <br><br>���ʴ������Ѻ���<br><b>" + aRequesterName + "</b></div>"
-                                                                                                                        //console.log("aMessage01 ",aMessage01)
-                                                                                                                        //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
-                                                                                                                        var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "<br><small>Request For Approve</small>" + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
-                                                                                                                        aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
-                                                                                                                    }
-                                                                                                                }
-                                                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();  // Refresh GridData
-                                                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                                                                //aMessageAlert("Already Confirmed To HR", "DarkGreen")
-                                                                                                                aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage,"DarkGreen")
-                                                                                                                popup.hide();
+                                                                                                                let getvalues = { aApproverName: aApproverName, aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aRefNoa: aRefNoa, aAddress2Do: aAddress2Do, aRequesterName: aRequesterName }
+                                                                                                                let aMessage01 = aVARs.ACONFIRM.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
+                                                                                                                //let aMessage01 = aaEmailArr[0] + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��سҵ�Ǩ�ͺ ���͹��ѵ���¡�� " + aaOnInitExpGroupDesc + " Expenses Reimbursement ����Ѻ REFNO = [" + aRefNoa + "] ��������������� <br> ����ö�������������� " + aAddress2Do + " (��Ǣ�� HR Approve) <br><br>���ʴ������Ѻ���<br><b>" + aRequesterName + "</b></div>"
+                                                                                                                //console.log("aMessage01 ",aMessage01)
+                                                                                                                //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
+                                                                                                                var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "<br><small>Request For Approve</small>" + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                                                aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+                                                                                                            }
+                                                                                                        }
+                                                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                                        //aMessageAlert("Already Confirmed To HR", "DarkGreen")
+                                                                                                        aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
+                                                                                                        popup.hide();
 
-                                                                                                            } // if
-                                                                                                        }); // result
+                                                                                                    } // if
+                                                                                                }); // result
                                                                                                 //    });
 
                                                                                             } // onclick
@@ -4430,7 +4513,7 @@
                                                                                         },
                                                                                     });
                                                                                 }
-                                                                                function aPopupHelp() {
+                                                                               /*  function aPopupHelp() {
                                                                                     const popup = $("#popupHelp").dxPopup({
                                                                                         title: " HELP - Data Input",
                                                                                         height: 400,
@@ -4451,7 +4534,7 @@
                                                                                     //'./images/locktonlogo70mmblack.png'
                                                                                     //'https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create'
 
-                                                                                }
+                                                                                } */
                                                                                 //=====[Function]
                                                                             }) //then fetch (HOD or HR Email get inside better ?)
                                                                     }) //then fetch (Limit)
@@ -4465,9 +4548,9 @@
                 }); // end FUN
             // last 
         })
-            // .catch(error => {
-            //     console.error("Error:", error);
-            // });
+        // .catch(error => {
+        //     console.error("Error:", error);
+        // });
     </script>
 </body>
 

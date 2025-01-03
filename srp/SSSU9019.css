@@ -1,0 +1,44 @@
+.title-bg {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+.second-group {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+.dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: #b3ceabea !important;
+}
+
+.dx-datagrid-borders>.dx-datagrid-total-footer {
+    border-top: 2px solid #b3ceabea;
+    border-bottom: 4px solid #b3ceabea;
+    /*border-left: 2px solid #b3ceabea
+            border-right: 2px solid #b3ceabea*/
+}
+
+.dx-datagrid-borders>.dx-datagrid-headers {
+    border-top: 4px solid #b3ceabea;
+    /*border-left: 2px solid #b3ceabea
+            border-right: 2px solid #b3ceabea */
+    border-bottom: 2px solid #b3ceabea;
+}
+
+.dx-datagrid-table {
+    border-left: 1px solid #b3ceabea;
+    border-right: 1px solid #b3ceabea;
+}
+
+.dx-datagrid-total-footer {
+    background-color: #e3f5de !important;
+}
+
+.dx-popup-title {
+    color: rgb(1, 6, 32);
+    background-color: rgb(252, 238, 250)
+}
+
+#acolorblue {
+    color: blue;
+}

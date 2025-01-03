@@ -1,0 +1,67 @@
+        :root {
+            --dgBG: #ace3fce5;
+            --dgColor: black;
+        }
+
+        /*-----------------------------*/
+        .dx-datagrid-headers {
+            color: var(--dgColor) !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-total-footer {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-headers {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        .dx-datagrid-table {
+            border-left: 4px solid var(--dgBG);
+            border-right: 4px solid var(--dgBG);
+        }
+
+        /*.dx-datagrid-total-footer {
+            background-color: var(--dgBG) !important;
+        }*/
+
+        .dx-datagrid-filter-panel {
+            background-color: var(--dgBG) !important;
+        }
+
+        /*-----------------------------*/
+        .dx-popup-wrapper>.dx-overlay-content {
+            border-radius: 9px
+        }
+
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        #gridContainer .dx-scrollable-scroll {
+            height: 180px !important;
+        }
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: var(--dgBG);
+            /*rgb(173, 250, 224)*/
+        }
+
+        #popupBenefitsView .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(198, 246, 255)
+        }
+
+        .dx-pivotgrid-text {
+            color: #00012a;
+            /* Change to a darker color */
+            font-weight: bold;
+            /* Optional: Make the text bold */
+        }
+        .dx-pivotgrid-area {
+            background-color: #fdf9f9; /* Very light blue color */
+        }

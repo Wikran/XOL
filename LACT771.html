@@ -83,7 +83,7 @@
         console.clear();
         var aaXToX = localStorage["aaXXoX"];
         var aaXNoX = localStorage["aaXXuX"];
-        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; 
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492";
         var aaPXXI = localStorage["aPXIXD"];
     </script>
 </head>
@@ -404,8 +404,21 @@
                                             {
                                                 dataField: "TaskGroup",
                                                 label: { text: "Group" },
-                                                editorType: "dxTextBox",
-                                                editorOptions: { width: 200, },
+                                                //editorType: "dxTextBox",
+                                                //editorOptions: { width: 200, },
+                                                editorType: "dxSelectBox", //dxSelectBox dxLookup
+                                                editorOptions: {
+                                                    dataSource: aObjects.aTaskProgram, //aaPurposeTable
+                                                    searchExpr: "PNAME",
+                                                    valueExpr: "code",
+                                                    displayExpr: "PNAME",
+                                                    searchEnabled: true,
+                                                    width: 200,
+                                                    //value: aNewDiva,
+                                                    // onValueChanged: function (e) {
+                                                    //     asERORefNo1 = e.value;
+                                                    // },
+                                                },
                                                 colSpan: 1,
                                             },
                                             {
@@ -549,6 +562,26 @@
                                         dataField: "TaskGroup",
                                         caption: "Group",
                                         sortOrder: "asc",
+                                        dataType: "string",
+                                        lookup: {
+                                            dataSource: aObjects.aTaskProgram,
+                                            valueExpr: "code",
+                                            displayExpr: "PNAME",
+                                        },
+                                        editorOptions: { width: 150 },
+                                        //editorType: "dxSelectBox", //dxSelectBox dxLookup
+                                        // editorOptions: {
+                                        //     dataSource: aObjects.aTaskProgram, //aaPurposeTable
+                                        //     searchExpr: "PNAME",
+                                        //     valueExpr: "code",
+                                        //     displayExpr: "PName",
+                                        //     searchEnabled: true,
+                                        //     width: 150,
+                                        //     //value: aNewDiva,
+                                        //     // onValueChanged: function (e) {
+                                        //     //     asERORefNo1 = e.value;
+                                        //     // },
+                                        // },
                                         width: 150,
                                     },
                                     {

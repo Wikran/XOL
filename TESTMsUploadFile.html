@@ -69,7 +69,7 @@
     <link rel="stylesheet" href="MHODEE123.css">
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
     <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
-    <script src="bundle.min.js"></script>
+    <script src="./src/bundle.min.js"></script>
     <script src="https://cbsdev2.locktonwattana.com/temp/uploads/Positions.js"></script>
 </head>
 
@@ -86,166 +86,141 @@
             DevExpress.ui.themes.current(aDXTheme);
         });
         const { PDFDocument } = PDFLib;
-        var aULSrvName = "https://cbsdev2.locktonwattana.com"
-        var aULServer = "https://cbsdev2.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE"
-        var aULStoken = "44095B6C-CC17-47FD-895B-649E0EAA2BAE"
-        var aUploadURL = "https://cbsdev2.locktonwattana.com/temp/uploads";
-        console.log(aaPositions)
+        var aaPFDMI = isLocalHost();
+        // var aULSrvName = "https://cbsdev2.locktonwattana.com"
+        // var aULServer = "https://cbsdev2.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE"
+        // var aULStoken = "44095B6C-CC17-47FD-895B-649E0EAA2BAE"
+        // var aUploadURL = "https://cbsdev2.locktonwattana.com/temp/uploads";
+        // console.log(aaPositions)
+
         $(function () {
-            aPopUpUpLoad("UPLOAD")
+            aPopUpUpLoad("X") //UPLOAD
             // Button to show the popup
             $("#showUploadPopupButton").dxButton({
                 text: "Upload File",
                 type: "default",
                 onClick: function () {
                     //$("#uploadPopup").dxPopup("instance").show();
-                    aPopUpUpLoad() 
+                    aPopUpUpLoad("X")
                 }
             });
 
         });
 
-        aPopUpUpLoad = (aRefNoForName) => {
-            $(() => {
-                var aaFileN;
-                var aaFileN2;
-                var aaNewNamePF = aRefNoForName;
-                const popup = $("#popupUL").dxPopup({
-                    title: `Upload File`, // For [${aaNewNamePF}]`,
-                    height: 280,
-                    width: 600,
-                    position: { offset: "-60 -280" }, //{offset: "0 -180"},
-                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
-                    visible: true,
-                    fullScreen: false,
-                    showCloseButton: true,
-                    showTitle: true,
-                    dragEnabled: true,
-                    closeOnOutsideClick: false,
-                    resizeEnabled: true,
-                    shadingColor:"rgb(190,190,190,0.9)",
+        // aPopUp2UpLoad = (aRefNoForName) => {
+        //     $(() => {
+        //         var aaFileN;
+        //         var aaFileN2;
+        //         var aaNewNamePF = aRefNoForName;
+        //         const popup = $("#popupUL").dxPopup({
+        //             title: `Upload File`, // For [${aaNewNamePF}]`,
+        //             height: 280,
+        //             width: 600,
+        //             position: { offset: "-60 -280" }, //{offset: "0 -180"},
+        //             //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+        //             visible: true,
+        //             fullScreen: false,
+        //             showCloseButton: true,
+        //             showTitle: true,
+        //             dragEnabled: true,
+        //             closeOnOutsideClick: false,
+        //             resizeEnabled: true,
+        //             shadingColor: "rgb(190,190,190,0.9)",
 
-                    contentTemplate: () => {
-                        return $("<div />").append(
-                            $("<div style='border: 1px solid grey; padding: 10px; display: inline-block; margin-left: 20px; margin-right: 10px;' id='fileUploaderContainer'><div id='fileUploader'></div></div>").appendTo("body"),
-                            $("<div style='position: fixed; left: 440px; top: 240px;' id='scbutton'></div>").appendTo("body"),
-                        )
-                    },
+        //             contentTemplate: () => {
+        //                 return $("<div />").append(
+        //                     $("<div style='border: 1px solid grey; padding: 10px; display: inline-block; margin-left: 20px; margin-right: 10px;' id='fileUploaderContainer'><div id='fileUploader'></div></div>").appendTo("body"),
+        //                     $("<div style='position: fixed; left: 440px; top: 240px;' id='scbutton'></div>").appendTo("body"),
+        //                 )
+        //             },
 
-                }).dxPopup("instance");
+        //         }).dxPopup("instance");
 
-                const aauploader = $("#fileUploader").dxFileUploader({
-                    multiple: false,
-                    selectButtonText: 'Select File',
-                    labelText: '',
-                    //accept: 'image/*',
-                    uploadMode: 'useForm',
-                    height: "130px",
-                    uploadedMessage: "Uploaded",
-                    uploadFailedMessage: "Upload failed",                  
-                    //accept: ".pdf",
-                    //allowedFileExtensions: [".pdf", ".PDF"],
-                    //uploadUrl: "https://cbsdev2.locktonwattana.com/",
-                    uploadUrl: "https://cbsdev2.locktonwattana.com/temp/backup",
-                });
+        //         const axuploader = $("#fileUploader").dxFileUploader({
+        //             multiple: false,
+        //             selectButtonText: "Select File",
+        //             labelText: "",
+        //             accept: "*/*", // Allow all file types explicitly
+        //             uploadMode: "useForm", // Ensure file is submitted as-is
+        //             height: "130px",
+        //             uploadedMessage: "Uploaded",
+        //             uploadFailedMessage: "Upload failed",
+        //             uploadUrl: `${aaPFDMI}/temp/backup`, // Your upload URL
+        //         });
 
-                $('#scbutton').dxButton({
-                    text: 'Upload File',
-                    type: 'success',
-                    onClick() {
-                        u2ploadFile().then(result => {
-                            if (result) {
-                                //aMessageAlert("Upload successful!","blue");                                                                
-                                //$("##popupUL").hide();
-                                popup.hide()
-                            } else {
-                                aMessageAlert("Upload failed.", "red");
-                            }
-                        });
-                    },
-                });
+        //         $('#scbutton').dxButton({
+        //             text: "Upload File",
+        //             type: "success",
+        //             onClick() {
+        //                 u22ploadFile().then((result) => {
+        //                     if (result) {
+        //                         aMessageAlert("Upload successful!", "blue");
+        //                         popup.hide(); // Hide the popup on success
+        //                     } else {
+        //                         aMessageAlert("Upload failed.", "red");
+        //                     }
+        //                 });
+        //             },
+        //         });
 
-                async function u2ploadFile() {
-                    try {
-                        // Get the dxFileUploader instance
-                        const fileUploader = $("#fileUploader").dxFileUploader("instance");
-                        const files = fileUploader.option("value");
+        //         async function u22ploadFile() {
+        //             try {
+        //                 // Get the dxFileUploader instance
+        //                 const fileUploader = $("#fileUploader").dxFileUploader("instance");
+        //                 const files = fileUploader.option("value");
 
-                        // Validate file selection
-                        if (!files.length) {
-                            console.log("No files selected.");
-                            return false;
-                        }
+        //                 // Validate file selection
+        //                 if (!files.length) {
+        //                     console.log("No files selected.");
+        //                     return false;
+        //                 }
 
-                        // Extract original file and extension
-                        const originalFile = files[0];
-                        const originalFileName = originalFile.name;
-                        const fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // Extract extension
-                        const newFileName = `${aaNewNamePF}${fileExtension}`; // New name with same extension `updated_${Date.now()}${fileExtension}`
+        //                 // Use the original file without renaming
+        //                 const originalFile = files[0];
+        //                 console.log("file ",file[0])
+        //                 // Create FormData and append the original file
+        //                 const formData = new FormData();
+        //                 formData.append("file", originalFile); // Use the file as-is
 
-                        // Create a new file with the updated name
-                        const simulatedFile = new File([originalFile], [originalFile], {type: originalFile.type, }); //new File([originalFile], newFileName, {type: originalFile.type, });
+        //                 // Request headers (DO NOT set Content-Type when using FormData)
+        //                 const myHeaders = new Headers();
+        //                 myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
 
-                        // Check if it's a PDF
-                        if (fileExtension.toLowerCase() === ".pdf") {
-                            // Load and modify PDF metadata
-                            const pdfBytes = await originalFile.arrayBuffer(); // Convert file to ArrayBuffer
-                            const pdfDoc = await PDFDocument.load(pdfBytes); // Load the PDF document
+        //                 // Request options
+        //                 const requestOptions = {
+        //                     method: "POST",
+        //                     headers: myHeaders,
+        //                     body: formData, // FormData includes the file
+        //                 };
 
-                            // Update metadata
-                            pdfDoc.setTitle(newFileName); // Set the new title
-                            pdfDoc.setSubject("Updated PDF"); // Optional: Set subject
-                            pdfDoc.setAuthor("TRF"); // Optional: Set author
+        //                 // Send the request
+        //                 const response = await fetch(
+        //                     `${aaPFDMI}/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE`,
+        //                     requestOptions
+        //                 );
 
-                            // Save the updated PDF
-                            updatedFileContent = await pdfDoc.save(); // Save the updated PDF as a Uint8Array
-                        }
+        //                 // Check response status
+        //                 if (!response.ok) {
+        //                     throw new Error(`HTTP error! status: ${response.status}`);
+        //                 }
 
-                        // Create FormData and append the new file
-                        const formData = new FormData();
-                        //formData.append("file", simulatedFile);
-                        formData.append("file", originalFile);
-
-                        // Request headers (DO NOT set Content-Type when using FormData)
-                        const myHeaders = new Headers();
-                        myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
-
-                        // Request options
-                        const requestOptions = {
-                            method: "POST",
-                            headers: myHeaders,
-                            body: formData, // Use FormData as the body
-                        };
-
-                        // Send the request
-                        const response = await fetch(
-                            "https://cbsdev2.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE",
-                            requestOptions
-                        );
-
-                        // Check response status
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        // Handle success
-                        const result = await response.text();
-                        console.log(result);
-                        //aMessageAlert(`Upload file ${newFileName} successful!`, "blue");
-                        aMessageAlert(`Upload file ${originalFileName} successful!`, "blue");
-                        fileUploader.reset(); // Clear the uploader
-                        return true; // Success
-                    } catch (error) {
-                        console.error("Error:", error);
-                        return false; // Error
-                    }
-                }
+        //                 // Handle success
+        //                 const result = await response.text();
+        //                 console.log(result);
+        //                 aMessageAlert(`Upload file ${originalFile.name} successful!`, "blue");
+        //                 fileUploader.reset(); // Clear the uploader
+        //                 return true; // Success
+        //             } catch (error) {
+        //                 console.error("Error:", error);
+        //                 return false; // Error
+        //             }
+        //         }
 
 
-            });
-        }
+        //     });
+        // }
 
-        async function isFileAvailable(fileUrl) {
+/*         async function isFileAvailable(fileUrl) {
             try {
                 const response = await fetch(fileUrl, { method: 'GET' });
                 if (response.status === 200) {
@@ -281,7 +256,7 @@
                 },
             }).dxPopup("instance");
         }
-
+ */
 
     </script>
 

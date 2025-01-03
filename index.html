@@ -61,12 +61,6 @@
     <script src="aThaiWord.js?v=1.0.2"></script>
     <!-- <script src="index.js?v=1.0.2"></script> -->
     <script>     
-        // const timestamps = Date.now(); // Adding timestamp to make it unique
-        // const link = document.createElement('link');
-        // link.rel  = 'stylesheet';
-        // link.href = `index.css?t=${timestamps}`;
-        // document.head.appendChild(link);
-
         const timestamp = Date.now(); 
         const scripts = [`./src/index.js?t=${timestamp}`]; //'./src/bundle.min.js' ,`aThaiWord.js?t=${timestamp}`, 
         scripts.forEach(function(file) {

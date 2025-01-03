@@ -486,11 +486,11 @@
             //console.log("Selected date: " + aNowDte);
             var aDatabasea = "ExtraOnLine.dbo.TaskControl";
             var aKeyField = "TaskGroup";
-            var aKeyIDa = aaPXIXD;
+            var aKeyIDa = aaPXIXD; //"main"; //aaPXIXD;
             var axFieldSelected = "IDNO,TaskName,TaskProgram,TaskGroup";
-            var condition = "TaskProgram";
-            var arMessages = {};
+            var aVARs = {};
             var aArrays = {};
+            var aObjects = {};
             var aaEmailArr;
             var aaMessage2Show;
             var aaMess2Show;
@@ -498,32 +498,94 @@
 
             LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
                 .then(result => {
-                    //console.log(result.length, result)
-                    //const aaEmailArr = result[ii].TaskProgram.split("\n").map(item => item.trim()).filter(item => item);
-                    console.log(result);
-                    for (let ii = 0; ii < result.length; ii++) { 
+                    for (let ii = 0; ii < result.length; ii++) {
                         //console.log(result[ii]); 
                         let aMatch = result[ii].TaskName.match(/\[(.*?)\]/);
-                        console.log("aMatch ", aMatch[1])
-                        if (result[ii].TaskName.includes("{ARRAY}")){
-                            aaEmailArr = result[ii][condition].split('\n'); //split(',')
-                            aArrays[aMatch[1]] = result[ii][condition].split('\n'); //result[ii].TaskProgram.replace(/`/g, "'");
-                            //console.log(aaEmailArr)
+                        if (aMatch) {
+                            //
                         } else {
-                            //let aMatch = result[ii].TaskName.match(/\[(.*?)\]/);
-                            //console.log("aMatch ", aMatch[1])
-                            arMessages[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
-                            //console.log(arMessages.ALERT01)            
-                            arMessages[`message${ii}`] = result[ii].TaskProgram.replace(/`/g, "'");
-                        }                        
+                            // Skip this iteration and move to the next one
+                            continue;
+                        }
+                        //console.log("aMatch ", aMatch[1])
+                        if (result[ii].TaskName.includes("{ARRAY}")) {
+                            aArrays[aMatch[1]] = result[ii].TaskProgram
+                                .replace(/`/g, "'") // Replace backticks with single quotes
+                                .split('\n')
+                                .map(item => {
+                                    let trimmedItem = item.trim(); // Remove extra spaces
+                                    if (trimmedItem === "") {
+                                        return ""; // Keep blanks as blank
+                                    } else if (!isNaN(trimmedItem)) {
+                                        return +trimmedItem; // Convert numeric strings to numbers
+                                    } else {
+                                        return trimmedItem; // Keep non-numeric text unchanged
+                                    }
+                                });
+                            console.log("aArrays.", aMatch[1], aArrays[aMatch[1]]);
+                        } else if (result[ii].TaskName.includes("{T2O}")) {
+                            let lines = result[ii].TaskProgram
+                                .replace(/`/g, "'") // Replace backticks with single quotes
+                                .split('\n')
+                            aObjects[aMatch[1]] = lines.map(line => { //aObjects[aMatch[1]]
+                                // Remove the trailing comma and extra spaces
+                                line = line.trim().replace(/,$/, "");
+                                // Add quotes around keys and values to make it JSON-compliant
+                                line = line.replace(/(\w+):/g, '"$1":').replace(/:\s*([\w]+)/g, ': "$1"');
+                                // Parse the cleaned line into an object
+                                return JSON.parse(line);
+                            });
+                            // Iterate through the array and modify the objects
+                            aObjects[aMatch[1]] = aObjects[aMatch[1]].map(obj => {
+                                for (let key in obj) {
+                                    // Check if the key includes 'amt' and the value is a string
+                                    if (key.includes('amt') && typeof obj[key] === 'string') {
+                                        obj[key] = +obj[key]; // Convert the value to a number
+                                    }
+                                }
+                                return obj;
+                            });
+                            console.log(aObjects[aMatch[1]])
+
+                        } else if (result[ii].TaskName.includes("{OBJ}")) {
+                            //console.log(result[ii].TaskProgram.split('\n'))
+                            aObjects[aMatch[1]] = result[ii].TaskProgram
+                                .replace(/`/g, "'") // Replace backticks with single quotes
+                                .split('\n')
+                                .reduce((obj, item) => {
+                                    let trimmedItem = item.trim(); // Remove extra spaces
+                                    if (trimmedItem === "") {
+                                        return obj; // Skip blank lines
+                                    }
+
+                                    // Split the line by colon (:) to get key and value
+                                    let [key, value] = trimmedItem.split(':').map(part => part.trim());
+
+                                    if (key && value !== undefined) {
+                                        // Check if value is numeric and convert it, otherwise keep as string
+                                        obj[key] = isNaN(value) ? value : +value;
+                                    }
+
+                                    return obj; // Return the accumulated object
+                                }, {});
+                            console.log(aObjects[aMatch[1]])
+                        } else {
+                            if (result[ii].TaskName.includes("{num}")) {
+                                aVARs[aMatch[1]] = +(result[ii].TaskProgram.replace(/`/g, "'"));
+                            } else {
+                                aVARs[aMatch[1]] = result[ii].TaskProgram.replace(/`/g, "'");
+                            }
+                            console.log("aVARs ", aVARs[aMatch[1]])
+                        }
                     }
-                    console.log(arMessages)
-                    console.log("ALERT01 ",arMessages.ALERT01)
-                    console.log("ALERT02 ",arMessages.ALERT02)
-                    console.log(" 0 ",arMessages.message0) 
-                    console.log(" 1 ",arMessages.message1)
-                    console.log("aaEmailArr ", aaEmailArr)
-                    console.log("aArrays.EWORD ", aArrays.EWORD)
+
+                    // console.log(aVARs)
+                    // console.log("ALERT01 ",aVARs.ALERT01)
+                    // console.log("ALERT02 ",aVARs.ALERT02)
+                    // console.log(" 0 ",aVARs.message0) 
+                    // console.log(" 1 ",aVARs.message1)
+                    // console.log("aaEmailArr ", aaEmailArr)
+                    // console.log("aArrays.EWORD ", aArrays.EWORD)
                     //var aaMessage2Show = result[0].TaskProgram.replace(/`/g, "'");  //aMedicalAlert01 result[0][condition]
                     //var aaMess2Show = aaMessage2Show.replace(/`/g, "'");  
                     // var aaMessage3Show;
@@ -981,8 +1043,8 @@
                                                                                 var aSubject = aaMailTitle
                                                                                 let aTHeadRefNo = e.row.data.HeadRefNo
                                                                                 let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
-                                                                                let getvalues = {aApproverName: aApproverName,aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aAddress2Do: aAddress2Do,aRequesterName: aRequesterName,aTHeadRefNo: aTHeadRefNo } // aAddress2Do: aRequesterName + "</div>"
-                                                                                let aMessage01 = arMessages.UNCONFIRM.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
+                                                                                let getvalues = { aApproverName: aApproverName, aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aAddress2Do: aAddress2Do, aRequesterName: aRequesterName, aTHeadRefNo: aTHeadRefNo } // aAddress2Do: aRequesterName + "</div>"
+                                                                                let aMessage01 = aVARs.UNCONFIRM.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
                                                                                 //let aMessage01 = "<div>เรียนคุณ " + $.trim(aApproverName) + "<br>&nbsp;&nbsp;&nbsp;&nbsp;  " + aaOnInitExpGroupDesc + " Expenses REFNO = [" + e.row.data.HeadRefNo + "] <br>&nbsp;&nbsp;&nbsp;&nbsp; Link -> " + aAddress2Do + " (HOD Approve) <br><br><br>" + aRequesterName + "</div>"
                                                                                 //let aMessage01 = aaEmailArr[0] + $.trim(aApproverName) + aaEmailArr[9]  + aaOnInitExpGroupDesc + aaEmailArr[2] + e.row.data.HeadRefNo + aaEmailArr[3] + aAddress2Do + aaEmailArr[4] + aRequesterName + aaEmailArr[5]
                                                                                 //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
@@ -991,14 +1053,14 @@
                                                                                 var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #9700F9; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#F5E6FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                                 aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
                                                                                 //aSendMailGM(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)    
-                                                                                
+
                                                                                 e.component.refresh(true);
                                                                                 e.component.refresh(true);
                                                                                 e.component.refresh(true);
                                                                                 e.event.preventDefault();
                                                                                 $("#gridContainer").dxDataGrid("instance").refresh();
                                                                                 //aMessageAlert("Already UN-Confirmed", "Red")
-                                                                                aMessageAlert("EMAIL" + aMessage,"grey")
+                                                                                aMessageAlert("EMAIL" + aMessage, "grey")
                                                                             }
                                                                         });
                                                                     }
@@ -1040,7 +1102,7 @@
                                                                         var aSubject = `${aaUCTT} EXPENSES REIMBURSEMENT - Request For Approve`;
                                                                         let aAddress2Do = `<a href='${aaPFDMI}/XOL/index.html'>Expenses Reimburse</a>`; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
                                                                         //let aMessage01 = "<div>เรียน คุณ" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;กรุณาตรวจสอบรายละเอียดรายการ " + aaOnInitExpGroupDesc + " Expenses สำหรับ REFNO = [" + e.row.data.HeadRefNo + "]<br> สามารถเข้าไปดูรายละเอียดได้ที่ " + aAddress2Do + " (หัวข้อ Approve --> HOD Approve) <br><br>ขอแสดงความนับถือ<br>" + aRequesterName + "</div>"
-                                                                        let aMessage01 = aaEmailArr[0] + $.trim(aApproverName) + aaEmailArr[1]  + aaOnInitExpGroupDesc + aaEmailArr[2] + e.row.data.HeadRefNo + aaEmailArr[3] + aAddress2Do + aaEmailArr[4] + aRequesterName + aaEmailArr[5]
+                                                                        let aMessage01 = aArrays.EWORD[0] + $.trim(aApproverName) + aArrays.EWORD[1] + aaOnInitExpGroupDesc + aArrays.EWORD[2] + e.row.data.HeadRefNo + aArrays.EWORD[3] + aAddress2Do + aArrays.EWORD[4] + aRequesterName + aArrays.EWORD[5]
                                                                         //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                                         var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
                                                                         aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
@@ -1276,7 +1338,19 @@
                                                                 location: "before",
                                                                 template: function () { return $("<div style='padding: 5px 85px;'/>") }
                                                             },
-
+                                                            {
+                                                                location: "after",
+                                                                widget: "dxButton",
+                                                                options: {
+                                                                    icon: "fas fa-info",
+                                                                    text: "HELP",
+                                                                    type: "default",
+                                                                    stylingMode: "contained", // "outlined" contained
+                                                                    onClick: function () {
+                                                                        aPopupHelp("HELP", aVARs.HELP01)
+                                                                    }
+                                                                }
+                                                            },
                                                             //aPopUpAddForm
                                                             {
                                                                 location: "after",
@@ -2435,8 +2509,8 @@
                                                                 //DevExpress.ui.dialog.alert("Success", "YES");
                                                                 // let result = DevExpress.ui.dialog.confirm("Press 'YES' For Expenses Reimbursement Request & Send Mail to " + aaHODAppName + " (" + aaHODAppEmail + ") <br><b style = 'color: red;'> Fleet Card Limit = [" + aaLTotal + "]  </b>", "CONFIRM TO HOD ?"); // "<br>��ด 'YES' เ��ื��อ��ั��ทึ��" +
                                                                 //console.log(aaMess2Show)
-                                                                let getvalues = {aaHODAppName: aaHODAppName,aaHODAppEmail: aaHODAppEmail,aaLTotal: aaLTotal} //
-                                                                let aAlertMess = arMessages.ALERT02.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match); //aaMess3Show
+                                                                let getvalues = { aaHODAppName: aaHODAppName, aaHODAppEmail: aaHODAppEmail, aaLTotal: aaLTotal } //
+                                                                let aAlertMess = aVARs.ALERT02.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match); //aaMess3Show
                                                                 let result = DevExpress.ui.dialog.confirm(aAlertMess, "CONFIRM TO HOD ?");
                                                                 result.done(function (dresult) {
                                                                     if (dresult) {
@@ -2478,8 +2552,8 @@
                                                                         let aRefNoa = aaiHeadRef //iData.HeadRefNo //*
                                                                         let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>";
 
-                                                                        let getvalues = {aApproverName: aApproverName,aaOnInitExpGroupDesc: aaOnInitExpGroupDesc,aRefNoa: aRefNoa, aAddress2Do: aAddress2Do,aRequesterName: aRequesterName } // aAddress2Do: aRequesterName + "</div>"
-                                                                        let aMessage01 = arMessages.ACONFIRM.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match); //aaMess3Show
+                                                                        let getvalues = { aApproverName: aApproverName, aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aRefNoa: aRefNoa, aAddress2Do: aAddress2Do, aRequesterName: aRequesterName } // aAddress2Do: aRequesterName + "</div>"
+                                                                        let aMessage01 = aVARs.ACONFIRM.replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match); //aaMess3Show
                                                                         //let aMessage01 = "<div>เรียน คุณ" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;กรุณาตรวจสอบ รายละเอียดเพื่ออนุมัติ " + aaOnInitExpGroupDesc + " Expenses สำหรับ REFNO = [" + aRefNoa + "]<br> สามารถเข้าไปตรวจสอบรายละเอียดได้ที่ " + aAddress2Do + " (หัวข้อ Approve --> HOD Approve) <br><br>ขอแสดงความนับถือ<br>" + aRequesterName + "</div>"
                                                                         //var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
                                                                         var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
@@ -2489,7 +2563,7 @@
                                                                         $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
                                                                         $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
                                                                         //aMessageAlert("Already Confirmed", "DarkGreen")
-                                                                        aMessageAlert("Already Confirmed <br>" + aMessage,"grey")
+                                                                        aMessageAlert("Already Confirmed <br>" + aMessage, "grey")
                                                                         popup.hide();
                                                                     } //if (dresult) 
                                                                 }); //result.done( 
@@ -3150,8 +3224,8 @@
                                                                                 newData.EROCheck02 = false;
                                                                             }
                                                                         } else { // Over Limitation
-                                                                            //nThisAmount = aaRemainChk; aaMess2Show arMessages.message1 aaMess2Show arMessages.message0
-                                                                            let aaAMessage = arMessages.ALERT01 + aTRem + "<div>" 
+                                                                            //nThisAmount = aaRemainChk; aaMess2Show aVARs.message1 aaMess2Show aVARs.message0
+                                                                            let aaAMessage = aVARs.ALERT01 + aTRem + "<div>"
                                                                             DevExpress.ui.dialog.alert({
                                                                                 showTitle: false,
                                                                                 //title: "OVER LIMITATION",
