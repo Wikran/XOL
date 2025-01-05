@@ -78,7 +78,7 @@
 
     <script src="aThaiWord.js"></script>
     <script src="bundle.min.js"></script>
-    <script src="currencies.js"></script>
+    <!-- <script src="currencies.js"></script> -->
 
     <style>
         :root {
@@ -482,12 +482,12 @@
         //console.log(aCurrenciesList)
         //Overseas                         10,000 B. per Person/ Night 
         //Entertainment                    40,000 per Person  
-        //Gift Provide and/or      Receive 40,000 per Person 
-        const aaLimitedAmt = [
-            { code: "Overseas", lmtamt: 10000 },
-            { code: "Entertainment", lmtamt: 50000 },
-            { code: "Gift", lmtamt: 50000 }
-        ]
+        //Gift Provide and/orReceive       40,000 per Person 
+        // const aaLimitedAmt = [
+        //     { code: "Overseas", lmtamt: 10000 },
+        //     { code: "Entertainment", lmtamt: 50000 },
+        //     { code: "Gift", lmtamt: 50000 }
+        // ]
 
         const aaOverLAmt = [  //if over then save to INCOME
             { code: "Overseas", lmtamt: 10000 },
@@ -1184,25 +1184,29 @@
                             //console.log("aVARs ", aVARs[aMatch[1]])
                         }
                     }
+                    const aaresult = aObjects.aaLimitGrp.find(item => item.code === "O/Seas Trav-Accom.");
+                    const aalmtamt = aaresult ? aaresult.lmtamt : null; // Get lmtamt if found, otherwise null
+                    const aaLimitedAmt = aObjects.aaLimitedAmt;
+                    //console.log("Found ", aalmtamt); // Output: 10000
                     //console.log(aVARs)
                     // console.log("ALERT01 ", aVARs.ALERT01)
                     // console.log("HELP02 ", aVARs.HELP02)
                     // console.log("aVARs.aaGiftLmt ", aVARs.aaGiftLmt)
                     // console.log("aVARs.aaEntertainLmt ", aVARs.aaEntertainLmt)
-                    console.log("Div ",aObjects.divisionsList)
-                    console.log("Dept ",aObjects.aaDeptList)
+                    //console.log("Div ", aObjects.divisionsList)
+                    //console.log("Dept ", aObjects.aaDeptList)
                     //console.log("ALERT02 ",aVARs.ALERT02)
                     //console.log(" 0 ", aVARs.message0)
                     //console.log(" 1 ", aVARs.message1)
                     //console.log("aaEmailArr ", aaEmailArr)
-                    console.log("Selected date: " + aNowDte);
-
+                    //console.log("Selected date: " + aNowDte);
+                    const aCurrenciesList = aObjects.aCurrenciesList;
                     const divisionsList = aObjects.divisionsList;
                     const aaDeptList = aObjects.aaDeptList;
 
                     const aaGiftLmt = aVARs.aaGiftLmt; //10000; // aVARs.aaGiftLmt
                     const aaEntertainLmt = aVARs.aaEntertainLmt; //40000; // aVARs.aaEntertainLmt
-                    console.log(aaGiftLmt, aaEntertainLmt)
+                    //console.log(aaGiftLmt, aaEntertainLmt)
                     var aaPFDMI = isLocalHost();
                     var afqrFull = "pageID='" + aaPXIXD + "' "
                     var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -2364,6 +2368,8 @@
                                                             var aaOverseasxx;
                                                             var aaConferencexx;
                                                             var aaPurposexx = "";
+                                                            var aaAccom = false;
+                                                            var aaTOFR;
                                                             var aaLocalTC = false;
                                                             var aaPFDMI = isLocalHost();
                                                             var aTravelSC = aSetTravel;
@@ -2412,10 +2418,10 @@
                                                                 var aaaTitle = " [EDIT]"
                                                                 //console.log(aRecNo);
                                                                 //console.log("iData = ",iData)
-                                                                console.log("iData.division = ", iData.Division)
-                                                                console.log("iData.ERORefNo5 = ", iData.ERORefNo5)
-                                                                console.log("iData.EROCode01 = ", iData.EROCode01, " ", iData.EROCode01.charAt(0))
-                                                                console.log("iData.EROCode02 = ", iData.EROCode02, " ", iData.EROCode02.charAt(0))
+                                                                //console.log("iData.division = ", iData.Division)
+                                                                //console.log("iData.ERORefNo5 = ", iData.ERORefNo5)
+                                                                //console.log("iData.EROCode01 = ", iData.EROCode01, " ", iData.EROCode01.charAt(0))
+                                                                //console.log("iData.EROCode02 = ", iData.EROCode02, " ", iData.EROCode02.charAt(0))
                                                                 //var aaCheckOC;
                                                                 aaOverseasxx = iData.EROCode01.charAt(0) === "O";
                                                                 aaConferencexx = iData.EROCode02.charAt(0) === "C";
@@ -2449,12 +2455,16 @@
                                                                 } else { //not match
                                                                     xxxSubGroup01 = aaSubGroup01; //searchExpenses(aaSubGroup01, searchTermsL);
                                                                 }
-                                                                console.log(aaOverseasxx, aaConferencexx)
-                                                                console.log(xxxSubGroup01)
+                                                                //console.log(aaOverseasxx, aaConferencexx)
+                                                                //console.log(xxxSubGroup01)
                                                                 var aTRFREFNO = iData.ERORefNo5
                                                                 editingMode = aTRFREFNO.substring(0, 1) === "R" ? "popup" : "cell";
-                                                                console.log(aTRFREFNO, aTRFREFNO.substring(0, 1), editingMode)
+                                                                //console.log(aTRFREFNO, aTRFREFNO.substring(0, 1), editingMode)
                                                                 asDivision = iData.Division;
+                                                                aaAccom = iData.ERORefNo3.includes("Accom.");
+                                                                aaTOFR = iData.ERORefNo3;
+                                                                console.log("aaAccom ", aaAccom)
+                                                                console.log("aaTOFR ", aaTOFR)
                                                                 //var aTotalRecs = iData.length;
                                                                 //console.log("Total Recs ", aTotalRecs)
                                                                 //insideAddNew = false;
@@ -2655,7 +2665,14 @@
                                                                                     DevExpress.ui.dialog.alert(`Field "${caption}" cannot be empty.`, "ERROR"); // (Key: ${key}, Value: ${value})
                                                                                     return false;
                                                                                 }
-
+                                                                                if (key === "ERORefNo3" && !value.includes("Accom.") && row.EROAmount4 !== 0) {
+                                                                                    DevExpress.ui.dialog.alert(`Night must be 0.`, "ERROR"); // (Key: ${key}, Value: ${value})
+                                                                                    return false;
+                                                                                }
+                                                                                if (key === "ERORefNo3" && value.includes("Accom.") && row.EROAmount4 === 0) {
+                                                                                    DevExpress.ui.dialog.alert(`Night cannot be 0.`, "ERROR"); // (Key: ${key}, Value: ${value})
+                                                                                    return false;
+                                                                                }
                                                                                 // Example: Log key, value, and caption for debugging
                                                                                 //console.log(`Key: ${key}, Value: ${value}, Caption: ${caption}`);
 
@@ -2741,9 +2758,9 @@
                                                                                 var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724"
                                                                                 var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
                                                                                 var condition = item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0 || (item.Xrate === 1 && item.Currency !== "THB") || (item.Xrate !== 1 && item.Currency === "THB");
-                                                                                console.log("#filter rows ", asFilterRow) // test
-                                                                                console.log("asFilterRec ", asFilterRec)
-                                                                                console.log("asTotalRecords ", asTotalRecords)
+                                                                                //console.log("#filter rows ", asFilterRow) // test
+                                                                                //console.log("asFilterRec ", asFilterRec)
+                                                                                //console.log("asTotalRecords ", asTotalRecords)
                                                                                 aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
                                                                                     .then(atestCehcka => {
                                                                                         //console.log("xx",atestCehcka); // Logs the actual message
@@ -3436,37 +3453,28 @@
                                                                                                         label: { text: "Type of Reimbursement" },
                                                                                                         editorType: "dxTextBox",
                                                                                                         editorOptions: {
-                                                                                                            width: 250, showClearButton: true,
-                                                                                                            // onValueChanged: function (e) {
-                                                                                                            //     const newData = e.component.option("data");                                                                                                                
-                                                                                                            //     newData.Amount = 0; // Set EROAmount2 to 0 on change of ERORefNo3
-                                                                                                            //     alert("somethings")
-                                                                                                            // }
-                                                                                                            //title: "If you select 'Accom,' the 'Night' field will be active. Otherwise, it will not be active." 
+                                                                                                            width: 250,
+                                                                                                            showClearButton: true,
                                                                                                         },
                                                                                                         editCellTemplate: dropDownBoxACC,
                                                                                                         setCellValue: function (newData, value, currentRowData) {
                                                                                                             let aResult = aSearch2json(xxxSubGroup01, "EDESC", value)
+                                                                                                            aaAccom = value.includes("Accom.")
                                                                                                             newData.ERORefNo3 = value;
                                                                                                             newData.ExpensesCode = aResult[0].ACCCODE
-                                                                                                            //newData.ERORefNo2 = ""; //EROCode03
-                                                                                                            //newData.Amount = 0;
-                                                                                                            //newData.EROAmount1 = 1;
-                                                                                                            //newData.EROAmount2 = 0;
-                                                                                                            //newData.EROAmount3 = 0;
-                                                                                                            // newData.EROAmount4 = 0;
-                                                                                                            //console.log(newData.Amount)
-                                                                                                            //alert("aaa")
+                                                                                                            newData.ERORefNo2 = ""; //EROCode03
+                                                                                                            newData.Amount = 0;
+                                                                                                            newData.LocalAmount = 0;
+                                                                                                            newData.RefundedAmount = 0;
+                                                                                                            newData.EROAmount1 = 1;
+                                                                                                            newData.EROAmount2 = 0;
+                                                                                                            newData.EROAmount3 = 0; //value.includes("Accom.") ? 1 : 0;
+                                                                                                            newData.EROAmount4 = 0;
                                                                                                         },
 
                                                                                                         validationRules: [{ type: "required", message: "." }],
                                                                                                         colSpan: 2,
                                                                                                     },
-                                                                                                    //  {
-                                                                                                    //     itemType: "empty",
-                                                                                                    //     colSpan: 2,
-                                                                                                    //     visible: true,
-                                                                                                    //  },
                                                                                                     {
                                                                                                         dataField: "ERORefNo2",  //OtherRefNo //ERORefNo2 //EROCode03
                                                                                                         label: { text: "Sub Code" },
@@ -3557,6 +3565,8 @@
                                                                                                             newData.RefundedAmount = value * (currentRowData.Xrate);
                                                                                                             aaRefunda = value * (currentRowData.Xrate);
                                                                                                             newData.EROAmount2 = (value * (currentRowData.Xrate)) / currentRowData.EROAmount1; // average expenses // amount1 = head
+                                                                                                            newData.EROAmount3 = currentRowData.ERORefNo3.includes("Accom.") ? 1:0;
+                                                                                                            newData.EROAmount4 = currentRowData.ERORefNo3.includes("Accom.") ? ((value * (currentRowData.Xrate)) / currentRowData.EROAmount1) : 0;
                                                                                                         },
                                                                                                         editorType: "dxNumberBox",
                                                                                                         editorOptions: { format: "#,##0.00", width: 120, elementAttr: { class: "right-align-number" }, }, //onValueChanged: function (e) {formInstance.getEditor("tabPanelOptions").option("selectedIndex", 1)} 
@@ -3628,7 +3638,7 @@
                                                                                                                 type: "custom",
                                                                                                                 validationCallback: function (e) {
                                                                                                                     const aalocalAmount = e.data.LocalAmount;
-                                                                                                                    return e.value >= (aalocalAmount - 10) && e.value <= (aalocalAmount + 10);
+                                                                                                                    return e.value >= (aalocalAmount - 10) && e.value <= (aalocalAmount + 10) && (e.value !== 0);
                                                                                                                 },
                                                                                                                 message: "Refunded Amount must be within ?10 of Calc of Refunded "
                                                                                                             }
@@ -3668,12 +3678,10 @@
                                                                                                             {
                                                                                                                 type: "custom",
                                                                                                                 validationCallback: function (e) { //EROCode01
-                                                                                                                    let aaChkCodexx = (e.data.ERORefNo3 === "Entertainment In Town" ? "Entertainment" : "NONE") //e.data.EROCode01  === "Overseas" ? "Overseas" : 
-                                                                                                                    //console.log(aaChkCodexx)
+                                                                                                                    let aaChkCodexx = (e.data.ERORefNo3 === "Entertainment" ? "Entertainment" : "NONE") //e.data.EROCode01  === "Overseas" ? "Overseas" :                                                                                                                     
                                                                                                                     if (e.data.ERORefNo3 === "Entertainment") { //e.data.EROCode01  === "Overseas" ||
                                                                                                                         let aResultxxx = aSearch2json(aaLimitedAmt, "code", aaChkCodexx); //"Overseas"
                                                                                                                         let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
-                                                                                                                        //console.log(aLimitAmtaa)
                                                                                                                         return e.value <= (aLimitAmtaa);
                                                                                                                     } else { return true }
                                                                                                                 },
@@ -3683,41 +3691,57 @@
                                                                                                     },
                                                                                                     {
                                                                                                         dataField: "EROAmount3", // O/Seas Trav-Accom. ERORefNo3  "EROAmount4"
-                                                                                                        label: { text: "Night" },
+                                                                                                        label: { text: "Night for Accom." },
                                                                                                         dataType: "number",
                                                                                                         format: { type: "fixedPoint", precision: 0 },
                                                                                                         setCellValue: function (newData, value, currentRowData) {
                                                                                                             newData.EROAmount3 = value;
-                                                                                                            newData.EROAmount4 = ((currentRowData.RefundedAmount) / (currentRowData.EROAmount1)) / value;
+                                                                                                            if (value === 0) {
+                                                                                                                newData.EROAmount4 = 0
+                                                                                                            }
+                                                                                                            else {
+                                                                                                                newData.EROAmount4 = ((currentRowData.RefundedAmount) / (currentRowData.EROAmount1)) / value;
+                                                                                                            }
                                                                                                         },
+                                                                                                        visible: true,
                                                                                                         width: 80,
                                                                                                         editorType: "dxNumberBox",
-                                                                                                        editorOptions: {
-                                                                                                            format: "#,##0",
-                                                                                                            width: 80,
-                                                                                                            elementAttr: { class: "right-align-number" },
-                                                                                                            // elementAttr: function (e) {
-                                                                                                            //     return {
-                                                                                                            //         class: e.row && e.row.data && e.row.data.ERORefNo3?.includes("Accom")
-                                                                                                            //             ? "greyed-out" // Apply grey style
-                                                                                                            //             : ""
-                                                                                                            //     };
-                                                                                                            // },
-                                                                                                            readOnly: function (e) {
-                                                                                                                return !(e.row && e.row.data && !e.row.data.ERORefNo3?.includes("Accom"));
-                                                                                                            },
-                                                                                                        }, // readOnly: [!aaOverseasxx]readOnly: function (e) {return (e.data.ERORefNo3.trim() === "O/Seas Trav-Accom." ? false : true )} 
-                                                                                                        // visible: function (e) {
-                                                                                                        //     return e.row && e.row.data && !e.row.data.ERORefNo3?.includes("Accom");
-                                                                                                        // },
+                                                                                                        editorOptions: { format: "#,##0", width: 80, elementAttr: { class: "right-align-number" }, }, //readOnly: [!aaAccom], 
+                                                                                                        validationRules: [
+                                                                                                            { type: "required" },
+                                                                                                            {
+                                                                                                                type: "custom",
+                                                                                                                validationCallback: function (e) {
+                                                                                                                    let message = "";
+                                                                                                                    // Condition 1: If "Accom." is included in ERORefNo3, the value must not be 0
+                                                                                                                    if (e.data.ERORefNo3.includes("Accom.")) {
+                                                                                                                        if (e.value === 0) {
+                                                                                                                            //message = "Night cannot be 0 for Accom.";
+                                                                                                                            e.rule.message = "Night cannot be 0";
+                                                                                                                            //DevExpress.ui.dialog.alert({ showTitle: true, title: "Invalid !!", messageHtml: message });
+                                                                                                                            //aMessageAlert("Value canot be 0 for Accom.","red")
+                                                                                                                            return false; // Fail validation
+                                                                                                                        }
+                                                                                                                        return true; // Pass validation
+                                                                                                                    }
 
-                                                                                                        // itemTemplate: function (cellElement, cellInfo) {
-                                                                                                        //     const isGreyedOut = cellInfo.data.ERORefNo3?.includes("Accom");
-                                                                                                        //     const labelStyle = isGreyedOut ? 'style="color: #a0a0a0;"' : '';
-                                                                                                        //     cellElement.html(
-                                                                                                        //         `<div ${labelStyle}>Per Night</div>`
-                                                                                                        //     );
-                                                                                                        // },
+                                                                                                                    // Condition 2: If "Accom." is not included, the value must be 0
+                                                                                                                    else {
+                                                                                                                        if (e.value !== 0) {
+                                                                                                                            //message = "Night is not allowed when not related to Accom.";
+                                                                                                                            e.rule.message = "Night must be 0";
+                                                                                                                            //aMessageAlert(message,"red")
+                                                                                                                            //DevExpress.ui.dialog.alert({ showTitle: true, title: "Invalid !!", messageHtml: message });
+                                                                                                                            //e.data.EROAmount3 = 0; // Reset the value
+                                                                                                                            //aMessageAlert("Only 0 is allowed when not related to Accom.","red")
+                                                                                                                            return false; // Fail validation
+                                                                                                                        }
+                                                                                                                        return true; // Pass validation
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                message: "Invalid value." // Default message (overridden by `e.rule.message` dynamically)
+                                                                                                            }
+                                                                                                        ],
                                                                                                         colSpan: 1,
                                                                                                     },
                                                                                                     {
@@ -3730,28 +3754,35 @@
                                                                                                         editorOptions: {
                                                                                                             format: "#,##0.00", width: 120,
                                                                                                             elementAttr: { class: "right-align-number" },
-                                                                                                            // elementAttr: function (e) {
-                                                                                                            //     return {
-                                                                                                            //         class: e.row && e.row.data && e.row.data.ERORefNo3?.includes("Accom")
-                                                                                                            //             ? "greyed-out" // Apply grey style
-                                                                                                            //             : ""
-                                                                                                            //     };
-                                                                                                            // },
-                                                                                                            readOnly: function (e) {
-                                                                                                                return !(e.row && e.row.data && !e.row.data.ERORefNo3?.includes("Accom"));
-                                                                                                            },
+                                                                                                            readOnly: true,
                                                                                                         },
-                                                                                                        // visible: function (e) {
-                                                                                                        //     return e.row && e.row.data && !e.row.data.ERORefNo3?.includes("Accom");
-                                                                                                        // },
-
-                                                                                                        // itemTemplate: function (cellElement, cellInfo) {
-                                                                                                        //     const isGreyedOut = cellInfo.data.ERORefNo3?.includes("Accom");
-                                                                                                        //     const labelStyle = isGreyedOut ? 'style="color: #a0a0a0;"' : '';
-                                                                                                        //     cellElement.html(
-                                                                                                        //         `<div ${labelStyle}>Per Night</div>`
-                                                                                                        //     );
-                                                                                                        // },
+                                                                                                        visible: true,
+                                                                                                        validationRules: [
+                                                                                                            {
+                                                                                                                type: "custom",
+                                                                                                                validationCallback: function (e) { //EROCode01
+                                                                                                                    //aMessageAlert(e.data.ERORefNo3, "red")
+                                                                                                                    let aaChkCodexx = (e.data.ERORefNo3 === "O/Seas Trav-Accom." ? "Overseas" : "NONE")
+                                                                                                                    if (e.data.ERORefNo3 === "O/Seas Trav-Accom.") {
+                                                                                                                        aaChkCodexx = "Overseas"
+                                                                                                                    } else if (e.data.ERORefNo3 === "Local  Trav-Accom.") {
+                                                                                                                        aaChkCodexx = "LocalAccom"
+                                                                                                                    } else {
+                                                                                                                        aaChkCodexx = "NONE"
+                                                                                                                    }
+                                                                                                                    console.log(aaChkCodexx)
+                                                                                                                    if (e.data.ERORefNo3 === "O/Seas Trav-Accom." || e.data.ERORefNo3 === "Local  Trav-Accom.") {
+                                                                                                                        let aResultxxx = aSearch2json(aaLimitedAmt, "code", aaChkCodexx); //"Overseas"
+                                                                                                                        let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
+                                                                                                                        return e.value <= (aLimitAmtaa);
+                                                                                                                    }
+                                                                                                                    // else if (e.data.ERORefNo3 === "Local Trav-Accom.") { //	 Local Travel EROCode03 && e.data.ERORefNo2 === "Accommodation"
+                                                                                                                    //     return e.value <= 4500;
+                                                                                                                    else { return true }
+                                                                                                                },
+                                                                                                                message: "Over Limited"
+                                                                                                            }
+                                                                                                        ],
                                                                                                         colSpan: 1,
                                                                                                     },
 
@@ -4154,16 +4185,18 @@
                                                                             editCellTemplate: dropDownBoxACC,
                                                                             setCellValue: function (newData, value, currentRowData) {
                                                                                 let aResult = aSearch2json(xxxSubGroup01, "EDESC", value)
+                                                                                aaAccom = value.includes("Accom.")
                                                                                 newData.ERORefNo3 = value;
                                                                                 newData.ExpensesCode = aResult[0].ACCCODE
                                                                                 newData.ERORefNo2 = ""; //EROCode03
                                                                                 newData.Amount = 0;
+                                                                                newData.LocalAmount = 0;
                                                                                 newData.RefundedAmount = 0;
                                                                                 newData.EROAmount1 = 1;
                                                                                 newData.EROAmount2 = 0;
-                                                                                newData.EROAmount3 = 0;
+                                                                                newData.EROAmount3 = 0; //value.includes("Accom.") ? 1 : 0;
                                                                                 newData.EROAmount4 = 0;
-                                                                                aaLocalTC = (value === "Local Travel" ? true : false)
+
                                                                             },
                                                                             visible: true,
                                                                         },
@@ -4190,17 +4223,17 @@
                                                                             width: 120,
                                                                             //visible: [aaLocalTC],
                                                                             visible: false,
-                                                                            validationRules: [
-                                                                                {
-                                                                                    type: "custom",
-                                                                                    validationCallback: function (e) {
-                                                                                        if (e.data.ERORefNo3 === "Local Travel" && e.data.ERORefNo2.length === 0) { //EROCode03
-                                                                                            return false
-                                                                                        } else { return true }
-                                                                                    },
-                                                                                    message: "Please Entry"
-                                                                                }
-                                                                            ],
+                                                                            // validationRules: [
+                                                                            //     {
+                                                                            //         type: "custom",
+                                                                            //         validationCallback: function (e) {
+                                                                            //             if (e.data.ERORefNo3 === "Local Travel" && e.data.ERORefNo2.length === 0) { //EROCode03
+                                                                            //                 return false
+                                                                            //             } else { return true }
+                                                                            //         },
+                                                                            //         message: "Please Entry"
+                                                                            //     }
+                                                                            // ],
                                                                         },
                                                                         {
                                                                             dataField: "Amount",
@@ -4214,7 +4247,8 @@
                                                                                 newData.RefundedAmount = value * (currentRowData.Xrate);
                                                                                 aaRefunda = value * (currentRowData.Xrate);
                                                                                 newData.EROAmount2 = (value * (currentRowData.Xrate)) / currentRowData.EROAmount1;
-
+                                                                                newData.EROAmount3 = currentRowData.ERORefNo3.includes("Accom.") ? 1:0;
+                                                                                newData.EROAmount4 = currentRowData.ERORefNo3.includes("Accom.") ? ((value * (currentRowData.Xrate)) / currentRowData.EROAmount1) : 0;
                                                                             },
                                                                             editorType: "dxNumberBox",
                                                                             editorOptions: { format: "#,##0.00", width: 85, elementAttr: { class: "custom-editor" } },
@@ -4309,9 +4343,9 @@
                                                                                 {
                                                                                     type: "custom",
                                                                                     validationCallback: function (e) { //EROCode01
-                                                                                        let aaChkCodexx = (e.data.ERORefNo3 === "Entertainment In Town" ? "Entertainment" : "NONE") //e.data.EROCode01  === "Overseas" ? "Overseas" : 
+                                                                                        let aaChkCodexx = (e.data.ERORefNo3 === "Entertainment" ? "Entertainment" : "NONE") //e.data.EROCode01  === "Overseas" ? "Overseas" : 
                                                                                         //console.log(aaChkCodexx)
-                                                                                        if (e.data.ERORefNo3 === "Entertainment In Town") { //e.data.EROCode01  === "Overseas" ||
+                                                                                        if (e.data.ERORefNo3 === "Entertainment") { //e.data.EROCode01  === "Overseas" ||
                                                                                             let aResultxxx = aSearch2json(aaLimitedAmt, "code", aaChkCodexx); //"Overseas"
                                                                                             let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
                                                                                             return e.value <= (aLimitAmtaa);
@@ -4323,25 +4357,60 @@
                                                                         },
                                                                         {
                                                                             dataField: "EROAmount3",
-                                                                            caption: "Night",
+                                                                            caption: "Night for Accom.",
                                                                             dataType: "number",
                                                                             format: { type: "fixedPoint", precision: 0 },
                                                                             setCellValue: function (newData, value, currentRowData) {
                                                                                 newData.EROAmount3 = value;
-                                                                                newData.EROAmount4 = ((currentRowData.RefundedAmount) / (currentRowData.EROAmount1)) / value;
+                                                                                if (value === 0) {
+                                                                                    newData.EROAmount4 = 0
+                                                                                }
+                                                                                else {
+                                                                                    newData.EROAmount4 = ((currentRowData.RefundedAmount) / (currentRowData.EROAmount1)) / value;
+                                                                                }
                                                                             },
+                                                                            visible: true,
                                                                             editorType: "dxNumberBox",
-                                                                            editorOptions: { format: "#,##0", width: 50, elementAttr: { class: "custom-editor" }, }, //readOnly: [!aaOverseasxx] 
+                                                                            editorOptions: {
+                                                                                format: "#,##0",
+                                                                                width: 70,
+                                                                                elementAttr: { class: "custom-editor" },
+                                                                                //readOnly: [!aaAccom],
+                                                                            },
                                                                             width: 70,
                                                                             validationRules: [
+                                                                                { type: "required" },
                                                                                 {
                                                                                     type: "custom",
                                                                                     validationCallback: function (e) {
-                                                                                        if (e.data.ERORefNo3 === "O/Seas Trav-Accom." || (e.data.ERORefNo3 === "Local Travel" && e.data.ERORefNo2 === "Accommodation")) { //EROCode03
-                                                                                            if (e.data.EROAmount3 === 0) { return false } else { return true }
-                                                                                        } else { return true }
+                                                                                        let message = "";
+                                                                                        // Condition 1: If "Accom." is included in ERORefNo3, the value must not be 0
+                                                                                        if (e.data.ERORefNo3.includes("Accom.")) {
+                                                                                            if (e.value === 0) {
+                                                                                                //message = "Night cannot be 0 for Accom.";
+                                                                                                e.rule.message = "Night cannot be 0";
+                                                                                                //DevExpress.ui.dialog.alert({ showTitle: true, title: "Invalid !!", messageHtml: message });
+                                                                                                //aMessageAlert("Value canot be 0 for Accom.","red")
+                                                                                                return false; // Fail validation
+                                                                                            }
+                                                                                            return true; // Pass validation
+                                                                                        }
+
+                                                                                        // Condition 2: If "Accom." is not included, the value must be 0
+                                                                                        else {
+                                                                                            if (e.value !== 0) {
+                                                                                                //message = "Night is not allowed when not related to Accom.";
+                                                                                                e.rule.message = "Night must be 0";
+                                                                                                //aMessageAlert(message,"red")
+                                                                                                //DevExpress.ui.dialog.alert({ showTitle: true, title: "Invalid !!", messageHtml: message });
+                                                                                                //e.data.EROAmount3 = 0; // Reset the value
+                                                                                                //aMessageAlert("Only 0 is allowed when not related to Accom.","red")
+                                                                                                return false; // Fail validation
+                                                                                            }
+                                                                                            return true; // Pass validation
+                                                                                        }
                                                                                     },
-                                                                                    message: "Please Entry"
+                                                                                    message: "Invalid value." // Default message (overridden by `e.rule.message` dynamically)
                                                                                 }
                                                                             ],
                                                                         },
@@ -4351,25 +4420,41 @@
                                                                             dataType: "number",
                                                                             format: { type: "fixedPoint", precision: 2 },
                                                                             editorType: "dxNumberBox",
-                                                                            editorOptions: { format: "#,##0.00", width: 90, elementAttr: { class: "custom-editor" }, readOnly: true },
+                                                                            editorOptions: { format: "#,##0.00", width: 90, elementAttr: { class: "custom-editor" }, readOnly: true, },
                                                                             width: 90,
                                                                             visible: true,
+                                                                            /*  visible: function (e) {
+                                                                                return false //(e.row.data.ERORefNo3.includes("Accom"));
+                                                                            }, */
                                                                             validationRules: [
                                                                                 {
                                                                                     type: "custom",
                                                                                     validationCallback: function (e) { //EROCode01
+                                                                                        //aMessageAlert(e.data.ERORefNo3, "red")
                                                                                         let aaChkCodexx = (e.data.ERORefNo3 === "O/Seas Trav-Accom." ? "Overseas" : "NONE")
                                                                                         if (e.data.ERORefNo3 === "O/Seas Trav-Accom.") {
+                                                                                            aaChkCodexx = "Overseas"
+                                                                                        } else if (e.data.ERORefNo3 === "Local  Trav-Accom.") {
+                                                                                            aaChkCodexx = "LocalAccom"
+                                                                                        } else {
+                                                                                            aaChkCodexx = "NONE"
+                                                                                        }
+                                                                                        console.log(aaChkCodexx)
+                                                                                        if (e.data.ERORefNo3 === "O/Seas Trav-Accom." || e.data.ERORefNo3 === "Local  Trav-Accom.") {
                                                                                             let aResultxxx = aSearch2json(aaLimitedAmt, "code", aaChkCodexx); //"Overseas"
                                                                                             let aLimitAmtaa = (aResultxxx.length === 0 ? 10000000 : aResultxxx[0].lmtamt);
                                                                                             return e.value <= (aLimitAmtaa);
-                                                                                        } else if (e.data.ERORefNo3 === "Local Travel" && e.data.ERORefNo2 === "Accommodation") { //EROCode03
-                                                                                            return e.value <= 4500;
-                                                                                        } else { return true }
+                                                                                        }
+                                                                                        // else if (e.data.ERORefNo3 === "Local Trav-Accom.") { //	 Local Travel EROCode03 && e.data.ERORefNo2 === "Accommodation"
+                                                                                        //     return e.value <= 4500;
+                                                                                        else { return true }
                                                                                     },
                                                                                     message: "Over Limited"
                                                                                 }
                                                                             ],
+                                                                            // visible: function (e) {
+                                                                            //     return (e.row && e.row.data && e.row.data.ERORefNo3?.includes("Accom"));
+                                                                            // },
                                                                         },
                                                                         {
                                                                             dataField: "ERODesc05",
@@ -4447,15 +4532,15 @@
                                                                         let allRows = dataSource.items(); // Get the total number of records 
                                                                         let filteredRows = allRows.filter(row => (row.ERORefNo3 === "Entertainment" && row.EROAmount2 > aaEntertainLmt) || (row.ERORefNo3 === "Corporate Gifts And Donations" && row.EROAmount2 > aaGiftLmt)); //aaEntertainLmt
                                                                         let totalRecords = allRows.length;
-                                                                        console.log("Total Records:", totalRecords);
-                                                                        console.log("All Rows:", allRows);
-                                                                        console.log("Filter Row:", filteredRows)
+                                                                        //console.log("Total Records:", totalRecords);
+                                                                        //console.log("All Rows:", allRows);
+                                                                        //console.log("Filter Row:", filteredRows)
                                                                         //---------------------------------//
                                                                         asTotalRecords = totalRecords;
                                                                         asAllRow = allRows;
                                                                         asFilterRow = filteredRows;
                                                                         asFilterRec = filteredRows.length
-                                                                        console.log(asFilterRow, asFilterRec, asTotalRecords)
+                                                                        //console.log(asFilterRow, asFilterRec, asTotalRecords)
                                                                     },
 
                                                                     //onContentReady: function(e) {
@@ -4496,10 +4581,6 @@
                                                                             {
                                                                                 column: "REFNO",
                                                                                 summaryType: "count",
-                                                                                //    summaryType: "max",
-                                                                                //    valueFormat: "currency",
-                                                                                //    showInGroupFooter: false,
-                                                                                //    alignByColumn: true            
                                                                                 displayFormat: "{0} Items",
                                                                             },
                                                                             /*
@@ -4522,10 +4603,10 @@
                                                                             {
                                                                                 column: "RefundedAmount",
                                                                                 summaryType: "sum",
-                                                                                //          summaryType: "max",
+                                                                                //summaryType: "max",
                                                                                 valueFormat: "#,##0.00", //"currency",
-                                                                                //          showInGroupFooter: false,
-                                                                                //          alignByColumn: true            
+                                                                                //showInGroupFooter: false,
+                                                                                //alignByColumn: true            
                                                                                 displayFormat: "{0}",
                                                                             },
                                                                         ],
