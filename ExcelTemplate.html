@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>DevExtreme + ExcelJS Report with Template</title>
+
+  <!-- DevExtreme CSS -->
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin: 24px; }
+    .toolbar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    #gridContainer { height: 440px; }
+    button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+    button:hover { background: #f5f5f5; }
+    .note { color: #666; font-size: 13px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>รายงานด้วย DevExtreme + ExcelJS (ใช้ Excel Template)</h2>
+
+  <div class="toolbar">
+    <button id="downloadTemplateBtn">Download Template</button>
+    <button id="exportBtn">Export Report (ใช้ template.xlsx ถ้ามี)</button>
+  </div>
+  <div id="gridContainer"></div>
+  <div class="note">
+    - วางไฟล์ template.xlsx ไว้ในโฟลเดอร์เดียวกับไฟล์นี้ เพื่อให้ปุ่ม Export โหลดมาใช้ได้โดยตรง<br>
+    - หรือคลิก “Download Template” เพื่อสร้างและดาวน์โหลด template.xlsx จากหน้านี้ แล้วค่อยกด Export
+  </div>
+
+  <!-- jQuery (สำหรับ DevExtreme jQuery widgets) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- DevExtreme JS -->
+  <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+  <!-- ExcelJS -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <!-- FileSaver -->
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <script>
+    // -----------------------------
+    // Sample data
+    // -----------------------------
+    const data = [
+      { name: "วิกรานต์", role: "Developer", score: 95, date: "2025-09-12" },
+      { name: "สมชาย", role: "Tester", score: 88, date: "2025-09-11" },
+      { name: "อารีย์", role: "Manager", score: 92, date: "2025-09-10" },
+      { name: "กมล", role: "Analyst", score: 85, date: "2025-09-09" }
+    ];
+
+    // -----------------------------
+    // Create DataGrid
+    // -----------------------------
+    const grid = $("#gridContainer").dxDataGrid({
+      dataSource: data,
+      showBorders: true,
+      columnAutoWidth: true,
+      rowAlternationEnabled: true,
+      columns: [
+        { dataField: "name", caption: "ชื่อ" },
+        { dataField: "role", caption: "ตำแหน่ง" },
+        { dataField: "score", caption: "คะแนน", dataType: "number" },
+        { dataField: "date", caption: "วันที่", dataType: "date", format: "yyyy-MM-dd" }
+      ],
+      export: { enabled: false }
+    }).dxDataGrid("instance");
+
+    // -----------------------------
+    // Helpers: สร้าง Template Workbook ด้วย ExcelJS
+    // -----------------------------
+    async function buildTemplateWorkbook() {
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet("Report", {
+        properties: { defaultRowHeight: 18 }
+      });
+
+      // โลโก้/หัวรายงาน (ตัวอย่างเขียนข้อความ)
+      ws.mergeCells("A1:D1");
+      ws.getCell("A1").value = "รายงานสรุปคะแนน (Template)";
+      ws.getCell("A1").font = { bold: true, size: 14 };
+      ws.getCell("A1").alignment = { horizontal: "center" };
+
+      // Header row ที่แถว 2
+      const headerRowNumber = 2;
+      const headers = ["ชื่อ", "ตำแหน่ง", "คะแนน", "วันที่"];
+      ws.getRow(headerRowNumber).values = headers;
+
+      // สไตล์หัวตาราง
+      for (let c = 1; c <= headers.length; c++) {
+        const cell = ws.getRow(headerRowNumber).getCell(c);
+        cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF455A64" } };
+        cell.border = {
+          top: { style: "thin" }, left: { style: "thin" },
+          bottom: { style: "thin" }, right: { style: "thin" }
+        };
+        cell.alignment = { horizontal: "center" };
+      }
+
+      // คอลัมน์ width + format
+      ws.columns = [
+        { key: "name", width: 22 },
+        { key: "role", width: 18 },
+        { key: "score", width: 12, style: { numFmt: "0" } },
+        { key: "date", width: 14, style: { numFmt: "yyyy-mm-dd" } }
+      ];
+
+      // แถวสรุป (ตัวอย่างแถว 3 จะเป็นข้อมูลเริ่มต้น ดังนั้น total row จะอยู่ท้ายข้อมูลตอน export)
+      // เราจะเว้นสูตรไว้ให้เติมทีหลัง หากต้องการ
+
+      // หมายเหตุสำหรับผู้ใช้ template
+      ws.getCell("F2").value = "Note:";
+      ws.getCell("F3").value = "เอกสารนี้เป็นแม่แบบ (อย่าแก้ไขหัวตารางแถว 2)";
+      ws.getCell("F2").font = { bold: true };
+
+      // Freeze header
+      ws.views = [{ state: "frozen", ySplit: headerRowNumber }];
+
+      return wb;
+    }
+
+    // ดาวน์โหลด Template.xlsx ไฟล์จริง
+    async function downloadTemplateFile() {
+      const wb = await buildTemplateWorkbook();
+      const buf = await wb.xlsx.writeBuffer();
+      saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "template.xlsx");
+    }
+
+    // พยายามโหลด template.xlsx จากเซิร์ฟเวอร์ (ถ้ามี)
+    async function tryFetchTemplateFromServer(url = "template.xlsx") {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) return null;
+        const ab = await res.arrayBuffer();
+        const wb = new ExcelJS.Workbook();
+        await wb.xlsx.load(ab);
+        // ตรวจสอบว่ามี sheet "Report" และหัวตารางอยู่ที่แถว 2
+        const ws = wb.getWorksheet("Report");
+        if (!ws) return null;
+        const headerRow = ws.getRow(2);
+        const headerValues = headerRow.values.filter(Boolean);
+        if (headerValues.length < 4) return null;
+        return wb;
+      } catch {
+        return null;
+      }
+    }
+
+    // Export รายงาน: เติม DataGrid ลงใน Template
+    async function exportReport() {
+      // 1) ลองโหลด template.xlsx จากโฟลเดอร์เดียวกันก่อน
+      let wb = await tryFetchTemplateFromServer("template.xlsx");
+      console.log(wb ? "Have TEMPLAE" : "No TEMPLATE")
+      
+      // 2) ถ้าไม่พบ ให้สร้าง template ใหม่แบบ in-memory
+      if (!wb) {
+        wb = await buildTemplateWorkbook();
+      }
+
+      const ws = wb.getWorksheet("Report");
+      if (!ws) {
+        alert("Template ไม่มีชีตชื่อ 'Report'");
+        return;
+      }
+
+      // หัวตารางอยู่แถว 2 ดังนั้นเริ่มเขียนข้อมูลที่แถว 3
+      const startRow = 2;
+
+      // ใช้ DevExtreme excelExporter เติมข้อมูล
+      await DevExpress.excelExporter.exportDataGrid({
+        component: grid,
+        worksheet: ws,
+        topLeftCell: { row: startRow, column: 1 }, // เริ่มที่ A3
+        autoFilterEnabled: true,
+        customizeCell: ({ gridCell, excelCell }) => {
+          // เส้นขอบบางๆ
+          excelCell.border = {
+            top: { style: "thin" }, left: { style: "thin" },
+            bottom: { style: "thin" }, right: { style: "thin" }
+          };
+          // จัดเลขชิดขวา
+          if (gridCell && gridCell.column && gridCell.column.dataField === "score") {
+            excelCell.alignment = { horizontal: "right" };
+          }
+          // วันที่จัดกลาง
+          if (gridCell && gridCell.column && gridCell.column.dataField === "date") {
+            excelCell.alignment = { horizontal: "center" };
+          }
+        }
+      });
+
+      // เพิ่มแถว Total ต่อท้ายข้อมูล
+      const lastDataRow = startRow + data.length ; //- 1
+      const totalRowIndex = lastDataRow + 1;
+      ws.getCell(`A${totalRowIndex}`).value = "รวม/เฉลี่ย:";
+      ws.getCell(`A${totalRowIndex}`).font = { bold: true };
+      ws.mergeCells(`A${totalRowIndex}:B${totalRowIndex}`);
+
+      // SUM และ AVERAGE ของ score
+      ws.getCell(`C${totalRowIndex}`).value = { formula: `SUM(C${startRow}:C${lastDataRow})` };
+      //ws.getCell(`D${totalRowIndex}`).value = { formula: `AVERAGE(C${startRow}:C${lastDataRow})` };
+      ws.getCell(`C${totalRowIndex}`).numFmt = "0";
+      //ws.getCell(`D${totalRowIndex}`).numFmt = "0.00";
+
+      // เส้นขอบ total row
+      ["A","B","C","D"].forEach(col => {
+        const cell = ws.getCell(`${col}${totalRowIndex}`);
+        cell.border = {
+          top: { style: "double" }, left: { style: "thin" },
+          bottom: { style: "thin" }, right: { style: "thin" }
+        };
+      });
+
+      // บันทึกเป็นไฟล์รายงาน
+      const buf = await wb.xlsx.writeBuffer();
+      saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "รายงาน.xlsx");
+    }
+
+    // -----------------------------
+    // Bind UI
+    // -----------------------------
+    document.getElementById("downloadTemplateBtn").addEventListener("click", downloadTemplateFile);
+    document.getElementById("exportBtn").addEventListener("click", exportReport);
+  </script>
+</body>
+</html>

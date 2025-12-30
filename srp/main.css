@@ -6,10 +6,30 @@
     margin: 0px;
     padding: 0px;
 }
-
-body {
-    font-family: 'Exo', sans-serif;
+/* #header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1a1a1a; 
+    z-index: 1000;
+    padding: 10px 0;
 }
+#toolbar {
+    position: fixed;
+    top: 50px; 
+    left: 0;
+    width: 100%;
+    background-color: #333; 
+    z-index: 999;
+    padding: 10px 0;
+} */
+
+/* body {
+    font-family: 'Exo', sans-serif;
+    /* margin-top: 100px; Adjust based on the header height 
+} */
+
 /*.context {
     display: none;
 }
@@ -207,13 +227,13 @@ body {
     height: 100%;
 }
 
-body {
+/* body {
     margin: 0;
-    /*background-image: url("./images/xmas01.jpg");*/
+    /*background-image: url("./images/xmas01.jpg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: 25%;
-}
+} */
 
 #tophead {
     /*dposition: fixed;*/
@@ -265,17 +285,57 @@ body {
     margin-right: 45px;
 }
 
-.toolsmenu {
+/* .toolsmenu {
     color: lightgrey;
 }
 
 .toolsmenu .dx-menu-item {
     color: whitesmoke;
     background-color: black;
-    /*rgb(91, 103, 112);*/
-    /*border-color: black;*/
-    /*rgb(1, 1, 75);  rgb(91, 103, 112) rgb(0, 46, 83);*/
-    /*background: yellow;  */
+} */
+
+/* Menu container + base */
+.toolsmenu .dx-menu-base {
+    background-color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Top-level menu items */
+.toolsmenu .dx-menu-item {
+    background-color: black !important;
+    color: lightgrey !important;
+    border: none !important;
+    transition: color 0.2s ease;
+}
+
+/* On hover: keep black background, brighten text/icon */
+.toolsmenu .dx-menu-item.dx-state-hover,
+.toolsmenu .dx-menu-item.dx-state-focused {
+    background-color: black !important;   /* no grey hover */
+    color: #fff !important;               /* brighten text */
+}
+
+/* Submenu panel */
+.toolsmenu .dx-submenu {
+    background-color: black !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Submenu items */
+.toolsmenu .dx-submenu .dx-menu-item {
+    background-color: black !important;
+    color: lightgrey !important;
+    border: none !important;
+    transition: color 0.2s ease;
+}
+
+/* Submenu hover: same rule (no grey background) */
+.toolsmenu .dx-submenu .dx-menu-item.dx-state-hover,
+.toolsmenu .dx-submenu .dx-menu-item.dx-state-focused {
+    background-color: black !important;
+    color: #fff !important;
 }
 
 #toolbar {
@@ -522,15 +582,15 @@ body {
     border-radius: 50%;
 }
 
-#aUsrName {
+/* #aUsrName {
     color: rgb(211, 211, 211);
-    /*rgb(102, 43, 0);*/
+    /*rgb(102, 43, 0);
     font-size: 14px;
     font-weight: 900;
     margin-right: 80px;
     margin-top: -8px;
-    /*900;*/
-}
+    /*900;
+} */
 
 /*TreeView*/
 .dx-treeview-select-all-item,
@@ -597,5 +657,83 @@ span.bb {
 .dx-popup-wrapper>.dx-overlay-content {
     border-radius: 9px
 }
+.first-icon {
+    color: grey; /*rgb(157, 144, 136); /*grey;  /* Set the color for the icon  */
+    background-color: transparent; /* Make background transparent */
+}
 
+#menu01 .fa-bullseye {
+    color: grey; /*rgb(157, 144, 136); /*grey; /* Alternative: Target by menu ID and icon class */
+    background-color: transparent; /* Make background transparent */
+}
+
+/* Fix DevExtreme overriding fonts */
+/* #aUsrName {
+    font-weight: normal !important;
+    font-size: 14px;         adjust as needed 
+    color: white;            or your preferred color 
+} */
+#aUsrName {
+    font-weight: normal !important;
+    font-size: 14px;
+    color: white;
+    margin-right: 80px;
+    margin-top: -8px;
+}
+
+#version {
+    font-weight: normal !important;
+    font-size: 12px;        /* adjust as needed */
+    color: lightcyan;       /* keep your original color */
+}
+
+body {
+    font-family: 'Exo', sans-serif;
+    margin: 0;
+    /* margin-top: 100px; Adjust based on the header height */
+    /* background-image: url("./images/xmas01.jpg"); */
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+}
+
+/* Allow body to grow taller than viewport */
+/* html, body, .dx-viewport {
+    height: auto !important;    /* not fixed 
+    min-height: 100%;           /* still fill at least full screen 
+    overflow-y: auto !important; /* scroll if needed 
+} */
+
+/* Allow body to grow taller than viewport and prevent horizontal scroll */
+html, body, .dx-viewport {
+    height: auto !important;         /* not fixed */
+    min-height: 100%;               /* still fill at least full screen */
+    overflow-y: auto !important;    /* scroll vertically if needed */
+    overflow-x: hidden !important;  /* prevent horizontal scroll */
+}
+
+/* --- Toolbar Vertical Center Fix --- */
+#toolbar .dx-toolbar-items-container {
+    display: flex;
+    align-items: center;   /* vertical centering */
+}
+
+#toolbar .xmenu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+#toolbar .xmenu .dx-icon {
+    line-height: 1;
+    font-size: 20px; /* adjust size if needed */
+}
+
+#toolbar .toolbar-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    height: 100%;
+}
 

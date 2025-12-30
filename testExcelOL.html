@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Online Excel Editor</title>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <style>
+    table { border-collapse: collapse; margin-top: 10px; }
+    td, th { border: 1px solid #ccc; padding: 5px; min-width: 80px; }
+    td[contenteditable] { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+  <h2>🧮 ExcelJS Online Editor</h2>
+  <input type="file" id="fileInput" accept=".xlsx" />
+  <button onclick="saveToMemory()">💾 Save to Memory</button>
+  <button onclick="exportExcel()">⏫ Export Excel</button>
+  <div id="grid"></div>
+
+  <script>
+    let workbook, worksheet;
+
+    document.getElementById('fileInput').addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      const buffer = await file.arrayBuffer();
+      workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(buffer);
+      worksheet = workbook.worksheets[0];
+      renderGrid();
+    });
+
+    function renderGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      const table = document.createElement('table');
+      worksheet.eachRow((row, rowIndex) => {
+        const tr = document.createElement('tr');
+        row.eachCell((cell, colIndex) => {
+          const td = document.createElement('td');
+          td.contentEditable = true;
+          td.innerText = cell.value || '';
+          td.dataset.row = rowIndex;
+          td.dataset.col = colIndex;
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+      grid.appendChild(table);
+    }
+
+    function saveToMemory() {
+      const cells = document.querySelectorAll('td[contenteditable]');
+      cells.forEach(td => {
+        const row = parseInt(td.dataset.row);
+        const col = parseInt(td.dataset.col);
+        worksheet.getRow(row).getCell(col).value = td.innerText;
+      });
+      localStorage.setItem('excelEditorBackup', worksheetToJSON());
+      alert('Saved to memory!');
+    }
+
+    function worksheetToJSON() {
+      const data = [];
+      worksheet.eachRow((row) => {
+        const rowData = [];
+        row.eachCell((cell) => rowData.push(cell.value));
+        data.push(rowData);
+      });
+      return JSON.stringify(data);
+    }
+
+    async function exportExcel() {
+      const cells = document.querySelectorAll('td[contenteditable]');
+      cells.forEach(td => {
+        const row = parseInt(td.dataset.row);
+        const col = parseInt(td.dataset.col);
+        worksheet.getRow(row).getCell(col).value = td.innerText;
+      });
+      const blob = await workbook.xlsx.writeBuffer();
+      const url = URL.createObjectURL(new Blob([blob]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'edited.xlsx';
+      a.click();
+    }
+  </script>
+</body>
+</html>

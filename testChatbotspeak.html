@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talking & Listening Chatbot (Thai & English)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        #chatbox { width: 300px; padding: 10px; border: 1px solid #ccc; margin: 10px auto; border-radius: 5px; }
+        input { width: 80%; padding: 5px; }
+        button { padding: 5px 10px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>🗣️ Chatbot (Thai & English)</h1>
+    <div id="chatbox">
+        <p><strong>Chatbot:</strong> Click "🎤 Start Listening" and speak.</p>
+        <p id="chatOutput"></p>
+        <input type="text" id="userInput" placeholder="Type a message...">
+        <button id="sendBtn">Send</button>
+        <button id="voiceBtn">🎤 Start Listening</button>
+    </div>
+
+    <script>
+        let voices = [];
+
+        function loadVoices() {
+            voices = window.speechSynthesis.getVoices();
+        }
+
+        function getVoiceByLang(lang) {
+            let availableVoices = voices.filter(voice => voice.lang.startsWith(lang));
+            return availableVoices.length ? availableVoices[0] : null;
+        }
+
+        function speak(text, lang) {
+            let speech = new SpeechSynthesisUtterance(text);
+            let selectedVoice = getVoiceByLang(lang);
+
+            if (selectedVoice) {
+                speech.voice = selectedVoice;
+            } else {
+                console.warn(`No voice found for ${lang}. Using default.`);
+            }
+
+            speech.lang = lang;
+            speech.volume = 1;
+            speech.rate = 1;
+            speech.pitch = 1;
+            window.speechSynthesis.speak(speech);
+        }
+
+        function chatbotResponse(userInput) {
+            let lang = /[\u0E00-\u0E7F]/.test(userInput) ? "th-TH" : "en-US";
+            let response;
+
+            if (lang === "th-TH") {
+                if (userInput.includes("สวัสดี")) response = "สวัสดี! ฉันช่วยอะไรคุณได้บ้าง?";
+                else if (userInput.includes("คุณชื่ออะไร")) response = "ฉันเป็นแชทบอทที่พูดได้ ยินดีที่ได้รู้จัก!";
+                else if (userInput.includes("ลาก่อน")) response = "ลาก่อน ขอให้มีวันที่ดี!";
+                else response = "ขอโทษ ฉันไม่เข้าใจคำถามนั้น";
+            } else {
+                if (userInput.toLowerCase().includes("hello")) response = "Hello! How can I help you today?";
+                else if (userInput.toLowerCase().includes("your name")) response = "I'm your talking chatbot, nice to meet you!";
+                else if (userInput.toLowerCase().includes("goodbye")) response = "Goodbye! Have a great day!";
+                else response = "Sorry, I didn't understand that.";
+            }
+
+            speak(response, lang);
+            document.getElementById("chatOutput").innerText = "Chatbot: " + response;
+        }
+
+        document.getElementById("sendBtn").addEventListener("click", function () {
+            let userInput = document.getElementById("userInput").value;
+            if (userInput.trim() !== "") {
+                chatbotResponse(userInput);
+                document.getElementById("userInput").value = "";
+            }
+        });
+
+        document.getElementById("userInput").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                document.getElementById("sendBtn").click();
+            }
+        });
+
+        let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = "th-TH";
+        recognition.interimResults = false;
+
+        recognition.onresult = function(event) {
+            let userVoiceInput = event.results[0][0].transcript;
+            document.getElementById("userInput").value = userVoiceInput;
+            chatbotResponse(userVoiceInput);
+        };
+
+        recognition.onerror = function(event) {
+            alert("Speech recognition error: " + event.error);
+        };
+
+        document.getElementById("voiceBtn").addEventListener("click", function () {
+            recognition.start();
+        });
+
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+    </script>
+
+</body>
+</html>
+
+
+

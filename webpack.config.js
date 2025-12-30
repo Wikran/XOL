@@ -1,20 +1,36 @@
-const path = require('path');
-const glob = require('glob');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const glob = require("glob");
 
 module.exports = {
-  entry: glob.sync('./src/**/*.js').reduce((entries, file) => {
-    const entry = path.basename(file, path.extname(file));
-    entries[entry] = './' + file.replace(/\\/g, '/');
-    return entries;
+  entry: glob.sync("./src/js/*.js").reduce((acc, file) => {
+    const name = path.basename(file, ".js"); // Get file name without extension
+    acc[name] = file; // Add to Webpack entry object
+    return acc;
   }, {}),
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    filename: "[name].bundle.js", // Generates a separate bundle for each file
+    path: path.resolve(__dirname, "dist"),
+    clean: true // Cleans the /dist folder before each build
   },
-  mode: 'development',
-  stats: {
-    errorDetails: true
-  }
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader"] // Extracts and bundles CSS
+      }
+    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({ filename: "styles.css" }),
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      filename: "index.html"
+    })
+  ],
+  mode: "production"
 };
+
 
 

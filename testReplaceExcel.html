@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Tag Replacer (Sheet: DATA)</title>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { border-collapse: collapse; margin-top: 20px; }
+    td, th { border: 1px solid #ccc; padding: 5px 10px; }
+    #download { margin-top: 20px; display: none; }
+  </style>
+</head>
+<body>
+  <h2>Upload Excel and Replace Tags in "DATA" Sheet</h2>
+  <input type="file" id="upload" accept=".xlsx,.xls" />
+  <button id="download">Download Updated Excel</button>
+  <div id="output"></div>
+
+  <script>
+    let workbookGlobal = null;
+
+    document.getElementById('upload').addEventListener('change', handleFile);
+    document.getElementById('download').addEventListener('click', () => {
+      if (workbookGlobal) {
+        XLSX.writeFile(workbookGlobal, 'updated.xlsx');
+      }
+    });
+
+    function handleFile(e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(evt) {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const sheetName = "DATA";
+        const sheet = workbook.Sheets[sheetName];
+
+        if (!sheet) {
+          alert(`Sheet "${sheetName}" not found.`);
+          return;
+        }
+
+        // Replace tags in "DATA" sheet only 
+        // Nadporn Srilert
+        // Suradee Malaiarisoon
+        // Sunee Srisuktaveerat
+        // Natthida Trisahavirakul
+
+        for (let cell in sheet) {
+          if (cell[0] === '!') continue;
+          const cellValue = sheet[cell].v;
+          if (typeof cellValue === 'string') {
+            sheet[cell].v = cellValue
+              .replace(/<approver1>/g, 'Nadporn Srilert')
+              .replace(/<approver2>/g, 'Suradee Malaiarisoon')
+              .replace(/<requester>/g, 'Natthida Trisahavirakul');
+          }
+        }
+
+        workbookGlobal = workbook;
+
+        // Display updated "DATA" sheet
+        const html = XLSX.utils.sheet_to_html(sheet);
+        document.getElementById('output').innerHTML = html;
+        document.getElementById('download').style.display = 'inline-block';
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat with DeepSeek AI (OpenRouter)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 700px;
+      margin: 30px auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    .chat-log {
+      height: 400px;
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #ddd;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+    }
+    .chat-message {
+      margin-bottom: 10px;
+    }
+    .user {
+      font-weight: bold;
+      color: #0066cc;
+    }
+    .ai {
+      font-weight: bold;
+      color: #cc0000;
+    }
+    input[type="text"] {
+      width: 85%;
+      padding: 10px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      border: none;
+      background-color: #0066cc;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #004999;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-container">
+  <h2>Chat with DeepSeek AI</h2>
+  <div class="chat-log" id="chatLog"></div>
+  <input type="text" id="userInput" placeholder="Type your message here..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  const apiKey = "sk-or-REPLACE_WITH_YOUR_API_KEY"; // 🔐 Replace with your OpenRouter API Key
+
+  async function callOpenrouter(input) {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "deepseek-ai/deepseek-v3",
+        messages: [{ role: "user", content: input }],
+        max_tokens: 200,
+        temperature: 0.7
+      })
+    });
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || "Error: No response.";
+  }
+
+  async function sendMessage() {
+    const userInput = document.getElementById("userInput");
+    const chatLog = document.getElementById("chatLog");
+    const input = userInput.value.trim();
+    if (!input) return;
+
+    // Display user message
+    chatLog.innerHTML += `<div class="chat-message"><span class="user">You:</span> ${input}</div>`;
+    userInput.value = "";
+    chatLog.scrollTop = chatLog.scrollHeight;
+
+    // Get AI response
+    const reply = await callOpenrouter(input);
+
+    // Display AI response
+    chatLog.innerHTML += `<div class="chat-message"><span class="ai">DeepSeek:</span> ${reply}</div>`;
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+</script>
+
+</body>
+</html>

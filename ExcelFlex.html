@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Pre-Approved Batch Generate</title>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="true">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+
+    <!-- DevExtreme JS -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- Excel export libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #grid {
+            height: 500px;
+        }
+
+        #output {
+            background: #f7f7f7;
+            padding: 12px;
+            border: 1px solid #ddd;
+            max-height: 320px;
+            overflow: auto;
+        }
+
+        /* .dx-button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .dx-button-success {
+            background: #e7f7e7;
+            border-color: #8bc34a;
+        } */
+
+        .note {
+            color: #666;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .file-label {
+            font-size: 12px;
+            color: #333;
+        }
+
+        #btn-export-excel {
+            display: none;
+        }
+
+        #btn-dl-customer {
+            display: none;
+        }
+
+        /* .custom-file {
+            display: inline-block;
+            width: 450px;
+            height: 21px;
+            padding: 2px 8px;
+            background: #eee;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            text-align: center;
+            line-height: 21px;
+        } */
+
+        #input-excel {
+            width: 450px;
+            /* expand width */
+            height: 21px;
+            /* keep height */
+        }
+    </style>
+    <link rel="stylesheet" href="MHODEE123.css">
+    <script src="fsrc/bundle.min.js"></script>
+</head>
+
+<body>
+    <h2 style="color: blue;">Pre-Approved Batch Generate</h2>
+    <h4 style="color: #03338c;">Flexible Benefits Cash Advance - Excel Transform</h4>
+
+    <div class="toolbar">
+        <!-- <div id="file-uploader"></div>
+        <span id="file-name">No file chosen</span> -->
+        <div class="toolbar-col">
+            <input type="file" id="input-excel" accept=".xlsx" />
+            <!-- <label for="input-excel" class="custom-file">Choose Excel File</label>
+            <input type="file" id="input-excel" accept=".xlsx" hidden /> -->
+            <!-- NEW: Load Excel Template button under the first choose file -->
+            <div>
+                <input type="file" id="input-template" accept=".xlsx" style="display:none" />
+                <button id="btn-load-template" class="dx-button dx-button-normal">
+                    <i class="fas fa-file-upload"></i> Load Excel Template (FlexibleTEMP.xlsx)
+                </button>
+                <span id="template-name" class="file-label"></span>
+            </div>
+        </div>
+
+        <!-- <button id="btn-download" class="dx-button dx-button-normal"><i class="fas fa-download"></i> Download JSON</button>
+        <button id="btn-popup" class="dx-button dx-button-normal"><i class="fas fa-file-alt"></i> View JSON (Popup)</button> -->
+        <button id="btn-export-excel" class="dx-button dx-button-success"><i class="fas fa-file-excel"></i> Export
+            Grouped Excel</button>
+        <!-- NEW: DL Customer Group -->
+        <button id="btn-dl-customer" class="dx-button dx-button-success"><i class="fas fa-file-excel"></i> DL Customer
+            Group</button>
+    </div>
+    <div id="agrid"></div>
+    <div id="grid"></div>
+
+    <!-- <h3>JSON preview</h3> -->
+    <!-- <pre id="output"></pre> -->
+    <!-- <div class="note">Headers: row 2. Data: from row 3. Company splits into Company, Address, TaxNo. DateText is -->
+    <!-- extracted from B1 (after “to”).</div> -->
+
+    <div id="jsonPopup"></div>
+
+    <script>
+            (() => {
+                let jsonData = [];
+                let jsonDataSum = [];
+                let gridInstance = null;
+                let agridInstance = null;
+                let popupInstance = null;
+                let templateBuffer = null; // FlexibleTEMP.xlsx buffer
+                let templateFileName = "";
+
+                // Client group mapping (full list)
+                const clientGroupcode = [
+                    { "ID": "00001", "CompanyGroup": "BASF Group", "ClientCode": "BAS11250", "CompanyName": "BASF (Thai) Limited", "CashAdvance": 300000 },
+                    { "ID": "00002", "CompanyGroup": "BASF Group", "ClientCode": "BAS28234", "CompanyName": "BASF Chemcat (Thailand) Limited", "CashAdvance": 300000 },
+                    { "ID": "S251117_52468", "CompanyGroup": "BASF Group", "ClientCode": "BAS", "CompanyName": "BASF Coatings Co., Ltd.", "CashAdvance": 300000 },
+                    { "ID": "00003", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "PHA56845", "CompanyName": "Kiatnakin Phatra Asset Management Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00004", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "KIA50093", "CompanyName": "Kiatnakin Phatra Bank Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00005", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "PHA56844", "CompanyName": "Kiatnakin Phatra Securities Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00006", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "PHA56843", "CompanyName": "KKP Capital Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00007", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "KKP59460", "CompanyName": "KKP Dime Securities Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00008", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "CMI56842", "CompanyName": "KKP Tower Company Limited", "CashAdvance": 300000 },
+                    { "ID": "S251118_22100", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "KKPFG", "CompanyName": "KKPFG", "CashAdvance": 300000 },
+                    { "ID": "00009", "CompanyGroup": "Osotspa Group", "ClientCode": "OSO56296", "CompanyName": "Osotspa Beverage Co., Ltd.", "CashAdvance": 300000 },
+                    { "ID": "00010", "CompanyGroup": "Osotspa Group", "ClientCode": "OSO56295", "CompanyName": "Osotspa Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00011", "CompanyGroup": "Osotspa Group", "ClientCode": "WAL56297", "CompanyName": "Osotspa Innovation Centre ", "CashAdvance": 300000 },
+                    { "ID": "00012", "CompanyGroup": "Osotspa Group", "ClientCode": "GRE57931", "CompanyName": "Greensville ", "CashAdvance": 300000 },
+                    { "ID": "00013", "CompanyGroup": "Mazda Group", "ClientCode": "MAZ59722", "CompanyName": "Mazda Powertrain Manufacturing (Thailand)", "CashAdvance": 100000 },
+                    { "ID": "00014", "CompanyGroup": "Promise", "ClientCode": "PRO60092", "CompanyName": "Promise (Thailand) Co., Ltd.", "CashAdvance": 100000 },
+                    { "ID": "00015", "CompanyGroup": "SCB X Group", "ClientCode": "SCB59297", "CompanyName": "SCB Tech X Company Limited", "CashAdvance": 100000 },
+                    { "ID": "00016", "CompanyGroup": "Thai Takenaka", "ClientCode": "THA60069", "CompanyName": "Thai Takenaka International Co.,Ltd.", "CashAdvance": 100000 },
+                    { "ID": "00017", "CompanyGroup": "NITMX", "ClientCode": "NAT60687", "CompanyName": "National ITMX", "CashAdvance": 200000 }
+                ];
+                
+                // $("#file-uploader").dxFileUploader({
+                //     selectButtonText: "Load Excel Template (FlexibleTEMP.xlsx)",
+                //     accept: ".xlsx",
+                //     uploadMode: "useForm",
+                //     multiple: false,
+                //     onValueChanged: function (e) {
+                //         if (e.value.length) {
+                //             const file = e.value[0];   // same as event.target.files[0]
+                //             console.log("Selected file:", file.name);
+
+                //             // Show filename beside the button
+                //             document.getElementById("file-name").textContent = file.name;
+
+                //             // 👉 If you want to read the file into ExcelJS:
+                //             const reader = new FileReader();
+                //             reader.onload = async (evt) => {
+                //                 const arrayBuffer = evt.target.result;
+                //                 // Example: load into ExcelJS workbook
+                //                 const workbook = new ExcelJS.Workbook();
+                //                 await workbook.xlsx.load(arrayBuffer);
+                //                 console.log("Workbook loaded:", workbook);
+                //             };
+                //             reader.readAsArrayBuffer(file);
+                //         } else {
+                //             document.getElementById("file-name").textContent = "No file chosen";
+                //         }
+                //     }
+                // });
+                // Helpers
+                
+                function normalizeCellValue(cell) {
+                    const v = cell && cell.value;
+                    if (v == null) return "";
+                    if (typeof v === "object") {
+                        if (v.text) return String(v.text).trim();
+                        if (v.result != null) return String(v.result).trim();
+                        if (v.richText) return v.richText.map(rt => rt.text).join("").trim();
+                        if (v instanceof Date) return formatDate(v);
+                        if (v.hyperlink && v.text) return String(v.text).trim();
+                        return String(v).trim();
+                    }
+                    return String(v).trim();
+                }
+
+                function formatDate(d) {
+                    const pad = (n) => (n < 10 ? "0" + n : n);
+                    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+                }
+
+                function getCellText(cell) {
+                    const v = cell && cell.value;
+                    if (v == null) return "";
+                    if (typeof v === "object" && v.text) return String(v.text).trim();
+                    return String(v).trim();
+                }
+
+                function extractDateAfterTo(text) {
+                    if (!text) return "";
+                    const m = String(text).match(/\bto\b\s+(\d{1,2}\/\d{1,2}\/\d{4})/i);
+                    return m ? m[1] : "";
+                }
+
+                function splitCompanyField(raw) {
+                    const str = String(raw || "").trim();
+                    if (!str) return { Company: "", Address: "", TaxNo: "" };
+                    const result = { Company: "", Address: "", TaxNo: "" };
+                    const segments = str.split(/(?=Company:|Address:|TaxNo:)/g);
+                    segments.forEach(seg => {
+                        const idx = seg.indexOf(":");
+                        if (idx === -1) return;
+                        const key = seg.slice(0, idx).trim();
+                        const val = seg.slice(idx + 1).trim();
+                        if (key === "Company") result.Company = val;
+                        else if (key === "Address") result.Address = val;
+                        else if (key === "TaxNo") result.TaxNo = val;
+                    });
+                    return result;
+                }
+
+                function enrichWithGroup(record) {
+                    const companyPrefix = (record.Company || "").toLowerCase().substring(0, 12);
+                    const match = clientGroupcode.find(c => c.CompanyName.toLowerCase().substring(0, 12) === companyPrefix);
+                    if (match) {
+                        record.CompanyGroup = match.CompanyGroup;
+                        record.CompanyName = match.CompanyName;
+                        record.ClientCode = match.ClientCode;
+                        record.CashAdvance = match.CashAdvance;
+                    } else {
+                        record.CompanyGroup = "";
+                        record.CompanyName = record.Company || "";
+                        record.ClientCode = "";
+                        record.CashAdvance = "";
+                    }
+                    return record;
+                }
+
+                function sanitizeSheetName(name) {
+                    const clean = String(name || "Unknown")
+                        .replace(/[\[\]\:\*\?\/\\]/g, " ")
+                        .substring(0, 31)
+                        .trim();
+                    return clean || "Sheet";
+                }
+
+                function sanitizeFileName(name) {
+                    return String(name || "Export")
+                        .replace(/[<>:"/\\|?*\u0000-\u001F]/g, " ")
+                        .replace(/\s+/g, " ")
+                        .trim();
+                }
+
+                function notify(type, message, ms = 2000) {
+                    if (window.DevExpress && DevExpress.ui && typeof DevExpress.ui.notify === 'function') {
+                        DevExpress.ui.notify(message, type, ms);
+                    } else {
+                        console.log(`[${type}]`, message);
+                    }
+                }
+
+                function initGrid(data) {
+                    // Clean data: remove records with blank/undefined CompanyGroup OR ProductName = "grand total"
+                    const filteredData = data.filter(item => {
+                        const companyGroupValid = item.CompanyGroup !== undefined && item.CompanyGroup.trim() !== "";
+                        const productNameValid = !(item["ProductName"] && item["ProductName"].toLowerCase() === "grand total");
+                        return companyGroupValid && productNameValid;
+                    });
+
+                    const columns = [
+                        {
+                            dataField: "HeadRefNo",
+                            caption: "REF#",
+                            width: 200,
+                        },
+                        {
+                            dataField: "CompanyGroup",
+                            caption: "Company Group",
+                            width: 250,
+                            dataType: "string",
+                            sortOrder: "desc",
+                            groupIndex: 0,
+                            // Remove "Company Group:" prefix in group headers
+                            customizeText: function (e) {
+                                return e.valueText; // only show the value
+                            }
+                        },
+                        {
+                            dataField: "CompanyName",
+                            caption: "Company Name",
+                            width: 200,
+                        },
+                        {
+                            dataField: "ClientCode",
+                            caption: "Client Code",
+                            width: 100,
+                        },
+                        {
+                            dataField: "Company",
+                            caption: "Company",
+                            width: 250,
+                        },
+                        {
+                            dataField: "ProductName",
+                            caption: "Product Name",
+                            dataType: "string",
+                            alignment: "left",
+                            width: 200
+                        },
+                        {
+                            dataField: "Quantity",
+                            caption: "Quantity",
+                            width: 100,
+                            dataType: "number",
+                            alignment: "right",
+                            format: { type: "fixedPoint", precision: 0 } // 9,999.99
+                        },
+                        {
+                            dataField: "ProductCost",
+                            caption: "Product Cost",
+                            width: 100,
+                            dataType: "number",
+                            alignment: "right",
+                            format: { type: "fixedPoint", precision: 2 }
+                        },
+                        {
+                            dataField: "CashAdvance",
+                            caption: "Cash Advance Limit",
+                            width: 100,
+                            dataType: "number",
+                            alignment: "right",
+                            format: { type: "fixedPoint", precision: 2 }
+                        },
+                        {
+                            dataField: "DateText",
+                            caption: "Date Text",
+                            width: 100,
+                        }
+                    ];
+
+                    if (!gridInstance) {
+                        gridInstance = $("#grid").dxDataGrid({
+                            dataSource: filteredData,
+                            columnAutoWidth: true,
+                            showBorders: true,
+                            rowAlternationEnabled: true,
+                            scrolling: { mode: "virtual" },
+                            filterRow: { visible: true },
+                            searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                            headerFilter: { visible: true },
+                            grouping: { contextMenuEnabled: true },
+                            groupPanel: { visible: true },
+                            columns: columns,
+
+                            // Collapse all groups by default
+                            onContentReady: function (e) {
+                                e.component.collapseAll(-1);
+                            },
+
+                            // Subtotals and Grand Totals
+                            summary: {
+                                recalculateWhileEditing: true,
+                                skipEmptyValues: false,
+
+                                // Grand totals at the bottom
+                                totalItems: [
+                                    {
+                                        column: "CompanyName",
+                                        summaryType: "count",
+                                        displayFormat: "{0} item(s)"
+                                    },
+                                    {
+                                        column: "Quantity",
+                                        summaryType: "sum",
+                                        valueFormat: "#,##0",
+                                        showInGroupFooter: true,
+                                        alignByColumn: true,
+                                        displayFormat: "{0}"
+                                    },
+                                    {
+                                        column: "Product Cost",
+                                        summaryType: "sum",
+                                        valueFormat: "#,##0.00",
+                                        showInGroupFooter: true,
+                                        alignByColumn: true,
+                                        displayFormat: "{0}"
+                                    },
+                                    {
+                                        column: "CashAdvance",
+                                        summaryType: "max",
+                                        valueFormat: "#,##0.00",
+                                        showInGroupFooter: true,
+                                        alignByColumn: true,
+                                        displayFormat: "{0}"
+                                    }
+                                ],
+
+                                // Subtotals per group
+                                groupItems: [
+                                    {
+                                        column: "CompanyName",
+                                        summaryType: "count",
+                                        displayFormat: "{0} item(s)"
+                                    },
+                                    {
+                                        column: "Quantity",
+                                        summaryType: "sum",
+                                        valueFormat: "#,##0",
+                                        showInGroupFooter: true,
+                                        alignByColumn: true,
+                                        displayFormat: "{0}"
+                                    },
+                                    {
+                                        column: "Product Cost",
+                                        summaryType: "sum",
+                                        valueFormat: "#,##0.00",
+                                        showInGroupFooter: true,
+                                        alignByColumn: true,
+                                        displayFormat: "{0}"
+                                    },
+                                    {
+                                        column: "CashAdvance",
+                                        summaryType: "max",
+                                        valueFormat: "#,##0.00",
+                                        showInGroupFooter: true,
+                                        alignByColumn: true,
+                                        displayFormat: "{0}"
+                                    }
+                                ]
+                            }
+
+                        }).dxDataGrid("instance");
+                    } else {
+                        gridInstance.option("dataSource", filteredData);
+                        gridInstance.option("columns", columns);
+                    }
+                }
+
+                function ainitGrid(data) {
+                    const columns = [
+                        {
+                            dataField: "HeadRefNo",
+                            caption: "PRE REF#",
+                            sortOrder: "asc",
+                            width: 130,
+                            editorOptions: { readOnly: true },
+                        },
+                        {
+                            dataField: "REFNO",
+                            caption: "REF#",
+                            width: 130,
+                            visible: false,
+                            editorOptions: { readOnly: true },
+                        },
+                        {
+                            dataField: "ERODate02",
+                            caption: "Period",
+                            format: "dd/MM/yyyy",
+                            width: 100,
+                            editorOptions: { readOnly: true }
+                        },
+                        {
+                            dataField: "ERORefNo1",
+                            caption: "Company Group",
+                            width: 220,
+                            editorOptions: { readOnly: true }
+                        },
+                        {
+                            dataField: "EROAmount6", //EROAmount4 //RefundedAmount
+                            caption: "Quantity",
+                            width: 100,
+                            dataType: "number",
+                            alignment: "right",
+                            editorOptions: { readOnly: true },
+                            format: { type: "fixedPoint", precision: 0 }
+                        },
+                        {
+                            dataField: "RefundedAmount", //EROAmount4 //RefundedAmount
+                            caption: "Cash Advance",
+                            width: 120,
+                            dataType: "number",
+                            alignment: "right",
+                            editorOptions: { readOnly: true },
+                            format: { type: "fixedPoint", precision: 2 }
+                        },
+                        {
+                            dataField: "EROAmount1",
+                            caption: "Limit",
+                            width: 130,
+                            dataType: "number",
+                            alignment: "right",
+                            editorOptions: { readOnly: true },
+                            format: { type: "fixedPoint", precision: 0 } // 9,999.99
+                        },
+
+                        {
+                            dataField: "ERODesc03",
+                            caption: "Cash Advance Reason",
+                            dataType: "string",
+                            width: 150,
+                            visible: false,
+                        },
+                        {
+                            dataField: "ERODesc01",
+                            caption: "URL FILENAME",
+                            dataType: "string",
+                            width: 200,
+                            visible: false,
+                        }, {
+                            dataField: "Note", caption: "Details Data", dataType: "string", editorType: "dxTextArea", alignment: 'top',
+                            cellTemplate: function (container, options) {
+                                var text = options.value ? options.value.replace(/\n/g, "<br>") : "";
+                                container.html(text);
+                            }, width: 200, visible: false
+                        },
+                        { dataField: "ERODesc05", caption: "LOT", width: 80 },
+                        { dataField: "EROAmount2", caption: "Outstanding", width: 150, dataType: "number", alignment: "right", format: { type: "fixedPoint", precision: 2 } }
+                    ];
+
+                    if (!agridInstance) {
+                        agridInstance = $("#agrid").dxDataGrid({
+                            dataSource: data,
+                            columnAutoWidth: true,
+                            showBorders: true,
+                            groupPaging: true,
+                            showColumnLines: true,
+                            showRowLines: true,
+                            rowAlternationEnabled: true,
+                            scrolling: { mode: "virtual" },
+                            filterRow: { visible: true },
+                            searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                            headerFilter: { visible: true },
+                            grouping: { contextMenuEnabled: true },
+                            groupPanel: { visible: false },
+                            columnChooser: { enabled: true, mode: "select" },
+                            columns: columns,
+
+                            // 👇 เปิด read/write พร้อม icons
+                            editing: {
+                                mode: "cell",              // ใช้ row mode เพื่อให้มีปุ่มในแต่ละแถว
+                                allowUpdating: true,
+                                allowAdding: true,
+                                allowDeleting: true,
+                                useIcons: true,           // แสดงเป็นไอคอนแทนข้อความ
+                                texts: {
+                                    addRow: "Add New",
+                                    editRow: "Edit",
+                                    deleteRow: "Delete",
+                                    saveRowChanges: "Save",
+                                    cancelRowChanges: "Cancel"
+                                }
+                            },
+
+                            // 👇 เพิ่ม toolbar icons
+                            onToolbarPreparing: function (e) {
+                                var dataGrid = e.component;
+                                e.toolbarOptions.items.unshift(
+                                    //e.toolbarOptions.items.push(
+                                    {
+                                        location: "after",
+                                        locateInMenu: "auto",
+                                        widget: "dxButton",
+                                        options: {
+                                            icon: "export",   // ใช้ icon ของ DevExtreme
+                                            text: "Customer Group",
+                                            onClick: function () {
+                                                //downloadCustomerGroup();
+                                                downloadCustomerGrp();
+                                            }
+                                        }
+                                    },
+                                    {
+                                        location: "after",
+                                        locateInMenu: "auto",
+                                        widget: "dxButton",
+                                        visible: false,
+                                        options: {
+                                            icon: "add",
+                                            text: "Add New",
+                                            onClick: function () {
+                                                dataGrid.addRow();
+                                            }
+                                        }
+                                    },
+                                    {
+                                        location: "after",
+                                        locateInMenu: "auto",
+                                        widget: "dxButton",
+                                        options: {
+                                            icon: "refresh",
+                                            hint: "Reload",
+                                            onClick: function () {
+                                                dataGrid.refresh();
+                                            }
+                                        }
+                                    }
+                                );
+                            },
+                            // 👇 เพิ่ม summary สำหรับทุก amount field
+                            summary: {
+                                totalItems: [
+                                    {
+                                        column: "EROAmount6",
+                                        summaryType: "sum",
+                                        displayFormat: "{0}",
+                                        valueFormat: { type: "fixedPoint", precision: 2 }
+                                    },
+                                    {
+                                        column: "RefundedAmount",
+                                        summaryType: "sum",
+                                        displayFormat: "{0}",
+                                        valueFormat: { type: "fixedPoint", precision: 2 }
+                                    },
+                                    {
+                                        column: "EROAmount1",
+                                        summaryType: "sum",
+                                        displayFormat: "{0}",
+                                        valueFormat: { type: "fixedPoint", precision: 2 }
+                                    },
+                                    {
+                                        column: "EROAmount2",
+                                        summaryType: "sum",
+                                        displayFormat: "{0}",
+                                        valueFormat: { type: "fixedPoint", precision: 2 }
+                                    }
+                                ]
+                            }
+
+
+                        }).dxDataGrid("instance");
+                    } else {
+                        agridInstance.option("dataSource", data);
+                        agridInstance.option("columns", columns);
+                    }
+                }
+
+                function buildColumnsFromData(data) {
+                    if (!data || data.length === 0) return [];
+                    const keys = Object.keys(data[0]);
+                    return keys.map(k => ({ dataField: k, caption: k }));
+                }
+
+                function initPopup() {
+                    if (!popupInstance) {
+                        popupInstance = $("#jsonPopup").dxPopup({
+                            title: "JSON content",
+                            width: 800,
+                            height: 600,
+                            showCloseButton: true,
+                            visible: true,
+                            contentTemplate: function () {
+                                const container = $("<div>").css({ height: "100%", display: "flex", flexDirection: "column" });
+                                const pre = $("<pre>").css({ flex: "1 1 auto", overflow: "auto", background: "#f7f7f7", padding: "12px", border: "1px solid #ddd" });
+                                pre.text(JSON.stringify(jsonData, null, 2));
+                                container.append(pre);
+                                return container;
+                            }
+                        }).dxPopup("instance");
+                    } else {
+                        popupInstance.option("contentTemplate", function () {
+                            const container = $("<div>").css({ height: "100%", display: "flex", flexDirection: "column" });
+                            const pre = $("<pre>").css({ flex: "1 1 auto", overflow: "auto", background: "#f7f7f7", padding: "12px", border: "1px solid #ddd" });
+                            pre.text(JSON.stringify(jsonData, null, 2));
+                            container.append(pre);
+                            return container;
+                        });
+                    }
+                }
+
+                // Load Excel Template via button (under the first choose file)
+                document.getElementById('btn-load-template').addEventListener('click', () => {
+                    document.getElementById('input-template').click();
+                });
+                
+                document.getElementById('input-template').addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    // check filename (case-insensitive)
+                    if (file.name.toLowerCase() !== "flexibletemp.xlsx") {
+                        notify("error", "Please select the correct file: FlexibleTEMP.xlsx", 3000);
+                        event.target.value = ""; // reset file input
+                        return;
+                    }
+                    try {
+                        templateBuffer = await file.arrayBuffer();
+                        templateFileName = file.name;
+                        document.getElementById('template-name').textContent = `Loaded: ${templateFileName}`;
+                        notify("success", "Template FlexibleTEMP.xlsx loaded.", 2000);
+                    } catch (err) {
+                        console.error(err);
+                        notify("error", "Failed to load template.", 3000);
+                    }
+                });
+
+                // Load Excel → JSON -> dxDataGrid // Run This first 
+                document.getElementById('input-excel').addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+
+                    if (!file) return;
+
+                    try {
+                        const buffer = await file.arrayBuffer();
+                        const workbook = new ExcelJS.Workbook();
+                        await workbook.xlsx.load(buffer);
+
+                        const worksheet = workbook.worksheets[0];
+                        const b1 = getCellText(worksheet.getCell('B1'));
+                        const dateText = extractDateAfterTo(b1);
+
+                        const headerRow = worksheet.getRow(2);
+                        const rawValues = headerRow.values.slice();
+                        const headers = {};
+                        for (let i = 1; i < rawValues.length; i++) {
+                            const h = rawValues[i];
+                            //const cleanValue = typeof value === 'string' ? value.replace(/\s+/g, '') : value;
+                            //headers[i] = typeof h === 'string' ? h.trim() : (h ? String(h).trim() : '');
+                            headers[i] = typeof h === 'string' ? h.trim() : (h ? String(h).trim() : '');
+                            headers[i] = headers[i].replace(/\s+/g, '')
+                        }
+
+                        const results = [];
+                        worksheet.eachRow((row, rowNumber) => {
+                            if (rowNumber < 3) return;
+
+                            const record = {};
+                            let hasData = false;
+
+                            row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+                                const header = headers[colNumber];
+                                if (!header) return;
+
+                                const value = normalizeCellValue(cell);
+
+                                if (header.toLowerCase() === 'company') {
+                                    const companyParts = splitCompanyField(value);
+                                    Object.assign(record, companyParts);
+                                    if (companyParts.Company || companyParts.Address || companyParts.TaxNo) hasData = true;
+                                } else {
+                                    //const cleanValue = typeof value === 'string' ? value.replace(/\s+/g, '') : value;
+                                    record[header] = value;
+                                    if (value !== '') hasData = true;
+                                }
+                            });
+
+                            record.DateText = dateText;
+                            enrichWithGroup(record);
+
+                            if (hasData) results.push(record);
+                        });
+                        //const aHRefNo = getUniqueHeadRef("P")
+                        jsonData = results;
+                        const xjsonData = cleanResults(results);
+                        console.log(xjsonData)
+                        jsonDataSum = SumJson(xjsonData);
+                        console.log(jsonDataSum)
+                        const njsonData = xLinkInsert(jsonDataSum, jsonData)//, "ERORefNo1", "CustomerGroup", ["REFNO"]);
+                        console.log(njsonData);
+                        const njsonDataSum = addNoteAsText(jsonDataSum, njsonData)
+                        console.log(njsonDataSum)
+                        jsonData = njsonData; // return jsonData with new jsonData with HeadRefNo 
+                        ainitGrid(njsonDataSum);
+                        //initGrid(njsonData);
+                        //document.getElementById('output').textContent = JSON.stringify(jsonData, null, 2);
+                        //initPopup();
+                        notify("success", "Excel loaded and JSON generated.", 2000);
+                    } catch (err) {
+                        console.error(err);
+                        notify("error", "Failed to load Excel. Check file format or console logs.", 3000);
+                    }
+                });
+
+                function cleanResults(results) {
+                    return results.filter(item => {
+                        const companyValid = item.Company !== undefined && item.Company.trim() !== "";
+                        const productValid = !(item.ProductName && item.ProductName.toLowerCase() === "grand total");
+                        return companyValid && productValid;
+                    });
+                }
+
+                function addNoteAsText(jsonDataSum = [], jsonData = []) {
+                    return jsonDataSum.map(sumRecord => {
+                        const relatedDetails = jsonData.filter(
+                            d => d.CompanyGroup === sumRecord.ERORefNo1 // 👈 match different keys
+                        );
+
+                        return {
+                            ...sumRecord,
+                            Note: JSON.stringify(relatedDetails) // compact JSON text, "[]" if empty
+                        };
+                    });
+                }
+
+                function SumJson(data) {
+                    const grouped = {};
+
+                    data.forEach(record => {
+                        const group = record.CompanyGroup;
+                        //const aHRefNo = getUniqueHeadRef("P")
+                        const [d, m, y] = record.DateText.split("/").map(Number);
+                        //grouped[group].DateFrom = new Date(y, m - 1, d);
+                        if (!grouped[group]) {
+                            grouped[group] = {
+                                //HeadRefNo: getUniqueHeadRef("P"), //aGetDateRef("P"), //getUniqueHeadRef("P") //
+                                HeadRefNo: getUniqueHeadRef("P"), // delay ensures uniqueness
+                                REFNO: "",
+                                ID: 1,
+                                ERORefNo1: group,
+                                RefundedAmount: 0, // Advance Amount from Excel (summary)
+                                //Quantity: 0,
+                                EROAmount1: 0, // limit 300,000
+                                //DateText: record.DateText, //ERODate02 //DateText
+                                ERODate02: new Date(y, m - 1, d),
+                                //LOT: "",
+                                EROAmount2: 0, // Outstanding
+                                EROAmount4: 0, // B/F LImit - (O/S + Advance)
+                                ERODesc01: "",
+                                ERODesc03: "",
+                                ERODesc05: "",
+                                EROAmount6: 0  // Quantity
+                            };
+                        }
+
+                        // Summaries 
+                        grouped[group].REFNO = grouped[group].HeadRefNo + "-001"; //REFNO: HeadRefNo + "-001"
+                        grouped[group].RefundedAmount += Number(record.ProductCost || 0);
+                        grouped[group].EROAmount6 += Number(record.Quantity || 0); //Quantity
+                        grouped[group].ERODesc01 = grouped[group].HeadRefNo + ".xlsx";
+                        grouped[group].EROAmount1 = Math.max(grouped[group].EROAmount1, Number(record.CashAdvance || 0));
+                    });
+
+                    // Finalize description
+                    Object.values(grouped).forEach(group => {
+                        group.ERODesc03 = "Pre-Approve for Flexible Benefits for " + "PRE-REF# " + group.HeadRefNo + ", Group " + group.ERORefNo1 + ", Date " + group.DateText;
+                    });
+
+                    // ✅ Return array directly
+                    return Object.values(grouped);
+                }
+
+                // helper: generate sorted randoms
+                function getSortedRandoms(count, max) {
+                    const arr = Array.from({ length: count }, () => Math.floor(Math.random() * max));
+                    return arr.sort((a, b) => a - b);
+                }
+
+                // main function
+                function getUniqueHeadRef(prefix) {
+                    // Call your existing function
+                    let baseRef = aGetDateRef(prefix);
+
+                    // Extract last 4 digits
+                    let numericTail = parseInt(baseRef.slice(-4), 10);
+
+                    // Increment normally
+                    numericTail = (numericTail + 1) % 10000;
+
+                    // Add a random boost from sorted randoms
+                    const randomBoosts = getSortedRandoms(20, 1000); // 5 random numbers up to 50
+                    const boost = randomBoosts[0]; // take the smallest (always increasing sequence)
+                    numericTail = (numericTail + boost) % 10000;
+
+                    // Replace last 4 digits with new value
+                    const newRef = baseRef.slice(0, -4) + numericTail.toString().padStart(4, "0");
+
+                    return newRef;
+                }
+
+                /**
+                 * LinkInsert - enrich detailJson with fields from summaryJson
+                 * @param {Array} summaryJson - source array (with master data)
+                 * @param {Array} detailJson - target array (to enrich)
+                 * @param {String} summaryLinkKey - field name in summaryJson used for matching (e.g. "ERORefNo1")
+                 * @param {String} detailLinkKey - field name in detailJson used for matching (e.g. "CompanyGroup")
+                 * @param {Array} fieldsToAdd - list of field names to copy from summaryJson into detailJson
+                 * @returns {Array} enriched detailJson
+                 */
+                function LinkInsert(summaryJson, detailJson, summaryLinkKey, detailLinkKey, fieldsToAdd) {
+                    // Build lookup map keyed by summaryLinkKey
+                    const lookup = {};
+                    summaryJson.forEach(item => {
+                        lookup[item[summaryLinkKey]] = item;
+                    });
+
+                    // Enrich detailJson
+                    return detailJson.map(record => {
+                        const match = lookup[record[detailLinkKey]];
+                        if (match) {
+                            const enriched = { ...record };
+                            fieldsToAdd.forEach(field => {
+                                enriched[field] = match[field];
+                            });
+                            return enriched;
+                        }
+                        return record; // unchanged if no match
+                    });
+                }
+
+                function xLinkInsert(summaryJson, detailJson) {
+                    // Build a lookup map from summaryJson keyed by ERORefNo1
+                    const lookup = {};
+                    summaryJson.forEach(item => {
+                        lookup[item.ERORefNo1] = {
+                            HeadRefNo: item.HeadRefNo,
+                            REFNO: item.REFNO
+                        };
+                    });
+
+                    // Map detailJson and insert HeadRefNo, REFNO if CompanyGroup matches
+                    return detailJson.map(record => {
+                        const match = lookup[record.CompanyGroup];
+                        if (match) {
+                            return {
+                                ...record,
+                                HeadRefNo: match.HeadRefNo,
+                                REFNO: match.REFNO
+                            };
+                        }
+                        return record; // unchanged if no match
+                    });
+                }
+
+                //------------------------
+                //Download JSON
+                // document.getElementById('btn-download').addEventListener('click', () => {
+                //     if (!jsonData || jsonData.length === 0) {
+                //         notify("warning", "No JSON data to download.", 2000);
+                //         return;
+                //     }
+                //     const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json;charset=utf-8" });
+                //     saveAs(blob, "export.json");
+                // });
+
+                //Show popup
+                // document.getElementById('btn-popup').addEventListener('click', () => {
+                //     if (!popupInstance) initPopup();
+                //     popupInstance.show();
+                // });
+
+                //Export grouped Excel: per CompanyGroup, with requested column layout and grand total (from testExcel2JSF.html)   
+                // document.getElementById('btn-export-excel').addEventListener('click', async () => {
+                //     if (!jsonData || jsonData.length === 0) {
+                //         notify("warning", "No data to export.", 2000);
+                //         return;
+                //     }
+
+                //     const workbook = new ExcelJS.Workbook();
+                //     const LIGHT_GREY = { argb: 'FFEFEFEF' };
+
+                //     // Group records by CompanyGroup
+                //     const groups = {};
+                //     jsonData.forEach(r => {
+                //         const groupName = r.CompanyGroup || "Unknown";
+                //         if (!groups[groupName]) groups[groupName] = [];
+                //         groups[groupName].push(r);
+                //     });
+
+                //     Object.keys(groups).forEach(groupNameRaw => {
+                //         const sheetName = sanitizeSheetName(groupNameRaw);
+                //         const sheet = workbook.addWorksheet(sheetName);
+
+                //         // Titles
+                //         const titleRow = sheet.addRow([`# ${groupNameRaw}`]);
+                //         titleRow.font = { bold: true, size: 16 };
+                //         const subTitleRow = sheet.addRow(["Company Grouped Export"]);
+                //         subTitleRow.font = { bold: true };
+
+                //         // Single DateText in A3 (kept from your base)
+                //         const firstDate = (groups[groupNameRaw][0] && groups[groupNameRaw][0].DateText) ? groups[groupNameRaw][0].DateText : "";
+                //         sheet.getCell('A3').value = firstDate;
+
+                //         // Build per-company buckets
+                //         const byCompany = {};
+                //         groups[groupNameRaw].forEach(r => {
+                //             const companyName = (r.CompanyName || r.Company || "Unknown").trim();
+                //             if (!byCompany[companyName]) byCompany[companyName] = [];
+                //             const qty = Number(r.Quantity) || 0;
+                //             const cost = Number(r["Product Cost"]) || 0;
+                //             const price = qty ? (cost / qty) : 0;
+                //             byCompany[companyName].push({
+                //                 CompanyName: companyName,
+                //                 ProductName: r["Product Name"],
+                //                 Quantity: qty,
+                //                 Price: price,
+                //                 ProductCost: cost
+                //             });
+                //         });
+
+                //         const companies = Object.keys(byCompany).sort((a, b) => a.localeCompare(b));
+
+                //         let colCMaxLen = 12;
+                //         let grandQty = 0;
+                //         let grandCost = 0;
+
+                //         companies.forEach(companyName => {
+                //             // Spacer rows to maintain your layout
+                //             while (sheet.rowCount < 17) {
+                //                 sheet.addRow([]);
+                //             }
+                //             sheet.addRow([]);
+
+                //             // Header row (C..H with grey fill)
+                //             const headerRow = sheet.addRow(["", "", "", "สินค้า", "จำนวน", "ราคา", "จำนวนเงิน", "การชำระเงิน"]);
+                //             for (let col of [3, 4, 5, 6, 7, 8]) {
+                //                 const cell = headerRow.getCell(col);
+                //                 cell.font = { bold: true };
+                //                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: LIGHT_GREY };
+                //             }
+
+                //             // Data rows: C=สินค้า, D blank, E/F/G/H values
+                //             let subtotalQty = 0;
+                //             let subtotalCost = 0;
+
+                //             byCompany[companyName].forEach(item => {
+                //                 const row = sheet.addRow([
+                //                     "", // A
+                //                     "", // B
+                //                     item.ProductName, // C
+                //                     undefined,        // D
+                //                     item.Quantity,    // E
+                //                     item.Price,       // F
+                //                     item.ProductCost, // G
+                //                     "Corporate Card"  // H (example payment text)
+                //                 ]);
+                //                 row.getCell(5).numFmt = "#,##0";
+                //                 row.getCell(6).numFmt = "#,##0.00";
+                //                 row.getCell(7).numFmt = "#,##0";
+
+                //                 const nameLen = item.ProductName ? String(item.ProductName).length : 0;
+                //                 if (nameLen > colCMaxLen) colCMaxLen = nameLen;
+
+                //                 subtotalQty += item.Quantity;
+                //                 subtotalCost += item.ProductCost;
+                //                 grandQty += item.Quantity;
+                //                 grandCost += item.ProductCost;
+                //             });
+
+                //             // Subtotal row: label in C; totals in E and G; shaded C..G
+                //             const subtotalRow = sheet.addRow(["", "", `${companyName} Total`, undefined, subtotalQty, "", subtotalCost, ""]);
+                //             subtotalRow.getCell(3).font = { bold: true };
+                //             for (let col of [3, 4, 5, 6, 7]) {
+                //                 const cell = subtotalRow.getCell(col);
+                //                 cell.fill = { type: 'pattern', pattern: 'solid', fgColor: LIGHT_GREY };
+                //             }
+                //             subtotalRow.getCell(5).numFmt = "#,##0";
+                //             subtotalRow.getCell(7).numFmt = "#,##0";
+                //         });
+
+                //         // Grand total row
+                //         sheet.addRow([]);
+                //         const grandRow = sheet.addRow(["", "", "Grand Total", "", grandQty, "", grandCost, ""]);
+                //         grandRow.getCell(3).font = { bold: true };
+                //         grandRow.getCell(5).numFmt = "#,##0";
+                //         grandRow.getCell(7).numFmt = "#,##0";
+
+                //         // Column widths: C = 12, D = 40; B slender; then remove column B as per your base
+                //         sheet.getColumn(2).width = 4;
+                //         sheet.getColumn(3).width = 12;
+                //         sheet.getColumn(4).width = 40;
+
+                //         sheet.columns.forEach((col, idx) => {
+                //             if ([2, 3, 4].includes(idx)) return;
+                //             let maxLength = 12;
+                //             col.eachCell({ includeEmpty: true }, cell => {
+                //                 const val = cell.value != null ? String(cell.value) : "";
+                //                 if (val.length > maxLength) maxLength = val.length;
+                //             });
+                //             col.width = Math.min(maxLength + 2, 60);
+                //         });
+                //         sheet.getColumn(1).width = 3;
+                //         sheet.getColumn(2).width = 10.25;
+
+                //         // Remove column B
+                //         sheet.spliceColumns(2, 1);
+                //     });
+
+                //     try {
+                //         const buffer = await workbook.xlsx.writeBuffer();
+                //         saveAs(new Blob([buffer], { type: "application/octet-stream" }), "CompanyGroupedExport.xlsx");
+                //         notify("success", "Exported CompanyGroupedExport.xlsx", 2000);
+                //     } catch (err) {
+                //         console.error(err);
+                //         notify("error", "Failed to export Excel.", 3000);
+                //     }
+                // });
+
+                // NEW: DL Customer Group — loop each group, open template, write into MEMO from row 18, keep MEMO+DATA, download
+                
+                document.getElementById('btn-dl-customer').addEventListener('click', async () => {
+                    if (!jsonData || jsonData.length === 0) {
+                        notify("warning", "No data to export.", 2000);
+                        return;
+                    }
+                    if (!templateBuffer) {
+                        notify("warning", "Load FlexibleTEMP.xlsx first.", 2000);
+                        return;
+                    }
+
+                    // Group records by CompanyGroup
+                    const groups = {};
+                    jsonData.forEach(r => {
+                        const groupName = r.CompanyGroup || "Unknown";
+                        if (!groups[groupName]) groups[groupName] = [];
+                        groups[groupName].push(r);
+                    });
+
+                    const groupNames = Object.keys(groups);
+                    for (let i = 0; i < groupNames.length; i++) {
+                        const groupNameRaw = groupNames[i];
+                        const displayName = groupNameRaw || "Unknown";
+                        notify("info", `Processing ${displayName} (${i + 1}/${groupNames.length})`, 1500);
+
+                        try {
+                            // 1) Open FlexibleTEMP.xlsx
+                            const templateWb = new ExcelJS.Workbook();
+                            await templateWb.xlsx.load(templateBuffer);
+
+                            const memoSheet = templateWb.getWorksheet("MEMO");
+                            const dataSheet = templateWb.getWorksheet("DATA");
+                            if (!memoSheet) { notify("error", "Template missing MEMO sheet.", 4000); break; }
+                            if (!dataSheet) { notify("error", "Template missing DATA sheet.", 4000); break; }
+
+                            // Optional: set group title somewhere on MEMO (uncomment and adjust as needed)
+                            // memoSheet.getCell('B15').value = displayName;
+
+                            // 2) Prepare grouped data by company (same logic)
+                            const byCompany = {};
+                            groups[groupNameRaw].forEach(r => {
+                                const companyName = (r.CompanyName || r.Company || "Unknown").trim();
+                                if (!byCompany[companyName]) byCompany[companyName] = [];
+                                const qty = Number(r.Quantity) || 0;
+                                const cost = Number(r["ProductCost"]) || 0;
+                                const price = qty ? (cost / qty) : 0;
+                                byCompany[companyName].push({
+                                    ProductName: r["ProductName"],
+                                    Quantity: qty,
+                                    Price: price,
+                                    ProductCost: cost,
+                                    DateText: "Corporate Card" //r.DateText
+                                });
+                            });
+
+                            // 3) Write results into MEMO starting at row 18
+                            const LIGHT_GREY = { argb: 'FFEFEFEF' };
+                            // Clear previous content from row 18 down (safe reset)
+                            const lastRowNumber = memoSheet.lastRow ? memoSheet.lastRow.number : 0;
+                            for (let r = 18; r <= lastRowNumber; r++) {
+                                memoSheet.getRow(r).values = [];
+                                memoSheet.getRow(r).eachCell(c => {
+                                    c.value = null;
+                                    c.fill = null;
+                                    c.font = null;
+                                    c.border = null;
+                                });
+                            }
+
+                            let rowIndex = 18;
+                            const companies = Object.keys(byCompany).sort((a, b) => a.localeCompare(b));
+                            let grandQty = 0;
+                            let grandCost = 0;
+
+                            companies.forEach(companyName => {
+                                // Spacer row to visually separate companies
+                                if (grandQty !== 0) {
+                                    const spacer = memoSheet.getRow(rowIndex++);
+                                    spacer.values = ["", "", "", "", "", "", ""];
+                                }
+                                // Per-company header: Columns C..G shaded
+                                const headerRow = memoSheet.getRow(rowIndex++);
+                                headerRow.values = ["", "", "สินค้า", "จำนวน", "ราคา", "จำนวนเงิน", "การชำระเงิน"];
+
+                                for (let c = 2; c <= 7; c++) {
+                                    const cell = headerRow.getCell(c);
+                                    cell.font = { bold: true };
+                                    cell.fill = {
+                                        type: 'pattern',
+                                        pattern: 'solid',
+                                        fgColor: LIGHT_GREY
+                                    };
+
+                                    // Apply alignment based on column
+                                    if (c === 4 || c === 5 || c === 6) {
+                                        // จำนวน, ราคา, จำนวนเงิน → right aligned
+                                        cell.alignment = { horizontal: "right" };
+                                    } else if (c === 7) {
+                                        // การชำระเงิน → indent 2
+                                        cell.alignment = { indent: 2 };
+                                    }
+                                }
+
+
+                                // Data rows
+                                let subtotalQty = 0;
+                                let subtotalCost = 0;
+                                byCompany[companyName].forEach(item => {
+                                    const row = memoSheet.getRow(rowIndex++);
+                                    //row.values = ["", "", item.ProductName, item.Quantity, item.Price, item.ProductCost, item.DateText];
+                                    row.values = [
+                                        "",                 // A blank
+                                        item.ProductName,   // B
+                                        undefined,          // C blank
+                                        item.Quantity,      // D
+                                        item.Price,         // E
+                                        item.ProductCost,   // F
+                                        item.DateText       // G
+                                    ];
+
+                                    row.getCell(4).numFmt = "#,##0";
+                                    row.getCell(5).numFmt = "#,##0.00";
+                                    row.getCell(6).numFmt = "#,##0.00";
+                                    row.getCell(7).alignment = { indent: 2 };//corpRow.getCell(3).alignment = { indent: 15 }; // shift right 10 times
+                                    subtotalQty += item.Quantity;
+                                    subtotalCost += item.ProductCost;
+                                    grandQty += item.Quantity;
+                                    grandCost += item.ProductCost;
+                                });
+
+                                // Subtotal row: label in C; totals in D and F shaded (C..F)
+                                const subtotalRow = memoSheet.getRow(rowIndex++);
+                                subtotalRow.values = ["", `${companyName} Total`, undefined, subtotalQty, "", subtotalCost, ""];
+                                for (let c = 2; c <= 7; c++) {
+                                    const cell = subtotalRow.getCell(c);
+                                    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: LIGHT_GREY };
+                                }
+                                subtotalRow.getCell(2).font = { bold: true };
+                                subtotalRow.getCell(4).numFmt = "#,##0";
+                                subtotalRow.getCell(6).numFmt = "#,##0.00";
+                            });
+
+                            // Grand total row
+                            // sheet.addRow([]);
+                            // const grandRow = sheet.addRow(["", "Grand Total", "", grandQty, "", grandCost]);
+                            // grandRow.getCell(2).font = { bold: true };
+                            // grandRow.getCell(4).numFmt = "#,##0";
+                            // grandRow.getCell(6).numFmt = "#,##0.00";
+                            // Add a spacer row before Grand Total
+                            // Add a spacer row before Grand Total
+                            // Add a spacer row before Grand Total
+                            memoSheet.addRow([]);
+
+                            // Grand Total row
+                            const grandRow = memoSheet.addRow([
+                                "",             // A
+                                "Grand Total",  // B
+                                "",             // C blank
+                                grandQty,       // D
+                                "",             // E blank
+                                grandCost,      // F
+                                ""              // G blank
+                            ]);
+
+                            // Apply light grey fill to B–G
+                            for (let c = 2; c <= 7; c++) {
+                                const cell = grandRow.getCell(c);
+                                cell.font = { bold: true };
+                                cell.fill = {
+                                    type: 'pattern',
+                                    pattern: 'solid',
+                                    fgColor: { argb: 'FFEFEFEF' }
+                                };
+                            }
+
+                            // Apply border only to the outside of B–G
+                            grandRow.getCell(2).border = {               // B left edge
+                                top: { style: 'thin' },
+                                left: { style: 'thin' },
+                                bottom: { style: 'thin' }
+                            };
+                            grandRow.getCell(7).border = {               // G right edge
+                                top: { style: 'thin' },
+                                right: { style: 'thin' },
+                                bottom: { style: 'thin' }
+                            };
+                            // Top border across all cells B–G
+                            for (let c = 3; c <= 6; c++) {
+                                grandRow.getCell(c).border = { top: { style: 'thin' }, bottom: { style: 'thin' } };
+                            }
+
+                            // Number formats
+                            grandRow.getCell(4).numFmt = "#,##0";        // D = Quantity
+                            grandRow.getCell(6).numFmt = "#,##0.00";     // F = Cost
+
+                            // Track the row number just after Grand Total
+                            let summaryStartRow = memoSheet.lastRow.number + 2; //1
+
+                            // Define formula range start
+                            const formulaStartRow = 18; // your data starts at row 18
+                            const formulaEndRow = summaryStartRow - 1; // last row before summary
+
+                            // Row 1: Corporate Card
+                            const corpRow = memoSheet.getRow(summaryStartRow++);
+                            corpRow.getCell(3).value = "Corporate Card"; // Column C
+                            corpRow.getCell(3).alignment = { indent: 15 }; // shift right 10 times
+                            corpRow.getCell(4).value = {
+                                formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Corporate Card",D${formulaStartRow}:D${formulaEndRow})`
+                            };
+                            corpRow.getCell(6).value = {
+                                formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Corporate Card",F${formulaStartRow}:F${formulaEndRow})`
+                            };
+                            corpRow.getCell(4).numFmt = "#,##0";
+                            corpRow.getCell(6).numFmt = "#,##0.00";
+
+                            // Row 2: Personal
+                            const personalRow = memoSheet.getRow(summaryStartRow++);
+                            personalRow.getCell(3).value = "Personal";
+                            personalRow.getCell(3).alignment = { indent: 15 };
+                            personalRow.getCell(4).value = {
+                                formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Personal",D${formulaStartRow}:D${formulaEndRow})`
+                            };
+                            personalRow.getCell(6).value = {
+                                formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Personal",F${formulaStartRow}:F${formulaEndRow})`
+                            };
+                            personalRow.getCell(4).numFmt = "#,##0";
+                            personalRow.getCell(6).numFmt = "#,##0.00";
+                            // ✅ Bottom single border for Personal row (D and F)
+                            [4, 6].forEach(col => {
+                                personalRow.getCell(col).border = {
+                                    bottom: { style: 'thin' }
+                                };
+                            });
+                            // Row 3: Total
+                            const totalRow = memoSheet.getRow(summaryStartRow++);
+                            totalRow.getCell(3).value = "Total";
+                            totalRow.getCell(3).alignment = { indent: 15 };
+                            totalRow.getCell(3).font = { bold: true };
+                            totalRow.getCell(4).value = {
+                                formula: `D${summaryStartRow - 3}+D${summaryStartRow - 2}`
+                            };
+                            totalRow.getCell(6).value = {
+                                formula: `F${summaryStartRow - 3}+F${summaryStartRow - 2}`
+                            };
+                            totalRow.getCell(4).numFmt = "#,##0";
+                            totalRow.getCell(6).numFmt = "#,##0.00";
+                            // ✅ Bottom double border for Total row (D and F)
+                            [4, 6].forEach(col => {
+                                totalRow.getCell(col).border = {
+                                    bottom: { style: 'double' }
+                                };
+                            });
+                            // Row after Total
+                            const regardsRow = memoSheet.getRow(summaryStartRow++);
+                            regardsRow.getCell(2).value = "Regards,"; // Column B
+                            // Row after "Regards,"
+                            summaryStartRow = summaryStartRow + 2;
+                            const preparedRow = memoSheet.getRow(summaryStartRow++);
+                            preparedRow.getCell(2).value = "Prepared by"; // Column B
+                            preparedRow.getCell(3).value = { formula: "UPPER(DATA!C11)" }; // Column C
+                            preparedRow.getCell(3).font = { bold: true };
+                            preparedRow.getCell(3).border = { bottom: { style: 'thin' } };
+
+                            // Verified by block on same row
+                            preparedRow.getCell(5).value = "Approve by"; // Column E
+                            preparedRow.getCell(6).value = { formula: "UPPER(DATA!C8)" }; // Column F
+                            preparedRow.getCell(6).font = { bold: true };
+                            preparedRow.getCell(6).border = { bottom: { style: 'thin' } };
+
+                            // Merge F and G for Verified by name
+                            memoSheet.mergeCells(summaryStartRow - 1, 6, summaryStartRow - 1, 7); // merge F:G
+                            // Center the merged cell content
+                            const mergedCell = memoSheet.getCell(summaryStartRow - 1, 6); // top-left of merged range
+                            //mergedCell.alignment = { horizontal: 'center' };
+                            const dateRow = memoSheet.getRow(summaryStartRow++);
+                            dateRow.getCell(3).value = { formula: "DATA!E18" }; // Column C
+                            dateRow.getCell(6).value = { formula: "DATA!E16" }; // Column F
+                            // Spacer row
+                            //summaryStartRow++;
+                            // Row for DATA!C13 and C14
+                            summaryStartRow = summaryStartRow + 2;
+                            const verifyRow = memoSheet.getRow(summaryStartRow++);
+                            verifyRow.getCell(5).value = { formula: "DATA!C13" }; // Column E
+                            verifyRow.getCell(6).value = { formula: "UPPER(DATA!C14)" }; // Column F
+                            verifyRow.getCell(6).font = { bold: true };
+                            //verifyRow.getCell(6).border = { bottom: { style: 'thin' } };
+
+                            // Merge F and G again
+                            memoSheet.mergeCells(summaryStartRow - 1, 6, summaryStartRow - 1, 7); // merge F:G
+                            // Center the merged cell content
+                            const amergedCell = memoSheet.getCell(summaryStartRow - 1, 6); // top-left of merged range
+                            //amergedCell.alignment = { horizontal: 'center' };
+                            const xdateRow = memoSheet.getRow(summaryStartRow++);
+                            xdateRow.getCell(6).value = { formula: "DATA!C15" }; // Column F
+                            // Stamp values into fixed cells
+                            // 1) Put DateText into DATA!E5
+                            //    You can take DateText from the first record in this group
+                            const firstRecord = groups[groupNameRaw][0];
+                            if (firstRecord) {
+                                dataSheet.getCell("E5").value = firstRecord.DateText;
+                            }
+
+                            // 2) Put CompanyGroup into DATA!C2
+                            dataSheet.getCell("C2").value = groupNameRaw;
+                            // Optional: column width tuning for MEMO
+                            memoSheet.getColumn(1).width = 5;   // A slender
+                            memoSheet.getColumn(2).width = 12;   // B slender
+                            memoSheet.getColumn(3).width = 35;  // Product Name
+                            memoSheet.getColumn(4).width = 8;  // Quantity
+                            memoSheet.getColumn(5).width = 12;  // Price
+                            memoSheet.getColumn(6).width = 13;  // Product Cost
+                            memoSheet.getColumn(7).width = 22;  // DateText
+
+                            // 4) Keep only MEMO and DATA sheets in the new file
+                            const keepNames = new Set(["MEMO", "DATA"]);
+                            templateWb.worksheets.slice().forEach(ws => {
+                                if (!keepNames.has(ws.name)) {
+                                    templateWb.removeWorksheet(ws.id);
+                                }
+                            });
+
+                            // 5) Name new Excel file with Customer Group name
+                            const safeName = sanitizeFileName(displayName) || "Unknown";
+                            const fileName = `${safeName}.xlsx`;
+                            // Force MEMO to be the active sheet when opening
+                            //templateWb.views = [{ activeTab: memoSheet.id - 1 }];
+                            // 6) Download the file
+                            if (safeName !== "Unknown") {
+                                const outBuffer = await templateWb.xlsx.writeBuffer();
+                                saveAs(new Blob([outBuffer], { type: "application/octet-stream" }), fileName);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            notify("error", `Failed group export for ${displayName}.`, 3000);
+                        }
+                    }
+
+                    notify("success", "DL Customer Group completed for all groups.", 2500);
+                });
+
+                // Helper: sanitize file name
+                function sanitizeFileName(name) {
+                    return name.replace(/[<>:"/\\|?*]+/g, "_");
+                }
+                // Helper: write per-company block (header + items + subtotal)
+                function writeCompanyBlock(memoSheet, rowIndex, companyName, items) {
+                    const LIGHT_GREY = { argb: 'FFEFEFEF' };
+                    let subtotalQty = 0;
+                    let subtotalCost = 0;
+
+                    // Spacer row
+                    if (rowIndex > 18) {
+                        const spacer = memoSheet.getRow(rowIndex++);
+                        spacer.values = ["", "", "", "", "", "", ""];
+                    }
+
+                    // Header row
+                    const headerRow = memoSheet.getRow(rowIndex++);
+                    headerRow.values = ["", "", "สินค้า", "จำนวน", "ราคา", "จำนวนเงิน", "การชำระเงิน"];
+                    for (let c = 2; c <= 7; c++) {
+                        const cell = headerRow.getCell(c);
+                        cell.font = { bold: true };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: LIGHT_GREY };
+                        if (c === 4 || c === 5 || c === 6) cell.alignment = { horizontal: "right" };
+                        if (c === 7) cell.alignment = { indent: 2 };
+                    }
+
+                    // Data rows
+                    items.forEach(item => {
+                        const row = memoSheet.getRow(rowIndex++);
+                        row.values = ["", item.ProductName, undefined, item.Quantity, item.Price, item.ProductCost, item.DateText];
+                        row.getCell(4).numFmt = "#,##0";
+                        row.getCell(5).numFmt = "#,##0.00";
+                        row.getCell(6).numFmt = "#,##0.00";
+                        row.getCell(7).alignment = { indent: 2 };
+                        subtotalQty += item.Quantity;
+                        subtotalCost += item.ProductCost;
+                    });
+
+                    // Subtotal row
+                    const subtotalRow = memoSheet.getRow(rowIndex++);
+                    subtotalRow.values = ["", `${companyName} Total`, undefined, subtotalQty, "", subtotalCost, ""];
+                    for (let c = 2; c <= 7; c++) {
+                        subtotalRow.getCell(c).fill = { type: 'pattern', pattern: 'solid', fgColor: LIGHT_GREY };
+                    }
+                    subtotalRow.getCell(2).font = { bold: true };
+                    subtotalRow.getCell(4).numFmt = "#,##0";
+                    subtotalRow.getCell(6).numFmt = "#,##0.00";
+
+                    return { rowIndex, subtotalQty, subtotalCost };
+                }
+
+                // Helper: write grand total
+                function writeGrandTotal(memoSheet, grandQty, grandCost) {
+                    console.log("grand Total")
+                    memoSheet.addRow([]);
+                    const grandRow = memoSheet.addRow(["", "Grand Total", "", grandQty, "", grandCost, ""]);
+                    for (let c = 2; c <= 7; c++) {
+                        const cell = grandRow.getCell(c);
+                        cell.font = { bold: true };
+                        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEFEFEF' } };
+                    }
+                    grandRow.getCell(4).numFmt = "#,##0";
+                    grandRow.getCell(6).numFmt = "#,##0.00";
+
+                    // Row after Total
+                    const regardsRow = memoSheet.getRow(summaryStartRow++);
+                    regardsRow.getCell(2).value = "Regards,"; // Column B
+                    // Row after "Regards,"
+                    summaryStartRow = summaryStartRow + 2;
+                    const preparedRow = memoSheet.getRow(summaryStartRow++);
+                    preparedRow.getCell(2).value = "Prepared by"; // Column B
+                    preparedRow.getCell(3).value = { formula: "UPPER(DATA!C11)" }; // Column C
+                    preparedRow.getCell(3).font = { bold: true };
+                    preparedRow.getCell(3).border = { bottom: { style: 'thin' } };
+
+                    // Verified by block on same row
+                    preparedRow.getCell(5).value = "Verified by"; // Column E
+                    preparedRow.getCell(6).value = { formula: "UPPER(DATA!C8)" }; // Column F
+                    preparedRow.getCell(6).font = { bold: true };
+                    preparedRow.getCell(6).border = { bottom: { style: 'thin' } };
+
+                    // Merge F and G for Verified by name
+                    memoSheet.mergeCells(summaryStartRow - 1, 6, summaryStartRow - 1, 7); // merge F:G
+                    // Center the merged cell content
+                    const mergedCell = memoSheet.getCell(summaryStartRow - 1, 6); // top-left of merged range
+                    //mergedCell.alignment = { horizontal: 'center' };
+                    const dateRow = memoSheet.getRow(summaryStartRow++);
+                    dateRow.getCell(3).value = { formula: "DATA!E18" }; // Column C
+                    dateRow.getCell(6).value = { formula: "DATA!E16" }; // Column F
+                    // Spacer row
+                    //summaryStartRow++;
+                    // Row for DATA!C13 and C14
+                    summaryStartRow = summaryStartRow + 2;
+                    const verifyRow = memoSheet.getRow(summaryStartRow++);
+                    verifyRow.getCell(5).value = { formula: "DATA!C13" }; // Column E
+                    verifyRow.getCell(6).value = { formula: "UPPER(DATA!C14)" }; // Column F
+                    verifyRow.getCell(6).font = { bold: true };
+                    //verifyRow.getCell(6).border = { bottom: { style: 'thin' } };
+
+                    // Merge F and G again
+                    memoSheet.mergeCells(summaryStartRow - 1, 6, summaryStartRow - 1, 7); // merge F:G
+                    // Center the merged cell content
+                    const amergedCell = memoSheet.getCell(summaryStartRow - 1, 6); // top-left of merged range
+                    //amergedCell.alignment = { horizontal: 'center' };
+                    const xdateRow = memoSheet.getRow(summaryStartRow++);
+                    xdateRow.getCell(6).value = { formula: "DATA!C15" }; // Column F
+                    return memoSheet.lastRow.number;
+                }
+
+                // Main function
+                async function downloadCustomerGroup() {
+                    if (!jsonData || jsonData.length === 0) {
+                        notify("warning", "No data to export.", 2000);
+                        return;
+                    }
+                    console.log("new function", jsonData)
+                    if (!templateBuffer) {
+                        notify("warning", "Load FlexibleTEMP.xlsx first.", 2000);
+                        return;
+                    }
+
+                    // Group records by CompanyGroup
+                    const groups = {};
+                    jsonData.forEach(r => {
+                        const groupName = r.CompanyGroup || "Unknown";
+                        if (!groups[groupName]) groups[groupName] = [];
+                        groups[groupName].push(r);
+                    });
+
+                    const groupNames = Object.keys(groups);
+                    for (let i = 0; i < groupNames.length; i++) {
+                        const groupNameRaw = groupNames[i];
+                        const displayName = groupNameRaw || "Unknown";
+                        notify("info", `Processing ${displayName} (${i + 1}/${groupNames.length})`, 1500);
+
+                        try {
+                            const templateWb = new ExcelJS.Workbook();
+                            await templateWb.xlsx.load(templateBuffer);
+
+                            const memoSheet = templateWb.getWorksheet("MEMO");
+                            const dataSheet = templateWb.getWorksheet("DATA");
+                            if (!memoSheet || !dataSheet) {
+                                notify("error", "Template missing MEMO or DATA sheet.", 4000);
+                                break;
+                            }
+
+                            // Prepare grouped data by company
+                            const byCompany = {};
+                            groups[groupNameRaw].forEach(r => {
+                                const companyName = (r.CompanyName || r.Company || "Unknown").trim();
+                                if (!byCompany[companyName]) byCompany[companyName] = [];
+                                const qty = Number(r.Quantity) || 0;
+                                const cost = Number(r["ProductCost"]) || 0;
+                                const price = qty ? (cost / qty) : 0;
+                                byCompany[companyName].push({
+                                    ProductName: r["ProductName"],
+                                    Quantity: qty,
+                                    Price: price,
+                                    ProductCost: cost,
+                                    DateText: "Corporate Card"
+                                });
+                            });
+
+                            // Clear old rows
+                            const lastRowNumber = memoSheet.lastRow ? memoSheet.lastRow.number : 0;
+                            for (let r = 18; r <= lastRowNumber; r++) {
+                                memoSheet.getRow(r).values = [];
+                            }
+
+                            // Write company blocks
+                            let rowIndex = 18;
+                            let grandQty = 0;
+                            let grandCost = 0;
+                            const companies = Object.keys(byCompany).sort((a, b) => a.localeCompare(b));
+                            companies.forEach(companyName => {
+                                const result = writeCompanyBlock(memoSheet, rowIndex, companyName, byCompany[companyName]);
+                                rowIndex = result.rowIndex;
+                                grandQty += result.subtotalQty;
+                                grandCost += result.subtotalCost;
+                            });
+                            console.log(grandQty, grandQty)
+                            // Grand total // footer
+                            const summaryStartRow = writeGrandTotal(memoSheet, grandQty, grandCost) + 2;
+
+                            // Put DateText and CompanyGroup into DATA sheet
+                            const firstRecord = groups[groupNameRaw][0];
+                            if (firstRecord) dataSheet.getCell("E5").value = firstRecord.DateText;
+                            dataSheet.getCell("C2").value = groupNameRaw;
+
+                            // Keep only MEMO and DATA sheets
+                            const keepNames = new Set(["MEMO", "DATA"]);
+                            templateWb.worksheets.slice().forEach(ws => {
+                                if (!keepNames.has(ws.name)) templateWb.removeWorksheet(ws.id);
+                            });
+
+                            // Save file
+                            const safeName = sanitizeFileName(displayName) || "Unknown";
+                            if (safeName !== "Unknown") {
+                                const outBuffer = await templateWb.xlsx.writeBuffer();
+                                saveAs(new Blob([outBuffer], { type: "application/octet-stream" }), `${safeName}.xlsx`);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            notify("error", `Failed group export for ${displayName}.`, 3000);
+                        }
+                    }
+
+                    notify("success", "DL Customer Group completed for all groups.", 2500);
+                }
+
+                const downloadCustomerGrp = async () => {
+                    if (!jsonData?.length) return notify("warning", "No data to export.", 2000);
+                    if (!templateBuffer) return notify("warning", "Load FlexibleTEMP.xlsx first.", 2000);
+
+                    // Group records by CompanyGroup
+                    const groups = jsonData.reduce((acc, r) => {
+                        const groupName = r.CompanyGroup || "Unknown";
+                        (acc[groupName] ||= []).push(r);
+                        return acc;
+                    }, {});
+
+                    const groupNames = Object.keys(groups);
+
+                    for (let i = 0; i < groupNames.length; i++) {
+                        const groupNameRaw = groupNames[i];
+                        const displayName = groupNameRaw || "Unknown";
+                        notify("info", `Processing ${displayName} (${i + 1}/${groupNames.length})`, 1500);
+
+                        try {
+                            // Load template workbook
+                            const templateWb = new ExcelJS.Workbook();
+                            await templateWb.xlsx.load(templateBuffer);
+
+                            const memoSheet = templateWb.getWorksheet("MEMO");
+                            const dataSheet = templateWb.getWorksheet("DATA");
+                            if (!memoSheet || !dataSheet) {
+                                notify("error", "Template missing MEMO or DATA sheet.", 4000);
+                                break;
+                            }
+
+                            // Prepare grouped data by company
+                            const byCompany = groups[groupNameRaw].reduce((acc, r) => {
+                                const companyName = (r.CompanyName || r.Company || "Unknown").trim();
+                                const qty = Number(r.Quantity) || 0;
+                                const cost = Number(r.ProductCost) || 0;
+                                const price = qty ? cost / qty : 0;
+                                (acc[companyName] ||= []).push({
+                                    ProductName: r.ProductName,
+                                    Quantity: qty,
+                                    Price: price,
+                                    ProductCost: cost,
+                                    DateText: "Corporate Card" // keep as original
+                                });
+                                return acc;
+                            }, {});
+
+                            // Clear previous content from row 18 down
+                            const LIGHT_GREY = { argb: "FFEFEFEF" };
+                            for (let r = 18; r <= (memoSheet.lastRow?.number || 0); r++) {
+                                const row = memoSheet.getRow(r);
+                                row.eachCell(c => { c.value = null; c.fill = null; c.font = null; c.border = null; });
+                                row.values = [];
+                            }
+
+                            let rowIndex = 18;
+                            let grandQty = 0;
+                            let grandCost = 0;
+                            const companies = Object.keys(byCompany).sort((a, b) => a.localeCompare(b));
+
+                            companies.forEach(companyName => {
+                                // Spacer row between companies
+                                if (grandQty !== 0) memoSheet.getRow(rowIndex++).values = ["", "", "", "", "", "", ""];
+
+                                // Header row C..G shaded
+                                const headerRow = memoSheet.getRow(rowIndex++);
+                                headerRow.values = ["", "", "สินค้า", "จำนวน", "ราคา", "จำนวนเงิน", "การชำระเงิน"];
+                                for (let c = 2; c <= 7; c++) {
+                                    const cell = headerRow.getCell(c);
+                                    cell.font = { bold: true };
+                                    cell.fill = { type: "pattern", pattern: "solid", fgColor: LIGHT_GREY };
+                                    if ([4, 5, 6].includes(c)) cell.alignment = { horizontal: "right" };
+                                    if (c === 7) cell.alignment = { indent: 2 };
+                                }
+
+                                // Data rows
+                                let subtotalQty = 0;
+                                let subtotalCost = 0;
+                                byCompany[companyName].forEach(item => {
+                                    const row = memoSheet.getRow(rowIndex++);
+                                    row.values = ["", item.ProductName, undefined, item.Quantity, item.Price, item.ProductCost, item.DateText];
+                                    row.getCell(4).numFmt = "#,##0";
+                                    row.getCell(5).numFmt = "#,##0.00";
+                                    row.getCell(6).numFmt = "#,##0.00";
+                                    row.getCell(7).alignment = { indent: 2 };
+                                    subtotalQty += item.Quantity;
+                                    subtotalCost += item.ProductCost;
+                                    grandQty += item.Quantity;
+                                    grandCost += item.ProductCost;
+                                });
+
+                                // Subtotal row
+                                const subtotalRow = memoSheet.getRow(rowIndex++);
+                                subtotalRow.values = ["", `${companyName} Total`, undefined, subtotalQty, "", subtotalCost, ""];
+                                for (let c = 2; c <= 7; c++) {
+                                    subtotalRow.getCell(c).fill = { type: "pattern", pattern: "solid", fgColor: LIGHT_GREY };
+                                }
+                                subtotalRow.getCell(2).font = { bold: true };
+                                subtotalRow.getCell(4).numFmt = "#,##0";
+                                subtotalRow.getCell(6).numFmt = "#,##0.00";
+                            });
+
+                            // Grand total section
+                            memoSheet.addRow([]);
+                            const grandRow = memoSheet.addRow(["", "Grand Total", "", grandQty, "", grandCost, ""]);
+                            for (let c = 2; c <= 7; c++) {
+                                const cell = grandRow.getCell(c);
+                                cell.font = { bold: true };
+                                cell.fill = { type: "pattern", pattern: "solid", fgColor: LIGHT_GREY };
+                            }
+                            grandRow.getCell(2).border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" } };
+                            grandRow.getCell(7).border = { top: { style: "thin" }, right: { style: "thin" }, bottom: { style: "thin" } };
+                            for (let c = 3; c <= 6; c++) {
+                                grandRow.getCell(c).border = { top: { style: "thin" }, bottom: { style: "thin" } };
+                            }
+                            grandRow.getCell(4).numFmt = "#,##0";
+                            grandRow.getCell(6).numFmt = "#,##0.00";
+
+                            // Summary block (Corporate/Personal/Total) + Regards + Prepared/Verified + Dates + Verify row
+                            let summaryStartRow = memoSheet.lastRow.number + 2;
+                            const formulaStartRow = 18;
+                            const formulaEndRow = summaryStartRow - 1;
+
+                            // Corporate Card
+                            const corpRow = memoSheet.getRow(summaryStartRow++);
+                            corpRow.getCell(3).value = "Corporate Card";
+                            corpRow.getCell(3).alignment = { indent: 15 };
+                            corpRow.getCell(4).value = { formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Corporate Card",D${formulaStartRow}:D${formulaEndRow})` };
+                            corpRow.getCell(6).value = { formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Corporate Card",F${formulaStartRow}:F${formulaEndRow})` };
+                            corpRow.getCell(4).numFmt = "#,##0";
+                            corpRow.getCell(6).numFmt = "#,##0.00";
+
+                            // Personal
+                            const personalRow = memoSheet.getRow(summaryStartRow++);
+                            personalRow.getCell(3).value = "Personal";
+                            personalRow.getCell(3).alignment = { indent: 15 };
+                            personalRow.getCell(4).value = { formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Personal",D${formulaStartRow}:D${formulaEndRow})` };
+                            personalRow.getCell(6).value = { formula: `SUMIF(G${formulaStartRow}:G${formulaEndRow},"Personal",F${formulaStartRow}:F${formulaEndRow})` };
+                            personalRow.getCell(4).numFmt = "#,##0";
+                            personalRow.getCell(6).numFmt = "#,##0.00";
+                            [4, 6].forEach(col => { personalRow.getCell(col).border = { bottom: { style: "thin" } }; });
+
+                            // Total
+                            const totalRow = memoSheet.getRow(summaryStartRow++);
+                            totalRow.getCell(3).value = "Total";
+                            totalRow.getCell(3).alignment = { indent: 15 };
+                            totalRow.getCell(3).font = { bold: true };
+                            totalRow.getCell(4).value = { formula: `D${summaryStartRow - 3}+D${summaryStartRow - 2}` };
+                            totalRow.getCell(6).value = { formula: `F${summaryStartRow - 3}+F${summaryStartRow - 2}` };
+                            totalRow.getCell(4).numFmt = "#,##0";
+                            totalRow.getCell(6).numFmt = "#,##0.00";
+                            [4, 6].forEach(col => { totalRow.getCell(col).border = { bottom: { style: "double" } }; });
+
+                            // Regards,
+                            const regardsRow = memoSheet.getRow(summaryStartRow++);
+                            regardsRow.getCell(2).value = "Regards,";
+
+                            // Two spacer rows
+                            summaryStartRow += 2;
+
+                            // Prepared by / Verified by
+                            const preparedRow = memoSheet.getRow(summaryStartRow++);
+                            preparedRow.getCell(2).value = "Prepared by";
+                            preparedRow.getCell(3).value = { formula: "UPPER(DATA!C11)" };
+                            preparedRow.getCell(3).font = { bold: true };
+                            preparedRow.getCell(3).border = { bottom: { style: "thin" } };
+
+                            preparedRow.getCell(5).value = "Verified by";
+                            preparedRow.getCell(6).value = { formula: "UPPER(DATA!C8)" };
+                            preparedRow.getCell(6).font = { bold: true };
+                            preparedRow.getCell(6).border = { bottom: { style: "thin" } };
+
+                            // Merge F:G for Verified by name
+                            memoSheet.mergeCells(summaryStartRow - 1, 6, summaryStartRow - 1, 7);
+
+                            // Dates row
+                            const dateRow = memoSheet.getRow(summaryStartRow++);
+                            dateRow.getCell(3).value = { formula: "DATA!E18" };
+                            dateRow.getCell(6).value = { formula: "DATA!E16" };
+
+                            // Two spacer rows
+                            summaryStartRow += 2;
+
+                            // Verify label + name row
+                            const verifyRow = memoSheet.getRow(summaryStartRow++);
+                            verifyRow.getCell(5).value = { formula: "DATA!C13" };
+                            verifyRow.getCell(6).value = { formula: "UPPER(DATA!C14)" };
+                            verifyRow.getCell(6).font = { bold: true };
+
+                            // Merge F:G again
+                            memoSheet.mergeCells(summaryStartRow - 1, 6, summaryStartRow - 1, 7);
+
+                            // Extra date
+                            const xdateRow = memoSheet.getRow(summaryStartRow++);
+                            xdateRow.getCell(6).value = { formula: "DATA!C15" };
+
+                            // Stamp values into DATA sheet (after summary block as requested)
+                            const firstRecord = groups[groupNameRaw][0];
+                            const dlRefNO = firstRecord.HeadRefNo;
+                            if (firstRecord) dataSheet.getCell("E5").value = firstRecord.DateText;
+                            dataSheet.getCell("C2").value = groupNameRaw;
+                            dataSheet.getCell("C1").value = dlRefNO; //firstRecord.HeadRefNo;
+                            //const dlfilename = firstRecord.HeadRefNo 
+                            // Column widths
+                            [5, 12, 35, 8, 12, 13, 22].forEach((w, i) => memoSheet.getColumn(i + 1).width = w);
+
+                            // Keep only MEMO and DATA sheets
+                            templateWb.worksheets.slice().forEach(ws => {
+                                if (!["MEMO", "DATA"].includes(ws.name)) templateWb.removeWorksheet(ws.id);
+                            });
+
+                            // Save file
+                            //const safeName = sanitizeFileName(displayName) || "Unknown";
+                            const safeName = dlRefNO || "Unknown";
+                            if (safeName !== "Unknown") {
+                                const outBuffer = await templateWb.xlsx.writeBuffer();
+                                saveAs(new Blob([outBuffer], { type: "application/octet-stream" }), `${safeName}.xlsx`);
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            notify("error", `Failed group export for ${displayName}.`, 3000);
+                        }
+                    }
+
+                    notify("success", "DL Customer Group completed for all groups.", 2500);
+                };
+
+            })();
+    
+    </script>
+</body>
+
+</html>

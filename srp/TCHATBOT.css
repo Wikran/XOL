@@ -1,0 +1,75 @@
+ body {
+            font-family: 'Sarabun', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: left;
+            font-size: 1.8rem;
+            margin: 20px 0 20px 20px;
+            /* Add 20px margin from the left */
+            color: #333;
+        }
+
+        #chatbot {
+            width: 100%;
+            max-width: 1100px;
+            height: 490px;
+            margin: 10px 0 10px 10px;
+            /* Add 20px margin from the left */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .user {
+            /* background-color: #e0f7fa; */
+            background-color: #ffffff; 
+            color: #00796b;
+        }
+
+        .bot {
+            background-color: #f1f8e9;
+            color: #33691e;
+        }
+
+        #userInput {
+            width: 80%;
+            max-width: 1000px;
+            padding: 10px;
+            margin: 10px 0 10px 20px;
+            /* Add 20px margin from the left */
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        #sendButton {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00796b;
+            color: #fff;
+            cursor: pointer;
+            margin: 10px 0 10px 20px;
+            /* Add 20px margin from the left */
+        }
+
+        #sendButton:hover {
+            background-color: #004d40;
+        }

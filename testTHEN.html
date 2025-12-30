@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TSTHATOENG Minimal</title>
+  <!-- Google CDN: jQuery (optional; not required for the function itself) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+  <h2>Thai → English Translator</h2>
+
+  <p>
+    Thai word:
+    <input id="src" type="text" size="40" placeholder="พิมพ์ข้อความภาษาไทยที่นี่">
+    <button id="go">Translate</button>
+  </p>
+
+  <p>
+    English word:
+    <span id="dst"></span>
+  </p>
+
+  <script>
+    // Pure function: receives Thai string, returns English string only
+    async function TSTHATOENG(text) {
+      const endpoint = "YOUR_WEB_APP_URL"; // e.g., https://script.google.com/macros/s/AKfycbx.../exec
+      const body = JSON.stringify({ text, source: "th", target: "en" });
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body
+      });
+
+      // Guard: ensure we got JSON, not HTML/login page
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const preview = await res.text();
+        throw new Error("Non-JSON response from endpoint (check you used the deployed /exec URL and public access).\nPreview:\n" + preview.slice(0, 200));
+      }
+
+      const data = await res.json();
+      if (!data || !data.ok) {
+        throw new Error((data && data.error) || "Translation failed");
+      }
+      return data.translated;
+    }
+
+    // Minimal UI wiring (outside input/output; function stays pure)
+    document.getElementById('go').addEventListener('click', async () => {
+      const thaiText = document.getElementById('src').value.trim();
+      if (!thaiText) return;
+      try {
+        const engWord = await TSTHATOENG(thaiText);
+        document.getElementById('dst').textContent = engWord;
+      } catch (err) {
+        document.getElementById('dst').textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

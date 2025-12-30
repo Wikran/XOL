@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="-1">
+    <title>File Manager (cleaned)</title>
+
+    <!-- jQuery (local with fallback) -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')</script>
+
+    <!-- Icons -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <!-- DevExtreme Themes (keep themes if needed) -->
+<!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!-- Export / PDF libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+    <!-- DevExtreme JS -->
+    <script src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- MSAL (optional) -->
+    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="MHODEE123.css">
+    <script src="./fsrc/bundle.min.js"></script>
+
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; }
+        .container { max-width: 900px; margin: 24px auto; padding: 20px; }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>📁 File Center</h2>
+
+        <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+            <div id="filename-input" style="flex:1;"></div>
+            <div id="browse-button" style="width:120px;"></div>
+            <div id="download-button" style="width:140px;"></div>
+            <div id="showUploadPopupButton" style="width:140px;"></div>
+        </div>
+
+        <!-- Popup for file browse grid -->
+        <div id="file-popup"></div>
+    </div>
+
+    <script>
+        // -------------------- Utility / Initialization --------------------
+        (function () {
+            // Safe theme initialization (if aDXTheme missing use softblue)
+            // try {
+            //     var aDXTheme = localStorage.getItem('aDXTheme') || 'generic.softblue';
+            //     if (DevExpress && DevExpress.ui && DevExpress.ui.themes && typeof DevExpress.ui.themes.current === 'function') {
+            //         DevExpress.ui.themes.current(aDXTheme);
+            //     }
+            // } catch (ex) {
+            //     // silently fail but log for debugging
+            //     console && console.warn && console.warn('Theme init error', ex);
+            // }
+
+            // Resolve server base: prefer explicit global ASERVER_BASE, otherwise origin
+            function getServerBase() {
+                if (typeof ASERVER_BASE === 'string' && ASERVER_BASE.trim() !== '') {
+                    return ASERVER_BASE.replace(/\/$/, ''); // remove trailing slash
+                }
+                // fallback to same origin
+                return window.location.origin;
+            }
+
+            const aserverName = getServerBase();
+            const aapilistfile = 'list-files.aspx';
+            const baseUrl = aserverName + '/temp/uploads/';
+            const listApi = aserverName + '/temp/' + aapilistfile;
+
+            // -------------------- UI Widgets --------------------
+            const filenameInput = $('#filename-input').dxTextBox({
+                placeholder: 'Enter filename (e.g., DeclarationTEMP.xlsx)',
+                value: '',
+                width: '100%'
+            }).dxTextBox('instance');
+
+            $('#download-button').dxButton({
+                text: 'Download',
+                type: 'success',
+                icon: 'fas fa-download',
+                onClick: function () {
+                    const filename = (filenameInput.option('value') || '').trim();
+                    if (!filename) {
+                        DevExpress.ui.notify('Please enter a filename.', 'error', 2000);
+                        return;
+                    }
+                    // Build URL and trigger browser download
+                    const fileUrl = baseUrl + encodeURIComponent(filename);
+
+                    // Best-effort check: try to open in new tab (some servers block cross-origin HEAD)
+                    const anchor = document.createElement('a');
+                    anchor.href = fileUrl;
+                    anchor.download = filename;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    document.body.removeChild(anchor);
+                }
+            });
+
+            $('#browse-button').dxButton({
+                text: 'List Files',
+                type: 'default',
+                icon: 'fas fa-folder',
+                onClick: function () {
+                    if (!listApi) {
+                        DevExpress.ui.notify('List API is not configured.', 'error', 3000);
+                        return;
+                    }
+
+                    popup.show();
+
+                    $.ajax({
+                        url: listApi,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (files) {
+                            if (!Array.isArray(files)) {
+                                DevExpress.ui.notify('Invalid file list format', 'error', 2000);
+                                return;
+                            }
+
+                            // Normalise different possible server responses:
+                            // - ['file1.xlsx','file2.pdf']
+                            // - [{ filename: 'file1.xlsx', modified: '2025-09-..' }, ...]
+                            const fileData = files.map(item => {
+                                if (typeof item === 'string') {
+                                    return {
+                                        filename: item,
+                                        extension: (item.split('.').pop() || '').toLowerCase(),
+                                        icon: getFileIcon(item),
+                                        modified: ''
+                                    };
+                                }
+                                // object
+                                const filename = item.filename || item.name || '';
+                                return {
+                                    filename: filename,
+                                    extension: (filename.split('.').pop() || '').toLowerCase(),
+                                    icon: getFileIcon(filename),
+                                    modified: item.modified || item.lastModified || ''
+                                };
+                            });
+
+                            $('#file-grid').dxDataGrid({
+                                dataSource: fileData,
+                                height: 380,
+                                paging: { enabled: true, pageSize: 50 },
+                                pager: { showPageSizeSelector: false, showNavigationButtons: true, visible: true },
+                                columns: [
+                                    {
+                                        dataField: 'icon', caption: '', width: 48, cellTemplate: function (container, options) {
+                                            var ic = $('<i>').addClass('fas').addClass(options.value || 'fa-file').css({ 'font-size': '18px' });
+                                            $(container).append(ic);
+                                        }
+                                    },
+                                    { dataField: 'filename', caption: 'File Name', minWidth: 240 },
+                                    { dataField: 'extension', caption: 'Type', width: 100 },
+                                    { dataField: 'modified', caption: 'Modified', width: 180 }
+                                ],
+                                rowAlternationEnabled: true,
+                                showBorders: true,
+                                hoverStateEnabled: true,
+                                searchPanel: { visible: true, width: 240, placeholder: 'Search files...' },
+                                selection: { mode: 'single' },
+                                onRowClick: function (e) {
+                                    filenameInput.option('value', e.data.filename);
+                                    popup.hide();
+                                }
+                            });
+                        },
+                        error: function (xhr, status, err) {
+                            DevExpress.ui.notify('Failed to load file list', 'error', 3000);
+                            console && console.error && console.error('List API error', status, err);
+                        }
+                    });
+                }
+            });
+
+            function getFileIcon(filename) {
+                if (!filename) return 'fa-file';
+                const ext = (filename.split('.').pop() || '').toLowerCase();
+                switch (ext) {
+                    case 'pdf': return 'fa-file-pdf';
+                    case 'xlsx': case 'xls': return 'fa-file-excel';
+                    case 'doc': case 'docx': return 'fa-file-word';
+                    case 'ppt': case 'pptx': return 'fa-file-powerpoint';
+                    case 'jpg': case 'jpeg': case 'png': case 'gif': return 'fa-file-image';
+                    case 'mp4': case 'mov': return 'fa-file-video';
+                    case 'html': case 'js': case 'css': return 'fa-file-code';
+                    default: return 'fa-file';
+                }
+            }
+
+            // Popup instance (grid lives inside)
+            const popup = $('#file-popup').dxPopup({
+                title: 'Select a file',
+                visible: false,
+                showTitle: true,
+                closeOnOutsideClick: true,
+                width: 700,
+                height: 'auto',
+                position: { my: 'top center', at: 'top center', offset: '0 10' },
+                contentTemplate: function (contentElement) {
+                    $('<div>').attr('id', 'file-grid').css({ 'max-height': '600px', 'overflow': 'auto' }).appendTo(contentElement);
+                }
+            }).dxPopup('instance');
+
+            // Upload button: safe fallback if server upload function not provided
+            $('#showUploadPopupButton').dxButton({
+                text: 'Upload File',
+                type: 'default',
+                icon: 'fas fa-file-upload',
+                onClick: function () {
+                    if (typeof aPopUpUpLoad === 'function') {
+                        aPopUpUpLoad('X');
+                        return;
+                    }
+                    DevExpress.ui.notify('Upload functionality is not available in this client build. Please implement aPopUpUpLoad or configure an upload endpoint.', 'warning', 4000);
+                }
+            });
+
+            // -------------------- End Init --------------------
+        })();
+    </script>
+</body>
+
+</html>

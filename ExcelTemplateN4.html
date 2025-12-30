@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <title>Template Export — Fixed date width</title>
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+  <style>
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial; margin: 18px; }
+    .toolbar { margin-bottom: 12px; display:flex; gap:10px; align-items:center; }
+    button { padding:8px 12px; border-radius:6px; cursor:pointer; }
+    #gridContainer { height:420px; }
+    .status { font-size:13px; color:#333; margin-left:8px; }
+  </style>
+</head>
+<body>
+  <h3>รายงานจาก Template.xlsx — date width fixed</h3>
+
+  <div class="toolbar">
+    <button id="downloadTemplateBtn">📥 ดาวน์โหลด Template.xlsx (ตัวอย่าง)</button>
+    <button id="exportBtn">📤 Export รายงาน</button>
+    <span class="status" id="statusText">สถานะ: พร้อม</span>
+  </div>
+
+  <div id="gridContainer"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="./fsrc/bundle.min.js"></script>
+<script>
+/* sample data */
+const data = [
+  { name: "วิกรานต์", role: "Dev",     score: 95, date: "2025-09-12", dept: "R&D" },
+  { name: "สมชาย",   role: "Tester",  score: 88, date: "2025-09-11", dept: "QA" },
+  { name: "อารีย์",   role: "Manager", score: 92, date: "2025-09-10", dept: "Ops" }
+];
+/*
+let aaTBKey "5ad2685d-4114-4aa5-aa87-67368f4a3559"
+var aaPFDMI = isLocalHost();
+//var aaXToX = "A75FCC75-8FB6-4460-B3F6-7070B4437930" //localStorage["aaXXoX"]; //atob('QTc1RkNDNzUtOEZCNi00NDYwLUIzRjYtNzA3MEI0NDM3OTMw')
+var aaXTox = "QTc1RkNDNzUtOEZCNi00NDYwLUIzRjYtNzA3MEI0NDM3OTMw"
+var aqrFull = "ExpGroupCode = '700'";
+var aurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all'
+var aSettings = { "url": aurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": btoa(aqrFull) }), };
+dataSource: {
+    store: new DevExpress.data.CustomStore({
+        key: "IDNO",
+        loadMode: "raw", //raw omit  "xmla"
+        load: function () { return $.post(aSettings).done(); },
+    }),
+}
+*/
+
+
+const captionMap = new Map([
+  ["name","name"], ["ชื่อ","name"],
+  ["role","role"], ["ตำแหน่ง","role"],
+  ["score","score"], ["คะแนน","score"],
+  ["date","date"], ["วันที่","date"],
+  ["dept","dept"], ["department","dept"], ["แผนก","dept"]
+]);
+
+const placeholderAlias = new Map([ ["dep","dept"] ]);
+
+const gridInstance = $("#gridContainer").dxDataGrid({
+  dataSource: data,
+  showBorders: true,
+  columnAutoWidth: true,
+  rowAlternationEnabled: true,
+  columns: [
+    { dataField: "name", caption: "ชื่อ" },
+    { dataField: "role", caption: "ตำแหน่ง" },
+    { dataField: "score", caption: "คะแนน", dataType: "number" },
+    { dataField: "date", caption: "วันที่", dataType: "date", format: "yyyy-MM-dd" },
+    { dataField: "dept", caption: "แผนก" }
+  ],
+  export: { enabled: false }
+}).dxDataGrid("instance");
+
+const STATUS = document.getElementById("statusText");
+const setStatus = t => STATUS.textContent = "สถานะ: " + t;
+
+function extractPlaceholder(v){
+  if(typeof v !== "string") return null;
+  const m = v.match(/^\s*\{\{\s*([a-zA-Z0-9_]+)\s*\}\}\s*$/);
+  return m ? (placeholderAlias.get(m[1]) || m[1]).toLowerCase() : null;
+}
+function extractDirective(v){
+  if(typeof v !== "string") return null;
+  const m = v.match(/^\s*\{\s*(sum|average|count)\s*\}\s*$/i);
+  return m ? m[1].toLowerCase() : null;
+}
+function colLetterFromIndex(i){
+  let s = "";
+  while(i>0){
+    const rem = (i-1) % 26;
+    s = String.fromCharCode(65 + rem) + s;
+    i = Math.floor((i-1)/26);
+  }
+  return s;
+}
+
+async function loadTemplateWorkbook(url="template.xlsx"){
+  try{
+    const res = await fetch(url, { cache: "no-store" });
+    if(!res.ok) return null;
+    const ab = await res.arrayBuffer();
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(ab);
+    const ws = wb.getWorksheet("Report");
+    if(!ws) return null;
+    return { wb, ws };
+  }catch(e){ return null; }
+}
+
+async function buildDefaultTemplate(){
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet("Report");
+  ws.mergeCells("A1:F1"); ws.getCell("A1").value = "รายงานตัวอย่าง";
+  ws.getRow(2).values = ["NO","Name","Department","Role","Date","Score"];
+  ws.getRow(3).values = ["{{no}}","{{name}}","{{dept}}","{{role}}","{{date}}","{{score}}"];
+  ws.getRow(4).values = ["","","","","","{sum}"];
+  ws.columns = [{width:6},{width:20},{width:20},{width:12},{width:14},{width:10}];
+  return { wb, ws };
+}
+
+function parseTemplateStructure(ws){
+  let placeholderRowIdx = null;
+  for(let r=1; r<=10; r++){
+    const row = ws.getRow(r).values.slice(1);
+    if(row.some(v => typeof v === "string" && v.trim().startsWith("{{"))) {
+      placeholderRowIdx = r; break;
+    }
+  }
+  let headerRowIdx = placeholderRowIdx ? placeholderRowIdx-1 : 2;
+  let directiveRowIdx = placeholderRowIdx+1;
+  const headerVals = ws.getRow(headerRowIdx).values.slice(1);
+  const placeholderVals = ws.getRow(placeholderRowIdx).values.slice(1);
+  const colCount = Math.max(headerVals.length, placeholderVals.length);
+
+  const columns = [];
+  for(let i=0; i<colCount; i++){
+    const idx = i+1;
+    const h = headerVals[i];
+    const p = placeholderVals[i];
+    const phName = extractPlaceholder(p);
+    let dataField = phName || null;
+    if(!dataField && h){
+      const key = String(h).trim().toLowerCase();
+      dataField = captionMap.get(key) || key.replace(/\s+/g,"_");
+    }
+    const isNo = (phName==="no" || dataField==="no");
+    columns.push({ colIndex: idx, header: h, placeholder: p, dataField, isNo });
+  }
+  return { headerRowIdx, placeholderRowIdx, directiveRowIdx, columns };
+}
+
+function applyTemplateToGrid(columnMap){
+  const cols = [];
+  for(const c of columnMap){
+    if(c.isNo) continue;
+    if(!c.dataField) continue;
+    const def = { dataField: c.dataField, caption: c.header || c.dataField };
+    if(c.dataField==="score") def.dataType="number";
+    if(c.dataField==="date") def.dataType="date";
+    cols.push(def);
+  }
+  if(cols.length) gridInstance.option("columns", cols);
+}
+
+function computeSummaryResult(items, dataField, dir){
+  if(!dataField){
+    if(dir==="count") return items.length; else return null;
+  }
+  const vals = items.map(it => it[dataField]);
+  if(dir==="sum"){
+    const nums = vals.map(v=>Number(v)).filter(n=>!Number.isNaN(n));
+    return nums.reduce((a,b)=>a+b,0);
+  }
+  if(dir==="average"){
+    const nums = vals.map(v=>Number(v)).filter(n=>!Number.isNaN(n));
+    return nums.reduce((a,b)=>a+b,0)/nums.length;
+  }
+  if(dir==="count") return vals.filter(v=>v!=null && String(v).trim()!=="").length;
+  return null;
+}
+
+/* ✅ auto-fit columns (date column forced narrower) */
+function autoFitColumns(ws, startRow, endRow, columnMap){
+  for(const col of columnMap){
+    const c = col.colIndex;
+    let maxLen = 0;
+    for(let r=startRow; r<=endRow; r++){
+      try{
+        let v = ws.getRow(r).getCell(c).value;
+        if(v && typeof v === "object"){
+          if(v.result!==undefined) v = v.result;
+          else if(v.text) v = v.text;
+          else if(v.formula) v = v.formula;
+        }
+        if(v instanceof Date) v = v.toISOString().slice(0,10);
+        if(v!=null) maxLen = Math.max(maxLen, String(v).length);
+      }catch{}
+    }
+    let width = Math.min(Math.max(maxLen+2, 6), 36);
+    if(col.dataField==="date") width = 12; // ✅ fix: force reasonable width for date column
+    ws.getColumn(c).width = width;
+  }
+}
+
+async function exportReport(){
+  setStatus("โหลด template...");
+  let tpl = await loadTemplateWorkbook(); if(!tpl) tpl = await buildDefaultTemplate();
+  const wb = tpl.wb; const ws = tpl.ws;
+
+  const parsed = parseTemplateStructure(ws);
+  const {headerRowIdx, placeholderRowIdx, directiveRowIdx, columns} = parsed;
+  const directiveValues = ws.getRow(directiveRowIdx).values.slice(1);
+
+  const exportTopRow = headerRowIdx, dataStartRow = exportTopRow+1;
+  const noCol = columns.find(c=>c.isNo);
+  const hasNo = !!noCol;
+  const firstNonNo = columns.find(c=>!c.isNo);
+  const firstExportCol = firstNonNo ? firstNonNo.colIndex : (hasNo ? noCol.colIndex+1 : 1);
+
+  applyTemplateToGrid(columns);
+
+  const headerBackup = new Map();
+  for(const c of columns){
+    const cell = ws.getRow(headerRowIdx).getCell(c.colIndex);
+    headerBackup.set(c.colIndex, {
+      value: cell.value, font: cell.font, fill: cell.fill, border: cell.border, alignment: cell.alignment
+    });
+  }
+
+  await DevExpress.excelExporter.exportDataGrid({
+    component: gridInstance,
+    worksheet: ws,
+    topLeftCell: { row: exportTopRow, column: firstExportCol },
+    customizeCell: ({gridCell,excelCell})=>{
+      if(gridCell?.rowType==="data"){
+        if(gridCell.column.dataField==="score") excelCell.value = Number(gridCell.value);
+        if(gridCell.column.dataField==="date") excelCell.numFmt = "yyyy-mm-dd";
+      }
+    }
+  });
+
+  for(const [colIdx,s] of headerBackup.entries()){
+    const cell = ws.getRow(headerRowIdx).getCell(colIdx);
+    cell.value = s.value; cell.font = s.font; cell.fill = s.fill; cell.border = s.border; cell.alignment = s.alignment;
+  }
+
+  const items = gridInstance.getDataSource().items();
+  const rowCount = items.length, lastDataRow = dataStartRow+rowCount-1, summaryRowIdx = lastDataRow+1;
+
+  if(hasNo){
+    for(let i=0;i<rowCount;i++){
+      const r = dataStartRow+i;
+      ws.getRow(r).getCell(noCol.colIndex).value = i+1;
+    }
+  }
+
+  wb.calcProperties = wb.calcProperties||{};
+  wb.calcProperties.fullCalcOnLoad = true;
+
+  for(let i=0;i<columns.length;i++){
+    const c = columns[i];
+    const dir = extractDirective(directiveValues[i]);
+    if(!dir) continue;
+    const letter = colLetterFromIndex(c.colIndex);
+    const range = `${letter}${dataStartRow}:${letter}${lastDataRow}`;
+    const result = computeSummaryResult(items,c.dataField,dir);
+    if(dir==="sum") ws.getCell(`${letter}${summaryRowIdx}`).value = {formula:`SUM(${range})`, result:Number(result)};
+    if(dir==="average") ws.getCell(`${letter}${summaryRowIdx}`).value = {formula:`AVERAGE(${range})`, result:Number(result)};
+    if(dir==="count") ws.getCell(`${letter}${summaryRowIdx}`).value = {formula:`COUNTA(${range})`, result:Number(result)};
+  }
+
+  autoFitColumns(ws, headerRowIdx, summaryRowIdx, columns);
+
+  const buffer = await wb.xlsx.writeBuffer();
+  saveAs(new Blob([buffer], {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"รายงาน.xlsx");
+  setStatus("ส่งออกเสร็จสิ้น");
+}
+
+document.getElementById("exportBtn").addEventListener("click", exportReport);
+document.getElementById("downloadTemplateBtn").addEventListener("click", async()=>{
+  const built=await buildDefaultTemplate();const buf=await built.wb.xlsx.writeBuffer();
+  saveAs(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"template.xlsx");
+});
+</script>
+</body>
+</html>

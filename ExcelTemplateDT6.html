@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Excel Export — Displayed Values Only</title>
+
+<!-- Exact links (as requested) -->
+<link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.1.3/css/dx.light.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="./fsrc/bundle.min.js"></script>
+
+<style>
+  body{font-family:system-ui,Arial;margin:18px;}
+  #gridContainer{height:420px;margin-top:10px;}
+  button{margin-right:8px;padding:8px 12px;border-radius:6px;}
+  #status{margin-top:8px;color:#333;}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .field{display:flex;align-items:center;gap:6px}
+  .label{font-weight:600}
+</style>
+</head>
+<body>
+
+<h2>📊 Export Report (Displayed Values Only)</h2>
+
+<div class="row">
+  <div class="field">
+    <span class="label">From</span>
+    <div id="dateFrom"></div>
+  </div>
+  <div class="field">
+    <span class="label">To</span>
+    <div id="dateTo"></div>
+  </div>
+</div>
+
+<br>
+<button id="loadDbBtn">Load Data</button>
+<button id="exportBtn">Export to Excel</button>
+<div id="status"></div>
+<div id="gridContainer"></div>
+
+<script>
+  // State
+  let gridInstance=null,currentData=[],columnMap=[],placeholderRowIdx=null,directiveRowIdx=null;
+  let templateColWidths={},templateColHeaders={},deptMap={};
+
+  // Utilities
+  const setStatus = (m)=>$("#status").text(m);
+  const guessDataType = (n)=>{
+    if(!n) return "string";
+    const s=n.toLowerCase();
+    if(/(amount|total|score|price|qty|quantity|number|count)/.test(s)) return "number";
+    if(/(date|day|time)/.test(s)) return "date";
+    return "string";
+  };
+  const colLetter = (n)=>{
+    let s="",q=n;
+    while(q>0){ const r=(q-1)%26; s=String.fromCharCode(65+r)+s; q=Math.floor((q-1)/26); }
+    return s;
+  };
+  const toIsoDate = (d)=>{
+    if(!d) return "";
+    const x=new Date(d);
+    if(Number.isNaN(x.getTime())) return "";
+    const y=x.getFullYear(), m=String(x.getMonth()+1).padStart(2,'0'), dd=String(x.getDate()).padStart(2,'0');
+    return `${y}-${m}-${dd}`;
+  };
+  const toEnGbDate = (d)=> d ? new Date(d).toLocaleDateString("en-GB",{day:'2-digit',month:'2-digit',year:'numeric'}) : "";
+
+  // British dropdowns (dd/MM yyyy) via DevExtreme DateBox
+  let dxFrom=null, dxTo=null;
+  $(function(){
+    dxFrom = $("#dateFrom").dxDateBox({
+      type:"date",
+      displayFormat:"dd/MM yyyy",
+      useMaskBehavior:true,
+      value: new Date(),
+      calendarOptions:{ firstDayOfWeek:1 }
+    }).dxDateBox("instance");
+
+    dxTo = $("#dateTo").dxDateBox({
+      type:"date",
+      displayFormat:"dd/MM yyyy",
+      useMaskBehavior:true,
+      value: new Date(),
+      calendarOptions:{ firstDayOfWeek:1 }
+    }).dxDateBox("instance");
+  });
+
+  // Parse template: columns, directives, widths, MSTABLE mapping
+  function parseTemplateWorkbook(wb){
+    const ws=wb.getWorksheet("Report");
+    if(!ws) throw new Error("Worksheet 'Report' not found in template.xlsx");
+
+    // Build department map (code -> name) from MSTABLE (visibility handled at export)
+    deptMap={};
+    const ms=wb.getWorksheet("MSTABLE");
+    if(ms){
+      ms.eachRow((r,i)=>{
+        if(i===1) return; // header
+        const code=r.getCell(1).value, name=r.getCell(2).value;
+        if(code!=null && name!=null) deptMap[String(code).trim()] = String(name).trim();
+      });
+    }
+
+    // Find placeholder row (contains {{...}}) and directive row (next line)
+    columnMap=[]; templateColWidths={}; templateColHeaders={};
+    placeholderRowIdx=null; directiveRowIdx=null;
+
+    for(let r=1;r<=500;r++){
+      const vals=(ws.getRow(r).values||[]).slice(1);
+      if(vals.some(v=>typeof v==="string" && v.includes("{{"))){
+        placeholderRowIdx=r; directiveRowIdx=r+1; break;
+      }
+    }
+    if(!placeholderRowIdx) throw new Error("Placeholder row with {{...}} not found in 'Report'");
+
+    const headerArr=(ws.getRow(placeholderRowIdx-1).values||[]).slice(1);
+    const phArr=(ws.getRow(placeholderRowIdx).values||[]).slice(1);
+    const dirArr=(ws.getRow(directiveRowIdx).values||[]).slice(1);
+    const maxCols=Math.max(headerArr.length,phArr.length,dirArr.length);
+
+    for(let c=1;c<=maxCols;c++){
+      const phRaw=phArr[c-1], dirRaw=dirArr[c-1];
+      let placeholder=null, directive=null;
+      if(typeof phRaw==="string"){
+        const m=phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+        if(m) placeholder=m[1].toLowerCase();
+      }
+      if(typeof dirRaw==="string"){
+        const dm=dirRaw.match(/\{\s*(sum|average|count)\s*\}/i);
+        if(dm) directive=dm[1].toLowerCase();
+      }
+
+      const col=ws.getColumn(c);
+      templateColWidths[c]=col.width || 15;
+      templateColHeaders[c]=headerArr[c-1] || placeholder || "";
+      columnMap.push({ colIndex:c, placeholder, directive, dataType: placeholder?guessDataType(placeholder):null });
+    }
+  }
+
+  // Load DB data and show in grid (department displayed as name)
+  async function loadDatabaseData(){
+    const df=dxFrom.option("value");
+    const dt=dxTo.option("value");
+    if(!df||!dt){ alert("Please select date range"); return; }
+
+    setStatus("Loading template & data...");
+    const tplRes=await fetch("template.xlsx",{cache:"no-store"});
+    const buf=await tplRes.arrayBuffer();
+    const wb=new ExcelJS.Workbook();
+    await wb.xlsx.load(buf);
+    parseTemplateWorkbook(wb);
+
+    // API (use isLocalHost from bundle.min.js)
+    const aaTBKey="5ad2685d-4114-4aa5-aa87-67368f4a3559";
+    const aaXToX="QTc1RkNDNzUtOEZCNi00NDYwLUIzRjYtNzA3MEI0NDM3OTMw";
+    const baseURL=isLocalHost();
+
+    const dateField = columnMap.find(c=>c.dataType==="date" && c.placeholder)?.placeholder || "ReqDate";
+    const aqrFull=`ExpGroupCode='700' AND ${dateField} BETWEEN '${toIsoDate(df)}' AND '${toIsoDate(dt)}'`;
+
+    const aurl=baseURL+'/DMQ/XOL/'+atob(aaXToX)+'/'+aaTBKey+'/all';
+    const aSettings={ url:aurl, method:"POST", timeout:0,
+      headers:{"Content-Type":"application/json"},
+      data:JSON.stringify({"@":btoa(aqrFull)})
+    };
+    const dbRaw=await $.ajax(aSettings);
+
+    // Map API fields -> placeholders
+    const dataPh=columnMap.filter(c=>c.placeholder && c.placeholder!=="no").map(c=>c.placeholder);
+    const sample=dbRaw[0]||{};
+    const finalMap={};
+    dataPh.forEach(ph=>{
+      const f=Object.keys(sample).find(k=>k.toLowerCase()===ph.toLowerCase());
+      finalMap[ph]=f||ph;
+    });
+
+    // Display: department as name (no formulas anywhere)
+    const mapped=dbRaw.map((r,i)=>{
+      const o={}; o.no=i+1;
+      dataPh.forEach(ph=>{
+        let v=r[finalMap[ph]];
+        if(ph==="department" && deptMap[v]) v=deptMap[v];
+        o[ph]=v;
+      });
+      return o;
+    });
+
+    // Grid columns
+    const cols=[];
+    for(const cm of columnMap){
+      if(!cm.placeholder) continue;
+      if(cm.placeholder==="no"){
+        cols.push({dataField:"no",caption:"NO",dataType:"number"});
+      }else{
+        cols.push({dataField:cm.placeholder,caption:templateColHeaders[cm.colIndex],dataType:cm.dataType||guessDataType(cm.placeholder)});
+      }
+    }
+
+    if(!gridInstance){
+      gridInstance=$("#gridContainer").dxDataGrid({
+        dataSource:mapped,
+        columns:cols,
+        showBorders:true,
+        columnAutoWidth:true
+      }).dxDataGrid("instance");
+    }else{
+      gridInstance.option("columns",cols);
+      gridInstance.option("dataSource",mapped);
+    }
+
+    currentData=mapped;
+    setStatus(`Loaded ${mapped.length} rows`);
+  }
+
+  // Export displayed values only; do NOT copy any formats from {{placeholder}} row; hide MSTABLE; header-styled totals
+  async function exportReport(data){
+    if (!data || !data.length) { alert("No data to export"); return; }
+
+    setStatus("Exporting...");
+    const tplRes = await fetch("template.xlsx", { cache: "no-store" });
+    const buf = await tplRes.arrayBuffer();
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(buf);
+    parseTemplateWorkbook(wb);
+
+    const ws = wb.getWorksheet("Report");
+    const startRow = placeholderRowIdx;
+    const headerRow = placeholderRowIdx - 1;
+    const periodRow = placeholderRowIdx - 2;
+
+    // For Period label (British dd/MM yyyy)
+    const df=dxFrom.option("value");
+    const dt=dxTo.option("value");
+    const periodText = `For Period ${toEnGbDate(df)} - ${toEnGbDate(dt)}`;
+    ws.getRow(periodRow).getCell(1).value = periodText;
+    ws.getRow(periodRow).commit();
+
+    // Map placeholders => column indexes
+    const colMap={}; columnMap.forEach(c=>{ if(c.placeholder) colMap[c.placeholder]=c.colIndex; });
+
+    // Write data rows: values only; leave all formatting to original template; skip empty cells entirely
+    data.forEach((rowData, i) => {
+      const row = ws.getRow(startRow + i);
+
+      if (colMap["no"]) {
+        row.getCell(colMap["no"]).value = i + 1; // value only
+      }
+
+      for (const [key, value] of Object.entries(rowData)) {
+        if (key==="no") continue;
+        const colIdx = colMap[key]; if(!colIdx) continue;
+
+        if (value===null || value===undefined || value==="") continue; // keep template cell as-is
+
+        const cell = row.getCell(colIdx);
+        const dataType = columnMap.find(c=>c.placeholder===key)?.dataType || guessDataType(key);
+
+        if (dataType==="date") {
+          const d = value instanceof Date ? value : new Date(value);
+          cell.value = Number.isNaN(d.getTime()) ? value : d; // value only
+        } else if (dataType==="number") {
+          const n = Number(value);
+          cell.value = Number.isNaN(n) ? value : n; // value only
+        } else {
+          cell.value = value; // value only
+        }
+        // no numFmt, no font, no fill, no border copied — per your request
+      }
+
+      row.commit();
+    });
+
+    // Summary row: put formulas where directive exists; style every column same as header
+    const endRow = startRow + data.length - 1;
+    const summaryRow = ws.getRow(endRow + 1);
+    const headerTemplateRow = ws.getRow(headerRow);
+
+    columnMap.forEach(col=>{
+      const sumCell = summaryRow.getCell(col.colIndex);
+      const headerCell = headerTemplateRow.getCell(col.colIndex);
+
+      // If directive present, set formula (value only; formatting inherited from header style below)
+      if (col.directive && col.placeholder) {
+        const L = colLetter(col.colIndex);
+        const range = `${L}${startRow}:${L}${endRow}`;
+        let formula="";
+        if(col.directive==="sum") formula=`SUM(${range})`;
+        else if(col.directive==="average") formula=`AVERAGE(${range})`;
+        else if(col.directive==="count") formula=`COUNTA(${range})`;
+        if(formula) sumCell.value = { formula };
+      }
+
+      // Apply header styling to every column in summary row (to meet your color requirement)
+      if (headerCell.font) sumCell.font = headerCell.font;
+      if (headerCell.alignment) sumCell.alignment = headerCell.alignment;
+      if (headerCell.border) sumCell.border = headerCell.border;
+      if (headerCell.fill) sumCell.fill = headerCell.fill;
+    });
+    summaryRow.commit();
+
+    // Column widths from template
+    for(const [ci,w] of Object.entries(templateColWidths)){
+      ws.getColumn(Number(ci)).width = w || 15;
+    }
+
+    // Hide MSTABLE in the output workbook (as requested)
+    const ms = wb.getWorksheet("MSTABLE");
+    if(ms) ms.state='hidden';
+
+    wb.calcProperties.fullCalcOnLoad=true;
+
+    const out=await wb.xlsx.writeBuffer();
+    saveAs(new Blob([out]),"Report.xlsx");
+    setStatus("Export complete");
+  }
+
+  // Actions
+  $("#loadDbBtn").on("click", loadDatabaseData);
+  $("#exportBtn").on("click", ()=>exportReport(currentData));
+</script>
+</body>
+</html>

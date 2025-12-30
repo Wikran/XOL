@@ -1,0 +1,26 @@
+[
+  {
+    "BankCode": "KTC",
+    "BankName": "Krungthai Card Public Company Limited",
+    "CardName": "NADPORN SRILERT",
+    "CardNo": "4513 4707 0016 7361",
+    "LimitAmt": 500000,
+    "Note": null
+  },
+  {
+    "BankCode": "KTC",
+    "BankName": "Krungthai Card Public Company Limited",
+    "CardName": "NATTHIDA TRISAHAVIRAKUL",
+    "CardNo": "4513 4707 0017 4235",
+    "LimitAmt": 700000,
+    "Note": null
+  },
+  {
+    "BankCode": "KTC",
+    "BankName": "Krungthai Card Public Company Limited",
+    "CardName": "SUKANYA KHANOM",
+    "CardNo": "4513 4707 0016 7726",
+    "LimitAmt": 500000,
+    "Note": null
+  }
+]

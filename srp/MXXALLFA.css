@@ -1,0 +1,31 @@
+
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: #edf5fde5 !important;
+        }
+
+        .H1Header {
+            color: rgb(197, 179, 88);
+
+        }
+
+        .flower-image {
+            background-image: url("./images/locktonlogo70mmblack.png");
+            background-repeat: no-repeat;
+            background-position: right;
+
+            /*background-color: #cccccc;
+            size: 5%;
+            background-size: cover;
+            position: relative;            
+            */
+        }
+
+        .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: #c6bfffe5 !important;
+        }

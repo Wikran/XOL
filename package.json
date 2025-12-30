@@ -1,15 +1,18 @@
 {
     "name": "expenses-reimbursement",
     "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
+    "description": "Webpack setup for dynamically bundling all JS files",
     "scripts": {
-        "build": "webpack --config webpack.config.js"
+        "start": "webpack serve --open",
+        "build": "webpack"
     },
     "devDependencies": {
-        "glob": "^7.2.0",
-        "javascript-obfuscator": "^4.1.1",
-        "webpack": "^5.38.1",
-        "webpack-cli": "^4.7.2"
+        "css-loader": "^6.11.0",
+        "glob": "^10.3.4",
+        "html-webpack-plugin": "^5.6.3",
+        "mini-css-extract-plugin": "^2.7.5",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^5.1.4",
+        "webpack-dev-server": "^4.15.0"
     }
 }

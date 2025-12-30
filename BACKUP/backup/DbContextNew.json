@@ -1,0 +1,235 @@
+{
+  "DbContext": [
+    {
+      "DbServer": "Lockthbk-cbdb3",
+      "DbUser": "cbs",
+      "DbPassword": "?+e4ebl5325",
+      "DbProvidor": "MSSQL",
+      "DbName": "SIBISDB",
+      "TokenKey": "7A6D88BA-1E06-47BC-9AF0-89DB4C343661xxx",
+      "URL": "",
+      "Category": "SIBIS"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "SIBISDB",
+      "TokenKey": "b18e9f22-2069-4f35-9739-4d7f976335eb",
+      "URL": "",
+      "Category": "SIBIS"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "CBS",
+      "TokenKey": "4C2BFD51-22AE-41BB-8C2D-EA0EA1375B94",
+      "URL": "",
+      "Category": "CBS"
+    },
+    {
+      "DbServer": "Lockthbk-cbdb3",
+      "DbUser": "cbs",
+      "DbPassword": "?+e4ebl5325",
+      "DbProvidor": "MSSQL",
+      "DbName": "CBS_DEV",
+      "TokenKey": "46E83AD0-B9DD-4C3E-87E9-F2F43DE072F3",
+      "URL": "",
+      "Category": "CBS @cbdb3"
+    },
+    {
+      "DbServer": "appsetup.db",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "SQLITE",
+      "DbName": "appsetup",
+      "TokenKey": "cbb91dcb-9e28-438f-91ad-ed5ffe143802",
+      "URL": "",
+      "Category": "AppSetup"
+    },
+    {
+      "DbServer": "cbsdbv1dev.database.windows.net",
+      "DbUser": "lwtadmin",
+      "DbPassword": "R7gudrij?*opu",
+      "DbProvidor": "MSSQL",
+      "DbName": "CBSDBV1_DEV",
+      "TokenKey": "535A2827-D571-4BD0-92D4-9FCBE4E82C55",
+      "URL": "",
+      "Category": "cbsdbv1dev.database.windows.net"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "ExtraOnLine",
+      "TokenKey": "9367094B-79DD-4467-BE4A-A882615C986C",
+      "URL": "",
+      "Category": "Extraonline @AP14"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "LEON",
+      "TokenKey": "f6d76c5a-649e-4b2a-9c4a-c54f38ba5e12",
+      "URL": "",
+      "Category": "Leave Onine @AP14"
+    },	
+    {
+      "DbServer": "XOLappsetup.db",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "SQLITE",
+      "DbName": "XOLappsetup",
+      "TokenKey": "8505e2be-22ae-43f8-8e23-d2e6d8ba064c",
+      "URL": "",
+      "Category": "XOLAppSetup"
+    },
+    {
+      "DbServer": "SBLappsetup.db",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "SQLITE",
+      "DbName": "SBLappsetup",
+      "TokenKey": "db4bb2cf-94bf-4c5d-8688-583451318f59",
+      "URL": "",
+      "Category": "SBLAppSetup"
+    },
+    {
+      "DbServer": "CLMappsetup.db",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "SQLITE",
+      "DbName": "CLMappsetup",
+      "TokenKey": "546915b9-3bae-4f9b-8479-7c31e2ab3dc6",
+      "URL": "",
+      "Category": "CLMAppSetup"
+    },
+    {
+      "DbServer": "HRSappsetup.db",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "SQLITE",
+      "DbName": "HRSappsetup",
+      "TokenKey": "1CE184F3-5B6B-468A-97A7-AC735913EEB8",
+      "URL": "",
+      "Category": "HRSAppSetup"
+    },	
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "CPProperty",
+      "TokenKey": "91442B98-C12C-492D-8BE9-5DC2A12D7666",
+      "URL": "",
+      "Category": "CPProperty"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "ClaimDatabase",
+      "TokenKey": "E68F9AE6-E832-4551-B5E4-710589AE2657",
+      "URL": "",
+      "Category": "ClaimDatabase"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "Reinsurance",
+      "TokenKey": "F2A7778B-66A9-4295-89B8-307E7C683DF8",
+      "URL": "",
+      "Category": "Reinsurance"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "ClaimDatabase",
+      "TokenKey": "7fe3b82f-7c8a-43c2-85ef-2c783dba3a55",
+      "URL": "",
+      "Category": "ClaimDatabase"
+    },
+    {
+      "DbServer": "APDSTD01VW.xls",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "EXCEL",
+      "DbName": "",
+      "TokenKey": "6BBBAFEE-59A2-4E5F-82D0-03493242C9DFss",
+      "URL": "",
+      "Category": "Utility"
+    },
+    {
+      "DbServer": "DATA202207.xlsx",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "EXCEL",
+      "DbName": "",
+      "TokenKey": "EB95BCCD-1836-49AC-AB69-52AAA8451549",
+      "URL": "~/temp/uploads",
+      "Category": "CLM"
+    },
+    {
+      "DbServer": "ClientGroup.xlsx",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "EXCEL",
+      "DbName": "",
+      "TokenKey": "6BBBAFEE-59A2-4E5F-82D0-03493242C9DF",
+      "URL": "~/temp/uploads",
+      "Category": "Utility"
+    },
+    {
+      "DbServer": "APDSTD01VW.xls",
+      "DbUser": "NA",
+      "DbPassword": "NA",
+      "DbProvidor": "EXCEL",
+      "DbName": "",
+      "TokenKey": "6BBBAFEE-59A2-4E5F-82D0-03493242C9DFxx",
+      "URL": "~/uploads",
+      "Category": "Utility"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "LEON",
+      "TokenKey": "50F6FA91-88BC-447B-B317-CE6B67E4D1B7",
+      "URL": "",
+      "Category": "LEON"
+    },
+    {
+      "DbServer": "lockthbnk-ap14",
+      "DbUser": "sa",
+      "DbPassword": "lockton123",
+      "DbProvidor": "MSSQL",
+      "DbName": "Extraonline",
+      "TokenKey": "Extraonline-ap14",
+      "URL": "",
+      "Category": "Extraonline-ap14"
+    },
+    {
+      "DbServer": "lockthbnk-db02",
+      "DbUser": "reimbursement",
+      "DbPassword": "dR@XrX122",
+      "DbProvidor": "MSSQL",
+      "DbName": "Extraonline",
+      "TokenKey": "Extraonline-db02",
+      "URL": "",
+      "Category": "Extraonline-db02"
+    }
+
+  ]
+}

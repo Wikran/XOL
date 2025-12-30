@@ -1,0 +1,274 @@
+ :root {
+            --dgBG: #f3e4fce5;
+            --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;
+        }
+
+        /*-----------------------------*/
+        #gridContainer .dx-datagrid-headers {
+            color: var(--dgColor) !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        #gridContainer .dx-datagrid-borders>.dx-datagrid-total-footer {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        #gridContainer .dx-datagrid-borders>.dx-datagrid-headers {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        #gridContainer .dx-datagrid-table {
+            border-left: 4px solid var(--dgBG);
+            border-right: 4px solid var(--dgBG);
+        }
+
+        /*.dx-datagrid-total-footer {
+            background-color: var(--dgBG) !important;
+        } */
+        #gridContainer .dx-datagrid-filter-panel {
+            background-color: var(--dgBG) !important;
+        }
+
+
+        /*-----------------------------*/
+        #popupBenefitsView .dx-popup-wrapper>.dx-overlay-content {
+            border-radius: 9px
+        }
+
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        #aMarkRef {
+            color: #41035e !important;
+            background-color: #c6e3ffe5 !important;
+        }
+
+        .colorRED {
+            color: #9e030b !important;
+        }
+
+        .colorREDW {
+            color: #d4040e !important;
+            background-color: white;
+        }
+
+        .colorGreen {
+            color: #006b59 !important;
+        }
+
+        .addEmpty {
+            background: green;
+        }
+
+        .colorBGlightgrey {
+            height: 80px;
+            width: 280px;
+            /*padding-top: 30px;*/
+            padding: 15px;
+            padding-left: 25px;
+            background-color: #f5f4f4 !important;
+            border-radius: 15px;
+        }
+
+        .colorRBGlightgrey {
+            border: 1px solid rgb(59, 59, 59);
+            height: 90px;
+            width: 305px;
+            padding-top: 2px;
+            padding: 2px;
+            color: rgb(0, 0, 0);
+            background-color: #f5f4f4fd !important;
+            display: inline-block;
+            border-radius: 3px;
+        }
+
+        #gridContainer .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        #gridContainer .dx-scrollable-scroll {
+            height: 180px !important;
+        }
+
+        .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
+            height: 180px;
+        }
+
+        .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:vertical {
+            width: 180px;
+        }
+
+        .dx-dialog .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: #edf5fde5 !important;
+        }
+
+        /*.dx-form {
+            background-color: rgb(229, 244, 248);
+        }
+        */
+        #popupBenefitsView .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(229, 170, 252)
+        }
+
+        #popupBenefitsView .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        #popupBenefitsViewIN .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(229, 170, 252)
+        }
+
+        #popupBenefitsViewIN .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        #popupBenefitsViewIN .dx-popup-wrapper>.dx-overlay-content {
+            border-radius: 9px
+        }
+
+        #popup .dx-popup-title {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        .cell-highlighted {
+            color: rgb(155, 5, 87);
+        }
+
+        #popupContainerAdd .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(224, 239, 252);
+        }
+
+        #popupPrintPDF .dx-popup-title {
+            color: whitesmoke;
+            background-color: black;
+        }
+
+        .dx-popup-fullscreen {
+            overflow-y: scroll;
+            height: 100%;
+        }
+
+        .custom-icon-size {
+            font-size: 20px;
+            color: green;
+        }
+
+        @media print {
+            body {
+                zoom: 100%;
+            }
+
+            @page {
+                /*size: A4 portrait;
+                portrait landscape */
+                /* size: auto; auto is the initial value */
+
+                /* this affects the margin in the printer settings top right bottom left*/
+                margin: 2mm 15mm 2mm 2mm;
+            }
+        }
+
+        @media screen,
+        print {
+
+            /*@page {size: landscape;}*/
+            #detail-dxDataGrid {
+                /*transform: scale(.8);*/
+                zoom: 95.5%;
+            }
+
+            #Add-dxDataGrid {
+                zoom: 100%;
+            }
+        }
+
+        #popupHelp .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(136, 255, 205)
+        }
+
+        #ACCChart-dxDataGrid .dx-datagrid-headers {
+            color: white !important;
+            background-color: rgb(48, 47, 47) !important;
+        }
+
+        #detail-dxDataGrid .dx-datagrid-headers {
+            color: white !important;
+            background-color: rgb(48, 47, 47) !important;
+        }
+
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(224, 239, 252)
+        }
+
+        .H1Header {
+            color: rgb(197, 179, 88);
+
+        }
+
+        .flower-image {
+            background-image: url("./images/locktonlogo70mmblack.png");
+            background-repeat: no-repeat;
+            background-position: right;
+
+            /*background-color: #cccccc;
+            size: 5%;
+            background-size: cover;
+            position: relative;            
+            */
+        }
+
+        .dx-datagrid .dx-row.dx-selection {
+            /*rgb(227, 120, 7); rgba(255, 87, 34, 1); rgba(239, 0, 0, 0.994);*/
+            color: var(--dgSelText);
+            /*font-weight: bold;*/
+        }
+
+        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
+            /*not change the color*/
+            /*background-color: rgba(248, 219, 187, 0.312); rgba(253, 242, 238, 0.626);*/
+            background-color: var(--dgSelBar);
+            color: unset;
+        }
+
+        /*
+        .dx-datagrid .dx-row.dx-selection .dx-icon {
+            color:rgba(239, 0, 0, 0.994); 
+        }        
+        .dx-datagrid .dx-row.dx-selection:hover .dx-icon {
+            color: rgba(252, 137, 6, 0.82); 
+        }*/
+
+        @media print {
+            @page {
+                orientation: landscape;
+                /*landscape; portrait*/
+                margin: 0.5cm;
+            }
+
+            body {
+                zoom: 90%;
+            }
+
+
+        }

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Send Email with Microsoft Graph</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export to PDF -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <link rel="stylesheet" href="MHODEE123.css">
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
+    <script src="bundle.min.js"></script>
+</head>
+
+<body>
+
+    <div id="emailPopup"></div>
+    <div id="emailForm"></div>
+
+    <script>
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        $(function () {
+            var aaHostName = window.location.href
+            var aClnID = '45887e5d-f593-4973-b957-4e80d32875c7';
+            var redUri
+            if (aaHostName.includes("localhost") || aaHostName.includes("wikran-w10")) {
+                //aClnID = '45887e5d-f593-4973-b957-4e80d32875c7';
+                redUri = 'http://localhost:8089';
+            } else {
+                //aClnID = 'd06fb086-2e92-4d48-bd18-9702d0f185b0';
+                redUri = 'https://cbsdev2.locktonwattana.com';
+            };
+            const formData = {
+                from: "wikran@hotmail.com",
+                toName: "",
+                toEmail: "",
+                ccEmail: "",
+                bccEmail: "",
+                subject: "",
+                message: ""
+            };
+            // Define the popup configuration
+            $("#emailPopup").dxPopup({
+                visible: true,
+                title: "SEND EMAIL",
+                width: 700,
+                height: "auto",
+                showCloseButton: true,
+                dragEnabled: true,
+                closeOnOutsideClick: true,
+                position: {
+                    my: "center top", // Align the popup's top center
+                    at: "center top", // Relative to the viewport's top center
+                    of: window,       // Position relative to the window
+                    offset: "0 10"    // Shift 10px down from the top
+                },
+                contentTemplate: function (contentElement) {
+                    // Create a form inside the popup
+                    $("<div>").appendTo(contentElement).dxForm({
+                        //$("#emailForm").dxForm({    
+                        // formData: {
+                        //     clientId: aClnID, //'45887e5d-f593-4973-b957-4e80d32875c7',  //// d06fb086-2e92-4d48-bd18-9702d0f185b0
+                        //     authority: 'https://login.microsoftonline.com/common',
+                        //     redirectUri: redUri, //'http://localhost:8089', //https://cbsdev2.locktonwattana.com
+                        //     recipientEmail: '',
+                        //     subject: '',
+                        //     bodyContent: ''
+                        // },
+                        formData: formData,
+                        items: [
+                            {
+                                dataField: "toName",
+                                label: { text: "To Name" },
+                                editorType: "dxTextBox",
+                                //validationRules: [{ type: "required", message: "Recipient email is required" }]
+                            },
+                            {
+                                dataField: "toEmail",
+                                label: { text: "To Email" },
+                                editorType: "dxTextBox",
+                                //validationRules: [{ type: "required", message: "Recipient email is required" }]
+                            },
+                            {
+                                dataField: "subject",
+                                label: { text: "Subject" },
+                                editorType: "dxTextBox",
+                                validationRules: [{ type: "required", message: "Subject is required" }]
+                            },
+                            {
+                                dataField: "message",
+                                label: { text: "Email Body" },
+                                editorType: "dxTextArea",
+                                editorOptions: { height: 250 },
+                                validationRules: [{ type: "required", message: "Email body is required" }]
+                            },
+                            {
+                                itemType: "group",
+                                colCount: 2, // Two columns for alignment
+                                items: [
+                                    {
+                                        itemType: "button",
+                                        colSpan: 1, // Occupies one column
+                                        buttonOptions: {
+                                            text: "Send Email",
+                                            type: "success",
+                                            width: "100%", // Ensures consistent width
+                                            onClick: function () {
+                                                const popupInstance = $("#emailPopup").dxPopup("instance");
+                                                const formInstance = popupInstance.content().find(".dx-form").dxForm("instance");
+                                                const form = formInstance.option("formData");
+
+                                                function formatToHTML(text) {
+                                                    const escaped = text
+                                                        .replace(/&/g, "&amp;")
+                                                        .replace(/</g, "&lt;")
+                                                        .replace(/>/g, "&gt;");
+                                                    const withSpaces = escaped.replace(/  /g, "&nbsp;&nbsp;");
+                                                    return withSpaces.replace(/\n/g, "<br>");
+                                                }
+
+                                                const formattedMessage = `<div style="font-family:Segoe UI, sans-serif; font-size:14px;">${formatToHTML(form.message)}</div>`;
+
+                                                let names = form.toName.split(',').map(n => n.trim()).filter(n => n);
+                                                let emails = form.toEmail.split(',').map(e => e.trim()).filter(e => e);
+
+                                                emails = [...new Set(emails)];
+
+                                                if (names.length !== emails.length) {
+                                                    alert(`❌ จำนวนชื่อ (${names.length}) ไม่ตรงกับอีเมล (${emails.length})`);
+                                                    return;
+                                                }
+                                                alert(names.length)
+                                                let sentCount = 0;
+                                                let failedList = [];
+
+                                                emails.forEach((email, i) => {
+                                                    ////alert(i)
+                                                    //alert(names[i])
+                                                    //(email)
+                                                    aSendMailDMZ(
+                                                        names[i],
+                                                        email,
+                                                        form.from,
+                                                        form.ccEmail || "",
+                                                        form.bccEmail || "",
+                                                        form.subject,
+                                                        formattedMessage,
+                                                        function (success) {
+                                                            sentCount++;
+                                                            if (!success) failedList.push(email);
+
+                                                            if (sentCount === emails.length) {
+                                                                if (failedList.length === 0) {
+                                                                   // alert("✅ ส่งอีเมลทั้งหมดเรียบร้อยแล้ว");
+                                                                } else {
+                                                                  //  alert(`⚠️ ส่งไม่สำเร็จบางรายการ: ${failedList.join(', ')}`);
+                                                                }
+                                                            }
+                                                        }
+                                                    );
+                                                });
+                                            }
+                                        },
+                                    },
+                                    {
+                                        itemType: "button",
+                                        colSpan: 1, // Occupies one column
+                                        buttonOptions: {
+                                            text: "Exit",
+                                            type: "danger",
+                                            width: "100%", // Ensures consistent width
+                                            onClick: function () {
+                                                $("#emailPopup").dxPopup("instance").hide();
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    });
+                }
+            });
+
+            // Show the popup when a button is clicked
+            $("<div>")
+                .appendTo("body")
+                .dxButton({
+                    text: "Open Email Popup",
+                    type: "normal",
+                    onClick: function () {
+                        $("#emailPopup").dxPopup("instance").show();
+                    }
+                });
+        });
+        /*
+                window.sendEmail = async function (clientId, authority, redirectUri, recipientEmails, subject, bodyContent) {
+                    const msalConfig = {
+                        auth: {
+                            clientId: clientId,
+                            authority: authority,
+                            redirectUri: redirectUri
+                        }
+                    };
+        
+                    const msalInstance = new msal.PublicClientApplication(msalConfig);
+        
+                    const getToken = async () => {
+                        const loginRequest = {
+                            scopes: ["Mail.Send"]
+                        };
+        
+                        try {
+                            const loginResponse = await msalInstance.loginPopup(loginRequest);
+                            const tokenRequest = {
+                                scopes: ["Mail.Send"],
+                                account: loginResponse.account
+                            };
+        
+                            const tokenResponse = await msalInstance.acquireTokenSilent(tokenRequest);
+                            return tokenResponse.accessToken;
+                        } catch (error) {
+                            console.error('Error acquiring token silently:', error);
+        
+                            if (error instanceof msal.InteractionRequiredAuthError) {
+                                const tokenResponse = await msalInstance.acquireTokenPopup(tokenRequest);
+                                return tokenResponse.accessToken;
+                            }
+        
+                            throw error;
+                        }
+                    };
+        
+                    try {
+                        const accessToken = await getToken();
+        
+                        // Split recipientEmails string into an array and map to required format
+                        const recipientArray = recipientEmails.split(',').map(email => ({
+                            emailAddress: { address: email.trim() }
+                        }));
+        
+                        const email = {
+                            message: {
+                                subject: subject,
+                                body: {
+                                    contentType: "Text",
+                                    content: bodyContent
+                                },
+                                toRecipients: recipientArray
+                            }
+                        };
+        
+                        const response = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(email)
+                        });
+        
+                        if (response.ok) {
+                            console.log('Email sent successfully!');
+                        } else {
+                            const errorData = await response.json();
+                            console.error('Error sending email:', errorData);
+                        }
+                    } catch (error) {
+                        console.error('Error in sendEmail function:', error);
+                    }
+                }
+         */
+        // Global sendEmail function
+        // window.sendEmail = async function (clientId, authority, redirectUri, recipientEmail, subject, bodyContent) {
+        //     const msalConfig = {
+        //         auth: {
+        //             clientId: clientId,
+        //             authority: authority,
+        //             redirectUri: redirectUri
+        //         }
+        //     };
+
+        //     const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        //     async function getToken() {
+        //         const loginRequest = {
+        //             scopes: ["Mail.Send"]
+        //         };
+
+        //         try {
+        //             const loginResponse = await msalInstance.loginPopup(loginRequest);
+        //             const tokenRequest = {
+        //                 scopes: ["Mail.Send"],
+        //                 account: loginResponse.account
+        //             };
+        //             const tokenResponse = await msalInstance.acquireTokenSilent(tokenRequest);
+        //             return tokenResponse.accessToken;
+        //         } catch (error) {
+        //             console.error('Error acquiring token:', error);
+        //             if (error instanceof msal.InteractionRequiredAuthError) {
+        //                 try {
+        //                     const tokenResponse = await msalInstance.acquireTokenPopup(tokenRequest);
+        //                     return tokenResponse.accessToken;
+        //                 } catch (popupError) {
+        //                     console.error('Error acquiring token via popup:', popupError);
+        //                 }
+        //             }
+        //             return null;
+        //         }
+        //     }
+
+        //     const accessToken = await getToken();
+        //     if (!accessToken) {
+        //         console.error('Failed to acquire access token');
+        //         return;
+        //     }
+
+        //     const email = {
+        //         message: {
+        //             subject: subject,
+        //             body: {
+        //                 contentType: "Text",
+        //                 content: bodyContent
+        //             },
+        //             toRecipients: [
+        //                 {
+        //                     emailAddress: {
+        //                         address: recipientEmail
+        //                     }
+        //                 }
+        //             ]
+        //         }
+        //     };
+
+        //     const response = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Authorization': `Bearer ${accessToken}`,
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify(email)
+        //     });
+
+        //     if (response.ok) {
+        //         DevExpress.ui.notify('Email sent successfully!', 'success', 3000);
+        //     } else {
+        //         const errorData = await response.json();
+        //         console.error('Error sending email:', errorData);
+        //         DevExpress.ui.notify('Error sending email. Check console for details.', 'error', 3000);
+        //     }
+        // };
+
+    </script>
+
+</body>
+
+</html>

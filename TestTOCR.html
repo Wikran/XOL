@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Thai PDF OCR with Text Detection</title>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+  </script>
+
+  <!-- Tesseract.js -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <!-- Thai tokenizer -->
+  <script src="https://cdn.jsdelivr.net/npm/thai-tokenizer@1.0.4/dist/thai-tokenizer.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; }
+    pre { white-space: pre-wrap; background: #f7f7f9; padding: 12px; }
+    .page-sep { margin: 12px 0; border-top: 1px dashed #ccc; }
+  </style>
+</head>
+<body>
+  <h2>PDF OCR (Thai + English) with Text Detection</h2>
+  <input type="file" id="pdfUpload" accept="application/pdf">
+  <button id="processBtn">Extract Text</button>
+  <button id="downloadBtn" disabled>Download .txt</button>
+
+  <h3>Output</h3>
+  <pre id="output"></pre>
+
+  <script>
+    const pdfInput = document.getElementById("pdfUpload");
+    const output = document.getElementById("output");
+    const downloadBtn = document.getElementById("downloadBtn");
+    let lastText = "";
+
+    async function ocrCanvas(canvas, langs="tha+eng") {
+      const result = await Tesseract.recognize(canvas, langs, {
+        langPath: "https://tessdata.projectnaptha.com/4.0.0",
+      });
+      return result.data.text;
+    }
+
+    function cleanThaiText(text) {
+      // ลบช่องว่างผิด ๆ ระหว่างพยัญชนะกับสระ/วรรณยุกต์
+      let fixed = text.replace(/([ก-ฮ])\s+([่-๋็์])/g, "$1$2");
+      fixed = fixed.replace(/([่-๋็์])\s+([ก-ฮ])/g, "$1$2");
+      // ใช้ tokenizer รวมคำใหม่
+      const tokens = window.thaiTokenizer.tokenize(fixed);
+      return tokens.join("");
+    }
+
+    document.getElementById("processBtn").addEventListener("click", async () => {
+      if (!pdfInput.files.length) {
+        alert("Please select a PDF file");
+        return;
+      }
+
+      const file = pdfInput.files[0];
+      const buf = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument(new Uint8Array(buf)).promise;
+
+      let fullText = "";
+
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+
+        // 1. Try native text extraction
+        const textContent = await page.getTextContent();
+        let pageText = textContent.items.map(item => item.str).join(" ");
+
+        if (pageText.trim().length > 0) {
+          // Found digital text → no OCR needed
+          fullText += `\n--- Page ${i} (native text) ---\n${pageText}\n`;
+        } else {
+          // 2. Fallback to OCR
+          const viewport = page.getViewport({ scale: 2.0 });
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          await page.render({ canvasContext: ctx, viewport }).promise;
+
+          const ocrText = await ocrCanvas(canvas, "tha+eng");
+          const cleaned = cleanThaiText(ocrText);
+          fullText += `\n--- Page ${i} (OCR) ---\n${cleaned}\n`;
+        }
+      }
+
+      output.textContent = fullText.trim();
+      lastText = fullText.trim();
+      downloadBtn.disabled = lastText.length === 0;
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!lastText) return;
+      const blob = new Blob([lastText], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "ocr_output.txt";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

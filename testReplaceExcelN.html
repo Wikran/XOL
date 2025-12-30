@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ExcelJS Placeholder Replacement with JSON Dates</title>
+</head>
+<body>
+  <h2>📄 Upload Excel Template</h2>
+  <input type="file" id="upload" accept=".xlsx" />
+  <br><br>
+  <button onclick="processExcel()">🔄 Replace & Download</button>
+
+  <!-- ExcelJS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+  <script>
+    async function processExcel() {
+      const fileInput = document.getElementById("upload");
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Please upload an Excel file first.");
+        return;
+      }
+
+      // 🔧 JSON dataset with approvers + dates
+      const appname = {
+        approver1: "", // "Nadporn Srilert",
+        datenow1: "",
+        approver2: "", // "Suradee Malaiarisoon",
+        datenow2: "",
+        requester: "Natthida Trisahavirakul",
+        datenowR: "12/11/2025"
+      };
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const buffer = e.target.result;
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(buffer);
+
+        // Step 1: Get the "DATA" sheet
+        const sheet = workbook.getWorksheet("DATA");
+        if (!sheet) {
+          alert('Sheet named "DATA" not found.');
+          return;
+        }
+
+        // Step 2: Scan cells for placeholders
+        sheet.eachRow((row) => {
+          row.eachCell((cell) => {
+            if (typeof cell.value === "string") {
+              let newValue = cell.value;
+
+              // Replace approver/requester placeholders if not empty
+              if (appname.approver1) {
+                newValue = newValue.replaceAll("{{approver1}}", appname.approver1);
+                if (appname.datenow1) {
+                  newValue = newValue.replaceAll("{{datenow1}}", appname.datenow1);
+                }
+              }
+              if (appname.approver2) {
+                newValue = newValue.replaceAll("{{approver2}}", appname.approver2);
+                if (appname.datenow2) {
+                  newValue = newValue.replaceAll("{{datenow2}}", appname.datenow2);
+                }
+              }
+              if (appname.requester) {
+                newValue = newValue.replaceAll("{{requester}}", appname.requester);
+                if (appname.datenowR) {
+                  newValue = newValue.replaceAll("{{datenowR}}", appname.datenowR);
+                }
+              }
+
+              cell.value = newValue;
+            }
+          });
+        });
+
+        // Step 3: Save updated file (download in browser)
+        const newBuffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([newBuffer], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        });
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = file.name; // same name as uploaded file
+        link.click();
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+  </script>
+</body>
+</html>

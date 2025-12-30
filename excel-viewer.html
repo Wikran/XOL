@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Excel Viewer via Office 365</title>
+  <!-- DevExtreme CSS -->
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.6/css/dx.light.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #viewerFrame {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+    #urlInput {
+      width: 80%;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📊 แสดงไฟล์ Excel ผ่าน Office 365 Viewer</h2>
+  <p>กรอก URL ของไฟล์ Excel (.xlsx) ที่เข้าถึงได้จากอินเทอร์เน็ต:</p>
+  <input type="text" id="urlInput" placeholder="https://yourdomain.com/path/to/file.xlsx">
+  <button id="loadExcel">🔍 โหลด Excel Viewer</button>
+
+  <iframe id="viewerFrame" src="" frameborder="0" scrolling="yes"></iframe>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- DevExtreme JS -->
+  <script src="https://cdn3.devexpress.com/jslib/23.1.6/js/dx.all.js"></script>
+  <!-- ExcelJS (ไม่จำเป็นในกรณีนี้) -->
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+
+  <script>
+    $("#loadExcel").on("click", function () {
+      const rawUrl = $("#urlInput").val().trim();
+      if (rawUrl && rawUrl.startsWith("https://")) {
+        const encodedUrl = encodeURIComponent(rawUrl);
+        const viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodedUrl;
+        $("#viewerFrame").attr("src", viewerUrl);
+      } else {
+        alert("กรุณาใส่ URL ที่ถูกต้องของไฟล์ Excel (.xlsx)");
+      }
+    });
+  </script>
+</body>
+</html>

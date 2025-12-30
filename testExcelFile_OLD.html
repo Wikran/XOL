@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Send Email with Microsoft Graph</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export to PDF -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <link rel="stylesheet" href="MHODEE123.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
+    <script src="./src/bundle.min.js"></script>
+    <!-- <script src="https://cbsdev2.locktonwattana.com/temp/uploads/Positions.js"></script> -->
+</head>
+
+<body>
+
+    <!-- <div id="emailPopup"></div> -->
+    <div id="showUploadPopupButton"></div>
+    <div id="showJsonDataButton"></div>
+    <div id="popupJSON"></div>
+    <div id="uploadPopup"></div>
+    <div id="popupUL"></div>
+
+    <script>
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        const { PDFDocument } = PDFLib;
+        var aaPFDMI = isLocalHost();
+        // var aULSrvName = "https://cbsdev2.locktonwattana.com"
+        // var aULServer = "https://cbsdev2.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE"
+        // var aULStoken = "44095B6C-CC17-47FD-895B-649E0EAA2BAE"
+        // var aUploadURL = "https://cbsdev2.locktonwattana.com/temp/uploads";
+        // console.log(aaPositions)
+
+        $(function () {
+            //aPopUpsUpLoad() //EXCEL LOAD
+            // Button to show the popup
+            var jsonData = "";
+            const aMyData = [
+                {
+                    "PageID": " XOXTP779",
+                    "TableName": "PositionBenefitLevel ",
+                    "PrimaryKey": "IDNO",
+                    "TableKey": "dca3e8a0-8533-45a4-96ce-28aeddefab72"
+                },
+                {
+                    "PageID": "EAEM7311",
+                    "TableName": "MasterPageSetUp",
+                    "PrimaryKey": "pageID",
+                    "TableKey": "326459ff-7ea6-4465-a946-9326b783d492"
+                },
+                {
+                    "PageID": "EMOE701",
+                    "TableName": "XOLStaff",
+                    "PrimaryKey": "EMPCode",
+                    "TableKey": "63971412-c4e4-4d35-8e79-3293fe59dac8"
+                },
+                {
+                    "PageID": "EMOE703",
+                    "TableName": "XOLStaff",
+                    "PrimaryKey": "EMPCode",
+                    "TableKey": "63971412-c4e4-4d35-8e79-3293fe59dac8"
+                },
+                {
+                    "PageID": "LACT771",
+                    "TableName": "TaskControl",
+                    "PrimaryKey": "IDNO",
+                    "TableKey": "19ae62cd-3de9-423d-ade7-43a335cf5def"
+                },
+                {
+                    "PageID": "LXOXTP779",
+                    "TableName": "PositionBenefitLevel",
+                    "PrimaryKey": "IDNO",
+                    "TableKey": "dca3e8a0-8533-45a4-96ce-28aeddefab72"
+                },]
+            const xtableConfig = {
+                TokenKey: "importedexcelfile",
+                DatabaseName: "EXCELFILE",
+                TableName: "EXCEL",
+                Primarykeys: "PageID",
+                Fields: [
+                    { dataField: "PageID", caption: "Page ID", allowFiltering: true, editorType: "dxTextBox", width: 150, visible: true, }, //, Type: "string", DxType: "dxTextBox", Width: 100, visible: true,
+                    { dataField: "TableName", caption: "Table Name", allowFiltering: true, editorType: "dxTextBox", width: 250, visible: true, },
+                    { dataField: "PrimaryKey", caption: "Primary Key", allowFiltering: true, editorType: "dxTextBox", width: 200, visible: true, },
+                    { dataField: "TableKey", caption: "Table Key", allowFiltering: true, editorType: "dxTextBox", width: 200, visible: true, },
+                ]
+            }
+            // Function to determine editorType based on sample data
+            function getEditorType(value) {
+                if (!isNaN(value) && value !== "" && value !== null) {
+                    return "dxNumberBox"; // If value is a number
+                } else if (!isNaN(Date.parse(value))) {
+                    return "dxDateBox"; // If value is a date
+                } else {
+                    return "dxTextBox"; // Default for strings
+                }
+            }
+
+            // Generate tableConfig array
+            // const tableConfig = aMyData.map((item) => {
+            //     const fields = Object.keys(item).map((key) => ({
+            //         dataField: key,
+            //         caption: key.replace(/([A-Z])/g, " $1").trim(), // Convert camelCase to spaced words
+            //         allowFiltering: true,
+            //         editorType: getEditorType(item[key]), // Determine editor type
+            //         width: 200,
+            //         visible: true
+            //     }));
+
+            //     return {
+            //         TokenKey: "importedexcelfile",
+            //         DatabaseName: "EXCELFILE",
+            //         TableName: "EXCEL",
+            //         Primarykeys: fields.length > 0 ? fields[0].dataField : "", // Set first key as Primarykeys
+            //         Fields: fields
+            //     };
+            // });
+
+            // console.log(tableConfig);
+            $("#showUploadPopupButton").dxButton(
+                {
+                    text: "Open Excel File",
+                    type: "default",
+                    onClick: function () {
+                        //$("#uploadPopup").dxPopup("instance").show();
+                        aPopUpsUpLoad()
+                    }
+                },
+            );
+            $("#showJsonDataButton").dxButton(
+                {
+                    text: "View Data",
+                    type: "default",
+                    visible: false,
+                    onClick: function () {
+                        //$("#uploadPopup").dxPopup("instance").show();
+                        //console.log("json Data 1 ", jsonData)
+                        if (typeof jsonData === "string") {
+                            aPopUpJsonData(aMyData)
+                        } else {
+                            aPopUpJsonData(jsonData)
+                        }
+
+                    }
+                },
+            );
+
+            const aPopUpsUpLoad = () => {
+                $(() => {
+
+                    //let aaNewNamePF = aRefNoForName;
+                    //let popupTitle = aaNewNamePF === "X" ? "Upload Excel File" : `File Attachment [${aaNewNamePF}]`;
+                    let popupTitle = "Load Excel File "
+
+                    // ✅ Create Popup
+                    const popup = $("#popupUL").dxPopup({
+                        title: popupTitle,
+                        height: 500,
+                        width: 800,
+                        position: { my: "center", at: "center", of: window },
+                        visible: true,
+                        showCloseButton: true,
+                        dragEnabled: true,
+                        closeOnOutsideClick: false,
+                        resizeEnabled: true,
+                        contentTemplate: function (contentElement) {
+                            contentElement.append(`
+                    <div id="ExcelUploader"></div>
+                    <br/>
+                    <textarea id="jsonOutput" class="form-control" rows="10" style="width:100%;" readonly></textarea>
+                    <br/>
+                    <div id="scbutton"></div>
+                `);
+                        }
+                    }).dxPopup("instance");
+
+                    // ✅ Initialize File Uploader
+                    $("#ExcelUploader").dxFileUploader({
+                        multiple: false,
+                        selectButtonText: 'Select Excel File',
+                        labelText: '',
+                        accept: ".xlsx",
+                        uploadMode: 'useForm',
+                        height: "120px",
+                        onValueChanged: function (e) {
+                            if (e.value.length > 0) {
+                                handleFileUpload(e.value[0]);
+                            }
+                        }
+                    });
+
+                    // ✅ Function to Handle Excel File Upload & Convert to JSON
+                    function handleFileUpload(file) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const data = new Uint8Array(e.target.result);
+                            const workbook = XLSX.read(data, { type: "array" });
+                            const sheetName = workbook.SheetNames[0]; // First sheet only
+                            const worksheet = workbook.Sheets[sheetName];
+
+                            jsonData = JSON.stringify(XLSX.utils.sheet_to_json(worksheet), null, 4);
+                            //console.log("jsonData ", jsonData)
+                            $("#jsonOutput").val(jsonData); // Show JSON in textarea
+                        };
+                        reader.readAsArrayBuffer(file);
+                    }
+
+                    // ✅ Initialize Upload Button
+                    $('#scbutton').dxButton({
+                        text: 'Upload Excel',
+                        type: 'success',
+                        onClick() {
+                            if (!jsonData) {
+                                DevExpress.ui.notify("Please select a valid Excel file.", "error", 3000);
+                                return;
+                            }
+                            // Generate tableConfig array
+                            if (typeof jsonData === "string") {
+                                jsonData = JSON.parse(jsonData);
+                            }
+                            // Collect unique field names from all records
+                            const uniqueFields = new Set();
+                            jsonData.forEach(item => Object.keys(item).forEach(key => uniqueFields.add(key)));
+
+                            // Convert unique fields into an array of field configurations
+                            const fields = Array.from(uniqueFields).map((key) => ({
+                                dataField: key,
+                                caption: key.replace(/([A-Z])/g, " $1").trim(), // Convert camelCase to spaced words
+                                allowFiltering: true,
+                                editorType: getEditorType(jsonData[0][key]), // Use first item as a reference for editorType
+                                width: 200,
+                                visible: true
+                            }));
+
+                            // Create single tableConfig object
+                            const tableConfig = {
+                                TokenKey: "importedexcelfile",
+                                DatabaseName: "EXCELFILE",
+                                TableName: "EXCEL",
+                                Primarykeys: fields.length > 0 ? fields[0].dataField : "", // Set first field as Primarykeys
+                                Fields: fields
+                            };
+                            var aaKeyField = tableConfig.Primarykeys;
+                            console.log("tableConfig", tableConfig)
+                            aPopUpJsonData(jsonData, tableConfig, aaKeyField)
+                            //alert("loaded")
+                            popup.hide(); // Close popup on success
+                            //console.log("JSON Data:", jsonData); // Use JSON data as needed
+                        },
+                    });
+
+                    popup.show();
+                });
+            };
+
+            const aPopUpJsonData = (aMyData, tableConfig, aaKeyField) => {
+                $(() => {
+                    //console.log("json datax", aMyData)
+                    //console.log("data type ", typeof aMyData)
+                    //console.log("my data ", aMyData)
+                    if (typeof aMyData === "string") {
+                        aMyData = JSON.parse(aMyData);
+                    }
+                    const popup = $("#popupJSON").dxPopup({
+                        title: "Excel Data Preview",
+                        width: '1300px',
+                        position: { offset: "0 -140" },
+                        visible: true,
+                        //fullScreen: true,
+                        showTitle: true,
+                        dragEnabled: true,
+                        closeOnOutsideClick: false,
+                        resizeEnabled: true,
+                        onInitialized: function (e) { e.component.registerKeyHandler("escape", function (arg) { }) },
+                        height: 600,
+                        width: 1000,
+                        showCloseButton: true,
+                        closeOnOutsideClick: true,
+                        contentTemplate: () => {
+                            return $("<div>").append(
+                                //$("<div id='jsonDataGrid' style='height:400px;'></div>")
+                                $("<p><div id='jsonDataGrid'></div></p>"),
+                            );
+                        },
+                        // onShown: function () {
+                        // }
+                    }).dxPopup("instance");
+
+                    $("#jsonDataGrid").dxDataGrid({
+                        dataSource: aMyData,   // Replace with your actual data source
+                        keyExpr: aaKeyField, // Adjust to your primary key field
+                        editing: {
+                            mode: "popup", //"raw"
+                            allowUpdating: true,
+                            allowAdding: true,
+                            allowDeleting: true,
+                            popup: {
+                                title: "Edit Record",  // ✅ This will set the title of the popup
+                                showTitle: true,       // ✅ Ensures the title is displayed
+                                width: 600,
+                                height: "auto"
+                            },
+                            form: {
+                                items: tableConfig.Fields.map(field => ({
+                                    dataField: field.Name,
+                                    label: { text: field.Caption }
+                                }))
+                            }
+                        },
+                        columns: [
+                            {
+                                type: "buttons",
+                                width: 110,
+                                buttons: ["edit", "delete"],
+                                visible: true,
+                            },
+                            ...tableConfig.Fields.map(field => ({
+                                dataField: field.dataField,
+                                sortOrder: field.sortOrder ?? null,
+                                allowFiltering: field.allowFiltering || false,
+                                caption: field.caption,
+                                dataType: field.dataType ?? null, // || "string", // === "date" ? "date" : "string",
+                                editorType: field.editorType || "dxTextBox",
+                                width: field.width || 100,
+                                validationRules: field.validationRules || [], // ✅ Apply validation rules if they exist
+                                visible: field.visible,
+                            })),
+                            // { dataField: "PageID", caption: "Page ID", allowFiltering: true, editorType: "dxTextBox", width: 150, visible: true, }, //, Type: "string", DxType: "dxTextBox", Width: 100, visible: true,
+                            // { dataField: "TableName", caption: "Table Name", allowFiltering: true, editorType: "dxTextBox", width: 250, visible: true, },
+                            // { dataField: "PrimaryKey", caption: "Primary Key", allowFiltering: true, editorType: "dxTextBox", width: 200, visible: true, },
+                            // { dataField: "TableKey", caption: "Table Key", allowFiltering: true, editorType: "dxTextBox", width: 200, visible: true, },
+                        ],
+                        allowColumnReordering: true,
+                        allowColumnResizing: true,
+                        columnMinWidth: 100,
+                        columnChooser: {
+                            enabled: true
+                        },
+                        showBorders: true,
+                        sorting: {
+                            mode: "multiple"
+                        },
+                        selection: {
+                            mode: 'single'
+                        },
+                        groupPanel: {
+                            visible: true
+                        },
+                        filterRow: {
+                            visible: true,
+                            applyFilter: "auto"
+                        },
+                        headerFilter: {
+                            visible: true
+                        },
+                        grouping: {
+                            autoExpandAll: true,
+                        },
+                        searchPanel: {
+                            visible: true
+                        },
+                        paging: {
+                            pageSize: 5
+                        },
+                        pager: {
+                            showPageSizeSelector: true,
+                            allowedPageSizes: [5, 10, 20, 50],
+                            showInfo: true
+                        },
+                        showBorders: true,
+                        groupPaging: true,
+                        showColumnLines: true,
+                        showRowLines: true,
+                        rowAlternationEnabled: true,
+                    });
+
+                });
+            };
+        });
+        // // Function to Open File Upload Popup
+        // const taPopUpsUpLoad = () => {
+        //     let popup = $("#popupUL").dxPopup({
+        //         title: "Upload Excel File",
+        //         height: 250,
+        //         width: 500,
+        //         visible: true,
+        //         showCloseButton: true,
+        //         closeOnOutsideClick: false,
+        //         contentTemplate: () => {
+        //             return $("<div>").append(
+        //                 $("<div id='fileUploader'></div>"),
+        //                 $("<div style='margin-top: 15px;' id='uploadButton'></div>")
+        //             );
+        //         },
+        //         onShown: () => {
+        //             $("#fileUploader").dxFileUploader({
+        //                 multiple: false,
+        //                 selectButtonText: "Select File",
+        //                 labelText: "",
+        //                 accept: ".xlsx,.xls",
+        //                 uploadMode: "useForm",
+        //                 onValueChanged: (e) => {
+        //                     if (e.value.length > 0) {
+        //                         handleFileSelect(e.value[0]); // Process Excel File
+        //                     }
+        //                 }
+        //             });
+
+        //             $("#uploadButton").dxButton({
+        //                 text: "Close",
+        //                 onClick: () => popup.hide(),
+        //             });
+        //         }
+        //     }).dxPopup("instance");
+        // };
+
+        // // Function to Process Excel File and Convert to JSON
+        // const handleFileSelect = (file) => {
+        //     const reader = new FileReader();
+
+        //     reader.onload = (e) => {
+        //         const data = new Uint8Array(e.target.result);
+        //         const workbook = XLSX.read(data, { type: "array" });
+        //         const sheetName = workbook.SheetNames[0];
+        //         const worksheet = workbook.Sheets[sheetName];
+        //         const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        //         console.log(jsonData); // Debugging
+        //         if (jsonData.length > 0) {
+        //             aPopUpJsonData(jsonData); // Show JSON in DataGrid
+        //         } else {
+        //             alert("No data found in the Excel file.");
+        //         }
+        //     };
+
+        //     reader.onerror = (error) => {
+        //         console.error("Error reading file:", error);
+        //     };
+
+        //     reader.readAsArrayBuffer(file);
+        // };
+
+        // // Function to Show JSON Data in DataGrid Popup
+        // const taPopUpJsonData = (jsonData) => {
+        //     let popup = $("#popupJSON").dxPopup({
+        //         title: "Excel Data Preview",
+        //         height: 500,
+        //         width: 800,
+        //         visible: true,
+        //         showCloseButton: true,
+        //         closeOnOutsideClick: true,
+        //         contentTemplate: () => {
+        //             return $("<div>").append(
+        //                 $("<div id='jsonDataGrid' style='height:400px;'></div>")
+        //             );
+        //         },
+        //         onShown: () => {
+        //             $("#jsonDataGrid").dxDataGrid({
+        //                 dataSource: jsonData,
+        //                 //keyExpr: Object.keys(jsonData[0] || {})[0], // First column as key
+        //                 keyExpr: jsonData.length > 0 ? Object.keys(jsonData[0])[0] : undefined, // Fix for W1011
+        //                 showBorders: true,
+        //                 columnAutoWidth: true,
+        //                 paging: { pageSize: 10 },
+        //                 filterRow: { visible: true },
+        //                 searchPanel: { visible: true },
+        //                 scrolling: { mode: "virtual" },
+        //             });
+        //         }
+        //     }).dxPopup("instance");
+        // };
+        // // const aPopUp22UpLoad = (aRefNoForName) => {
+        // //     $(() => {
+        // //         // var aaFileN;
+        // //         // var aaFileN2;
+        // //         var aaNewNamePF = aRefNoForName;
+        // //         var aatitleaa = aaNewNamePF === "X" ? "File Upload" : `File Attachment [${aaNewNamePF}]`
+        // //         const popup = $("#popupUL").dxPopup({
+        // //             title: aatitleaa, //`File Attachment [${aaNewNamePF === "X" ? "" : aaNewNamePF}]`,
+        // //             height: 280,
+        // //             width: 600,
+        // //             position: { offset: "-50 -80" },
+        // //             visible: true,
+        // //             fullScreen: false,
+        // //             showCloseButton: true,
+        // //             showTitle: true,
+        // //             dragEnabled: true,
+        // //             closeOnOutsideClick: false,
+        // //             resizeEnabled: true,
+
+        // //             contentTemplate: () => {
+        // //                 return $("<div />").append(
+        // //                     $("<div style='border: 1px solid grey; padding: 10px; display: inline-block; margin-left: 20px; margin-right: 10px;' id='fileUploaderContainer'><div id='fileUploader'></div></div>").appendTo("body"),
+        // //                     $("<div style='position: fixed; left: 440px; top: 240px;' id='scbutton'></div>").appendTo("body"),
+        // //                 )
+        // //             },
+
+        // //         }).dxPopup("instance");
+
+        // //         const aauploader = $("#fileUploader").dxFileUploader({
+        // //             multiple: false,
+        // //             selectButtonText: 'Select File',
+        // //             labelText: '',
+        // //             uploadMode: 'useForm',
+        // //             height: "130px",
+        // //             uploadedMessage: "Uploaded",
+        // //             uploadFailedMessage: "Upload failed",
+        // //             //accept: ".pdf",
+        // //             accept: aaNewNamePF === "X" ? "*/*" : ".pdf,.PDF", // "*/*",
+        // //             //allowedFileExtensions: [".pdf", ".PDF"],
+        // //             //uploadUrl: "https://cbsdev2.locktonwattana.com/temp/uploads",
+        // //         });
+
+        // //         $('#scbutton').dxButton({
+        // //             text: 'Upload File',
+        // //             type: 'success',
+        // //             onClick() {
+        // //                 //u2ploadFile();
+        // //                 u2ploadFile().then(result => {
+        // //                     if (result) {
+        // //                         popup.hide()
+        // //                     } else {
+        // //                         aMessageAlert("Upload failed.", "red");
+        // //                     }
+        // //                 });
+        // //             },
+        // //         });
+
+        // //         async function u2ploadFile() {
+        // //             try {
+        // //                 // Get the dxFileUploader instance
+        // //                 const fileUploader = $("#fileUploader").dxFileUploader("instance");
+        // //                 const files = fileUploader.option("value");
+
+        // //                 // Validate file selection
+        // //                 if (!files.length) {
+        // //                     console.log("No files selected.");
+        // //                     return false;
+        // //                 }
+
+        // //                 // Extract original file and extension
+        // //                 const originalFile = files[0];
+        // //                 const originalFileName = originalFile.name;
+        // //                 const fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // Extract extension
+        // //                 //const newFileName = `${aaNewNamePF}${fileExtension}`; // New name with same extension `updated_${Date.now()}${fileExtension}`
+
+        // //                 if (aaNewNamePF === "X") {
+        // //                     var newFileName = originalFileName;
+        // //                 } else {
+        // //                     var newFileName = `${aaNewNamePF}${fileExtension}`; // New name with same extension `updated_${Date.now()}${fileExtension}`
+        // //                 }
+
+        // //                 // Create a new file with the updated name
+        // //                 const simulatedFile = new File([originalFile], newFileName, {
+        // //                     type: originalFile.type,
+        // //                 });
+
+        // //                 // Check if it's a PDF
+        // //                 if (fileExtension.toLowerCase() === ".pdf") {
+        // //                     // Load and modify PDF metadata
+        // //                     const pdfBytes = await originalFile.arrayBuffer(); // Convert file to ArrayBuffer
+        // //                     const pdfDoc = await PDFDocument.load(pdfBytes); // Load the PDF document
+
+        // //                     // Update metadata
+        // //                     pdfDoc.setTitle(newFileName); // Set the new title
+        // //                     pdfDoc.setSubject("Updated PDF"); // Optional: Set subject
+        // //                     pdfDoc.setAuthor("XOL"); // Optional: Set author
+
+        // //                     // Save the updated PDF
+        // //                     updatedFileContent = await pdfDoc.save(); // Save the updated PDF as a Uint8Array
+        // //                 }
+
+        // //                 // Create FormData and append the new file
+        // //                 const formData = new FormData();
+        // //                 formData.append("file", simulatedFile);
+
+        // //                 // Request headers (DO NOT set Content-Type when using FormData)
+        // //                 const myHeaders = new Headers();
+        // //                 myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
+
+        // //                 // Request options
+        // //                 const requestOptions = {
+        // //                     method: "POST",
+        // //                     headers: myHeaders,
+        // //                     body: formData, // Use FormData as the body
+        // //                 };
+
+        // //                 // Send the request
+        // //                 const response = await fetch(
+        // //                     //"https://cbsdev2.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE",
+        // //                     isLocalHost() + "/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE",
+        // //                     requestOptions
+        // //                 );
+
+        // //                 // Check response status
+        // //                 if (!response.ok) {
+        // //                     throw new Error(`HTTP error! status: ${response.status}`);
+        // //                 }
+
+        // //                 // Handle success
+        // //                 const result = await response.text();
+        // //                 console.log(result);
+        // //                 aMessageAlert(`Upload file ${newFileName} successful!`, "blue");
+        // //                 fileUploader.reset(); // Clear the uploader
+        // //                 return true; // Success
+        // //             } catch (error) {
+        // //                 console.error("Error:", error);
+        // //                 return false; // Error
+        // //             }
+        // //         }
+
+        // //     });
+        // // }
+
+
+    </script>
+
+</body>
+
+</html>

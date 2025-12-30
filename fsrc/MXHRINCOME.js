@@ -1,0 +1,6136 @@
+// All Departments Report
+
+$(document).ready(function () {
+    var aDXTheme = localStorage["aDXTheme"]
+    DevExpress.ui.themes.current(aDXTheme);
+});
+
+let columnMap = [];
+let placeholderRowIdx = null;
+let directiveRowIdx = null;
+let templateColWidths = {};
+let templateColHeaders = {};
+
+// Utilities
+const guessDataType = (n) => {
+    if (!n) return "string";
+    const s = n.toLowerCase();
+    if (/(amount|total|sum|price|qty|quantity|number|count)/.test(s)) return "number";
+    if (/(date|day|time)/.test(s)) return "date";
+    return "string";
+};
+
+
+const aaLimitedAmt = [
+    { code: "Overseas", lmtamt: 10000 },
+    { code: "Entertainment", lmtamt: 40000 },
+    { code: "Gift", lmtamt: 40000 }
+]
+const aaTypeOfGift = [
+    { code: "Gift", thaname: "ของขวัญ" },
+    { code: "GiftCard", thaname: "บัตรของขวัญ" },
+    { code: "Reward", thaname: "รางวัล" },
+    { code: "Trip", thaname: "การเดินทาง" },
+    { code: "Voucher", thaname: "บัตรกำนัล" },
+    { code: "Other", thaname: "อื่น ๆ" }
+]
+
+window.jsPDF = window.jspdf.jsPDF;
+applyPlugin(window.jsPDF);
+console.clear();
+
+
+function valueInfo(cell) {
+    const v = cell.value;
+    if (v === null || typeof v === "undefined") return { kind: "empty", text: "" };
+
+    if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
+        return { kind: typeof v, text: String(v) };
+    }
+
+    if (v && typeof v === "object") {
+        if (v.formula) return { kind: "formula", text: `=${v.formula}` };
+        if (v.richText) {
+            const text = v.richText.map(x => x.text).join("");
+            return { kind: "richText", text };
+        }
+        if (v.result !== undefined) return { kind: "result", text: String(v.result) };
+        if (v.error) return { kind: "error", text: String(v.error) };
+        try {
+            return { kind: "object", text: JSON.stringify(v) };
+        } catch {
+            return { kind: "object", text: "[Object]" };
+        }
+    }
+
+    return { kind: typeof v, text: String(v) };
+}
+
+// 🟢 Helper: คืนค่าจาก master cell ถ้า cell นี้อยู่ใน merged range
+// --- Fixed mergedMasterText ---
+function mergedMasterText(ws, cell) {
+    const addr = cell.address;
+    const merge = ws._merges && ws._merges[addr];
+    if (!merge) return null;
+
+    const master = ws.getCell(merge.top + 1, merge.left + 1);
+    return {
+        address: master.address,
+        row: master.row,
+        col: master.col,
+        ...valueInfo(master)
+    };
+}
+
+// Deep clone a style object safely
+function cloneObj(obj) {
+    if (!obj) return obj;
+    try { return JSON.parse(JSON.stringify(obj)); } catch { return obj; }
+}
+
+// Clone ExcelJS cell style into a plain object
+function cloneCellStyle(cell) {
+    return {
+        font: cloneObj(cell.font),
+        alignment: cloneObj(cell.alignment),
+        border: cloneObj(cell.border),
+        fill: cloneObj(cell.fill),
+        numFmt: cell.numFmt || undefined
+    };
+}
+
+// Apply a plain style object back to an ExcelJS cell
+function applyCellStyle(cell, style) {
+    if (!style) return;
+    if (style.font) cell.font = cloneObj(style.font);
+    if (style.alignment) cell.alignment = cloneObj(style.alignment);
+    if (style.border) cell.border = cloneObj(style.border);
+    if (style.fill) cell.fill = cloneObj(style.fill);
+    if (style.numFmt) cell.numFmt = style.numFmt;
+}
+
+function rowHasWrapText(row) {
+    let hasWrap = false;
+    row.eachCell(cell => {
+        if (cell.alignment?.wrapText) hasWrap = true;
+    });
+    return hasWrap;
+}
+
+function resolveTemplateUrl(fileName) {
+    const aHostName = window.location.href  //$(location).attr('host');
+    const aSrvOL = aHostName.includes("webspace") ? "https://webspace.locktonwattana.com" : "https://cbsdev2.locktonwattana.com"
+    if (aHostName.includes("localhost") || aHostName.includes("192.168.1.32")) {
+        // ใช้ path แบบ relative สำหรับ local dev
+        const aSrvLoc = aHostName.includes("localhost") ? "http://localhost:8089" : "http://192.168.1.32:8089"
+        //const aSrvLoc = "http://localhost:8089"; ///temp/uploads/${filename}
+        const aWebHost = aSrvLoc + "/temp/uploads/"
+        return `${aWebHost}${fileName}`;
+        //return `${fileName}`; ///temp/uploads/
+        //return `${aWebHost}${fileName}`;
+    } else {
+        // ใช้ full URL สำหรับ production var aaPFDMI = isLocalHost();  "https://cbsdev2.locktonwattana.com"
+        //const aSrvLoc = "https://cbsdev2.locktonwattana.com"; //isLocalHost;
+        const aWebHost = aSrvOL + "/temp/uploads/"
+        return `${aWebHost}${fileName}`;
+        // `https://cbsdev2.locktonwattana.com/temp/uploads/${fileName}`;
+    }
+}
+
+// ฟังก์ชันช่วยอัปเดต HODApprovedDate ใน allData
+function updateHODApprovedDate(allData, aaSubGroup01) {
+    return allData.map(rowData => {
+        const target = "T" + (rowData.HeadRefNo?.slice(-10) || "");
+        const match = aaSubGroup01.find(item => item.HeadRefNo === target);
+
+        let hodDate = null;
+
+        if (match && match.ERODate02) {
+            // ✅ ใช้ Date object เหมือน calculateCellValue
+            hodDate = new Date(match.ERODate02);
+        } else if (rowData.ERStatus && rowData.ERStatus.includes("Confirmed (finished)")) {
+            hodDate = rowData.ReqDate ? new Date(rowData.ReqDate) : null;
+        }
+
+        // ✅ Vendor02Note: ใช้จาก match ถ้ามี, ไม่งั้นคงค่าเดิม
+        const vendorNote = match?.Vendor02Note ?? rowData.Vendor02Note ?? null;
+
+        return {
+            ...rowData,
+            HODApprovedDate: hodDate,      // keep as Date object
+            Vendor02Note: vendorNote
+        };
+    });
+}
+
+
+
+
+
+//===== Active ======================================================
+
+const exportReport = async (data, filter, templateFile, resultFile) => {
+    // ---------------------------
+    // Guards
+    // ---------------------------
+    if (!Array.isArray(data) || data.length === 0) {
+        alert("No data to export");
+        return;
+    }
+    if (!templateFile || !resultFile) {
+        alert("Missing templateFile or resultFile");
+        return;
+    }
+
+    // ---------------------------
+    // Utilities
+    // ---------------------------
+    const fmtDate = (d, fmt = "dd/mm/yyyy") => {
+        const date = d instanceof Date ? d : new Date(d);
+        if (Number.isNaN(date.getTime())) return "";
+        const dd = String(date.getDate()).padStart(2, "0");
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const yyyy = date.getFullYear();
+        if (fmt === "dd/mm/yyyy") return `${dd}/${mm}/${yyyy}`;
+        return date.toISOString();
+    };
+
+    const shiftDateBackOneDay = (d) => {
+        const dt = d instanceof Date ? new Date(d.getTime()) : new Date(d);
+        if (!Number.isNaN(dt.getTime())) {
+            dt.setDate(dt.getDate() - 1);
+            dt.setHours(0, 0, 0, 0);
+        }
+        return dt;
+    };
+
+    const valueText = (cell) => {
+        const v = cell?.value;
+        if (v == null) return "";
+        if (typeof v === "string") return v;
+        if (typeof v === "number") return String(v);
+        if (v instanceof Date) return fmtDate(v);
+        if (typeof v === "object") {
+            if ("formula" in v) return "";
+            if (Array.isArray(v.richText)) return v.richText.map(rt => rt.text ?? "").join("");
+            if ("text" in v) return String(v.text);
+        }
+        return String(v);
+    };
+
+    const copyCellStyle = (src, dst) => {
+        if (!src || !dst) return;
+        const s = src.style || {};
+        dst.style = {
+            font: s.font ? { ...s.font } : undefined,
+            alignment: s.alignment ? { ...s.alignment } : undefined,
+            border: s.border ? { ...s.border } : undefined,
+            fill: s.fill ? { ...s.fill } : undefined,
+            numFmt: s.numFmt
+        };
+    };
+
+    const cloneCellStyle = (cell) => {
+        const s = cell?.style || {};
+        return {
+            font: s.font ? { ...s.font } : undefined,
+            alignment: s.alignment ? { ...s.alignment } : undefined,
+            border: s.border ? { ...s.border } : undefined,
+            fill: s.fill ? { ...s.fill } : undefined,
+            numFmt: s.numFmt
+        };
+    };
+
+    const applyCellStyle = (cell, styleObj) => {
+        if (!cell || !styleObj) return;
+        cell.style = {
+            font: styleObj.font ? { ...styleObj.font } : undefined,
+            alignment: styleObj.alignment ? { ...styleObj.alignment } : undefined,
+            border: styleObj.border ? { ...styleObj.border } : undefined,
+            fill: styleObj.fill ? { ...styleObj.fill } : undefined,
+            numFmt: styleObj.numFmt
+        };
+    };
+
+    const rowHasWrapText = (row) => {
+        for (let c = 1; c <= row.cellCount; c++) {
+            const al = row.getCell(c)?.style?.alignment;
+            if (al && al.wrapText) return true;
+        }
+        return false;
+    };
+
+    const colLetter = (n) => {
+        let s = "";
+        while (n > 0) {
+            const m = (n - 1) % 26;
+            s = String.fromCharCode(65 + m) + s;
+            n = Math.floor((n - 1) / 26);
+        }
+        return s;
+    };
+
+    const isDirectiveToken = (s) => {
+        if (!s) return false;
+        return /^\{\s*(sum|average|count|text)(?::[^}]*)?\s*\}$/i.test(String(s).trim());
+    };
+
+    const guessDataType = (key) => {
+        const k = String(key || "").toLowerCase();
+        if (k.includes("date")) return "date";
+        if (k.includes("amount") || k.includes("value") || k.includes("sum") || k.includes("count")) return "number";
+        return "text";
+    };
+
+    // ---------------------------
+    // DevExtreme-like filter evaluator (kept stable)
+    // ---------------------------
+    const toLowerKeyMap = (obj) => {
+        const m = {};
+        for (const k of Object.keys(obj || {})) m[k.toLowerCase()] = k;
+        return m;
+    };
+
+    const getFieldValue = (row, field) => {
+        if (!row || !field) return undefined;
+        const lower = field.toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(row, field)) return row[field];
+        const km = toLowerKeyMap(row);
+        if (km[lower] !== undefined) return row[km[lower]];
+        if (field.includes(".")) {
+            const parts = field.split(".");
+            let cur = row;
+            for (const p of parts) {
+                if (cur == null) return undefined;
+                const map = toLowerKeyMap(cur);
+                const key = map[p.toLowerCase()];
+                if (key === undefined) return undefined;
+                cur = cur[key];
+            }
+            return cur;
+        }
+        return undefined;
+    };
+
+    const toNumberIfPossible = (v) => {
+        if (typeof v === "number") return v;
+        if (typeof v === "string" && v.trim() !== "" && !Number.isNaN(Number(v))) return Number(v);
+        return v;
+    };
+
+    const toDateIfPossible = (v) => {
+        if (v instanceof Date) return v;
+        if (typeof v === "string" || typeof v === "number") {
+            const d = new Date(v);
+            if (!Number.isNaN(d.getTime())) return d;
+        }
+        return v;
+    };
+
+    const cmpStr = (a, b) => String(a ?? "").toLowerCase().localeCompare(String(b ?? "").toLowerCase());
+    const includesStr = (a, b) => String(a ?? "").toLowerCase().includes(String(b ?? "").toLowerCase());
+    const startsWithStr = (a, b) => String(a ?? "").toLowerCase().startsWith(String(b ?? "").toLowerCase());
+    const endsWithStr = (a, b) => String(a ?? "").toLowerCase().endsWith(String(b ?? "").toLowerCase());
+
+    const compare = (left, op, right) => {
+        const lNum = toNumberIfPossible(left), rNum = toNumberIfPossible(right);
+        const lDateRaw = toDateIfPossible(left), rDateRaw = toDateIfPossible(right);
+        const bothNum = typeof lNum === "number" && typeof rNum === "number";
+        const bothDate = (lDateRaw instanceof Date) && (rDateRaw instanceof Date);
+
+        let L = left, R = right;
+        if (bothNum) { L = lNum; R = rNum; }
+        else if (bothDate) {
+            const l = new Date(lDateRaw.getTime());
+            const r = new Date(rDateRaw.getTime());
+            L = l.getTime();
+            R = r.getTime();
+        }
+
+        switch (op) {
+            case "=":
+            case "==": return (bothNum || bothDate) ? (L === R) : (cmpStr(L, R) === 0);
+            case "<>":
+            case "!=": return (bothNum || bothDate) ? (L !== R) : (cmpStr(L, R) !== 0);
+            case ">": return (bothNum || bothDate) ? (L > R) : (cmpStr(L, R) > 0);
+            case "<": return (bothNum || bothDate) ? (L < R) : (cmpStr(L, R) < 0);
+            case ">=": return (bothNum || bothDate) ? (L >= R) : (cmpStr(L, R) >= 0);
+            case "<=": return (bothNum || bothDate) ? (L <= R) : (cmpStr(L, R) <= 0);
+            case "contains": return includesStr(L, R);
+            case "notcontains": return !includesStr(L, R);
+            case "startswith": return startsWithStr(L, R);
+            case "endswith": return endsWithStr(L, R);
+            case "in": return Array.isArray(R) ? R.some(v => compare(L, "==", v)) : false;
+            case "between":
+                if (Array.isArray(R) && R.length === 2) {
+                    return compare(left, ">=", R[0]) && compare(left, "<=", R[1]); // inclusive end in logic
+                }
+                return false;
+            default: return false;
+        }
+    };
+
+    const evalDxFilter = (row, f) => {
+        if (!f) return true;
+        if (typeof f === "function") return !!f(row);
+        if (!Array.isArray(f)) return true;
+
+        if (f.length === 2 && f[0] === "!") return !evalDxFilter(row, f[1]);
+
+        if (typeof f[0] === "string" && (f[0].toLowerCase() === "and" || f[0].toLowerCase() === "or")) {
+            const op = f[0].toLowerCase();
+            const parts = f.slice(1);
+            return op === "and" ? parts.every(p => evalDxFilter(row, p)) : parts.some(p => evalDxFilter(row, p));
+        }
+
+        if (Array.isArray(f[0])) {
+            let acc = null, accOp = "and";
+            for (let i = 0; i < f.length; i++) {
+                const token = f[i];
+                if (Array.isArray(token)) {
+                    const res = evalDxFilter(row, token);
+                    acc = (acc === null) ? res : (accOp === "and" ? (acc && res) : (acc || res));
+                } else if (typeof token === "string") {
+                    const t = token.toLowerCase();
+                    if (t === "and" || t === "or") accOp = t;
+                }
+            }
+            return !!acc;
+        }
+
+        const [field, op, value] = f;
+        const left = getFieldValue(row, field);
+        return compare(left, op, value);
+    };
+
+    const applyDxFilter = (rows, dxFilter) => {
+        if (!dxFilter) return rows;
+        return rows.filter(r => evalDxFilter(r, dxFilter));
+    };
+
+    // ---------------------------
+    // Pick dataset
+    // ---------------------------
+    const expData = filter ? applyDxFilter(data, filter) : data;
+    if (filter && (!expData || expData.length === 0)) {
+        alert("No data to export (filtered result is empty)");
+        return;
+    }
+
+    // ---------------------------
+    // Resolve and load template
+    // ---------------------------
+    const safeResolveTemplateUrl = (path) => {
+        try { if (typeof resolveTemplateUrl === "function") return resolveTemplateUrl(path); } catch { }
+        return path;
+    };
+
+    const templateUrl = safeResolveTemplateUrl(templateFile);
+    const tplRes = await fetch(templateUrl, { cache: "no-store" });
+    if (!tplRes.ok) throw new Error(`Template file ${templateUrl} not found`);
+
+    const buf = await tplRes.arrayBuffer();
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(buf);
+
+    const ws = wb.getWorksheet("Report");
+    if (!ws) throw new Error("Worksheet 'Report' not found");
+
+    // ---------------------------
+    // Parse template (fallback)
+    // ---------------------------
+    const safeParseTemplateWorkbook = (wb) => {
+        try { if (typeof parseTemplateWorkbook === "function") return parseTemplateWorkbook(wb); } catch { }
+        const ws = wb.getWorksheet("Report");
+        let placeholderRowIdx = 0, filterRowIdx = 0, totalFormatRowIdx = 0;
+        const columnMap = [];
+        const templateColHeaders = {};
+        const placeholderMaps = {};
+
+        ws.eachRow((row, rowNumber) => {
+            let hasDoubleCurly = false;
+            let hasTotalFormat = false;
+            row.eachCell((cell, colNumber) => {
+                const t = valueText(cell);
+                if (t.includes("{{")) hasDoubleCurly = true;
+                if (t.includes("{filterdesc}")) filterRowIdx = rowNumber;
+                if (t.includes("{totalFormat}")) hasTotalFormat = true;
+                if (!hasDoubleCurly && t && !templateColHeaders[colNumber]) templateColHeaders[colNumber] = t;
+            });
+            if (hasDoubleCurly && !placeholderRowIdx) placeholderRowIdx = rowNumber;
+            if (hasTotalFormat) totalFormatRowIdx = rowNumber;
+        });
+
+        const phRow = ws.getRow(placeholderRowIdx);
+        phRow.eachCell((cell, colIndex) => {
+            const raw = valueText(cell);
+            const m = (raw || "").match(/\{\{\s*([a-z0-9_]+)\s*\}\}/i);
+            if (m) {
+                const placeholder = m[1].toLowerCase();
+                let directive;
+                if (totalFormatRowIdx) {
+                    const tfCell = ws.getRow(totalFormatRowIdx).getCell(colIndex);
+                    const txt = valueText(tfCell);
+                    const md = txt.match(/^\{\s*(sum|average|count|text)(?::([^}]+))?\s*\}$/i);
+                    directive = md ? md[1].toLowerCase() : undefined;
+                }
+                columnMap.push({
+                    colIndex,
+                    placeholder,
+                    dataType: guessDataType(placeholder),
+                    directive
+                });
+            }
+        });
+
+        return { placeholderRowIdx, filterRowIdx, totalFormatRowIdx, columnMap, templateColHeaders, placeholderMaps };
+    };
+
+    const tplInfo = safeParseTemplateWorkbook(wb);
+    if (!tplInfo || !tplInfo.placeholderRowIdx || !tplInfo.columnMap?.length) {
+        throw new Error("Template parsing failed: placeholder row or columnMap missing");
+    }
+
+    // ---------------------------
+    // Save total format styles
+    // ---------------------------
+    let totalFormatStyles = null;
+    if (tplInfo.totalFormatRowIdx) {
+        totalFormatStyles = {};
+        const fmtRow = ws.getRow(tplInfo.totalFormatRowIdx);
+        tplInfo.columnMap.forEach(cm => {
+            const fCell = fmtRow.getCell(cm.colIndex);
+            totalFormatStyles[cm.colIndex] = cloneCellStyle(fCell);
+        });
+    }
+
+    // ---------------------------
+    // Derived indices
+    // ---------------------------
+    const headerRowIndex = tplInfo.placeholderRowIdx - 1;
+    const firstDataRow = tplInfo.placeholderRowIdx;
+    const lastDataRow = firstDataRow + expData.length - 1;
+    const totalsRowIndex = lastDataRow + 1;
+    const periodRowIndex = headerRowIndex - 1;
+
+    // ---------------------------
+    // Build colMap
+    // ---------------------------
+    const colMap = {};
+    tplInfo.columnMap.forEach(c => { if (c.placeholder) colMap[c.placeholder] = c.colIndex; });
+
+    // ---------------------------
+    // Stamp “For Period” with date-to shifted back 1 day
+    // ---------------------------
+    const buildPeriodText = (f) => {
+        let fromD = null, toD = null;
+
+        const harvest = (node) => {
+            if (!node) return;
+            if (Array.isArray(node[0])) {
+                node.forEach(harvest);
+                return;
+            }
+            if (Array.isArray(node)) {
+                const [, op, value] = node;
+                if (op === "between" && Array.isArray(value) && value.length === 2) {
+                    fromD = value[0] instanceof Date ? value[0] : new Date(value[0]);
+                    const endRaw = value[1] instanceof Date ? value[1] : new Date(value[1]);
+                    toD = shiftDateBackOneDay(endRaw); // exact request: shift back 1 day
+                } else if (op === ">=" || op === ">") {
+                    const d = value instanceof Date ? value : new Date(value);
+                    fromD = fromD ? (d < fromD ? d : fromD) : d;
+                } else if (op === "<=" || op === "<") {
+                    const d = value instanceof Date ? value : new Date(value);
+                    toD = toD ? (d > toD ? shiftDateBackOneDay(d) : toD) : shiftDateBackOneDay(d);
+                }
+            }
+        };
+
+        try { harvest(f); } catch { }
+
+        if (fromD && toD) return `For Period ${fmtDate(fromD)} - ${fmtDate(toD)}`;
+        if (fromD && !toD) return `For Period ${fmtDate(fromD)} - ${fmtDate(fromD)}`;
+        if (!fromD && toD) return `For Period ${fmtDate(toD)} - ${fmtDate(toD)}`;
+        return "For Period ";
+    };
+
+    const filterText = buildPeriodText(filter);
+    const targetFilterRow = tplInfo.filterRowIdx || periodRowIndex;
+    const filterRow = ws.getRow(targetFilterRow);
+    filterRow.getCell(1).value = filterText;
+    filterRow.commit();
+
+    // ---------------------------
+    // Header row
+    // ---------------------------
+    const hdrRow = ws.getRow(headerRowIndex);
+    tplInfo.columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+        const cell = hdrRow.getCell(cm.colIndex);
+        const finalText = (cell?.text?.trim()) || tplInfo.templateColHeaders?.[cm.colIndex] || (typeof cell.value === "string" ? cell.value : "");
+        cell.value = finalText || "";
+    });
+    hdrRow.commit();
+
+    // ---------------------------
+    // Render data rows
+    // ---------------------------
+    const templateRow = ws.getRow(firstDataRow);
+
+    expData.forEach((rowData, i) => {
+        const rNo = firstDataRow + i;
+        const row = ws.getRow(rNo);
+
+        // Clear placeholders
+        tplInfo.columnMap.forEach(cm => {
+            if (cm.placeholder) row.getCell(cm.colIndex).value = "";
+        });
+
+        // Auto number
+        if (colMap["no"]) row.getCell(colMap["no"]).value = i + 1;
+
+        // Fill values
+        for (const [key, val] of Object.entries(rowData)) {
+            const lowerKey = String(key).toLowerCase();
+            if (lowerKey === "no") continue;
+            const colIdx = colMap[lowerKey];
+            if (!colIdx || val == null || val === "") continue;
+
+            const dtType = tplInfo.columnMap.find(c => c.placeholder === lowerKey)?.dataType || guessDataType(lowerKey);
+            const cell = row.getCell(colIdx);
+
+            const maps = tplInfo.placeholderMaps?.[lowerKey];
+            if (maps) {
+                const mapped = maps[String(val).trim()];
+                cell.value = mapped ?? val;
+            } else if (dtType === "date") {
+                const d = val instanceof Date ? val : new Date(val);
+                cell.value = Number.isNaN(d.getTime()) ? "" : d;
+            } else if (dtType === "number") {
+                const n = Number(val);
+                cell.value = Number.isNaN(n) ? "" : n;
+            } else {
+                cell.value = val;
+            }
+        }
+
+        // Apply template style
+        tplInfo.columnMap.forEach(cm => {
+            const src = templateRow.getCell(cm.colIndex);
+            const dst = row.getCell(cm.colIndex);
+            copyCellStyle(src, dst);
+        });
+
+        if (rowHasWrapText(row)) row.height = undefined;
+
+        row.commit();
+    });
+
+    // ---------------------------
+    // Totals row (normal mode)
+    // ---------------------------
+    const totalsRow = ws.getRow(totalsRowIndex);
+    const headerTemplateRow = ws.getRow(headerRowIndex);
+
+    tplInfo.columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+
+        const cell = totalsRow.getCell(cm.colIndex);
+        const origVal = cell.value;
+        const txt = valueText(cell).trim();
+        const isDir = isDirectiveToken(txt);
+
+        if (txt && !isDir) {
+            cell.value = origVal; // preserve free text
+        } else if (cm.directive) {
+            const L = colLetter(cm.colIndex);
+            const rng = `${L}${firstDataRow}:${L}${lastDataRow}`;
+            let formula = "";
+            if (cm.directive === "sum") formula = `SUM(${rng})`;
+            else if (cm.directive === "average") formula = `AVERAGE(${rng})`;
+            else if (cm.directive === "count") formula = `COUNTA(${rng})`;
+            else if (cm.directive === "text" && cm.label) cell.value = cm.label;
+            if ((!txt || isDir) && formula) cell.value = { formula };
+        }
+
+        if (totalFormatStyles && totalFormatStyles[cm.colIndex]) {
+            applyCellStyle(cell, totalFormatStyles[cm.colIndex]);
+        } else {
+            copyCellStyle(headerTemplateRow.getCell(cm.colIndex), cell);
+        }
+    });
+
+    totalsRow.commit();
+
+    // ---------------------------
+    // Hide MSTABLE
+    // ---------------------------
+    const ms = wb.getWorksheet("MSTABLE");
+    if (ms) ms.state = "hidden";
+
+    // ---------------------------
+    // LAST STEP: if single record, delete the row containing {totalFormat}
+    // ---------------------------
+    if (expData.length === 1) {
+        // Prefer template index; else find by scanning; else fallback to 9
+        let totalFormatRow = tplInfo.totalFormatRowIdx || 0;
+
+        if (!totalFormatRow) {
+            ws.eachRow((row, rowNumber) => {
+                let found = false;
+                row.eachCell((cell) => {
+                    const t = valueText(cell);
+                    if (t.includes("{totalFormat}")) found = true;
+                });
+                if (found && totalFormatRow === 0) totalFormatRow = rowNumber;
+            });
+        }
+
+        if (!totalFormatRow) totalFormatRow = 9; // your explicit quick fix
+
+        if (totalFormatRow && ws.getRow(totalFormatRow)) {
+            ws.spliceRows(totalFormatRow, 1);
+        }
+    }
+
+    // ---------------------------
+    // Finalize and download
+    // ---------------------------
+    wb.calcProperties.fullCalcOnLoad = true;
+    const out = await wb.xlsx.writeBuffer();
+    saveAs(new Blob([out]), resultFile);
+};
+
+function parseTemplateWorkbook(wb) {
+    const ws = wb.getWorksheet("Report");
+    if (!ws) throw new Error("Worksheet 'Report' not found in template file");
+
+    // 🟢 Helper: แปลงค่า cell เป็น string
+    function toStr(v) {
+        if (v == null) return "";
+        if (typeof v === "string") return v.trim();
+        if (typeof v === "number") return String(v);
+        if (typeof v === "object") {
+            if (v.text) return String(v.text).trim();
+            if (v.richText && Array.isArray(v.richText)) {
+                return v.richText.map(rt => rt.text || "").join("").trim();
+            }
+            return String(v).trim();
+        }
+        return String(v).trim();
+    }
+
+    // 🟢 Helper: หา index ของ header
+    function findHeaderIndex(headers, key) {
+        const target = key.toLowerCase();
+        for (let i = 0; i < headers.length; i++) {
+            const h = (headers[i] || "").toLowerCase().trim();
+            if (h === target) return i;
+        }
+        for (let i = 0; i < headers.length; i++) {
+            const h = (headers[i] || "").toLowerCase().trim();
+            if (h.includes(target)) return i;
+        }
+        return -1;
+    }
+
+    // 🟢 Build placeholderMaps จาก MSTABLE
+    const placeholderMaps = {};
+    const mst = wb.getWorksheet("MSTABLE");
+    if (mst) {
+        const hdrVals = mst.getRow(1).values.map(toStr);
+        const codeCol = findHeaderIndex(hdrVals, "code");
+        const nameCol = findHeaderIndex(hdrVals, "name");
+        const phCol = findHeaderIndex(hdrVals, "placeholder");
+
+        if (codeCol > -1 && nameCol > -1 && phCol > -1) {
+            mst.eachRow((row, i) => {
+                if (i === 1) return;
+                const code = toStr(row.getCell(codeCol).value);
+                const name = toStr(row.getCell(nameCol).value);
+                const phRaw = toStr(row.getCell(phCol).value);
+                if (!code || !name || !phRaw) return;
+
+                const m = phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+                if (m) {
+                    const phName = m[1].trim().toLowerCase();
+                    if (!placeholderMaps[phName]) placeholderMaps[phName] = {};
+                    placeholderMaps[phName][code] = name;
+                }
+            });
+        }
+    }
+
+    // 🟢 Initialize
+    const templateColWidths = {};
+    const templateColHeaders = {};
+    const columnMap = [];
+
+    let placeholderRowIdx = null;
+    let directiveRowIdx = null;
+    let footerRowIdx = null;
+    let filterRowIdx = null;
+    let totalFormatRowIdx = null;
+
+    // 🔎 Scan rows
+    const maxScan = Math.max(ws.rowCount || 0, 1000);
+    for (let r = 1; r <= maxScan; r++) {
+        const rowVals = (ws.getRow(r).values || []).slice(1).map(toStr);
+
+        if (!placeholderRowIdx && rowVals.some(v => /\{\{\s*[^}]+\s*\}\}/.test(v))) {
+            placeholderRowIdx = r;
+            directiveRowIdx = r + 1;
+        }
+        if (!footerRowIdx && rowVals.some(v => /\{footer\}/i.test(v))) {
+            footerRowIdx = r;
+        }
+        if (!filterRowIdx && rowVals.some(v => /\{filterdesc\}/i.test(v))) {
+            filterRowIdx = r;
+        }
+        if (!totalFormatRowIdx && rowVals.some(v => /\{totalformat\}/i.test(v))) {
+            totalFormatRowIdx = r;
+        }
+    }
+
+    if (!placeholderRowIdx) throw new Error("No {{placeholder}} row found");
+
+    // 🟢 Build columnMap
+    const headerRowIdx = Math.max(1, placeholderRowIdx - 1);
+    const headerArr = (ws.getRow(headerRowIdx).values || []).slice(1).map(toStr);
+    const phArr = (ws.getRow(placeholderRowIdx).values || []).slice(1).map(toStr);
+    const dirArr = (ws.getRow(directiveRowIdx).values || []).slice(1).map(toStr);
+    const maxCols = Math.max(headerArr.length, phArr.length, dirArr.length, ws.columnCount || 0);
+
+    for (let c = 1; c <= maxCols; c++) {
+        const phRaw = phArr[c - 1] || "";
+        const dirRaw = dirArr[c - 1] || "";
+
+        let placeholder = null;
+        const phMatch = phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+        if (phMatch) placeholder = phMatch[1].trim().toLowerCase();
+
+        let directive = null, label = null;
+        const dMatch = dirRaw.match(/\{\s*(sum|average|count|text)(?::\s*([^}]+))?\s*\}/i);
+        if (dMatch) {
+            directive = dMatch[1].toLowerCase();
+            if (directive === "text" && dMatch[2]) label = dMatch[2].trim();
+        }
+
+        const col = ws.getColumn(c);
+        templateColWidths[c] = col.width || 15;
+        templateColHeaders[c] = headerArr[c - 1] || (placeholder || "");
+
+        columnMap.push({
+            colIndex: c,
+            placeholder,
+            directive,
+            label,
+            header: templateColHeaders[c],
+            width: templateColWidths[c]
+        });
+    }
+
+    // 🟢 Return metadata
+    return {
+        placeholderMaps,
+        placeholderRowIdx,
+        directiveRowIdx,
+        footerRowIdx,
+        filterRowIdx,
+        totalFormatRowIdx,
+        columnMap,
+        templateColWidths,
+        templateColHeaders
+    };
+}
+
+function describeFilter(filter, prefix, dateFormat, dateOnly) {
+    prefix = prefix || "";
+    dateFormat = dateFormat || "dd/mm/yyyy";
+    dateOnly = !!dateOnly;
+
+    // 1) Tools
+    const formatDate = (val) => {
+        const d = toDate(val);
+        if (!d) return "";
+        if (dateFormat === "dd/mm/yyyy") {
+            return d.toLocaleDateString("en-GB", { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+        if (dateFormat === "yyyy-mm-dd") {
+            // ISO 10 ตัวแรก
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+        // fallback
+        return d.toLocaleDateString();
+    };
+
+    const toDate = (v) => {
+        if (v == null) return null;
+        if (v instanceof Date) return Number.isNaN(v.getTime()) ? null : v;
+        // DevExtreme อาจให้เป็น string/number
+        const d = new Date(v);
+        return Number.isNaN(d.getTime()) ? null : d;
+    };
+
+    const isDateField = (field) =>
+        typeof field === "string" && /date|day|time/i.test(field);
+
+    // 2) เก็บช่วงต่อฟิลด์
+    // structure: map[field] = { min: Date|null, max: Date|null }
+    const ranges = {};
+
+    // 3) รวมค่าช่วง
+    const addMin = (field, d) => {
+        if (!ranges[field]) ranges[field] = { min: null, max: null };
+        if (!ranges[field].min || d < ranges[field].min) ranges[field].min = d;
+    };
+    const addMax = (field, d) => {
+        if (!ranges[field]) ranges[field] = { min: null, max: null };
+        if (!ranges[field].max || d > ranges[field].max) ranges[field].max = d;
+    };
+    const setEq = (field, d) => {
+        if (!ranges[field]) ranges[field] = { min: null, max: null };
+        ranges[field].min = d;
+        ranges[field].max = d;
+    };
+
+    // 4) สแกน recursive รองรับโครงสร้าง filter ของ DevExtreme
+    const scan = (node) => {
+        if (!node) return;
+
+        // case: condition triplet ["Field", "op", value]
+        if (Array.isArray(node) && node.length === 3 && typeof node[0] === "string") {
+            const field = node[0];
+            const op = String(node[1]).toLowerCase();
+            const value = node[2];
+
+            if (!isDateField(field)) return; // เอาเฉพาะ date fields
+
+            // between อาจเป็น [start, end]
+            if (op === "between" && Array.isArray(value) && value.length === 2) {
+                const d1 = toDate(value[0]);
+                const d2 = toDate(value[1]);
+                if (d1) addMin(field, d1);
+                if (d2) addMax(field, d2);
+                return;
+            }
+
+            const d = toDate(value);
+            if (!d) return;
+
+            if (op === "=") setEq(field, d);
+            else if (op === ">=" || op === ">") addMin(field, d);
+            else if (op === "<=" || op === "<") addMax(field, d);
+
+            return;
+        }
+
+        // case: array group e.g. [ cond, "and", cond, "or", cond, ... ]
+        if (Array.isArray(node)) {
+            for (const item of node) {
+                // skip logical tokens "and"/"or"/"!"
+                if (typeof item === "string") continue;
+                scan(item);
+            }
+            return;
+        }
+
+        // other shapes (objects/functions) — ignore for date purpose
+    };
+
+    scan(filter);
+
+    // 5) เลือกช่วงที่ "ดีที่สุด"
+    // ถ้ามีหลายฟิลด์ ให้เลือกตาม priority: ReqDate > DocDate > อื่น ๆ
+    const pickField = () => {
+        const keys = Object.keys(ranges);
+        if (keys.length === 0) return null;
+        const priority = [/^reqdate$/i, /^docdate$/i, /date|day|time/i];
+        for (const p of priority) {
+            const k = keys.find(k => p.test(k));
+            if (k) return k;
+        }
+        return keys[0];
+    };
+
+    const chosen = pickField();
+    if (chosen) {
+        const { min, max } = ranges[chosen];
+        const hasMin = !!min;
+        const hasMax = !!max;
+
+        if (hasMin || hasMax) {
+            const left = hasMin ? formatDate(min) : "";
+            const right = hasMax ? formatDate(max) : "";
+            const rangeText = left && right ? `${left} - ${right}` : (left || right);
+            return prefix ? `${prefix}: ${rangeText}` : rangeText;
+        }
+    }
+
+    // 6) ถ้าหา date ช่วงไม่ได้เลย
+    return prefix ? `${prefix}: ไม่มีช่วงวันที่ที่กำหนด` : "ไม่มีช่วงวันที่ที่กำหนด";
+}
+
+// ✅ Deep clone style จาก src → dst
+function copyCellStyle(src, dst) {
+    const s = src && src.style ? src.style : {};
+
+    const cloneBorder = (b) => {
+        if (!b) return undefined;
+        const side = (sd) => (sd ? { ...sd } : undefined);
+        return {
+            top: side(b.top),
+            left: side(b.left),
+            bottom: side(b.bottom),
+            right: side(b.right),
+            diagonal: side(b.diagonal)
+        };
+    };
+
+    const cloneFill = (f) => {
+        if (!f) return undefined;
+        if (f.type === 'pattern') {
+            return {
+                type: 'pattern',
+                pattern: f.pattern,
+                fgColor: f.fgColor ? { ...f.fgColor } : undefined,
+                bgColor: f.bgColor ? { ...f.bgColor } : undefined
+            };
+        }
+        return { ...f };
+    };
+
+    dst.style = {
+        font: s.font ? { ...s.font } : undefined,
+        alignment: s.alignment ? { ...s.alignment } : undefined,
+        border: cloneBorder(s.border),
+        fill: cloneFill(s.fill),
+        numFmt: s.numFmt ?? undefined,
+        protection: s.protection ? { ...s.protection } : undefined,
+    };
+}
+
+// ✅ Copy style ทั้งแถวจาก templateRow → targetRow
+const applyRowStyleFromTemplate = (templateRow, targetRow, columnMap) => {
+    columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+        const src = templateRow.getCell(cm.colIndex);
+        const dst = targetRow.getCell(cm.colIndex);
+        copyCellStyle(src, dst);
+    });
+};
+
+/* =============================== Template parsing =============================== */
+
+async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected, condition) {
+
+    let aTokena = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+    console.log("Inside aaLoadData aKeya = ", aKeya);
+    let axqr2S = `Where ${aKeyfield} LIKE '%${aKeya}%'`;
+    console.log("Inside aaLoadData axqr2S = ", axqr2S)
+    //let axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+    let axFullBody = "Select " + axFieldSelected + " From " + aDataBasea + " " + axqr2S;
+
+    let response = await fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + aTokena, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ "@": btoa(axFullBody) }),
+        redirect: "follow"
+    });
+
+    let acData = await response.json();
+    //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
+    console.log("record ", acData.length);
+    console.log(acData);
+    const filteredArray = acData.filter(condition);
+    //console.log(filteredArray);
+    //console.log(filteredArray.length);
+
+    let abc;
+    if (filteredArray.length === 0) { //pass                
+        abc = 0;
+    } else { // not pass
+        // Extract and log the field name that caused the condition to fail
+        /*let failedFields = [];
+        acData.forEach(item => {
+            for (let key in item) {
+                let tempItem = { ...item };
+                delete tempItem[key];
+                //console.log("Temp item after deleting key", key, ":", tempItem); // Log tempItem after deletion                        
+                if (condition(tempItem)) {
+                    failedFields.push(key);
+                }
+            }
+        });*/
+        //console.log("Failed fields: ", failedFields);
+        console.log("not found ", filteredArray.length)
+        console.log("Filter Array ", filteredArray)
+        abc = 1;
+    }
+    return abc;
+}
+
+const aTranTextJson = (aText, aFMark, aLMark) => { //"NAME:" "EMAIL:"
+    var axHODFtext = aText;
+    var xaChkName;
+    var aatestChk = axHODFtext.replaceAll("|", '"')
+    var xxChk1 = aatestChk.search(aFMark);
+    var xxChk2 = aatestChk.search(aLMark);
+    //var xxChk3;
+
+    xxChk1 = aatestChk.search(aFMark)
+    xxChk2 = aatestChk.search(aLMark)
+
+    if (aLMark === "") {
+        xaChkName = $.trim(aatestChk.substr(xxChk1 + 5, 300)); //xxChk1+5, xxChk2-5);
+    } else {
+        xaChkName = $.trim(aatestChk.substr(xxChk1 + 5, xxChk2 - xxChk1 - 5)); //xxChk1+5, xxChk2-5);
+    }
+    //console.log(xaChkName);
+    const xxNameArr = JSON.parse(xaChkName);
+    //console.log(xxNameArr)
+    //console.log(xxNameArr[0])
+    return xxNameArr;
+}
+
+function showPreviousYearPopup(callback) {
+    var today = new Date();
+    var aTYear = new Date().getFullYear();
+    var aLYear = aTYear - 1;
+    var aNYear = aTYear + 1;
+    var aTextThisYear = aTYear.toString() + "-" + aNYear.toString();
+    var aTextLastYear = aLYear.toString() + "-" + aTYear.toString();
+    // Check if the current date is after May 3 of this year
+    //var isAfterMay3 = (today.getMonth() > 3) || (today.getMonth() === 3 && today.getDate() >= 3);
+    var isAfterMay3 = (today.getMonth() === 4 && today.getDate() <= 3)
+    //alert(isAfterMay3);
+    // If the current date is not after May 3, show the button
+    if (isAfterMay3) {
+        // Create an array of possible options
+        var options = [
+            { id: true, text: "LAST YEAR (" + aTextLastYear + ")" },
+            { id: false, text: "THIS YEAR (" + aTextThisYear + ")" }
+        ];
+
+        // Create a dxPopup widget with a list selection
+        var popup = $("#popup").dxPopup({
+            title: "Please Select Year",
+            width: 250,
+            height: "auto",
+            position: { offset: "-100 -350" },
+            contentTemplate: function (contentElement) {
+                $("<div>").dxList({
+                    dataSource: options,
+                    height: "100%",
+                    selectionMode: "single",
+                    onSelectionChanged: function (e) {
+                        // Get the selected option
+                        var selectedOption = e.addedItems[0];
+                        // Set the aNowDte variable based on the selected option
+                        if (selectedOption.id) {
+                            var year = new Date().getFullYear();
+                            var month = 3; // April is month 3 (zero-based)
+                            var day = 30;
+                            var aNowDte = new Date(year, month, day);
+                            console.log("aNowDte: " + aNowDte);
+                        } else {
+                            var today = new Date();
+                            var aNowDte = new Date(); //var aNowDte = today.getDate() + "/" + (today.getMonth() + 1) + "/" + today.getFullYear();
+                            console.log("aNowDte: " + aNowDte);
+                        }
+                        // Close the popup
+                        popup.hide();
+                        // Call the callback function with the selected date
+                        callback(aNowDte);
+                    }
+                }).appendTo(contentElement);
+            }
+        }).dxPopup("instance");
+
+        // Show the pop-up when a button is clicked
+        $("#showPopupButton").dxButton({
+            hint: "Please select your submitted year (LAST YEAR or THIS YEAR)",
+            text: "Year Selection",
+            icon: "fas fa-calendar-alt",
+            type: "default",
+            visible: isAfterMay3,
+            onClick: function () {
+                popup.show();
+            }
+        });
+    } else {
+        // If the current date is after May 3, hide the button
+        var aNowDte = new Date();
+        $("#showPopupButton").hide();
+        callback(aNowDte);
+    }
+}
+
+var aNowDte = new Date();
+var aaXToX = localStorage.getItem("aaXXoX"); //localStorage["aaXXoX"];
+var aaERTYPE = "700" // Income
+var aaPXIXD = localStorage["aPXIXD"];
+var aaEnt = aaPXIXD.includes("X");
+var aaUsrN = localStorage["aaXXuX"];
+const dbToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+
+// aFullBody
+//fieldMap {db ->HODApprovedDate: "ERODate02" <- from json}
+/**
+ * Load two DBs, match rows, merge fields with conditions, and update target DB
+ * @param {string} querySource - SQL query string to load source DB (jsonSource)
+ * @param {string} queryTarget - SQL query string to load target DB (dbData)
+ * @param {string} matchField - Field name to match (e.g. "HeadRefNo")
+ * @param {Object} fieldMap - Mapping { targetField: sourceField } to copy from source
+ * @param {Array} rules - Array of conditional rules [{ when, apply }]
+ */
+const syncDatabases = async (
+    querySource,
+    queryTarget,
+    matchField = "HeadRefNo",
+    fieldMap = { HODApprovedDate: "ERODate02" },
+    rules = []
+) => {
+    try {
+        // 🔑 Use dbToken for API calls
+        const dbToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+
+        // 1️⃣ Load source DB (jsonSource)
+        const responseSource = await fetch(
+            `${aaPFDMI}/DMQ/XOL/${atob(aaXToX)}/${dbToken}`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "@": btoa(querySource) }),
+                redirect: "follow"
+            }
+        );
+        const jsonSource = await responseSource.json();
+        console.log("Loaded jsonSource:", jsonSource);
+
+        // 2️⃣ Load target DB (dbData)
+        const responseTarget = await fetch(
+            `${aaPFDMI}/DMQ/XOL/${atob(aaXToX)}/${dbToken}`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ "@": btoa(queryTarget) }),
+                redirect: "follow"
+            }
+        );
+        const dbData = await responseTarget.json();
+        console.log("Loaded dbData:", dbData);
+
+        // 3️⃣ Match each target row against jsonSource
+        const promises = dbData.map(row => {
+            const targetKey = "T" + row[matchField]?.slice(-10);
+            const match = jsonSource.find(item => item[matchField] === targetKey);
+
+            if (match) {
+                // 4️⃣ Merge fields with conditional rules
+                let mergedRow = { ...row };
+
+                for (const [targetField, sourceField] of Object.entries(fieldMap)) {
+                    // Check if any rule applies
+                    const rule = rules.find(r => r.when(row, targetField, match));
+                    if (rule) {
+                        mergedRow[targetField] = rule.apply(row, targetField, match);
+                    } else {
+                        mergedRow[targetField] = match[sourceField];
+                    }
+                }
+
+                // 5️⃣ Update DB using sendRequestNew
+                const ObjRowData = JSON.stringify(mergedRow);
+                return sendRequestNew("Update", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+            }
+
+            return Promise.resolve("No match");
+        });
+
+        const results = await Promise.all(promises);
+        console.log("Sync results:", results);
+        return results;
+    } catch (error) {
+        console.error("Error syncing DB:", error);
+        throw error;
+    }
+};
+
+// Source query
+let querySource = "Select * From ExtraOnLine.dbo.EXPREIM Where Left(HeadRefNo,1) = 'T'";
+
+// Target query
+let queryTarget = "Select * From ExtraOnLine.dbo.ExpenseRequests Where ExpGroupCode = '" + aaERTYPE + "'";
+
+// Conditional rules
+const rules = [
+    {
+        when: (row, targetField, match) => targetField === "HODApprovedDate" && row.ERStatus === "Confirmed (finished)",
+        apply: (row, targetField, match) => match.ReqDate
+    }
+];
+
+// Run sync
+// await syncDatabases(querySource, queryTarget, "HeadRefNo", {
+//   HODApprovedDate: "ERODate02",
+//   ERStatus: "ERStatus",
+//   Vendor02Note: "Vendor02Note"
+// }, rules);
+
+
+showPreviousYearPopup(function (aNowDte) {
+    //console.log("Selected date: " + aNowDte);
+
+    var aaPFDMI = isLocalHost();
+    var afqrFull = "pageID='" + aaPXIXD + "' "
+    var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
+    var afsettings = {
+        "url": afURL,
+        "method": "POST",
+        "timeout": 0,
+        "headers": { "Content-Type": "application/json" },
+        "data": JSON.stringify({ "@": btoa(afqrFull) }), //"pageID='Resigned'"
+    };
+    $.post(afsettings, function (e) { }) //var jqxhr = 
+        .done(function (e) {
+            aObjMPage = e;
+            //var aaKeyField = aObjMPage[0].PrimaryKey;
+            let aaTBKey = aObjMPage[0].TBKey;
+
+            // $(function () { // TOP PRG
+            $(() => {
+                var aDatabasea = "ExtraOnLine.dbo.TaskControl";
+                var aKeyField = "TaskGroup";
+                var aKeyIDa = aaPXIXD; //"main"; //aaPXIXD;
+                var axFieldSelected = "IDNO,TaskName,TaskProgram,TaskGroup";
+                var aVARs = {};
+                var aArrays = {};
+                var aObjects = {};
+                LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
+                    .then(result => {
+                        if (!Array.isArray(result)) {
+                            console.error("Unexpected result format:", result);
+                            return;
+                        }
+                        result.forEach(item => {
+                            let aMatch = item.TaskName.match(/\[(.*?)\]/);
+                            if (!aMatch) return;
+
+                            let taskProgram = item.TaskProgram.replace(/`/g, "'");
+
+                            if (item.TaskName.includes("{ARRAY}")) {
+                                aArrays[aMatch[1]] = taskProgram
+                                    .split("\n")
+                                    .map(line => line.trim())
+                                    .map(line => (line === "" ? "" : isNaN(line) ? line : +line));
+
+                            } else if (item.TaskName.includes("{T2O}")) {
+                                let lines = taskProgram.split("\n");
+                                aObjects[aMatch[1]] = lines
+                                    .map(line => {
+                                        line = line.trim().replace(/,$/, "");
+                                        line = line.replace(/(\w+):/g, '"$1":').replace(/:\s*([\w]+)/g, ': "$1"');
+                                        return JSON.parse(line);
+                                    })
+                                    .map(obj => {
+                                        for (let key in obj) {
+                                            if (key.includes("amt") && typeof obj[key] === "string") {
+                                                obj[key] = +obj[key];
+                                            }
+                                        }
+                                        return obj;
+                                    });
+                            } else if (item.TaskName.includes("{OBJ}")) {
+                                aObjects[aMatch[1]] = taskProgram
+                                    .split("\n")
+                                    .reduce((obj, line) => {
+                                        let [key, value] = line.trim().split(":").map(part => part.trim());
+                                        if (key && value !== undefined) obj[key] = isNaN(value) ? value : +value;
+                                        return obj;
+                                    }, {});
+
+                            } else {
+                                aVARs[aMatch[1]] = item.TaskName.includes("{num}") ? +taskProgram : taskProgram;
+                            }
+                        });
+                        // const arSTATUS = aArrays.arSTATUS;
+                        // const arSTANOTE = aArrays.arSTANOTE;
+                        // console.log(aArrays.ACONFIRM[0])
+                        // console.log(aArrays.ACONFIRM[1])
+                        //alert(aArrays.ADATERNG[0])
+                        //alert(aArrays.ADATERNG[1])
+                        var aaPFDMI = isLocalHost();
+                        var aaXToX = localStorage["aaXXoX"];
+
+                        var aaOnInitExpGroupCode = "700"
+                        var aaOnInitExpGroupDesc = "Reveiving"
+                        var aaOnInitAccCode = "4141000002" //"55101150003"
+                        var aaOnInitAccDesc = "Sundry Income NON VATABLE" // "Other"
+                        var aaLeftL = "T"
+                        //var acData;
+
+                        //let axqr2S = "Where EXPGroup = '400' " //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
+                        let axqr2S = " Where Left(HeadRefNo,1) = '" + aaLeftL + "'"
+                        let axFieldSelected = "*" //HeadRefNo,ID
+                        //let axFieldSelected = "ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE,EXPGroup,EXPDesc"
+                        let axFullBody = "Select " + axFieldSelected + " From " + "ExtraOnLine.dbo.EXPREIM " + axqr2S; //alert(aFullBody)
+
+                        fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(axFullBody) }), redirect: "follow" })
+                            .then(response => response.json())
+                            //
+                            .then(acData => {
+                                var aaSubGroup01 = acData; /// update after this
+                                console.log("SubGroup01:", aaSubGroup01); // interactive view
+                                //alert(JSON.stringify(aaSubGroup01, null, 2)); // readable popup
+                                // update database
+
+
+                                let aDivisionC = localStorage["asDIV"];
+                                let aDivS = "Where ApproverCode = 'HOD' AND ApproveToDivision = '" + aDivisionC + "' Order By LRange02"
+                                let aFieldSelected = "ApproveToDivision,ApproverName,ApproverEmail,LRange01,LRange02"
+                                let aFullBody = "Select " + aFieldSelected + " From " + "ExtraOnLine.dbo.Approver " + aDivS; //alert(aFullBody)                                           
+
+                                fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBody) }), redirect: "follow" })
+                                    .then(response => response.json())
+                                    //
+                                    .then(hData => {
+
+                                        var aaHODApprover = hData;
+                                        if (jQuery.type(aaHODApprover[0]) === "undefined") {
+                                            DevExpress.ui.dialog.alert({
+                                                //showTitle: false,
+                                                position: { offset: "-130 -310" },
+                                                //position: { my: "top",  at: "top", of: "window"  },
+                                                title: "ERROR SETTING!!",
+                                                messageHtml: "<div>Un-completed system setup, please contact Administrator <br></div>"
+                                            });
+                                            System.exit(0);
+                                        }
+                                        var aaHODAppName = aaHODApprover[0].ApproverName
+                                        var aaHODAppEmail = aaHODApprover[0].ApproverEmail //.LRange02
+                                        var aaHODRAnge02 = aaHODApprover[0].LRange02
+                                        // View Limit Summary //let aaTT = if today = 20/11/2022
+                                        var aYearNum = aNowDte.getFullYear()  // 2022
+                                        var aMonthNum = aNowDte.getMonth() // 10
+                                        var aYearStr = aYearNum.toString() // 2022
+                                        var aYearNumS = aNowDte.getFullYear()
+                                        var aYearNumL = aNowDte.getFullYear()
+                                        var aYearStrS = "";
+                                        var aYearStrL = "";
+                                        //---- Year for Medical 5/2021 - 4/2022 
+                                        if (aMonthNum === 0 || aMonthNum === 1 || aMonthNum === 2 || aMonthNum === 3) {
+                                            aYearNumS = aYearNum - 1;
+                                            aYearStrS = aYearNumS.toString(); // 21
+                                        } else {
+                                            aYearStrS = aYearNum.toString(); // 22**
+                                        }
+                                        if (aMonthNum === 0 || aMonthNum === 1 || aMonthNum === 2 || aMonthNum === 3) {
+                                            aYearNumL = aYearNum;
+                                            aYearStrL = aYearNumL.toString(); // 22
+                                        } else {
+                                            aYearNumL = aYearNum + 1;
+                                            aYearStrL = aYearNumL.toString(); // 23**
+                                        }
+                                        var aFilterT = aYearStrS + aArrays.ADATERNG[0]  //'/05/01'  //2022/05/01
+                                        var aFilterT2 = aYearStrS + aArrays.ADATERNG[1] //aYearStrL + '/04/30'  //2023/04/01 aArrays.ADATERNG[0]
+
+                                        //---- LOAD DATA to json ----- // END
+
+                                        var aMMaMx = localStorage["MMaMx"];
+                                        var aRRgRs = aMMaMx.split("0");
+                                        var aDDeDx = aRRgRs[0];
+                                        var aRrgSx = aRRgRs[1];
+                                        if (jQuery.type(aRrgSx) === "undefined") {
+                                            aRrgSx = "377B";
+                                        }
+                                        let nDataPos = 1;
+                                        let nExcelPos = 2;
+                                        let nPDFPos = 3;
+                                        let nRPTPos = 4;
+                                        var arDataC = aRolesAction(aRrgSx, nDataPos, 1);
+                                        var arDataU = aRolesAction(aRrgSx, nDataPos, 2);
+                                        if (arDataU === 1) {
+                                            var aUpdateText = "Update";
+                                            var aSaveVisible = 1;
+                                            var aCancelText = "Cancel";
+                                            var aCancelicon = "close";
+                                            var aCancelType = "danger";
+                                        } else {
+                                            var aUpdateText = "xxx";
+                                            var aSaveVisible = 0;
+                                            var aCancelText = "EXIT";
+                                            var aCancelicon = "fas fa-sign-out-alt";
+                                            var aCancelType = "success";
+                                        }
+                                        var arDataD = aRolesAction(aRrgSx, nDataPos, 3);
+                                        var arExcelEx = aRolesAction(aRrgSx, nExcelPos, 2);
+                                        var arPDFEx = aRolesAction(aRrgSx, nPDFPos, 2);
+                                        var aNowDatev = new Date()
+
+                                        var asFullName = localStorage["asFTNAME"];
+                                        var asStaffID = $.trim(localStorage["asSTFID"]);
+                                        var asDepartment = localStorage["asDEPT"];
+                                        var asDivision = localStorage["asDIV"];
+                                        var asStaffEmail = localStorage["asEMAIL"];
+
+                                        var aqrFull = "ExpGroupCode = '" + aaERTYPE + "'";//" and " + "Department = '" + asDepartment + "'" // Department = asDepartment ?"PayToCode = '" + asStaffID + "'" scopes based permission (View Only Login Name)  ExpensesCode LIKE aaOnInitAccCode
+                                        var aurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all'
+                                        var aSettings = { "url": aurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": btoa(aqrFull) }), };
+                                        var aaAllData;
+
+                                        $("#gridContainer").dxDataGrid({
+
+                                            dataSource: new DevExpress.data.CustomStore({
+                                                key: "REFNO",
+                                                loadMode: "omit",
+
+                                                load: function () { return $.post(aSettings).done(function (resp) { aaAllData = resp }); },   //console.log(resp);
+
+                                                insert: function (values) {
+                                                    if (aaEnt) {
+                                                        var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                                                        var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                    }
+                                                    else {
+                                                        var ObjRowData = JSON.stringify(values);
+                                                    }
+                                                    sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                },
+                                                update: function (key, values) {
+                                                    //console.log( aaKeyField );
+                                                    console.log(values)
+                                                    var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                                                    var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                    sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                },
+                                                remove: function (key) {
+                                                    var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                                                    var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                                                    sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                }
+                                            }),
+
+                                            allowColumnReordering: true,
+                                            allowColumnResizing: true,
+                                            columnMinWidth: 10,
+                                            columnChooser: {
+                                                enabled: true,  //false // true
+                                                mode: "select",
+                                            },
+                                            showBorders: true,
+                                            sorting: {
+                                                mode: "multiple"
+                                            },
+                                            selection: {
+                                                mode: "single" //'multiple'
+                                            },
+                                            groupPanel: {
+                                                visible: false, //false //false // can't select other group
+                                            },
+                                            filterRow: {
+                                                visible: true,
+                                                applyFilter: "auto"
+                                            },
+                                            headerFilter: {
+                                                visible: true
+                                            },
+                                            filterPanel: {
+                                                visible: true
+                                            },
+                                            filterBuilderPopup: {
+                                                position: {
+                                                    of: window, at: 'top', my: 'top', offset: { y: 5 },
+                                                },
+                                                height: 500,
+                                                width: 1000,
+                                            },
+                                            filterValue: [['ReqDate', '>=', aFilterT], "and", ['ReqDate', '<=', aFilterT2], "and", ['ERStatus', 'contains', 'finished']],  //     [Req.Date] Is any of('2022')                                   
+                                            grouping: {
+                                                autoExpandAll: true,
+                                            },
+                                            searchPanel: {
+                                                visible: true
+                                            },
+                                            paging: {
+                                                pageSize: 10
+                                            },
+                                            pager: {
+                                                showPageSizeSelector: true,
+                                                allowedPageSizes: [10, 20, 50],
+                                                showNavigationButtons: true,
+                                                showInfo: true
+                                            },
+                                            showBorders: true,
+                                            groupPaging: true,
+                                            showColumnLines: true,
+                                            showRowLines: true,
+                                            rowAlternationEnabled: true, //true,
+                                            wordWrapEnabled: true,
+                                            // Export to Excel 		
+                                            export: {
+                                                enabled: arExcelEx,
+                                                allowExportSelectedData: true
+                                            },
+                                            onExporting: function (e) {
+                                                const workbook = new ExcelJS.Workbook();
+                                                const worksheet = workbook.addWorksheet('DATA');
+                                                DevExpress.excelExporter.exportDataGrid({
+                                                    worksheet: worksheet,
+                                                    component: e.component
+                                                }).then(function () {
+                                                    workbook.xlsx.writeBuffer().then(function (buffer) {
+                                                        saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DECLARATION' + '.xlsx');
+                                                    });
+                                                });
+                                                e.cancel = true;
+                                            },
+                                            onEditingStart: function (e) {
+                                                grid.option("editing.popup.title", "Editing");
+                                            },
+                                            onInitNewRow: function (e) {
+                                                //e.component.__addingStart = true; 
+                                                //gridContainer.option("editing.popup.title", "Adding Expenses Reimbursement");
+                                                let aaID = 1
+                                                let axRunRun = aGetDateRef("I");
+                                                let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                e.data.ID = aaID
+                                                e.data.HeadRefNo = axRunRun
+                                                e.data.REFNO = axLineNo
+                                                e.data.PayToCode = asStaffID
+                                                e.data.PayToName = asFullName
+                                                e.data.Department = asDepartment
+                                                e.data.Division = asDivision
+                                                e.data.ERODesc06 = asStaffEmail
+                                                e.data.ReqDate = new Date()
+                                                e.data.ExpensesCode = "" //aaOnInitAccCode
+                                                e.data.ExpensesDescription = aaOnInitAccDesc ////aaOnInitAccDesc
+                                                e.data.Currency = "THB"
+                                                e.data.Xrate = 1
+                                                e.data.ExpGroupCode = aaOnInitExpGroupCode
+                                                e.data.ExpGroupDescEng = aaOnInitExpGroupDesc
+                                                e.data.ERStatus = "Register"
+                                                e.data.ERORefNo3 = ""
+                                                e.data.EROCheck01 = true
+                                                e.data.EROCheck02 = true
+                                                e.data.NeedPayment = false
+                                                e.data.RefundedAmount = 0
+                                                e.data.LimitedAmount = 0 //aaLTotal // Fleet Card
+                                            },
+                                            onEditorPreparing: function (e) {
+                                                if (e.parentType === "dataRow" && arDataU === 0) {
+                                                    e.editorOptions.disabled = true;
+                                                } else {     //PSPvNO,PSPvDate
+                                                    if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERStatus" || e.dataField === "PSPvNO" || e.dataField === "PSPvDate" || e.dataField === "LocalAmount" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department")) {
+                                                        e.editorOptions.disabled = true;
+                                                    }
+                                                }
+                                            },
+                                            onCellPrepared: function (e) {
+                                                if (e.rowType === "data") {
+                                                    e.cellElement.css("vertical-align", "top");
+                                                }
+                                            },
+                                            //
+                                            // Editing
+                                            editing: {
+                                                mode: "cell", // popup , row, cell (click to edit)
+                                                useIcons: true,
+                                                allowUpdating: false,
+                                                allowDeleting: arDataD,
+                                                allowAdding: 0, //arDataC, //arDataC, false, 
+                                                popup: {
+                                                    title: "Declaration Info",
+                                                    fullScreen: false,
+                                                    showTitle: true,
+                                                    width: 1200,
+                                                    height: 650,
+                                                    position: {
+                                                        my: "top",
+                                                        at: "top",
+                                                        of: "window"
+                                                    },
+                                                    onContentReady: function (e) {
+                                                        e.component.option('toolbarItems[0].visible', aSaveVisible);
+                                                        e.component.option('toolbarItems[0].options.icon', 'save');
+                                                        e.component.option('toolbarItems[0].options.type', 'success');
+                                                        e.component.option('toolbarItems[1].options.text', aCancelText);
+                                                        e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                                                        e.component.option('toolbarItems[1].options.type', aCancelType);
+                                                    }
+                                                },
+
+                                            },
+                                            // column list
+                                            columns: [
+                                                {
+                                                    type: "buttons",
+                                                    showInColumnChooser: false,
+                                                    width: 40,
+                                                    buttons: [// Edit Record
+                                                        {
+                                                            hint: "Edit",
+                                                            icon: "fas fa-pen",
+                                                            visible: false,
+                                                            // visible: function (e) {
+                                                            //     return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing; //&& e.row.data.Confirmed === false
+                                                            // },
+                                                            onClick: function (e) {
+                                                                aPopUpAddForm(e.row.data.HeadRefNo, e.row.data, e.row.data.ReqDate);
+                                                                $("#gridContainer").dxDataGrid("instance").refresh();
+                                                            }
+                                                        },
+                                                        {
+                                                            hint: "view",
+                                                            icon: "fas fa-search",
+                                                            visible: true,
+                                                            visible: function (e) {
+                                                                return (e.row.data.ID === 1 && e.row.data.Confirmed === true) //return !e.row.isEditing; //&& e.row.data.Confirmed === false && e.row.data.Confirmed === true
+                                                            },
+                                                            onClick: function (e) {
+                                                                aPopUpAddForm(e.row.data.HeadRefNo, e.row.data, e.row.data.ReqDate, true);
+                                                                $("#gridContainer").dxDataGrid("instance").refresh();
+                                                            }
+                                                        },
+                                                    ]
+                                                },
+                                                {
+                                                    type: "buttons",
+                                                    //caption: "Editor",
+                                                    showInColumnChooser: false,
+                                                    width: 92,
+                                                    visible: false,
+                                                    buttons: [
+                                                        {
+                                                            name: "edit",
+                                                            visible: function (e) { return (e.row.data.Confirmed === false) }, //aEditDelIcon //
+                                                        },
+                                                        {
+                                                            name: "delete",
+                                                            visible: function (e) { return (e.row.data.Confirmed === false) }, //aEditDelIcon //
+                                                        },
+                                                    ]
+                                                },
+                                                {
+                                                    dataField: "HeadRefNo",
+                                                    caption: "REF NO",
+                                                    dataType: "string",
+                                                    sortOrder: "desc",
+                                                    //groupIndex: 1,
+                                                    width: 110,
+                                                },
+                                                {
+                                                    dataField: "ID",
+                                                    sortOrder: "asc",
+                                                    caption: "NO",
+                                                    dataType: "string",
+                                                    editorOptions: { width: 40 },
+                                                    width: 40,
+                                                    visible: false,
+                                                    showInColumnChooser: false,
+                                                },
+                                                {
+                                                    dataField: "Department", //ReqDate
+                                                    caption: "Dept.",
+                                                    dataType: "dxTextBox",
+                                                    //groupIndex: 0,
+                                                    editorOptions: { width: 100 },
+                                                    width: 80,
+                                                },
+                                                {
+                                                    dataField: "ReqDate", //ReqDate
+                                                    caption: "Req. Date",
+                                                    dataType: "date",
+                                                    format: "dd/MM/yyyy",
+                                                    editorOptions: { width: 100 },
+                                                    //validationRules: [{ type: "required" }],
+                                                    width: 100,
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ERODate01", //ReqDate
+                                                    caption: "Date",
+                                                    dataType: "date",
+                                                    format: "dd/MM/yyyy",
+                                                    editorOptions: { width: 100 },
+                                                    //validationRules: [{ type: "required" }],
+                                                    width: 100,
+                                                    visible: false,
+                                                    showInColumnChooser: false,
+                                                },
+                                                {
+                                                    dataField: "PayToName",
+                                                    caption: "Associate Name", //Name
+                                                    dataType: "string",
+                                                    width: 180,
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "EROCode01",
+                                                    caption: "Type of Gift & Entertain",
+                                                    dataType: "string",
+                                                    editorType: "dxSelectBox",
+                                                    width: 150,
+                                                    editorOptions: {
+                                                        width: 150,
+                                                        dataSource: aaTypeOfGift,
+                                                        displayExpr: function (item) { return item && item.code + " (" + item.thaname + ")"; },
+                                                        valueExpr: "code"
+                                                    },
+                                                    visible: true
+                                                },
+                                                {
+                                                    dataField: "ERODesc01",
+                                                    caption: "Details of gift or entertainment",
+                                                    dataType: "string",
+                                                    editorType: "dxTextArea",
+                                                    width: 200,
+                                                    editorOptions: { width: 200, height: 80 }, //, height: 80 
+                                                    //validationRules: [{ type: "required" }],
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ERODesc02",
+                                                    caption: "Purpose",
+                                                    dataType: "string",
+                                                    editorType: "dxTextArea",
+                                                    width: 200,
+                                                    height: 80,
+                                                    editorOptions: { width: 200, height: 80 }, //, height: 80 
+                                                    //validationRules: [{ type: "required" }],
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ERODesc03",
+                                                    caption: "From/With Whom", //Other Lockton Employees present?
+                                                    dataType: "string",
+                                                    cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                    editorType: "dxTextArea",
+                                                    width: 200,
+                                                    height: 180,
+                                                    editorOptions: { width: 200, height: 220 },
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ERODesc04",
+                                                    caption: "Other Lockton Employees present", //Other Lockton Employees present?
+                                                    dataType: "string",
+                                                    cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                    editorType: "dxTextArea",
+                                                    width: 150,
+                                                    height: 180,
+                                                    editorOptions: { width: 150, height: 220 },
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ERORefNo1",
+                                                    caption: "Given/Receive", //Associate Name & Signature
+                                                    dataType: "string",
+                                                    editorType: "dxSelectBox",
+                                                    width: 80,
+                                                    editorOptions: {
+                                                        width: 80,
+                                                        dataSource: [{ code: "Given" }, { code: "Receive" }],
+                                                        displayExpr: "code",
+                                                        //displayExpr: function (item) { return item && item.code + " (" + item.thaname + ")"; },
+                                                        valueExpr: "code"
+                                                    },
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ERODesc05",
+                                                    caption: "Vendor Name ", //Associate Name & Signature
+                                                    dataType: "string",
+                                                    cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                    editorType: "dxTextArea",
+                                                    width: 120,
+                                                    height: 180,
+                                                    editorOptions: { width: 120, height: 220 },
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "EROAmount1",
+                                                    caption: "Approximate Value",
+                                                    dataType: "number",
+                                                    format: { type: "fixedPoint", precision: 2 },
+                                                    editorType: "dxNumberBox",
+                                                    width: 150,
+                                                },
+                                                {
+                                                    dataField: "EROAmount2",
+                                                    caption: "Head Count",
+                                                    dataType: "number",
+                                                    format: { type: "fixedPoint", precision: 0 },
+                                                    editorType: "dxNumberBox",
+                                                    width: 80,
+                                                },
+                                                {
+                                                    dataField: "Amount",
+                                                    caption: "Average Value",
+                                                    dataType: "number",
+                                                    format: { type: "fixedPoint", precision: 2 },
+                                                    editorType: "dxNumberBox",
+                                                    editorOptions: { format: "#,##0.00", width: 150 },
+                                                    width: 150,
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "Vendor02Note",
+                                                    caption: "HOD",
+                                                    editorType: "dxTextBox",
+                                                    width: 100,
+                                                    editorOptions: { readOnly: true, width: 180 },
+                                                    visible: false,
+                                                },
+                                                {
+                                                    caption: "HOD",
+                                                    dataType: "string",
+                                                    width: 150,
+                                                    calculateCellValue: (rowData) => {
+                                                        const target = "T" + rowData.HeadRefNo?.slice(-10);
+                                                        const match = aaSubGroup01.find(item => item.HeadRefNo === target);
+
+                                                        if (match && match.Vendor02Note) {
+                                                            // Convert ISO string to Date object
+                                                            return (match.Vendor02Note);
+                                                         } else if (rowData.ERStatus.includes("Confirmed (finished)")) {
+                                                             return (rowData.Vendor02Note);
+                                                        }
+                                                        return null;
+                                                    },
+                                                },
+                                                {
+                                                    caption: "HOD Approved Date",
+                                                    dataType: "date",
+                                                    width: 150,
+                                                    calculateCellValue: (rowData) => {
+                                                        const target = "T" + rowData.HeadRefNo?.slice(-10);
+                                                        const match = aaSubGroup01.find(item => item.HeadRefNo === target);
+
+                                                        if (match && match.ERODate02) {
+                                                            // Convert ISO string to Date object
+                                                            return new Date(match.ERODate02);
+                                                        } else if (rowData.ERStatus.includes("Confirmed (finished)")) {
+                                                            return new Date(rowData.ReqDate);
+                                                        }
+                                                        return null;
+                                                    },
+                                                    format: "dd/MM/yyyy" // dxDataGrid will now show 22/10/2025
+                                                },
+                                                {
+                                                    dataField: "HODApprovedDate", //ReqDate
+                                                    caption: "HOD Approved Date",
+                                                    dataType: "date",
+                                                    format: "dd/MM/yyyy",
+                                                    editorOptions: { width: 100 },
+                                                    width: 100,
+                                                    visible: false,
+                                                    showInColumnChooser: true,
+                                                },
+                                                {
+                                                    dataField: "ERStatus",
+                                                    caption: "Status",
+                                                    dataType: "string",
+                                                    width: 250,
+                                                    visible: true,
+                                                },
+                                                {
+                                                    dataField: "ConfirmedDate",
+                                                    caption: "Confirmed Date",
+                                                    dataType: "date",
+                                                    format: "dd/MM/yyyy",
+                                                    width: 100,
+                                                    visible: false,
+                                                },
+                                            ],
+                                            // summary
+                                            summary: {
+                                                recalculateWhileEditing: true,
+                                                skipEmptyValues: false,
+                                                totalItems: [
+                                                    {
+                                                        column: "REFNO",
+                                                        summaryType: "count",
+                                                        /*
+                                                        summaryType: "max",
+                                                        valueFormat: "currency",
+                                                        showInGroupFooter: false,
+                                                        alignByColumn: true      
+                                                        */
+                                                        displayFormat: "{0} Items",
+                                                    },
+                                                    /*
+                                                    {
+                                                        column: "Amount",
+                                                        summaryType: "sum",
+                                                        valueFormat: "#,##0.00",
+                                                        displayFormat: "{0}",
+                                                    },
+                                                    {
+                                                        column: "LocalAmount",
+                                                        summaryType: "sum",
+                                                        //          summaryType: "max",
+                                                        valueFormat: "#,##0.00", //"currency",
+                                                        //          showInGroupFooter: false,
+                                                        //          alignByColumn: true            
+                                                        displayFormat: "{0}",
+                                                    },
+                                                    */
+                                                    {
+                                                        column: "Amount",
+                                                        summaryType: "sum",
+                                                        //summaryType: "max",
+                                                        valueFormat: "#,##0.00", //"currency",
+                                                        //showInGroupFooter: false,
+                                                        //alignByColumn: true            
+                                                        displayFormat: "{0}",
+                                                    },
+                                                ],
+                                                groupItems: [
+                                                    {
+                                                        column: "ID",
+                                                        summaryType: "count",
+                                                        displayFormat: "{0} Items",
+                                                    },
+
+                                                    {
+                                                        column: "ERORefNo4",
+                                                        summaryType: "count",
+                                                        showInGroupFooter: true,
+                                                        displayFormat: "Total {0} Items",
+                                                    },
+                                                    /*{
+                                                        column: "Amount",
+                                                        summaryType: "sum",
+                                                        valueFormat: "#,##0.00",
+                                                        showInGroupFooter: true,
+                                                        alignByColumn: true,
+                                                        displayFormat: "{0}",
+                                                    },
+                                                    {
+                                                        column: "LocalAmount",
+                                                        summaryType: "sum",
+                                                        valueFormat: "#,##0.00",
+                                                        showInGroupFooter: true,
+                                                        alignByColumn: true,
+                                                        displayFormat: "{0}",
+                                                    },*/
+                                                    {
+                                                        column: "RefundedAmount",
+                                                        summaryType: "sum",
+                                                        valueFormat: "#,##0.00",
+                                                        showInGroupFooter: true,
+                                                        alignByColumn: true,
+                                                        displayFormat: "{0}",
+                                                    },
+                                                ],
+                                            },
+                                            // Tool Bar
+                                            onToolbarPreparing: function (e) {
+                                                var dataGrid = e.component;
+                                                e.toolbarOptions.items.unshift(
+
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        //type: "success",
+                                                        options: {
+                                                            icon: "fas fa-table",
+                                                            text: 'Pivot',
+                                                            type: "default",
+                                                            stylingMode: "contained", //"outlined",
+                                                            width: 140,
+                                                            onClick: function (e) {
+                                                                aPivotPopUp(); //e.data
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        options: {
+                                                            icon: "help", //"fas fa-info",
+                                                            text: "help",
+                                                            hing: "help",
+                                                            //type: "default",
+                                                            //stylingMode: "contained", // "outlined" contained
+                                                            onClick: function () {
+                                                                aPopupHelp("HELP", aVARs.HELP01) //"./images/All Slide-Training Expense Reimbursement System.pdf#view=FitH" //"./Help.html" "https://cbsdev2.locktonwattana.com/xol/index.html"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        visible: true,
+                                                        options: {
+                                                            hint: "Excel Report using Excel Template",
+                                                            icon: "exportxlsx",
+                                                            text: "Excel Report",
+                                                            onClick: async function () {
+                                                                try {
+                                                                    const grid = $("#gridContainer").dxDataGrid("instance");
+                                                                    const ds = grid.getDataSource();
+                                                                    const store = ds.store();
+
+                                                                    const combinedFilter = grid.getCombinedFilter(true) || null;
+                                                                    const sort = ds.sort?.();
+                                                                    const group = ds.group?.();
+
+                                                                    let allData = await store.load({
+                                                                        filter: combinedFilter,
+                                                                        sort,
+                                                                        group,
+                                                                        requireTotalCount: false
+                                                                    });
+
+                                                                    if (!allData?.length) {
+                                                                        allData = grid.getVisibleRows().map(r => r.data);
+                                                                    }
+
+                                                                    if (!allData?.length) {
+                                                                        alert("ไม่มีข้อมูลสำหรับส่งออก");
+                                                                        return;
+                                                                    }
+
+                                                                    // ✅ อัปเดต HODApprovedDate ก่อน export
+                                                                    allData = updateHODApprovedDate(allData, aaSubGroup01);
+                                                                    // ✅ แปลง allData ให้เหลือเฉพาะ field ที่ต้องการ
+                                                                    const slimData = allData.map(row => ({
+                                                                        HeadRefNo: row.HeadRefNo,
+                                                                        Vendor02Note: row.Vendor02Note,
+                                                                        HODApprovedDate: row.HODApprovedDate
+                                                                    }));
+
+                                                                    // ✅ Alert ข้อมูลที่เลือกแล้ว
+                                                                    //alert("Selected Data:\n" + JSON.stringify(slimData, null, 2));
+                                                                    // ✅ Alert ตรวจสอบข้อมูล
+                                                                    //alert("AllData:\n" + JSON.stringify(allData, null, 2));
+                                                                    console.table(allData);
+
+                                                                    await exportReport(
+                                                                        allData,
+                                                                        combinedFilter,
+                                                                        aArrays.EXCELTEMP[0],
+                                                                        aArrays.EXCELTEMP[1]
+                                                                    );
+                                                                } catch (err) {
+                                                                    alert("Export failed: " + err.message);
+                                                                }
+                                                            }
+
+                                                        }
+                                                    },
+                                                    { //Not use
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        visible: false,
+                                                        options: {
+                                                            hint: "Excel Report using Excel Template",
+                                                            icon: "exportxlsx",
+                                                            text: "Excel Report",
+                                                            onClick: async function (e) {
+                                                                try {
+                                                                    const grid = e.component;
+                                                                    const ds = grid.getDataSource();
+                                                                    const store = ds.store();
+
+                                                                    // 1) รวม filter ที่ผู้ใช้ตั้ง
+                                                                    const combinedFilter = grid.getCombinedFilter(true) || null;
+
+                                                                    // 2) sort/group ให้ตรงกับ grid
+                                                                    const sort = ds.sort && ds.sort();
+                                                                    const group = ds.group && ds.group();
+
+                                                                    // 3) โหลดข้อมูลทั้งหมดที่ match filter
+                                                                    let allData = await store.load({
+                                                                        filter: combinedFilter,
+                                                                        sort: sort || undefined,
+                                                                        group: group || undefined,
+                                                                        requireTotalCount: false
+                                                                    });
+                                                                    //alert(allData)
+                                                                    // 4) fallback ถ้า store ว่างแต่ grid มีข้อมูล
+                                                                    if (!allData || !allData.length) {
+                                                                        const visibleData = grid.getVisibleRows().map(r => r.data);
+                                                                        allData = visibleData;
+                                                                    }
+
+                                                                    if (!allData || !allData.length) {
+                                                                        alert("ไม่มีข้อมูลสำหรับส่งออก");
+                                                                        return;
+                                                                    }
+                                                                    // calculateCellValue: (rowData) => {
+                                                                    //     const target = "T" + rowData.HeadRefNo?.slice(-10);
+                                                                    //     const match = aaSubGroup01.find(item => item.HeadRefNo === target);
+
+                                                                    //     if (match && match.ERODate02) {
+                                                                    //         // Convert ISO string to Date object
+                                                                    //         return new Date(match.ERODate02);
+                                                                    //     } else if (rowData.ERStatus.includes("Confirmed (finished)")) {
+                                                                    //         return new Date(rowData.ReqDate);
+                                                                    //     }
+                                                                    //     return null;
+                                                                    // },
+                                                                    // 5) preprocess → เติม HODApprovedDate ลงไป
+                                                                    const enrichedData = allData.map(row => {
+                                                                        const target = "T" + row.HeadRefNo?.slice(-10);
+                                                                        const match = aaSubGroup01.find(item => item.HeadRefNo === target);
+
+                                                                        let hodDate = null;
+                                                                        if (match && match.ERODate02) {
+                                                                            hodDate = new Date(match.ERODate02);
+                                                                        } else if (row.ERStatus?.includes("Confirmed (finished)")) {
+                                                                            hodDate = new Date(row.ReqDate);
+                                                                        }
+
+                                                                        const hodDateStr = hodDate ? hodDate.toLocaleDateString("en-GB") : "";
+
+                                                                        return {
+                                                                            ...row,
+                                                                            HODApprovedDate: hodDateStr
+                                                                        };
+                                                                    });
+                                                                    // 👇 Alert enrichedData เพื่อดูค่าที่ได้
+                                                                    alert(JSON.stringify(enrichedData, null, 2));
+                                                                    // 6) เรียก custom exportReport
+                                                                    //await exportReport(enrichedData, combinedFilter, aArrays.EXCELTEMP[0], aArrays.EXCELTEMP[1]);
+
+                                                                } catch (err) {
+                                                                    alert("Export failed: " + err.message);
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+
+                                                    {
+                                                        location: "before",
+                                                        visible: false,
+                                                        template: () => { return $("<div style='padding: 5px 5px;'/>") }
+                                                    },
+                                                    // {
+                                                    //     location: "before",
+                                                    //     template: () => {
+                                                    //         return $("<div />")
+                                                    //             .append(
+                                                    //                 $("<span style='font-size: 13px; font-weight: bold; color: white; background-color: Purple; border-radius: 3px; border: 0px; padding: 1px 30px; ' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                                    //                     .text(aaOnInitExpGroupDesc.toUpperCase() + " INPUT FOR"),
+                                                    //                 $("<br><center />"),
+                                                    //                 $("<i class= 'fas fa-user-circle''><span />")   //; style='color: DarkGreen;
+                                                    //                     .text(" " + $.trim(asFullName)),
+                                                    //             );
+                                                    //     }
+                                                    // },
+                                                    {
+                                                        location: "before",
+                                                        visible: false,
+                                                        template: () => { return $("<div style='padding: 5px 8px; '/>") }
+                                                    },
+
+                                                    {
+                                                        location: "before",
+                                                        visible: false,
+                                                        template: () => { return $("<div style='padding: 5px 8px; '/>") }
+                                                    },
+                                                    {
+                                                        location: "before",
+                                                        visible: false,
+                                                        template: () => { return $("<div style='padding: 5px 85px;'/>") }
+                                                    },
+
+                                                    //aPopUpAddForm
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        visible: false,
+                                                        options: {
+                                                            icon: "fas fa-plus-circle",
+                                                            text: "Add New",
+                                                            type: "success",
+                                                            stylingMode: "contained",
+                                                            onClick: () => {
+                                                                let aNewDate = new Date()
+                                                                aPopUpAddForm(1, 1, aNowDte);
+                                                            }
+                                                        }
+                                                    },
+
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        options: {
+                                                            icon: 'collapse',
+                                                            text: 'Collapse All',
+                                                            //type: "danger",
+                                                            width: 140,
+                                                            onClick: (e) => {
+                                                                var expanding = e.component.option("text") === "Expand All";
+                                                                dataGrid.option("grouping.autoExpandAll", expanding);
+                                                                e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                                                                e.component.option("icon", expanding ? "collapse" : "expand");
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        visible: arPDFEx,
+                                                        options: {
+                                                            icon: "exportpdf",
+                                                            //text: "Export to PDF",
+                                                            hint: "Export to PDF File",
+                                                            onClick: () => {
+                                                                const doc = new jsPDF();
+                                                                //doc.addFont("font/ANGSA.ttf", "angsana", "normal");
+                                                                doc.addFont("font/Prompt-ExtraLight.ttf", "Prompt", "normal"); // load thai font (in font location Google Font)
+                                                                doc.setFont("Prompt", "normal"); // set to thai font
+                                                                DevExpress.pdfExporter.exportDataGrid({
+                                                                    jsPDFDocument: doc,
+                                                                    component: dataGrid,
+                                                                    customizeCell: function (options) {
+                                                                        const { gridCell, pdfCell } = options;
+
+                                                                        //if(gridCell.rowType === 'data') {
+                                                                        //set font and font size
+                                                                        pdfCell.styles = {
+                                                                            font: 'Prompt',
+                                                                            fontSize: 10
+                                                                        }
+                                                                        //}
+                                                                    }
+                                                                }).then(function () {
+                                                                    doc.save('EXPREIM' + '.pdf');
+                                                                });
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        location: "after",
+                                                        locateInMenu: "auto",
+                                                        widget: "dxButton",
+                                                        options: {
+                                                            icon: "refresh",
+                                                            hint: "Refresh",
+                                                            onClick: () => {
+                                                                dataGrid.refresh();
+                                                            }
+                                                        }
+                                                    }
+                                                );
+                                            }
+
+                                        }).dxDataGrid("instance");
+
+                                        function apopupPeriod() {
+                                            jQuery(function ($) {
+                                                popupPeriod = $("#periodPopup").dxPopup({
+                                                    width: 480,
+                                                    height: 240,
+                                                    showTitle: true,
+                                                    title: "Select Period",
+                                                    visible: false,
+                                                    dragEnabled: false,
+                                                    closeOnOutsideClick: true,
+                                                    onShown: function () {
+                                                        // sync popup values with main date controls when showing
+                                                        if (dxFromPopup && dxToPopup) {
+                                                            dxFromPopup.option("value", dxFrom.option("value"));
+                                                            dxToPopup.option("value", dxTo.option("value"));
+                                                        }
+                                                    },
+                                                    contentTemplate: function (contentElement) {
+                                                        // create dateboxes inside the popup content
+                                                        const $container = $("<div>").css({ padding: "8px" });
+                                                        const row = $("<div>").css({ display: "flex", gap: "12px", alignItems: "flex-start" });
+                                                        const fromWrap = $("<div>").css({ display: "flex", flexDirection: "column" });
+                                                        const toWrap = $("<div>").css({ display: "flex", flexDirection: "column" });
+
+                                                        fromWrap.append($("<label>").text("From").css({ fontWeight: 600, marginBottom: "6px" }));
+                                                        fromWrap.append($("<div id='dateFromPopup_inner'>"));
+                                                        toWrap.append($("<label>").text("To").css({ fontWeight: 600, marginBottom: "6px" }));
+                                                        toWrap.append($("<div id='dateToPopup_inner'>"));
+
+                                                        row.append(fromWrap).append(toWrap);
+                                                        $container.append(row);
+
+                                                        // buttons
+                                                        const btnRow = $("<div>").css({ display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "12px" });
+                                                        const applyBtn = $("<div id='applyPeriodBtn_inner'>");
+                                                        const closeBtn = $("<div id='closePeriodBtn_inner'>");
+                                                        btnRow.append(closeBtn).append(applyBtn);
+                                                        $container.append(btnRow);
+
+                                                        contentElement.append($container);
+
+                                                        // instantiate inner dateboxes and buttons
+                                                        dxFromPopup = $("#dateFromPopup_inner").dxDateBox({
+                                                            type: "date", displayFormat: "dd/MM/yyyy", useMaskBehavior: true,
+                                                            value: dxFrom.option("value") || new Date(), calendarOptions: { firstDayOfWeek: 1 },
+                                                            onValueChanged: function (e) {
+                                                                // sync main date and reload grid
+                                                                dxFrom.option("value", e.value);
+                                                                scheduleReload();
+                                                            }
+                                                        }).dxDateBox("instance");
+
+                                                        dxToPopup = $("#dateToPopup_inner").dxDateBox({
+                                                            type: "date", displayFormat: "dd/MM/yyyy", useMaskBehavior: true,
+                                                            value: dxTo.option("value") || new Date(), calendarOptions: { firstDayOfWeek: 1 },
+                                                            onValueChanged: function (e) {
+                                                                dxTo.option("value", e.value);
+                                                                scheduleReload();
+                                                            }
+                                                        }).dxDateBox("instance");
+
+                                                        $("#applyPeriodBtn_inner").dxButton({
+                                                            text: "Apply",
+                                                            type: "success",
+                                                            onClick: function () {
+                                                                // apply values to main controls and reload immediately
+                                                                dxFrom.option("value", dxFromPopup.option("value"));
+                                                                dxTo.option("value", dxToPopup.option("value"));
+                                                                popupPeriod.hide();
+                                                                loadDatabaseData();
+                                                            }
+                                                        });
+
+                                                        $("#closePeriodBtn_inner").dxButton({
+                                                            text: "Close",
+                                                            type: "normal",
+                                                            onClick: function () {
+                                                                popupPeriod.hide();
+                                                            }
+                                                        });
+                                                    }
+                                                }).dxPopup("instance");
+                                            });
+                                        }
+
+                                        function aPivotPopUp() { //, aaHeadRefNo, taData
+                                            //console.log(aaDeptList, "inside Pivot")
+                                            //var aqrIDNo = "IDNO = '" + iData.IDNO + "'"
+                                            //var aqrStatus = "Status = 'Lapse'"
+                                            //var aaRWIDNOa = iData.IDNO
+                                            //var aaRWSfIDa = iData.STAFFID
+                                            //var aaRWSfNmea = iData.STAFFNAME.substring(0, 20)
+                                            //var aaRWDNNoa = iData.InvRefNo
+                                            //var aaRWStatusa = iData.Status
+                                            //var aaDbNmea = "SIBISDB"
+                                            //var aTableNamea = "RWFollowUp"
+                                            //var aaiHeadRef = aaHeadRefNo;
+                                            //var aaSchRef = "HeadRefNo LIKE '%" + aaHeadRefNo + "%'" // scopes based permission (View Only Login Name)
+                                            let drillDownDataSource = {};
+                                            // define the $ as jQuery for multiple uses
+                                            jQuery(function ($) {
+                                                // ...
+                                                //var gbxRateV = 1;
+                                                const popup = $("#PivotPopUp").dxPopup({
+                                                    title: "Gift/Receive Pivot",
+                                                    width: '1300px',
+                                                    position: { offset: "0 -140" }, //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: true,
+                                                    showCloseButton: false,
+                                                    showTitle: true,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+                                                    //shadingColor:"rgb(190,190,190,0.9)",
+                                                    //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                                                    //toolbarItems: [
+                                                    //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                                                    contentTemplate: function () {
+                                                        return $("<div />").append(
+                                                            $("<p><div id='aAgentPivot'></div></p>"), //acStatus
+                                                            $("<div id='popupexit' style='margin:5px;'></div></p>"),
+                                                            //$("<p><div id='Status-dxDataGrid'></div></p>"),
+                                                            //$("<p><div id='aSchxx' style='margin:5px;'></div>"), //acStatus
+                                                            //$("<div id='asave' style='margin:5px;'></div>"),
+                                                            //$("<p><div id='account-chart' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                                                            //$("<p><div id='fu-datagrida'></div></p>"),                              
+                                                        );
+                                                    },
+                                                    toolbarItems: [
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                                                        },
+                                                        /*
+                                                         {
+                                                             toolbar: "top",
+                                                             locateInMenu: 'always',
+                                                             widget: "dxButton",
+                                                             //toolbar: "bottom",
+                                                             location: "right",
+                                                             options: {
+                                                                 icon: "print",
+                                                                 //text: "Print",
+                                                                 onClick: function () {
+                                                                     window.print()
+                                                                 }
+                                                             }
+                                                         },*/
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            widget: "dxButton",
+                                                            //toolbar: "bottom",
+                                                            location: "after",
+                                                            options: {
+                                                                //text: "EXIT",
+                                                                icon: "fas fa-times",
+                                                                //type: "danger",                
+                                                                onClick: function (e) {
+                                                                    popup.hide();
+                                                                }
+                                                            }
+                                                        }]
+
+                                                }).dxPopup("instance");
+
+                                                $("#popupexit").dxButton({
+                                                    icon: "fas fa-times",
+                                                    type: "danger",
+                                                    stylingMode: "outlined",
+                                                    text: "EXIT",
+                                                    width: "120px",
+                                                    visible: true,
+                                                    onClick: function () {
+                                                        //Check if Local Amount = 0 then delete Records
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        //$("#gridContainer").dxDataGrid("instance").refresh();
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#print").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        window.print();
+                                                    }
+                                                });
+
+                                                $('#aAgentPivot').dxPivotGrid({
+                                                    allowSorting: true,
+                                                    allowFiltering: true,
+                                                    allowSortingBySummary: true,
+                                                    allowExpandAll: true,
+                                                    height: 620,
+                                                    showBorders: true,
+                                                    fieldChooser: {
+                                                        allowSearch: true,
+                                                    },
+                                                    fieldPanel: {
+                                                        visible: true,
+                                                        showFilterFields: true,
+                                                    },
+                                                    //rowHeaderLayout: 'tree',
+                                                    headerFilter: {
+                                                        allowSearch: true,
+                                                    },
+                                                    scrolling: {
+                                                        mode: 'virtual',
+                                                    },
+                                                    export: {
+                                                        enabled: true,
+                                                    },
+                                                    onCellClick(e) {
+                                                        if (e.area === 'data') {
+                                                            const pivotGridDataSource = e.component.getDataSource();
+                                                            const rowPathLength = e.cell.rowPath.length;
+                                                            const rowPathName = e.cell.rowPath[rowPathLength - 1];
+                                                            const popupTitle = `${rowPathName || 'Total'} Drill Down Data`;
+
+                                                            drillDownDataSource = pivotGridDataSource.createDrillDownDataSource(e.cell);
+                                                            salesPopup.option('title', popupTitle);
+                                                            salesPopup.show();
+                                                        }
+                                                    },
+                                                    dataSource: {
+                                                        //remoteOperations: true,
+                                                        //store: iData,
+                                                        store: new DevExpress.data.CustomStore({
+                                                            key: "IDNO",
+                                                            loadMode: "raw", //raw omit  "xmla"
+                                                            load: function () { return $.post(aSettings).done(); },
+                                                        }),
+                                                        //"HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpGroupCode,ExpGroupDescEng,Confirmed,ConfirmedDate,HODApproved,HODApprovedDate,HRApproved,HRApprovedDate,Approved,FAApprovedDate,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Currency,Xrate,TotalAmount,TotalLocalAmount,TotalReimburse,ERStatus,ReqEmail,APPEmail,APPName,LimitAmount,LimitPerTime,MaternityLimit,nRecord
+                                                        fields: [
+                                                            {
+                                                                caption: 'Name',
+                                                                dataField: 'PayToName',
+                                                                width: 200,
+                                                                dataType: "string",
+                                                                expanded: true,
+                                                                sortBySummaryField: 'NO OF ITEM',
+                                                                //sortBySummaryPath: [],
+                                                                //sortOrder: 'desc',
+                                                                area: 'row',
+                                                            },
+                                                            {
+                                                                dataField: "Department",
+                                                                caption: "Department Name",
+                                                                dataType: "string",
+                                                            },
+                                                            {
+                                                                caption: 'Req. Date',
+                                                                dataField: 'ReqDate',
+                                                                dataType: 'date',
+                                                                width: 120,
+                                                                expanded: true,
+                                                                //summaryType: 'count',
+                                                                //format: "MM/yyyy",
+                                                                //sortBySummaryField: 'NO OF ITEM',
+                                                                //sortBySummaryPath: [],
+                                                                //sortOrder: 'desc',
+                                                                //area: 'column',
+                                                            },
+                                                            {
+                                                                groupName: 'ReqDate',
+                                                                groupInterval: 'year', //['ReqDate', '>=', aFilterT], "and", ['ReqDate', '<=', aFilterT2]
+                                                                //area: 'filter', // filtering
+                                                            }, {
+                                                                groupName: 'ReqDate',
+                                                                groupInterval: 'quarter',
+                                                                //area: 'filter', // filtering
+                                                            },
+                                                            // {
+                                                            //     dataField: "ExpGroupDescEng",//"ExpensesDescription",
+                                                            //     caption: "Expenses",
+                                                            //     dataType: "string",
+                                                            //     width: 200,
+                                                            //     expanded: true,
+                                                            //     //filterValues: [null,""],
+                                                            //     //filterType: "exclude", 
+                                                            //     filterValues: ["Medical", "Fleet Card"], // Filter by date range
+                                                            //     filterType: "include",
+                                                            //     area: 'column'
+                                                            // },
+                                                            {
+                                                                dataField: "EROCode01",//"ExpensesDescription",
+                                                                caption: "Type Of Gift/Receive",
+                                                                dataType: "string",
+                                                                width: 150,
+                                                                visible: true,
+                                                                area: 'column'
+                                                            },
+                                                            {
+                                                                dataField: "ReqDate",
+                                                                caption: "Requested Date",
+                                                                dataType: "date",
+                                                                area: 'fliter', //'filter', // Placing the status field in the filter area
+                                                                // Apply filter condition here:
+                                                                filterValues: [[aFilterT, aFilterT2]], // Filter by date range
+                                                                filterType: "include",
+                                                                filter: function (date) {
+                                                                    // Ensure ReqDate is between aFilterT and aFilterT2
+                                                                    console.log("Filtering date:", date);
+                                                                    console.log("Filter range:", aFilterT, aFilterT2);
+                                                                    return date >= aFilterT && date <= aFilterT2;
+                                                                }
+                                                            },
+                                                            {
+                                                                dataField: "ERStatus",
+                                                                caption: "Status",
+                                                                dataType: "string",
+                                                                area: 'filter', // Placing the status field in the filter area
+                                                                filterValues: ["Confirmed (finished)"], // Only include records with 'FA Approved'
+                                                                filterType: "include", // Including only the specified values
+                                                            },
+                                                            {
+                                                                caption: 'NO OF ITEM',
+                                                                dataField: 'Amount',
+                                                                dataType: 'number',
+                                                                summaryType: 'count',
+                                                                format: "#,##0",
+                                                                //area: 'data',
+                                                                width: 80,
+                                                            },
+                                                            // {
+                                                            //     caption: 'Amount',
+                                                            //     dataField: 'Amount',
+                                                            //     dataType: 'number',
+                                                            //     summaryType: 'sum',
+                                                            //     format: "#,##0.00",
+                                                            //     area: 'data',
+                                                            //     width: 120,
+                                                            //     visible: false,
+                                                            // },
+                                                            {
+                                                                caption: 'Approximate Value',
+                                                                dataField: 'EROAmount1',
+                                                                dataType: 'number',
+                                                                summaryType: 'sum',
+                                                                format: "#,##0.00",
+                                                                area: 'data',
+                                                                width: 100,
+                                                            },
+                                                            {
+                                                                caption: 'Head Count',
+                                                                dataField: 'EROAmount2',
+                                                                dataType: 'number',
+                                                                summaryType: 'sum',
+                                                                format: "#,##0.00",
+                                                                area: 'data',
+                                                                width: 100,
+                                                            },
+                                                            {
+                                                                caption: 'Average Value',
+                                                                dataField: 'Amount',
+                                                                dataType: 'number',
+                                                                summaryType: 'sum',
+                                                                format: "#,##0.00",
+                                                                area: 'data',
+                                                                width: 100,
+                                                            },
+                                                        ],
+                                                    },
+                                                    onExporting(e) {
+                                                        const workbook = new ExcelJS.Workbook();
+                                                        const worksheet = workbook.addWorksheet('ERList');
+
+                                                        worksheet.columns = [
+                                                            { width: 70 }, { width: 20 }, { width: 30 }, { width: 30 }//, { width: 30 }, { width: 30 },
+                                                        ];
+
+                                                        DevExpress.excelExporter.exportPivotGrid({
+                                                            component: e.component,
+                                                            worksheet,
+                                                            topLeftCell: { row: 4, column: 1 },
+                                                            keepColumnWidths: false,
+                                                        }).then((cellRange) => {
+                                                            // Header
+                                                            const headerRow = worksheet.getRow(2);
+                                                            headerRow.height = 30;
+
+                                                            const columnFromIndex = worksheet.views[0].xSplit + 1;
+                                                            const columnToIndex = columnFromIndex + 3;
+                                                            worksheet.mergeCells(2, columnFromIndex, 2, columnToIndex);
+
+                                                            const headerCell = headerRow.getCell(columnFromIndex);
+                                                            headerCell.value = 'Expenses Reimbursement [Department]';
+                                                            headerCell.font = { name: 'Segoe UI Light', size: 22, bold: true };
+                                                            headerCell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+
+                                                            // Footer
+                                                            const footerRowIndex = cellRange.to.row + 2;
+                                                            const footerCell = worksheet.getRow(footerRowIndex).getCell(cellRange.to.column);
+                                                            footerCell.value = aaPFDMI //'https://cbsdev2.locktonwattana.com/XOL/index.html';
+                                                            footerCell.font = { color: { argb: '000000' }, italic: true }; //B6BDB4 BFBFBF
+                                                            footerCell.alignment = { horizontal: 'right' };
+                                                        }).then(() => {
+                                                            workbook.xlsx.writeBuffer().then((buffer) => {
+                                                                saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'ERListPivot.xlsx');
+                                                            });
+                                                        });
+                                                        e.cancel = true;
+                                                    },
+                                                });
+
+                                                const salesPopup = $('#sales-popup').dxPopup({
+                                                    width: 850,
+                                                    height: 600,
+                                                    contentTemplate(contentElement) {
+                                                        $('<div />')
+                                                            .addClass('drill-down')
+                                                            .dxDataGrid({
+                                                                width: 800,
+                                                                height: 500,
+                                                                columns: [
+                                                                    {
+                                                                        dataField: "IDNO",
+                                                                        caption: "IDNO",
+                                                                        //sortOrder: "asc",
+                                                                        editorOptions: { readOnly: true, width: 120 },
+                                                                        width: 120,
+                                                                    },
+                                                                    {
+                                                                        dataField: "EXPDATE",
+                                                                        caption: "Expiry Date",
+                                                                        dataType: "date",
+                                                                        format: "dd/MM/yyyy",
+                                                                        editorType: "dxDateBox",
+                                                                        editorOptions: { displayFormat: "dd/MM/yyyy", readOnly: true, width: 100 },
+                                                                        width: 100
+                                                                    },
+                                                                    {
+                                                                        dataField: "OFFICER",
+                                                                        caption: "A/Exec",
+                                                                        editorOptions: { readOnly: true, width: 80 },
+                                                                        width: 80,
+                                                                    },
+                                                                    {
+                                                                        dataField: "Premium",
+                                                                        caption: "Premium",
+                                                                        dataType: "number",
+                                                                        format: { type: "fixedPoint", precision: 2 },
+                                                                        editorOptions: { format: "#,##0.00", readOnly: true, rtlEnabled: true, width: 150 },
+                                                                        width: 150,
+                                                                    },
+                                                                    {
+                                                                        dataField: "NETINCOME",
+                                                                        caption: "Net Income",
+                                                                        dataType: "number",
+                                                                        format: { type: "fixedPoint", precision: 2 },
+                                                                        editorOptions: { format: "#,##0.00", readOnly: true, rtlEnabled: true, width: 150 },
+                                                                        width: 150,
+                                                                    },
+
+                                                                ],
+                                                            })
+                                                            .appendTo(contentElement);
+                                                    },
+                                                    onShowing() {
+                                                        $('.drill-down')
+                                                            .dxDataGrid('instance')
+                                                            .option('dataSource', drillDownDataSource);
+                                                    },
+                                                    onShown() {
+                                                        $('.drill-down')
+                                                            .dxDataGrid('instance')
+                                                            .updateDimensions();
+                                                    },
+                                                }).dxPopup('instance');
+
+                                            });
+
+                                        }
+
+                                        // Not use
+                                        $("#action-add").dxSpeedDialAction({
+                                            label: "Add",
+                                            icon: "fas fa-plus-circle",
+                                            index: 1,
+                                            position: {
+                                                offset: "-990 -950"
+                                            },
+                                            elementAttr: {
+                                                //class: "addEmpty"
+                                            },
+                                            onClick: function () {
+                                                aPopUpAddForm(1, 1, new Date());
+                                            }
+                                        }).dxSpeedDialAction("instance");
+
+
+
+                                        function aDataGridRF() {
+                                            dataGrid.refresh();
+                                        }
+
+                                        function aSearchjson(aObjArr, asID) {
+                                            return aObjArr.filter( //aaEmployee
+                                                function (data) {
+                                                    return data.ACCCODE == asID
+                                                }
+                                            );
+                                        }
+
+                                        function aSearchXjson(aObjArr, asID) {
+                                            return aObjArr.filter( //aaEmployee
+                                                function (data) {
+                                                    return data.Code == asID
+                                                }
+                                            );
+                                        }
+
+                                        const aPrint2PDF4HTML = (iData, aaHeadRefNo, aDetailHTML, aACHTML) => {
+                                            var aaiHeadRef = aaHeadRefNo;
+                                            var aaSchRef = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // scopes based permission (View Only Login Name)
+                                            var aaPFDMI = isLocalHost();
+                                            var astr = localStorage["aDXTheme"]
+                                            if (astr.includes("dark")) {
+                                                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmwhite.png' width='88'></center></div>"
+                                            } else {
+                                                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"
+                                            }
+
+                                            // define the $ as jQuery for multiple uses
+                                            //jQuery(function ($) {
+                                            $(() => {
+                                                var gbxRateV = 1;
+                                                let atopmargin = "5px";
+                                                let abodyleftm = "5px";
+                                                let abodylefts = "15px";
+                                                let aSubD = iData.ReqDate.toString();
+                                                let aSubmitD = aSubD.substring(8, 10) + "/" + aSubD.substring(5, 7) + "/" + aSubD.substring(0, 4)
+                                                //let aSubmitD =  aSubD.getFullYear() + "/" + aSubD.getMonth() + "/" + aSubD.getDate()
+                                                let atitledtl = "Travel & Entertainment Expenses Reimbursement";
+                                                let aAlertMessage = "<big>��س�Ṻ���������͡��÷������Ҵ��� ����蹹�鹨��������ö�ӡ���ԡ�� **</big>";
+                                                let arectanglehtml = "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><rect x='1' y='1' width='100' height='100' stroke='black' stroke-width='0.2' fill='none' /></svg>"
+                                                let arspace = (no) => { return "&nbsp;".repeat(no) }; //= "&nbsp;".repeat(30);
+                                                let arlineno = (nor) => { return "<br>".repeat(nor) };
+                                                var aheaderhtml = "<h4 style='text-align: left;'><img src='data:image/png;base64,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' height='42.30000000000001' width='95'> </h4>"
+                                                /*
+                                                      my_window = window.open("", "mywindow","status=1,width=350,height=150");
+                                                      my_window.document.write('<html><head><title>Print Me</title></head>');
+                                                      my_window.document.write('<body onafterprint="self.close()">');
+                                                      my_window.document.write('<p>When you print this window, it will close afterward.</p>');
+                                                      my_window.document.write('</body></html>');  
+                                                */
+                                                var aHTMLsource = $("<div />").append(
+                                                    $("<div style = 'margin-left: " + atopmargin + "'>" + aheaderhtml + " </div>"), //<div style="margin: 0 auto; width: 100px;">
+                                                    $("<b><div style = 'font-size: 22px; margin-left: " + atopmargin + "; text-align:left; border-left: 10px solid grey;  border-bottom: 2px solid grey;'>" + arspace(1) + atitledtl + "</div></b>"),
+                                                    //$("<hr size='5px'; width='auto' color='lightgrey'>"),
+                                                    $("<p style='margin-left: " + atopmargin + "; text-align:left;'>REF.NO: <b>" + aaiHeadRef + "</b>" + arspace(10) + "DATE: <b>" + aSubmitD + "</b></span><span style='float:right;' id='popupprint'></span></p>"),
+                                                    //$("<p><div id='form'></div></p>"),
+                                                    $("<div style = 'margin-left: " + abodyleftm + "' id='form'></div>" + arlineno(1)),
+                                                    $("<div style = 'margin-left: " + abodyleftm + "'>��������´ - DESCRIPTIONS</div>"),
+                                                    $("<div style = 'margin-left: " + atopmargin + "'>" + aDetailHTML + " </div>"),
+                                                    //$("<p><div style = 'margin-left: " + abodyleftm + "' id='detail-dxDataGrid'></div></p>"),
+                                                    $("<p style = 'margin-left: " + abodyleftm + "'>�����ŷҧ�/� - ACCOUNTING INFORMATION</p>"),
+                                                    $("<div style = 'margin-left: " + atopmargin + "'>" + aACHTML + " </div>"),
+                                                    //$("<p><div style = 'margin-left: " + abodyleftm + "' id='ACCChart-dxDataGrid'></div></p>"), //#ACCChart-dxDataGri alastLine
+                                                    $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)), //.text("��س�Ṻ ����� �Ҿ�����Ѻ�͡��é�Ѻ��� | Please attach the receipt with this document."),
+                                                    //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                                                    //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                                                    //$(" " + arlineno(8) + "<center><div style = 'margin-left: " + abodylefts + "' class= 'colorRBGlightgrey'>Requester ___________________________________________ <span style='padding: 100px 20px;'>" + arspace(25) + "Approver ___________________________________________</span></div></center>"),
+                                                    //$("<span style = 'margin-left: " +  abodylefts + "'></span>").text(" "),
+                                                    $(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>����͹��ѵ� (Requester)</b></small></div>"),
+                                                    $("<span>" + arspace(28) + "</span>"),
+                                                    $("<div class='colorRBGlightgrey';><small><b>���͹��ѵ� (Approver)</b></small></div>"),
+                                                    //Requester_______________</span></div>' + arspace(25) + '<span class = 'colorBGlightgrey';>Approver</span>'),
+                                                );
+                                                //console.log(aHTMLsource)       
+                                                const popup = $("#popupContainer").dxPopup({
+                                                    title: "Travel & Entertainment Expenses Reimbursement",
+                                                    maxWidth: "1300px",
+                                                    maxHeight: "5000px;",
+                                                    position: { offset: "0 0" }, //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: true,
+                                                    showCloseButton: false,
+                                                    showTitle: false,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+
+                                                    //shadingColor:"rgb(190,190,190,0.9)",
+                                                    //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                                                    //toolbarItems: [
+                                                    //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                                                    contentTemplate: () => {
+                                                        return (aHTMLsource);
+                                                    },
+                                                    toolbarItems: [
+                                    /*{
+                                        toolbar: "top",
+                                        locateInMenu: 'always',
+                                        html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                                    },
+                                    {
+                                        toolbar: "top",
+                                        locateInMenu: 'always',
+                                        widget: "dxButton",
+                                        //toolbar: "bottom",
+                                        location: "right",
+                                        options: {
+                                            icon: "print",
+                                            //text: "Print",
+                                            onClick: function () {
+                                                window.print()
+                                            }
+                                        }
+                                    }, {
+                                        toolbar: "top",
+                                        locateInMenu: 'always',
+                                        widget: "dxButton",
+                                        //toolbar: "bottom",
+                                        location: "after",
+                                        options: {
+                                            //text: "EXIT",
+                                            icon: "fas fa-times",
+                                            //type: "danger",                
+                                            onClick: function (e) {
+                                                popup.hide();
+                                            }
+                                        }
+                                    }*/]
+
+                                                }).dxPopup("instance");
+
+                                                $("#popupexit").dxButton({
+                                                    icon: "fas fa-times",
+                                                    type: "danger",
+                                                    //text: "EXIT",
+                                                    //width: "120px",
+                                                    visible: true,
+                                                    onClick: function () {
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#popupprint").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        /*
+                                                        var options = {
+                                                            printBackground: true,
+                                                            landscape: true,
+                                                            marginTop: "1cm",
+                                                            marginLeft: "1cm",
+                                                            marginBottom: "1cm",
+                                                            marginRight: "1cm",
+                                                            scaling: "default"
+                                                        };
+                                                        window.print(options);
+                                                        */
+                                                        //printPage();
+                                                        window.print()
+                                                        printJS('popupContainer', 'html')
+                                                        //aPDFFromHTML(aHTMLsource)
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#print").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        //window.print();
+                                                        aPDFFromHTML(aHTMLsource)
+
+                                                    }
+                                                });
+                                                /*
+                                                $("#asave").dxButton({
+                                                    icon: "save",
+                                                    text: "CONFIRM",
+                                                    type: "success",
+                                                    onClick: function (e) {
+                                                        let ObjRowD = JSON.stringify(iData)
+                                                        sendRequestNew("Update", ObjRowD, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        // refresh before close popup ?
+                                                        popup.hide();
+                    
+                                                    }
+                                                });
+                                                */
+
+                                                const aform = $("#form").dxForm({
+                                                    formData: iData,
+                                                    showColonAfterLabel: false,
+                                                    labelLocation: "top",
+                                                    colCount: 1,
+                                                    items: [{
+                                                        itemType: "group",
+                                                        //caption: "Refference",
+                                                        colCount: 4,
+                                                        cssClass: "colorBGlightgrey",
+                                                        items: [
+                                                            {
+                                                                dataField: "PayToName",
+                                                                label: { text: "Pay To" },
+                                                                editorOptions: { value: iData.PayToName + " (" + iData.PayToCode + ")", width: 200, readOnly: true },
+                                                            },
+
+                                                        ]
+
+                                                    },
+
+                                                    ]
+
+                                                }).dxForm("instance");
+
+                                                $("#detail-dxDataGrid").dxDataGrid({
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "REFNO",
+                                                        loadMode: "omit",
+                                                        load: function () {
+                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": btoa(aaSchRef) }) // Change aaTBKey to TokenKey for this table 5102300001
+                                                                .fail(function () { throw "Data loading error" });
+                                                        },
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false,
+                                                    columnMinWidth: 20,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    showBorders: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    /*onRowPrepared: function (e) {
+                                                        e.rowElement.css({ height: 60 });
+                                                    },*/
+                                                    wordWrapEnabled: true,
+
+                                                    columns: [
+                                                        {
+                                                            dataField: "ID",
+                                                            sortOrder: "asc",
+                                                            dataType: "string",
+                                                            //headerCellTemplate: $('<b style="color: white">NO</b>'),
+                                                            caption: " ",
+                                                            width: 40
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo4",
+                                                            caption: "Bill No",
+                                                            dataType: "string",
+                                                            width: 80,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate01",
+                                                            caption: "Date",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc02",
+                                                            caption: "Description",
+                                                            dataType: "string",
+                                                            editorType: "dxTextBox",
+                                                            width: 180,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc03",
+                                                            caption: "Purpose",
+                                                            dataType: "string",
+                                                            width: 110,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc04",
+                                                            caption: "Company/Personal Name",
+                                                            dataType: "string",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo3",
+                                                            caption: "Type of Reimbursement",
+                                                            dataType: "string",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "Account Code",
+                                                            dataType: "string",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Amount",
+                                                            caption: "Original currency",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorType: "dxNumberBox",
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Currency",
+                                                            caption: "Currency", //aCurrenciesList
+                                                            dataType: "string",
+                                                            width: 60,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Xrate",
+                                                            caption: "X-Rate",
+                                                            dataType: "number",
+                                                            editorOptions: { format: "#,##0.00", width: 60 },
+                                                            format: "#,##0.00",
+                                                            width: 60,
+                                                            visible: true,
+                                                        },
+
+                                                        {
+                                                            dataField: "RefundedAmount",
+                                                            caption: "Reimburse",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorOptions: { format: "#,##0.00", width: 80 },
+                                                            width: 80,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate02",
+                                                            caption: "Date2",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate03",
+                                                            caption: "Date3",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate04",
+                                                            caption: "Date4",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate05",
+                                                            caption: "Date5",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+
+
+                                                    ],
+                                                    // summary
+                                                    summary: {//ReqDate
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "ERORefNo4",
+                                                                summaryType: "count",
+                                                                displayFormat: "TOTAL",
+                                                            },
+                                                            {
+                                                                column: "Amount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00", //"currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+
+                                                    },
+
+                                                }).dxDataGrid("instance");
+
+                                                $("#ACCChart-dxDataGrid").dxDataGrid({
+
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "HeadRefNo",
+                                                        loadMode: "omit",
+                                                        load: function () {
+                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "891F052B-E489-41E3-A254-A038B66C0444" + '/all', { "@": btoa(aaSchRef) }) // Change aaTBKey to TokenKey for this table 5102300001
+                                                                .fail(function () { throw "Data loading error" });
+                                                        },
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false,
+                                                    columnMinWidth: 20,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    //HeadRefNo,DR,ExpensesCode,EAccDesc,DRAMT,CR,CRCODE,CRName,CRAMT
+                                                    showBorders: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    columns: [
+                                                        {
+                                                            dataField: "DC",
+                                                            caption: " ",
+                                                            editorOptions: { width: 70 },
+                                                            width: 70
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "CODE",
+                                                            editorOptions: { width: 100 },
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "EAccDesc",
+                                                            caption: "Account Name",
+                                                            editorType: "dxTextBox",
+                                                            width: 200,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Division",
+                                                            caption: "Division",
+                                                            editorType: "dxTextBox",
+                                                            width: 80,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "DRAMT",
+                                                            caption: "Debit Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            //format: "#,##0.00",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "CRAMT",
+                                                            caption: "Credit Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+
+
+                                                    ],
+                                                    // summary
+                                                    summary: {
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "Division",
+                                                                //summaryType: "count",
+                                                                displayFormat: "BALANCE",
+                                                            },
+                                                            {
+                                                                column: "DRAMT",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+
+                                                            {
+                                                                column: "CRAMT",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+
+                                                    },
+
+                                                }).dxDataGrid("instance");
+
+                                            });
+                                        }
+
+
+                                        // Print
+                                        //function aPopUpPrintForm(iData, aaHeadRefNo) { //, taData
+                                        const aPopUpPrintForm = (iData, aaHeadRefNo) => { //, eData, acData
+                                            var aaiHeadRef = aaHeadRefNo;
+                                            var aaSchRef = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // scopes based permission (View Only Login Name)
+                                            var aaPFDMI = isLocalHost();
+                                            var astr = localStorage["aDXTheme"]
+                                            if (astr.includes("dark")) {
+                                                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmwhite.png' width='88'></center></div>"
+                                            } else {
+                                                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"
+                                            }
+
+                                            $(() => {
+                                                var gbxRateV = 1;
+                                                let atopmargin = "5px";
+                                                let abodyleftm = "5px";
+                                                let abodylefts = "15px";
+                                                var aAppArr = iData.Vendor01Note
+                                                var xxChkNamexx = aTranTextJson(aAppArr, "NAME:", "MAIL:")
+                                                var anNameLen = xxChkNamexx.length
+                                                var aChkApprove = 0;
+
+                                                //var aiDataArr = objectToArray(eData) //"[" + JSON.stringify(iData) + "]" //
+                                                //var aHLabel = ["NO","Bill No", "Bill Date","Description","Purpose","CompanyName","Type Of Reimbursement","Expenses Code", "Original Currency","Currency","X-Rate","Reimburse"]
+                                                //var aTableFromData = eData//generateTableXX(eData,aMulSet01);
+                                                //var aTableFromAC = acData
+                                                //console.log(aTableFromData);
+                                                // var aTableAccount  = generateTableXX(acData,aMulSet02);
+                                                //var transposedArray = aiDataArr[0].map((col, i) => aiDataArr.map(row => row[i]));
+                                                //var astiData = [ JSON.stringify(iData) ]
+                                                //var aTableDatax = [{ "REFNO": "T2212262644-001", "ID": 1, "HeadRefNo": "T2212262644", "ReqDate": "2022-12-26T00:00:00", "PayToCode": "101301", "PayToName": "�ԡ�ҹ�� �Թ�û�Шѡ��", "Department": "1182        ", "Division": "1182-01     ", "ExpensesCode": "5101110001", "ExpensesDescription": "Travel & Entertainment", "Currency": "THB", "Xrate": 1, "Amount": 32000, "LocalAmount": 32000, "Confirmed": true, "Approved": false, "Note": "", "EntryBy": "Wikran", "EntryDate": "2022-12-26T00:00:00", "HRApproved": false, "ERStatus": "Confirmed wait for HOD", "LimitedAmount": 0, "OtherRefNo": "", "PBatchNo": "", "PBatchDate": "1901-01-01T00:00:00", "PSPvNO": "", "PSPvDate": "1901-01-01T00:00:00", "Vendor01": "", "Vendor02": "", "Vendor01Amount": 0, "Vendor02Amount": 0, "Vendor01Diff": 0, "Vendor02Diff": 0, "Vendor01Note": "NAME:[|���о��� �Ծ��ǧ��|,|�Ѳ�� ǧ������ɹ��س|] MAIL:[|wikran@lockton.com|,|wikran@lockton.com|] RANG:[30000,9999999]", "Vendor02Note": "�Ѳ�� ǧ������ɹ��س", "ERODate01": "2022-12-26T00:00:00", "ERODate02": "2023-02-01T00:00:00", "ERODate03": "1901-01-01T00:00:00", "ERODate04": "1901-01-01T00:00:00", "ERODate05": "1901-01-01T00:00:00", "ERODate06": "1901-01-01T00:00:00", "ERODesc01": "", "ERODesc02": "tt", "ERODesc03": "tt", "ERODesc04": "ttss", "ERODesc05": "", "ERODesc06": "wikran@lockton.com", "EROCheck01": true, "EROCheck02": true, "EROCheck03": false, "EROCheck04": false, "EROCheck05": false, "EROCheck06": false, "EROCode01": "", "EROCode02": "", "EROCode03": "", "EROCode04": "", "EROCode05": "", "EROCode06": "", "ERORefNo1": "", "ERORefNo2": "", "ERORefNo3": "Breakfast/Lunch/Dinner-Overseas Trip", "ERORefNo4": "tt", "ERORefNo5": "", "ERORefNo6": "wikran@lockton.com", "EROAmount1": 0, "EROAmount2": 0, "EROAmount3": 0, "EROAmount4": 0, "EROAmount5": 0, "EROAmount6": 0, "EROSum1": 0, "EROSum2": 0, "EROSum3": 0, "EROSum4": 0, "EROSum5": 0, "EROSum6": 0, "HODApproved": false, "ExpGroupCode": "400", "ExpGroupDescEng": "Travel & Entertainment", "AmountBeforeVAT": 0, "VAT": 0, "ConfirmedDate": "1901-01-01T00:00:00", "HODApprovedDate": "1901-01-01T00:00:00", "FAApprovedDate": "1901-01-01T00:00:00", "TotalLocalAmount": 0, "TotalAmount": 0, "TotalIems": 0, "TotalAmountBeforeVAT": 0, "TotalVAT": 0, "NeedPayment": false, "RefundedAmount": 32000, "HRApprovedDate": "1901-01-01T00:00:00" }]
+
+                                                var aDate00 = iData.ERODate02.toString();
+                                                var aDateD00 = aDate00.substring(8, 10) + "/" + aDate00.substring(5, 7) + "/" + aDate00.substring(0, 4)
+                                                var aDate01 = iData.ERODate03.toString();
+                                                var aDateD01 = aDate01.substring(8, 10) + "/" + aDate01.substring(5, 7) + "/" + aDate01.substring(0, 4)
+                                                var aDate02 = iData.ERODate04.toString();
+                                                var aDateD02 = aDate02.substring(8, 10) + "/" + aDate02.substring(5, 7) + "/" + aDate02.substring(0, 4)
+                                                let aSubD = iData.ReqDate.toString();
+                                                let aSubmitD = aSubD.substring(8, 10) + "/" + aSubD.substring(5, 7) + "/" + aSubD.substring(0, 4)
+                                                console.log(aDateD00 + aDateD01 + aDateD02)
+                                                if (anNameLen === 1) {
+                                                    if (aDateD00 !== "01/01/1901") {
+                                                        aChkApprove = 1;
+                                                    } else {
+                                                        aChkApprove = 0;
+                                                    }
+                                                } if (anNameLen === 2) {
+                                                    if (aDateD00 !== "01/01/1901" && aDateD01 !== "01/01/1901") {
+                                                        aChkApprove = 1;
+                                                    } else {
+                                                        aChkApprove = 0;
+                                                    }
+                                                } if (anNameLen === 3) {
+                                                    if (aDateD00 !== "01/01/1901" && aDateD01 !== "01/01/1901" && aDateD02 !== "01/01/1901") {
+                                                        aChkApprove = 1;
+                                                    } else {
+                                                        aChkApprove = 0;
+                                                    }
+                                                }
+                                                //console.log(aChkApprove)
+                                                //let aSubmitD =  aSubD.getFullYear() + "/" + aSubD.getMonth() + "/" + aSubD.getDate()
+                                                let atitledtl = "Travel & Entertainment Expenses Reimbursement";
+                                                let aAlertMessage = "<big>��س�Ṻ���������͡��÷������Ҵ��� ����蹹�鹨��������ö�ӡ���ԡ�� **</big>";
+                                                let arectanglehtml = "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><rect x='1' y='1' width='100' height='100' stroke='black' stroke-width='0.2' fill='none' /></svg>"
+                                                let arspace = (no) => { return "&nbsp;".repeat(no) }; //= "&nbsp;".repeat(30);
+                                                let arlineno = (nor) => { return "<br>".repeat(nor) };
+                                                var aAppLineDtl = "";
+                                                var aReqLineDtl = "";
+                                                if (aChkApprove === 1) {
+                                                    if (anNameLen === 1) {
+                                                        aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>����͹��ѵ� (Requester)</b></small><br><br><br></div>"
+                                                        aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���͹��ѵ� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" //+ arspace(5) + xxChkNamexx[1] + arspace(5) +"(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>"
+                                                    } if (anNameLen === 2) {
+                                                        aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>����͹��ѵ� (Requester)</b></small><br><br><br><br></div>"
+                                                        aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���͹��ѵ� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" + arspace(5) + xxChkNamexx[1] + arspace(5) + "(" + aDateD01 + ")<br>" // + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>"  
+                                                    } if (anNameLen === 3) {
+                                                        aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>����͹��ѵ� (Requester)</b></small><br><br><br><br><br></div>"
+                                                        aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���͹��ѵ� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" + arspace(5) + xxChkNamexx[1] + arspace(5) + "(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] + arspace(5) + "(" + aDateD02 + ")<br>" + "</div>"
+                                                    }
+                                                } else {
+                                                    aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>����͹��ѵ� (Requester)</b></small><br><br><br></div>"
+                                                    aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���͹��ѵ� (Approver)</b></small><br><br><br>" //+ arspace(5) + xxChkNamexx[1] + arspace(5) +"(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>"
+                                                }
+
+                                                var aheaderhtml = "<h4 style='text-align: left;'><img src='data:image/png;base64,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' height='42.30000000000001' width='95'> </h4>"
+                                                const popup = $("#popupContainer").dxPopup({
+                                                    title: "Travel & Entertainment Expenses Reimbursement",
+                                                    maxWidth: "1300px",
+                                                    maxHeight: "5000px;",
+                                                    position: { offset: "0 0" }, //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: true,
+                                                    showCloseButton: false,
+                                                    showTitle: false,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+
+                                                    //shadingColor:"rgb(190,190,190,0.9)",
+                                                    //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                                                    //toolbarItems: [
+                                                    //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],   
+                                                    //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                                                    //$("<p><div id='alastLine' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                                                    //$(" " + arlineno(8) + "<center><div style = 'margin-left: " + abodylefts + "' class= 'colorRBGlightgrey'>Requester ___________________________________________ <span style='padding: 100px 20px;'>" + arspace(25) + "Approver ___________________________________________</span></div></center>"),
+                                                    //$("<span style = 'margin-left: " +  abodylefts + "'></span>").text(" "),     
+                                                    //$("<p><div id='form'></div></p>"),                 
+                                                    //$("<hr size='5px'; width='auto' color='lightgrey'>"),
+                                                    //Requester_______________</span></div>' + arspace(25) + '<span class = 'colorBGlightgrey';>Approver</span>'),   
+                                                    //.text("��س�Ṻ ����� �Ҿ�����Ѻ�͡��é�Ѻ��� | Please attach the receipt with this document."),   
+                                                    //<div style="margin: 0 auto; width: 100px;">      
+                                                    //#ACCChart-dxDataGri alastLine       
+                                                    contentTemplate: () => {
+                                                        return $("<div />").append(
+                                                            $("<div style = 'margin-left: " + atopmargin + "'>" + aheaderhtml + " </div>"),
+                                                            //$("<div style = 'margin-left: " + atopmargin + "'>" + aTableFromData + " </div>"),
+                                                            $("<b><div style = 'font-size: 22px; margin-left: " + atopmargin + "; text-align:left; border-left: 10px solid grey;  border-bottom: 2px solid grey;'>" + arspace(1) + atitledtl + "</div></b>"),
+                                                            $("<p style='margin-left: " + atopmargin + "; text-align:left;'>REF.NO: <b>" + aaiHeadRef + "</b>" + arspace(10) + "DATE: <b>" + aSubmitD + "</b></span><span style='float:right;' id='popupprint'></span></p>"),
+                                                            $("<div style = 'margin-left: " + abodyleftm + "' id='form'></div>" + arlineno(1)),
+                                                            $("<div style = 'margin-left: " + abodyleftm + "'>��������´ - DESCRIPTIONS</div>"),
+                                                            //$("<div style = 'margin-left: " + atopmargin + "'>" + aTableFromData + " </div>"),
+                                                            $("<p><div style = 'margin-left: " + abodyleftm + "' id='detail-dxDataGrid'></div></p>"),
+                                                            $("<p style = 'margin-left: " + abodyleftm + "'>�����ŷҧ�/� - ACCOUNTING INFORMATION</p>"),
+                                                            //$("<div style = 'margin-left: " + atopmargin + "'>" + aTableFromAC + " </div>"),
+                                                            $("<p><div style = 'margin-left: " + abodyleftm + "' id='ACCChart-dxDataGrid'></div></p>"),
+                                                            $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)),
+                                                            //$(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>����͹��ѵ� (Requester)</b></small><br><br><br><br><br></div>"),
+                                                            $(aReqLineDtl),
+                                                            $("<span>" + arspace(28) + "</span>"),
+                                                            $(aAppLineDtl),
+                                                            //$("<div class='colorRBGlightgrey';><small><b>���͹��ѵ� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" + arspace(5) + xxChkNamexx[1] + arspace(5) +"(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>"),
+                                                        );
+                                                    },
+                                                    /*
+                                                        toolbarItems: [
+                                                            {
+                                                                toolbar: "top",
+                                                                locateInMenu: 'always',
+                                                                html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                                                            },
+                                                            {
+                                                                toolbar: "top",
+                                                                locateInMenu: 'always',
+                                                                widget: "dxButton",
+                                                                //toolbar: "bottom",
+                                                                location: "right",
+                                                                options: {
+                                                                    icon: "print",
+                                                                    onClick: function () {
+                                                                        window.print()
+                                                                    }
+                                                                }
+                                                            }, {
+                                                                toolbar: "top",
+                                                                locateInMenu: 'always',
+                                                                widget: "dxButton",
+                                                                //toolbar: "bottom",
+                                                                location: "after",
+                                                                options: {
+                                                                    //text: "EXIT",
+                                                                    icon: "fas fa-times",
+                                                                    //type: "danger",                
+                                                                    onClick: function (e) {
+                                                                        popup.hide();
+                                                                    }
+                                                                }
+                                                            }
+                                                        ]
+                                                    */
+                                                }).dxPopup("instance");
+
+                                                $("#popupexit").dxButton({
+                                                    icon: "fas fa-times",
+                                                    type: "danger",
+                                                    //text: "EXIT",
+                                                    //width: "120px",
+                                                    visible: true,
+                                                    onClick: function () {
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#popupprint").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        window.print()
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#print").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        window.print();
+                                                    }
+                                                });
+
+                                                const aform = $("#form").dxForm({
+                                                    formData: iData,
+                                                    showColonAfterLabel: false,
+                                                    labelLocation: "top",
+                                                    colCount: 1,
+                                                    items: [{
+                                                        itemType: "group",
+                                                        //caption: "Refference",
+                                                        colCount: 4,
+                                                        cssClass: "colorBGlightgrey",
+                                                        items: [
+                                                            {
+                                                                dataField: "PayToName",
+                                                                label: { text: "Pay To" },
+                                                                editorOptions: { value: iData.PayToName + " (" + iData.PayToCode + ")", width: 200, readOnly: true },
+                                                            },
+                                                        ]
+                                                    },
+                                                    ]
+                                                }).dxForm("instance");
+
+                                                $("#detail-dxDataGrid").dxDataGrid({
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "REFNO",
+                                                        loadMode: "omit",
+                                                        load: function () {
+                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": btoa(aaSchRef) }) // Change aaTBKey to TokenKey for this table 5102300001
+                                                                .fail(function () { throw "Data loading error" });
+                                                        },
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false,
+                                                    columnMinWidth: 20,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    showBorders: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    /*onRowPrepared: function (e) {
+                                                        e.rowElement.css({ height: 60 });
+                                                    },*/
+                                                    wordWrapEnabled: true,
+                                                    columns: [
+                                                        {
+                                                            dataField: "ID",
+                                                            sortOrder: "asc",
+                                                            dataType: "string",
+                                                            //headerCellTemplate: $('<b style="color: white">NO</b>'),
+                                                            caption: " ",
+                                                            width: 40
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo4",
+                                                            caption: "Bill No",
+                                                            dataType: "string",
+                                                            width: 80,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate01",
+                                                            caption: "Bill Date",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc02",
+                                                            caption: "Description",
+                                                            dataType: "string",
+                                                            editorType: "dxTextBox",
+                                                            width: 190,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc03",
+                                                            caption: "Purpose",
+                                                            dataType: "string",
+                                                            width: 150,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc04",
+                                                            caption: "Company/Personal Name",
+                                                            dataType: "string",
+                                                            width: 130,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo3",
+                                                            caption: "Type of Reimbursement",
+                                                            dataType: "string",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "Account Code",
+                                                            dataType: "string",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Amount",
+                                                            caption: "Original currency",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorType: "dxNumberBox",
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Currency",
+                                                            caption: "Currency", //aCurrenciesList
+                                                            dataType: "string",
+                                                            width: 60,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Xrate",
+                                                            caption: "X-Rate",
+                                                            dataType: "number",
+                                                            editorOptions: { format: "#,##0.00", width: 60 },
+                                                            format: "#,##0.00",
+                                                            width: 60,
+                                                            visible: true,
+                                                        },
+
+                                                        {
+                                                            dataField: "RefundedAmount",
+                                                            caption: "Reimburse",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorOptions: { format: "#,##0.00", width: 100 },
+                                                            width: 100,
+                                                        },
+
+                                                    ],
+                                                    // summary
+                                                    summary: {//ReqDate
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "ERORefNo4",
+                                                                summaryType: "count",
+                                                                displayFormat: "TOTAL",
+                                                            },
+                                                            {
+                                                                column: "Amount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00", //"currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+
+                                                    },
+
+                                                }).dxDataGrid("instance");
+
+                                                $("#ACCChart-dxDataGrid").dxDataGrid({
+
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "HeadRefNo",
+                                                        loadMode: "omit",
+                                                        load: function () {
+                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "891F052B-E489-41E3-A254-A038B66C0444" + '/all', { "@": btoa(aaSchRef) }) // Change aaTBKey to TokenKey for this table 5102300001
+                                                                .fail(function () { throw "Data loading error" });
+                                                        },
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false,
+                                                    columnMinWidth: 20,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    //HeadRefNo,DR,ExpensesCode,EAccDesc,DRAMT,CR,CRCODE,CRName,CRAMT
+                                                    showBorders: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    columns: [
+                                                        {
+                                                            dataField: "DC",
+                                                            caption: " ",
+                                                            editorOptions: { width: 70 },
+                                                            width: 70
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "CODE",
+                                                            editorOptions: { width: 100 },
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "EAccDesc",
+                                                            caption: "Account Name",
+                                                            editorType: "dxTextBox",
+                                                            width: 200,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Division",
+                                                            caption: "Division",
+                                                            editorType: "dxTextBox",
+                                                            width: 80,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "DRAMT",
+                                                            caption: "Debit Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            //format: "#,##0.00",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "CRAMT",
+                                                            caption: "Credit Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+
+
+                                                    ],
+                                                    // summary
+                                                    summary: {
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "Division",
+                                                                //summaryType: "count",
+                                                                displayFormat: "BALANCE",
+                                                            },
+                                                            {
+                                                                column: "DRAMT",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+
+                                                            {
+                                                                column: "CRAMT",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+
+                                                    },
+
+                                                }).dxDataGrid("instance");
+
+
+
+                                            });
+                                        }
+
+                                        //function aPopUpAddForm(aRecNo, iData, idDate) { // popup Add New
+
+                                        const aPopUpAddFormOT = (aRecNo, iData, idDate, iView) => {
+                                            var aaPFDMI = isLocalHost();
+                                            var astr = localStorage["aDXTheme"]
+                                            var aViewF = (iView === undefined) ? false : iView;
+                                            var aViewG = (iView === undefined) ? true : !iView;
+                                            if (aRecNo === 1) {
+                                                var aaaTitle = " [ADD]"
+                                                let aaID = 1
+                                                let axRunRun = aGetDateRef(aaOnInitExpGroupDesc.substring(0, 1));
+                                                let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                var aaiHeadRef = axRunRun;
+                                                //aaOnInitAccCode            aaOnInitAccDesc         Currency: "THB", Xrate: 1,                                                                                                                                                                     // Fleet Card                                                                                                                                                                                               //                                                                                            
+                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: idDate, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
+                                                var ObjRowData = JSON.stringify(ObjKeyData);
+                                                console.log(ObjRowData)
+                                                sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                insideAddNew = true;
+                                            } else {
+                                                var aaiHeadRef = aRecNo;
+                                                //var aaaTitle = " [EDIT]"
+                                                var aaaTitle = (iView === undefined) ? " [EDIT]" : " {VIEW}"; //" [EDIT]"
+                                                insideAddNew = false;
+                                            }
+                                            var aaSchRefx = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // (DataGrid View Only This New Item)
+                                            aqrFull = aaSchRefx;
+                                            var aaxurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all'
+                                            var aaxSettings = { "url": aaxurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": btoa(aqrFull) }), };
+
+                                            //jQuery(function ($) {
+                                            $(() => {
+                                                var aaLastLineNo = 1;
+                                                var aXXData = function () { return $.post(aaxSettings).done(); }
+                                                if (iData === 1) {
+                                                    iData = aXXData[0];
+                                                }
+                                                /*
+                                                jQuery(document).keyup(function (e) {
+                                                    if (e.keyCode === 27 ) { //&& popupStatus == 1
+                                                        //alert('not allowed !!!');
+                                                        let aErrMessage = "<b><div style = 'color: darkred; font-size: 16px;'><i class='fas fa-exclamation-triangle'></i> CUATION: To press 'ESC' will make worng process, for [ADD NEW] the data already saved without warning, please back to edit again!!</b><br> ����͹: ��á����� 'ESC' �з�����÷ӧҹ�Դ��Ҵ, ����Ѻ��� [ADD NEW] �����Ũ� Save �ѹ��������ա����, ��سҡ�Ѻ仴��Թ��õ���ա���� !!</div>"
+                                                        DevExpress.ui.dialog.alert({ showTitle: true, title: "ERROR ON PRESS 'ESC'", messageHtml: aErrMessage });
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        //return false;
+                                                    }
+                                                });
+                                                */
+                                                var gbxRateV = 1;
+                                                const popup = $("#popupContainerAdd").dxPopup({
+                                                    title: "Travel & Entertainment Expenses Reimbursement" + aaaTitle,
+                                                    width: '1300px',
+                                                    position: { offset: "0 -140" }, //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: true,
+                                                    showCloseButton: false,
+                                                    showTitle: true,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+                                                    onInitialized: function (e) { e.component.registerKeyHandler("escape", function (arg) { }) },     // ignore when press 'ESC'  
+
+                                                    //shadingColor:"rgb(190,190,190,0.9)",
+                                                    //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                                                    //toolbarItems: [
+                                                    //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                                                    contentTemplate: function () {
+                                                        return $("<div />").append(
+                                                            $("<p><div id='Add-form'></div></p>"),
+                                                            $("<p><div id='Add-dxDataGrid'></div></p>"),
+                                                            $("<span id='Add-popupexit'></span>"),
+                                                            $("<span style='padding: 5px 15px;'></span>").text(" "),
+                                                            $("<span id='aConfirm'></span>")
+                                                        );
+                                                    },
+                                                    onContentReady: function () {
+                                                        // $("#Add-dxDataGrid").hide(); // hide dataGrid
+                                                    },
+                                                    toolbarItems: [
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>" // Logo
+                                                        },
+                                                        /*
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            widget: "dxButton",
+                                                            //toolbar: "bottom",
+                                                            location: "right",
+                                                            options: {
+                                                                icon: "print",
+                                                                //text: "Print",
+                                                                onClick: function () {
+                                                                    window.print()
+                                                                }
+                                                            }
+                                                        },*/
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            widget: "dxButton",
+                                                            //toolbar: "bottom",
+                                                            location: "after",
+                                                            options: {
+                                                                //text: "EXIT",
+                                                                icon: "fas fa-times",
+                                                                stylingMode: "outlined",
+                                                                type: "danger",
+                                                                onClick: function (e) {
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    //let cRes = aMessageSelect("Exit Without SAVE", "Press 'YES' to Not Save ")
+                                                                    if (aRecNo === 1) {
+                                                                        let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?"); //+ "<br>?? 'YES' ???????????"
+                                                                        result.done(function (dresult) {
+                                                                            if (dresult) {
+                                                                                // not delete
+                                                                            } else {
+                                                                                // delete data
+                                                                                // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
+                                                                                let aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                //alert(aSQLCommand)
+                                                                                //console.log(aXXData[0].ERStatus)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    popup.hide()
+                                                                }
+                                                            }
+                                                        }]
+
+                                                }).dxPopup("instance");
+
+                                                $("#Add-popupexit").dxButton({
+                                                    icon: "fas fa-times",
+                                                    type: "danger",
+                                                    text: "EXIT",
+                                                    visible: true,
+                                                    onClick: function (e) {
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        if (aRecNo === 1) {
+                                                            let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?"); // "<br>�� 'YES' ���ͺѹ�֡" +
+                                                            result.done(function (dresult) {
+                                                                if (dresult) {
+                                                                    // not delete 
+                                                                } else {
+                                                                    // delete data
+                                                                    let aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + aaiHeadRef + "'"
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                }
+                                                            });
+                                                        }
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        popup.hide()
+                                                    }
+                                                });
+
+                                                $("#aConfirm").dxButton({
+                                                    hint: "Confirm and send to HOD",
+                                                    icon: "fas fa-check-circle",
+                                                    type: "success",
+                                                    text: "CONFIRM",
+                                                    visible: aViewG, //true,
+                                                    onClick: function (e) {
+                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                        //
+                                                        let aDivSxx = "Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                        let aFieldSelectedxx = "HeadRefNo,TotalReimburse" //ExtraOnLine].[dbo].[EXPREIM_400]
+                                                        let aFullBodyxx = "Select " + aFieldSelectedxx + " From " + "ExtraOnLine.dbo.EXPREIM_400 " + aDivSxx; //alert(aFullBody)                                           
+                                                        //console.log(aFullBodyxx, aaHODApprover);
+
+                                                        fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBodyxx) }), redirect: "follow" })
+                                                            .then(response => response.json())
+                                                            //
+                                                            .then(ppData => {
+                                                                var aaTotalValue = ppData;
+                                                                var aaTotalReim = aaTotalValue[0].TotalReimburse
+                                                                var aaiFoundApp = false;
+                                                                var nnLno = 0;
+                                                                var nnAdno = 0;
+                                                                var aaHODEmail4Chk = ""; //aaHODAppName
+                                                                var aaHODName4Chk = "";
+                                                                var aaHODRange4Chk = "";
+                                                                for (let i = 0; i < aaHODApprover.length; i++) {
+                                                                    if ($.trim(aaHODApprover[i].ApproverName) === $.trim(asFullName)) {
+                                                                        nnAdno = i
+                                                                        aaiFoundApp = true;
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                //console.log("asFullName ", asFullName)
+                                                                //console.log(aaHODApprover[0].ApproverName)
+                                                                //console.log(nnAdno)
+                                                                if (aaiFoundApp === true && aaHODApprover.length > 1) {
+                                                                    nnAdno = nnAdno + 1
+                                                                }
+                                                                //console.log(i)
+                                                                for (let i = nnAdno; i < aaHODApprover.length; i++) {
+                                                                    if (aaTotalReim <= aaHODApprover[i].LRange02) {
+                                                                        aaHODEmail4Chk = aaHODEmail4Chk + "|" + aaHODApprover[i].ApproverEmail + "|"
+                                                                        aaHODName4Chk = aaHODName4Chk + "|" + aaHODApprover[i].ApproverName + "|"
+                                                                        aaHODRange4Chk = aaHODRange4Chk + aaHODApprover[i].LRange02
+                                                                        nnLno = i
+                                                                        break;
+                                                                    } else {
+                                                                        aaHODEmail4Chk = aaHODEmail4Chk + "|" + aaHODApprover[i].ApproverEmail + "|" + ","
+                                                                        aaHODName4Chk = aaHODName4Chk + "|" + aaHODApprover[i].ApproverName + "|" + ","
+                                                                        aaHODRange4Chk = aaHODRange4Chk + aaHODApprover[i].LRange02 + ","
+                                                                    }
+                                                                }
+                                                                var aaHODAll4Chk = "NAME:[" + aaHODName4Chk + "] MAIL:[" + aaHODEmail4Chk + "] RANG:[" + aaHODRange4Chk + "]";
+                                                                var xxChkEmailxx = aTranTextJson(aaHODAll4Chk, "MAIL:", "RANG:")
+                                                                var xxChkNamexx = aTranTextJson(aaHODAll4Chk, "NAME:", "MAIL:")
+                                                                var xxChkRangexx = aTranTextJson(aaHODAll4Chk, "RANG:", "")
+                                                                var xxChkLenxx = xxChkNamexx.length;
+                                                                //console.log(aaHODAll4Chk)
+                                                                //console.log(xxChkNamexx, xxChkEmailxx, xxChkRangexx)
+
+                                                                // send mail to first Approver 
+                                                                aaHODAppName = xxChkNamexx[0] //aaHODApprover[0].ApproverName; //aaHODApprover[nnLno].ApproverName;
+                                                                aaHODAppEmail = xxChkEmailxx[0] //aaHODApprover[0].ApproverEmail; //aaHODApprover[nnLno].ApproverEmail;
+
+                                                                //console.log(aaHODAppEmail)
+                                                                //    
+                                                                // loop aaLoad
+                                                                var aDatabasea = "ExtraOnLine.dbo.EXPREIM";
+                                                                var aKeyField = "HeadRefNo";
+                                                                var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724"
+                                                                var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+                                                                var condition = item => item.Amount === 0 || item.ERORefNo3 === "";
+
+                                                                aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
+                                                                    .then(atestCehcka => {
+                                                                        if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aIncomeAlert01, "INPUT ERRORs"); }  //(aAllTChecked === "") || (aAllChecked === 0) DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: "��ุณต��อ����ั��ทึ������อมูล��ห����ร��ทุ��ราย��าร����อ�� ��ด Confirm" });
+                                                                        //DevExpress.ui.dialog.alert(messageHtml, title);
+                                                                        else {
+                                                                            let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm ", "Confirm ") // + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > ��� ��سҵ�Ǩ�ͺ��úѹ�֡��¡�����ú�ء��ͧ㹷ء��÷Ѵ** <br><b><u>����蹹��</u> �з������¡�ù���ԡ��������� </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>�� 'YES' ���ͺѹ�֡" +
+                                                                            result.done(function (dresult) {
+                                                                                if (dresult) {
+                                                                                    //if (aContinueChk !== true) {
+                                                                                    let aFREF = aaiHeadRef + "-001"
+                                                                                    console.log(aaiHeadRef)
+                                                                                    console.log(aFREF)
+                                                                                    let aERStatus = "Confirmed (finished)" //"Register"
+                                                                                    let aTrueORFalse = '1'
+                                                                                    let aTrueORFalseB = true
+                                                                                    //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
+                                                                                    //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
+                                                                                    var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus };
+                                                                                    var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+                                                                                    //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+                                                                                    //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704' ERORefNo6
+                                                                                    let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", Vendor01Note = '" + aaHODAll4Chk + "', Vendor02Note = '" + aaHODAppName + "', ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                    aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+
+                                                                                    //send Email
+
+                                                                                    //var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " REIMBURSEMENT REQUEST";
+                                                                                    //let aApproverName = aaHODAppName //+ ", [HOD]"        // aaHRAppName  //"Wikran" + " [HOD]"       // HOD Approver Name
+                                                                                    //let aApproverEmail = $.trim(aaHODAppEmail)            // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                                                                                    //let aRequesterName = asFullName //e.data.PayToName    //"Wikran Intaraprajaks"
+                                                                                    //let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                                                                                    // let aSubject = aaOnInitExpGroupDesc + " Expewnses Reimbursement Requested"
+                                                                                    //var aSubject = aaMailTitle
+                                                                                    //let aRefNoa = aaiHeadRef //iData.HeadRefNo
+                                                                                    //let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
+                                                                                    //let aMessage01 = "<div>���¹ �س" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��سҵ�Ǩ�ͺ ���͹��ѵ���¡�� " + aaOnInitExpGroupDesc + " Expenses ����Ѻ REFNO = [" + aRefNoa + "]<br> ����ö�������������� " + aAddress2Do + " (��Ǣ�� Approve --> HOD Approve) <br><br>���ʴ������Ѻ���<br>" + aRequesterName + "</div>"
+                                                                                    //// var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
+                                                                                    //var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                    //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+                                                                                    //
+
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+
+                                                                                    aMessageAlert("Already Confirmed !!") //& send mail to Requester " + aApproverName + " (" + aApproverEmail + ")", "DarkGreen")
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                    popup.hide();
+                                                                                } //if (dresult)
+                                                                            }); //result.done
+                                                                        } //else if
+                                                                    }); // .then  
+                                                                // loop aaLoad
+
+                                                            }); //fetch
+
+
+                                                    } // onClick
+                                                }); // aConfirm
+
+                                                const aform = $("#Add-form").dxForm({
+                                                    formData: iData, //aXXData[0], //iData,
+                                                    showColonAfterLabel: false,
+                                                    labelLocation: "left", //"top",
+                                                    readOnly: true,
+                                                    colCount: 1,
+                                                    items: [{
+                                                        itemType: "group",
+                                                        // caption: "Refference",
+                                                        // cssClass: "second-group",
+                                                        colCount: 4,
+                                                        items: [{
+                                                            dataField: "HeadRefNo",
+                                                            label: { text: "REF NO" },
+                                                            value: aaiHeadRef,
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { value: aaiHeadRef, width: 150 },
+                                                        },
+                                                        {
+                                                            dataField: "ReqDate",
+                                                            label: { text: "Submitted Date" },
+                                                            editorType: "dxDateBox",
+                                                            editorOptions: { value: idDate, displayFormat: "dd/MM/yyyy", width: 150 },	  //showClearButton: true,  //value: new Date(),                
+                                                        },
+                                                        {
+                                                            dataField: "PayToName",
+                                                            label: { text: "Associate Name" },
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { width: 180 }, //value: asFullName,
+                                                        },
+                                                        {
+                                                            dataField: "ERStatus",
+                                                            label: { text: "Status" },
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { readOnly: true, width: 180 },
+                                                        },
+
+
+                                                        ]
+
+                                                    },
+
+                                                    ]
+
+                                                }).dxForm("instance");
+
+                                                $("#Add-dxDataGrid").dxDataGrid({
+
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "REFNO",
+                                                        loadMode: "omit",
+                                                        load: function () { return $.post(aaxSettings).done(); },
+                                                        insert: function (values) {
+                                                            if (aaEnt) {
+                                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                                                                var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                            }
+                                                            else {
+                                                                var ObjRowData = JSON.stringify(values);
+                                                            }
+                                                            sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        },
+                                                        update: function (key, values) {
+                                                            //console.log( aaKeyField );
+                                                            //console.log(values)
+                                                            //console.log(JSON.stringify(values))
+                                                            var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                                                            var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                            sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        },
+                                                        remove: function (key) {
+                                                            var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                                                            var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                                                            sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        }
+
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false, //true,
+                                                    columnMinWidth: 10,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    showBorders: true,
+                                                    sorting: {
+                                                        mode: "single" //"multiple"
+                                                    },
+                                                    selection: {
+                                                        mode: 'single' //'multiple'
+                                                    },
+                                                    groupPanel: {
+                                                        visible: false //true //false // can't select other group
+                                                    },
+                                                    filterRow: {
+                                                        visible: false,
+                                                        applyFilter: "auto"
+                                                    },
+                                                    headerFilter: {
+                                                        visible: false //true
+                                                    },
+                                                    grouping: {
+                                                        autoExpandAll: true,
+                                                    },
+                                                    searchPanel: {
+                                                        visible: false //true
+                                                    },
+                                                    paging: {
+                                                        pageSize: 10
+                                                    },
+                                                    pager: {
+                                                        showPageSizeSelector: true,
+                                                        allowedPageSizes: [10, 20, 50],
+                                                        showNavigationButtons: true,
+                                                        showInfo: true
+                                                    },
+                                                    showBorders: true,
+                                                    groupPaging: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    rowAlternationEnabled: false, //true,
+                                                    /*
+                                                    onRowPrepared: function (e) {
+                                                        e.rowElement.css({ height: 100 });
+                                                    },
+                                                    */
+                                                    wordWrapEnabled: true,
+                                                    cacheEnabled: false,
+                                                    columnAutoWidth: true,
+
+                                                    // Export to Excel
+
+                                                    onInitNewRow: function (e) {
+                                                        //e.component.__addingStart = true; 
+                                                        //gridContainer.option("editing.popup.title", "Adding Expenses Reimbursement");
+                                                        let aaID = 1
+                                                        let axRunRun = aGetDateRef(aaOnInitExpGroupDesc.substring(0, 1));
+                                                        let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                        e.data.ID = aaID
+                                                        e.data.HeadRefNo = axRunRun
+                                                        e.data.REFNO = axLineNo
+                                                        e.data.PayToCode = asStaffID
+                                                        e.data.PayToName = asFullName
+                                                        e.data.Department = asDepartment
+                                                        e.data.Division = asDivision
+                                                        e.data.ERODesc06 = asStaffEmail
+                                                        e.data.ReqDate = aNowDte //new Date()
+                                                        e.data.ExpensesCode = "" //aaOnInitAccCode
+                                                        e.data.ExpensesDescription = aaOnInitAccDesc //aaOnInitAccDesc
+                                                        e.data.Currency = "THB"
+                                                        e.data.Xrate = 1
+                                                        e.data.ExpGroupCode = aaOnInitExpGroupCode
+                                                        e.data.ExpGroupDescEng = aaOnInitExpGroupDesc
+                                                        e.data.ERStatus = "Register"
+                                                        e.data.ERORefNo3 = "" // type of expenses
+                                                        e.data.EROCheck01 = true
+                                                        e.data.EROCheck02 = true
+                                                        e.data.NeedPayment = false
+                                                        e.data.RefundedAmount = 0
+                                                        e.data.LimitedAmount = 0 //aaLTotal
+                                                    },
+                                                    onEditorPreparing: function (e) {
+                                                        if (e.parentType === "dataRow" && arDataU === 0) {
+                                                            e.editorOptions.disabled = true;
+                                                        } else {     //PSPvNO,PSPvDate
+                                                            if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERStatus" || e.dataField === "PSPvNO" || e.dataField === "PSPvDate" || e.dataField === "LocalAmount" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department")) {
+                                                                e.editorOptions.disabled = true;
+                                                            }
+                                                        }
+                                                    },
+                                                    //
+                                                    //
+                                                    // Editing
+                                                    editing: {
+                                                        mode: "cell", // popup , row, cell (click to edit)
+                                                        useIcons: true,
+                                                        allowUpdating: aViewG, //aViewG, //true
+                                                        allowDeleting: aViewG, //arDataD,
+                                                        allowAdding: false,  //arDataC,
+
+                                                        popup: {
+                                                            title: "Expenses Reimbursement Info",
+                                                            fullScreen: false,
+                                                            showTitle: true,
+                                                            width: 1200,
+                                                            height: 650,
+                                                            position: {
+                                                                my: "top",
+                                                                at: "top",
+                                                                of: "window"
+                                                            },
+                                                            onContentReady: function (e) {
+                                                                e.component.option('toolbarItems[0].visible', aSaveVisible);
+                                                                e.component.option('toolbarItems[0].options.icon', 'save');
+                                                                e.component.option('toolbarItems[0].options.type', 'success');
+                                                                e.component.option('toolbarItems[1].options.text', aCancelText);
+                                                                e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                                                                e.component.option('toolbarItems[1].options.type', aCancelType);
+                                                            }
+                                                        },
+                                                    },
+                                                    // column list
+                                                    columns: [
+                                                        {
+                                                            type: "buttons",
+                                                            width: 40, //80
+                                                            buttons: [
+                                                                {
+                                                                    hint: "delete",
+                                                                    icon: "fas fa-trash", //fa-trash-alt
+                                                                    visible: function (e) {
+                                                                        return (e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                                                    },
+                                                                    onClick: function (e) {
+                                                                        //$("#gridContainer").dxDataGrid("instance").refresh();
+                                                                        var aLocalMess = "";
+                                                                        var aLocalTitle = "";
+                                                                        var aSQLCommand = "";
+                                                                        var aExitMessage = "All rows of this Reimbursement have deleted !!";
+                                                                        var aFrecN = e.row.data.ID;
+                                                                        if (aFrecN === 1) {
+                                                                            aLocalMess = "<div style='color:Tomato; font-size: 16px'><center><b>THIS IS THE FIRST ROW (NO = 1)</b><br>If you delete first row, program will delete all rows [REFNO = <u>" + e.row.data.HeadRefNo + "</u>]</div> <br> Are you sure you want to delete all rows ?"
+                                                                            aLocalTitle = "DELETE ALL ROWS"
+                                                                        } else {
+                                                                            aLocalMess = "Are you sure you want to delete this row (ROW =" + e.row.data.ID + " )?"
+                                                                            aLocalTitle = "DELETE THIS ROW"
+                                                                        }
+                                                                        let result = DevExpress.ui.dialog.confirm(aLocalMess, aLocalTitle); //
+                                                                        result.done(function (dresult) {
+                                                                            if (dresult) {
+                                                                                // delete data
+                                                                                // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
+                                                                                if (aFrecN === 1) {
+                                                                                    aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                                                                } else {
+                                                                                    aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE REFNO = '" + e.row.data.REFNO + "'"
+                                                                                }
+
+                                                                                //alert(aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aaLastLineNo = aaLastLineNo - 1
+                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                if (aFrecN === 1) {
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: aExitMessage }); //title: "OVER LIMITATION",
+                                                                                    popup.hide();
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            type: "buttons",
+                                                            width: 40,
+                                                            buttons: [// Clone first record ID++
+                                                                {
+                                                                    hint: "Add More Line",
+                                                                    icon: "fas fa-plus",
+                                                                    visible: function (e) {
+                                                                        return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                                                    },
+                                                                    onClick: (e) => {
+                                                                        aaLastLineNo = aaLastLineNo + 1
+                                                                        //alert(aaLastLineNo)
+                                                                        //REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,RemitTo1,RemitTo2,RemitTo1Amount,RemitTo2Amount,RemitTo1Diff,RemitTo2Diff,RemitTo1Note,RemitTo2Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6
+                                                                        let aBlankDate = new Date(); //"1900-01-01T00:00:00" //new Date('1900-01-01T00:00')//console.log(aBlankDate) 
+                                                                        let axRunRun = e.row.data.HeadRefNo
+                                                                        let aFieldSelected = "NextID"
+                                                                        let aFullTableName = "ExtraOnLine.dbo.ERnextIDview Where HeadRefNo LIKE '" + axRunRun + "%'"
+                                                                        let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName; //alert(aFullBody)                                           
+                                                                        let myHeaders = new Headers(); myHeaders.append("Content-Type", "application/json");
+                                                                        let raw = JSON.stringify({ "@": aFullBody });
+                                                                        let requestOptions = { method: "POST", headers: myHeaders, body: raw, redirect: "follow" };
+                                                                        let aURL = aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+
+                                                                        fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBody) }), redirect: "follow" })
+                                                                            .then(response => response.json())
+                                                                            //
+                                                                            .then(aData => {
+                                                                                // start process
+                                                                                let aaID = aData[0].NextID //JSON.stringify(aData); //aData[0].NextID //next no 
+                                                                                let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                                                //let aObjKeyData = { ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, EROAmount: 0, PBatchDate: aBlankDate,PSPvDate: aBlankDate,ERODate01: aBlankDate,ERODate02: aBlankDate,ERODate03: aBlankDate,ERODate04: aBlankDate,ERODate05: aBlankDate,ERODate06: aBlankDate} //{EntryBy: aaUsrN , EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                                                                                let aObjKeyData = { REFNO: axLineNo, ID: aaID, LocalAmount: 0, Amount: 0, RefundedAmount: 0, Note: "", ERORefNo1: "", ERORefNo3: "", ERORefNo4: "", ERODesc02: "", ERODesc03: "", ERODesc04: "", ExpensesCode: "", Currency: "THB", Xrate: 1 }
+                                                                                let aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //values 
+                                                                                //var clonedItem = $.extend({}, e.row.data, { REFNO: axRunRun }); //++maxID
+
+                                                                                sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+
+                                                                                e.component.refresh(true); //employees.splice(e.row.rowIndex, 0, clonedItem);
+                                                                                e.component.refresh(true);
+                                                                                e.component.refresh(true);
+                                                                                e.event.preventDefault();
+
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+
+                                                                            })
+                                                                            .catch(e => {
+                                                                                console.log(e);
+                                                                            })
+                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                    }
+                                                                },
+                                                            ]
+                                                        },
+                                                        {
+                                                            dataField: "ID",
+                                                            sortOrder: "asc",
+                                                            caption: "#",
+                                                            editorOptions: { width: 50 },
+                                                            alignment: 'top',
+                                                            width: 50
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo4",
+                                                            caption: "Bill No",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate01",
+                                                            caption: "Bill Date",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 120,
+                                                            stylingMode: 'filled',
+                                                            editorType: "dxDateBox", //"dxDateBox", //"dxCalendar", function (){return null}
+                                                            editorOptions: {
+                                                                showClearButton: true,
+                                                                format: "dd/MM/yyyy",
+                                                                width: 120,
+                                                                showTodayButton: false,
+                                                            },
+                                                            validationRules: [{ type: "required" }, {
+                                                                type: "range",
+                                                                min: new Date(aYearStrS + "-04-30"), //aYearStrS
+                                                                max: new Date(aYearStrL + "-04-30"), //aYearStrL
+                                                                message: "Please Change Bill Date"
+                                                            }],
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc02",
+                                                            caption: "Description",
+                                                            editorType: "dxTextArea",
+                                                            width: 200,
+                                                            editorOptions: { width: 200 }, //, height: 300 
+                                                            //validationRules: [{ type: "required" }],
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc03",
+                                                            caption: "Purpose",
+                                                            editorType: "dxTextArea",
+                                                            width: 150,
+                                                            editorOptions: { width: 150 }, //, height: 80
+                                                            //validationRules: [{ type: "required" }],
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc04",
+                                                            caption: "Company/Personal Name",
+                                                            editorType: "dxTextArea",
+                                                            width: 180,
+                                                            editorOptions: { width: 180 }, //, height: 80
+                                                            //validationRules: [{ type: "required" }],
+                                                            visible: true,
+                                                        },
+                                                        /*
+                                                        {
+                                                            dataField: "ERORefNo3",
+                                                            caption: "Type of Reimbursement",
+                                                            lookup: {
+                                                                dataSource: aaSubGroup01,
+                                                                valueExpr: "TDESC", //"ExpSubGroup"
+                                                                displayExpr: "TDESC"
+                                                            },
+                                                            setCellValue: function (newData, value, currentRowData) { //, componentInstance
+                                                                console.log(value);
+                                                                newData.ERORefNo3 = value;
+                                                                newData.ExpensesCode = (aaSubGroup01.find(item => item.TDESC === value)?.ACCCODE);
+                                                            },
+                                
+                                                            width: 200,
+                                                            editorOptions: { width: 180 },
+                                                            value: false,
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "Account Code",
+                                                            allowEditing: false,
+                                                            editorOptions: { width: 100, readOnly: true },
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "PayToCode",
+                                                            caption: "Code",
+                                                            editorOptions: { width: 150 },
+                                                            width: 150,
+                                                            visible: false,
+                                                        },         
+                                                        {
+                                                            dataField: "PayToName",
+                                                            caption: "Name",
+                                                            editorOptions: { width: 300 },
+                                                            width: 250,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Department",
+                                                            caption: "Department",
+                                                            editorOptions: { width: 150 },
+                                                            width: 150,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Division",
+                                                            caption: "Division",
+                                                            editorOptions: { width: 150 },
+                                                            width: 150,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "Expenses Code",
+                                                            editorType: "dxTextArea",
+                                                            editorOptions: { width: 200 },
+                                                            width: 120,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesDescription", //
+                                                            caption: "Expenses",
+                                                            editorType: "dxTextArea",
+                                                            editorOptions: { width: 300 },
+                                                            width: 250,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo1",
+                                                            caption: "Plate NO",
+                                                            width: 150,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo2",
+                                                            caption: "Fleet Card NO",
+                                                            width: 150,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate01",
+                                                            caption: "Slip/Bill Date",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 150,
+                                                            editorOptions: { width: 150 },
+                                                            validationRules: [{ type: "required" }],
+                                                            visible: false,
+                                                        },
+                                                        */
+                                                        {
+                                                            dataField: "Amount",
+                                                            caption: "Original currency",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            setCellValue: function (newData, value, currentRowData) {
+                                                                newData.Amount = value;
+                                                                newData.LocalAmount = value * (currentRowData.Xrate);
+                                                                newData.RefundedAmount = value * (currentRowData.Xrate);
+                                                            },
+
+                                                            /*setCellValue: function (newData, value, currentRowData) {
+                                                                let aaHeadRefNO = currentRowData.HeadRefNo
+                                                                let aaTT = aGetD2V(aaPFDMI, "ExtraOnLine.dbo.ERnextIDview Where HeadRefNo LIKE '" + aaHeadRefNO + "%'", "TAmount", "aaOBJnnT")
+                                                                let arResult = JSON.parse(localStorage.getItem("aaOBJnnT"));
+                                                                let aaTTAmt = arResult[0].TAmount //Total Amount 
+                                                                let aaRemain = aaLTotal - aaTTAmt
+                                                                let aaCheckAmt = aaLTotal - (aaTTAmt + value)
+                                                                let aTRem = (aaRemain === 0 ? "0" : aaRemain.toString());
+                                                                let aaAMessage = "<div  style='color:Tomato;'><center><b><i class='fas fa-exclamation-triangle'></i> OVER LIMITATION</b></br></br> The remaining amount = " + aTRem + "</br>Please Try again !!!</center></div>";
+                            
+                                                                if (aaCheckAmt >= 0) {
+                                                                    //newData.Amount = value;
+                                                                    //newData.LocalAmount = value * (1/currentRowData.Xrate); 
+                                                                } else {
+                                                                    DevExpress.ui.dialog.alert({
+                                                                        showTitle: false,
+                                                                        //title: "OVER LIMITATION",
+                                                                        messageHtml: aaAMessage
+                                                                    });
+                                                                    //alert(" OVER LIMITATION, Please Try again !!!");
+                                                                }
+                                                                newData.Amount = value;
+                                                                newData.LocalAmount = value * (1 / currentRowData.Xrate);
+                                                            },
+                                                            */
+
+                                                            editorType: "dxNumberBox",
+                                                            editorOptions: { format: "#,##0.00", width: 130 },
+                                                            width: 130,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Currency",
+                                                            caption: "Currency", //aCurrenciesList
+                                                            lookup: {
+                                                                dataSource: aCurrenciesList,
+                                                                valueExpr: "code",
+                                                                displayExpr: "code"
+                                                            },
+                                                            editorOptions: { width: 100 },
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Xrate",
+                                                            caption: "X-Rate",
+                                                            dataType: "number",
+                                                            editorType: "dxNumberBox",
+                                                            editorOptions: { format: "#,##0.000000", width: 100 },
+                                                            format: "#,##0.000000",
+                                                            setCellValue: function (newData, value, currentRowData) {
+                                                                newData.Xrate = value;
+                                                                newData.LocalAmount = value * currentRowData.Amount;
+                                                                newData.RefundedAmount = value * currentRowData.Amount;
+                                                            },
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        /*
+                                                        {
+                                                            dataField: "LocalAmount",
+                                                            caption: "Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorOptions: { format: "#,##0.00", width: 120 },
+                                                            width: 120,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "EROCheck01",
+                                                            caption: "Pay Slip",
+                                                            //alignment: "center",
+                                                            width: 110,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "EROCheck02",
+                                                            caption: "Tax Invoice",
+                                                            //alignment: "center",
+                                                            width: 110,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Confirmed",
+                                                            caption: "CF",
+                                                            //editorOpetions: {disable: aConfirm2Pay},
+                                                            //alignment: "center",
+                                                            width: 80,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "NeedPayment",
+                                                            caption: "Refunded",
+                                                            //alignment: "center",
+                                                            width: 110,
+                                                            visible: false,
+                                                        },
+                                                        
+                                                        {
+                                                            dataField: "RefundedAmount",
+                                                            caption: "Reimburse",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorOptions: { format: "#,##0.00", width: 120, readOnly: true },
+                                                            width: 120,
+                                                            visible: false,
+                                                        },
+                                                        */
+                                                        {
+                                                            dataField: "ERStatus",
+                                                            caption: "Status",
+                                                            dataType: "string",
+                                                            width: 180,
+                                                            visible: true,
+                                                        },
+                                                        /*
+                                                        {
+                                                            dataField: "ERODesc05",
+                                                            caption: "FA NOTE",
+                                                            dataType: "string",
+                                                            cssClass: "colorRED",
+                                                            editorOptions: { width: 250, readOnly: true }, //, height: 80
+                                                            width: 250,
+                                                            visible: true,
+                                                        },
+                                                        */
+                                                        {
+                                                            dataField: "HeadRefNo",
+                                                            caption: " ", // REF NO
+                                                            dataType: "string",
+                                                            //sortOrder: "desc",
+                                                            //groupIndex: 0,
+                                                            width: 5,
+                                                            allowSorting: false,
+                                                            editorOptions: { width: 5, readOnly: true },
+                                                            visible: true,
+                                                        },
+                                                        /*
+                                                        {
+                                                            dataField: "Note",
+                                                            caption: "Note",
+                                                            editorType: "dxTextArea",
+                                                            editorOptions: { width: 400, height: 80 },
+                                                            visible: false,
+                                                        },
+                                                        {  dataField: "ERSTATUS",
+                                                           caption:"Status",
+                                                          //editorType:"dxTextArea",
+                                                          //editorOptions: {width: 400, height: 80},
+                                                           visible: false,
+                                                        },
+                                                        //PBatchNo,PBatchDate,PSPvNO,PSPvDate
+                                                        {
+                                                            dataField: "PSPvNO",
+                                                            caption: "PS PVNO",
+                                                            //editorType:"dxTextArea",
+                                                            editorOptions: { width: 120 },
+                                                            width: 120,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "PSPvDate",
+                                                            caption: "PS PV Date",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 120,
+                                                            editorOptions: { width: 120 },
+                                                            visible: false,
+                                                            //validationRules: [{ type: "required" }],
+                                                        },
+                                                        {
+                                                            dataField: "HODApproved",
+                                                            caption: "HD",
+                                                            width: 60,
+                                                            //filterValue: false, 
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "HRApproved",
+                                                            caption: "HR",
+                                                            filterValue: false,
+                                                            width: 60,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Approved",
+                                                            caption: "FA",
+                                                            filterValue: false,
+                                                            width: 60,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "EntryBy",
+                                                            caption: "Entry By",
+                                                            value: [aaUsrN],
+                                                            editorOptions: { width: 150 },
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "EntryDate",
+                                                            caption: "Entry Date",
+                                                            value: [aNowDatev],
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            editorOptions: { width: 150 },
+                                                            visible: false,
+                                                        },
+                                                        */
+
+                                                    ],
+                                                    // summary
+                                                    summary: {
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "REFNO",
+                                                                summaryType: "count",
+                                                                //summaryType: "max",
+                                                                //valueFormat: "currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0} Items",
+                                                            },
+                                                            /*
+                                                            {
+                                                                column: "Amount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+                                                            {
+                                                                column: "LocalAmount",
+                                                                summaryType: "sum",
+                                                                //summaryType: "max",
+                                                                valueFormat: "#,##0.00",
+                                                                //"currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0}",
+                                                            },
+                                                            */
+                                                            {
+                                                                column: "RefundedAmount",
+                                                                summaryType: "sum",
+                                                                //summaryType: "max",
+                                                                valueFormat: "#,##0.00", //"currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+                                                        groupItems: [
+                                                            {
+                                                                column: "ID",
+                                                                summaryType: "count",
+                                                                displayFormat: "{0} Items",
+                                                            },
+
+                                                            {
+                                                                column: "ERORefNo4",
+                                                                summaryType: "count",
+                                                                showInGroupFooter: true,
+                                                                displayFormat: "Total {0} Items",
+                                                            },
+                                                            /*
+                                                            {
+                                                                column: "Amount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                showInGroupFooter: true,
+                                                                alignByColumn: true,
+                                                                displayFormat: "{0}",
+                                                            },
+                                                            {
+                                                                column: "LocalAmount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                showInGroupFooter: true,
+                                                                alignByColumn: true,
+                                                                displayFormat: "{0}",
+                                                            },
+                                                            */
+                                                            {
+                                                                column: "RefundedAmount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                showInGroupFooter: true,
+                                                                alignByColumn: true,
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+                                                    },
+                                                    // Tool Bar
+                                                    onToolbarPreparing: function (e) {
+                                                        var dataGrid = e.component;
+                                                        e.toolbarOptions.items.unshift(
+                                                            /*
+                                                               {
+                                                                   location: "before",
+                                                                   template: function () { return $("<div style='padding: 5px 5px;'/>") }
+                                                               },
+                                                              
+                                                               {
+                                                                   location: "before",
+                                                                   template: function () {
+                                                                       return $("<div />")
+                                                                           //.addClass("informer")
+                                                                           .append(
+                                                                               $("<span style='font-size: 13px; font-weight: bold; color: white; background-color: LightSeaGreen; border-radius: 3px; border: 0px; padding: 1px 30px; ' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                                                                   .text(aaOnInitExpGroupDesc.toUpperCase() + " EXPENSES FOR"),
+                                                                               $("<br><center />"),
+                                                                               $("<i class= 'fas fa-user-circle''><span />")   //; style='color: DarkGreen;
+                                                                                   //.addClass("name")
+                                                                                   .text(" " + $.trim(asFullName)),
+                                                                           );
+                                                                   }
+                                                               },
+                                                               {
+                                                                   location: "before",
+                                                                   template: function () { return $("<div style='padding: 5px 8px; '/>") }
+                                                               },
+                                                               {
+                                                                    location: "before",
+                                                                    template: function () {
+                                                                        return $("<div />")  //    height: 70px; width: 130px; text-align: center;  color: #fff;
+                                                                            .append(
+                                                                                $("<span style='font-size: 13px; font-weight: bold; color: lightgrey; background-color: Indigo; border-radius: 3px; border: 0px; padding: 1px 10px;' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                                                                    .text("LIMIT/MONTH"),
+                                                                                $("<br>"),
+                                                                                $("<i class= 'fas fa-coins'; style='color: Indigo;'>;"),
+                                                                                $("<span />")
+                                                                                    .text('   ' + String(aaLTotal).replace(/(.)(?=(\d{3})+$)/g, '$1,') + '.00'),
+                                                                            );
+                                                                    }
+                                                                },
+                                                                {
+                                                                    location: "before",
+                                                                    template: function () { return $("<div style='padding: 5px 95px;'/>") }
+                                                                },
+                                                                //aPopUpAddForm
+                                                                {
+                                                                    location: "after",
+                                                                    widget: "dxButton",
+                                                                    options: {
+                                                                        icon: "check",
+                                                                        onClick: function () {
+                                                                            aPopUpAddForm(1);
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    location: "after",
+                                                                    widget: "dxButton",
+                                                                    options: {
+                                                                        icon: 'collapse',
+                                                                        text: 'Collapse All',
+                                                                        //type: "danger",
+                                                                        width: 140,
+                                                                        onClick: function (e) {
+                                                                            var expanding = e.component.option("text") === "Expand All";
+                                                                            dataGrid.option("grouping.autoExpandAll", expanding);
+                                                                            e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                                                                            e.component.option("icon", expanding ? "collapse" : "expand");
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    location: "after",
+                                                                    widget: "dxButton",
+                                                                    visible: arPDFEx,
+                                                                    options: {
+                                                                        icon: "exportpdf",
+                                                                        //text: "Export to PDF",
+                                                                        onClick: function () {
+                                                                            const doc = new jsPDF();
+                                                                            //doc.addFont("font/ANGSA.ttf", "angsana", "normal");
+                                                                            doc.addFont("font/Prompt-ExtraLight.ttf", "Prompt", "normal"); // load thai font (in font location Google Font)
+                                                                            doc.setFont("Prompt", "normal"); // set to thai font
+                                                                            DevExpress.pdfExporter.exportDataGrid({
+                                                                                jsPDFDocument: doc,
+                                                                                component: dataGrid,
+                                                                                customizeCell: function (options) {
+                                                                                    const { gridCell, pdfCell } = options;
+                                
+                                                                                    //if(gridCell.rowType === 'data') {
+                                                                                    //set font and font size
+                                                                                    pdfCell.styles = {
+                                                                                        font: 'Prompt',
+                                                                                        fontSize: 10
+                                                                                    }
+                                                                                    //}
+                                                                                }
+                                                                            }).then(function () {
+                                                                                doc.save('EXPREIM' + '.pdf');
+                                                                            });
+                                                                        }
+                                                                    }
+                                                                },
+                                                                */
+                                                            {
+                                                                location: "before",
+                                                                widget: "dxButton",
+                                                                options: {
+                                                                    icon: "refresh",
+                                                                    text: "REFRESH",
+                                                                    stylingMode: "outlined",
+                                                                    onClick: function () {
+                                                                        dataGrid.refresh();
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                location: "before",
+                                                                template: function () { return $("<div style='padding: 5px 15px;'/>") }
+                                                            },
+                                                            {
+                                                                location: "after",
+                                                                widget: "dxButton",
+                                                                options: {
+                                                                    icon: "fas fa-info",
+                                                                    text: "HELP",
+                                                                    type: "success",
+                                                                    stylingMode: "contained",
+                                                                    onClick: function () {
+                                                                        aPopupHelp()
+                                                                    }
+                                                                }
+                                                            }
+                                                        );
+                                                    }
+
+                                                }).dxDataGrid("instance");
+
+
+                                                function aPopupHelp() {
+                                                    const popup = $("#popupHelp").dxPopup({
+                                                        title: " HELP - Data Input",
+                                                        height: 800,
+                                                        width: 1000,
+                                                        position: { offset: "40 -100" }, //{my:"top", at:"top", of:window}, <ul><li>
+                                                        visible: true,
+                                                        showCloseButton: true,
+                                                        contentTemplate:
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-plus'></i>" + " �������� ��¡�� </li><li>������¡�� ��������բ����� ¡��� ��Ǣ���ѹ��� ���ʴ����ѹ���</li></ul></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-trash'></i>" + " ����ź��¡��㹺�÷Ѵ������͡</li><li>�������͡ź ��÷Ѵ��� 1 �ж������繡��ź�����ŷ����� ** ��ͧ���Ѵ���ѧ </ul></li></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-redo'></i>" + " REFRESH</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-plus'></i>" + " �������� ��¡�� </li><li>������¡�� ��������բ����� ¡��� ��Ǣ���ѹ��� ���ʴ����ѹ���</li></ul></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " INPUT VDO</div>" +
+                                                            "<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
+                                                    }).dxPopup("instance");
+
+                                                }
+
+                                            });
+                                        }
+
+                                        function aPopUpAddForm(aRecNo, iData, idDate, iView) { // popup Add New
+                                            var aaPFDMI = isLocalHost();
+                                            var astr = localStorage["aDXTheme"]
+                                            var aViewF = (iView === undefined) ? false : iView;
+                                            var aViewG = (iView === undefined) ? true : !iView;
+                                            if (aRecNo === 1) {
+                                                var aaaTitle = " [ADD]"
+                                                let aaID = 1
+                                                let axRunRun = aGetDateRef(aaOnInitExpGroupDesc.substring(0, 1));
+                                                let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                var aaiHeadRef = axRunRun;
+                                                //aaOnInitAccCode            aaOnInitAccDesc         Currency: "THB", Xrate: 1,                                                                                                                                                                     
+                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: idDate, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 1, EROCheck02: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: 0 }
+                                                var ObjRowData = JSON.stringify(ObjKeyData);
+                                                console.log(ObjRowData)
+                                                sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                            } else {
+                                                var aaiHeadRef = aRecNo;
+                                                //var aaaTitle = " [EDIT]"
+                                                var aaaTitle = (iView === undefined) ? " [EDIT]" : " {VIEW}"; //" [EDIT]"
+                                            }
+                                            var aaSchRefx = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // (DataGrid View Only This New Item)
+                                            aqrFull = aaSchRefx;
+                                            var aaxurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all'
+                                            var aaxSettings = { "url": aaxurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": btoa(aqrFull) }), };
+
+                                            //jQuery(function ($) {
+                                            $(() => {
+                                                var aaLastLineNo = 1;
+
+                                                var aXXData = function () { return $.post(aaxSettings).done(); }
+                                                if (iData === 1) {
+                                                    iData = aXXData[0];
+                                                }
+
+                                                var gbxRateV = 1;
+                                                const popup = $("#popupContainerAdd").dxPopup({
+                                                    title: "Receiving" + aaaTitle,
+                                                    width: '1300px',
+                                                    position: { offset: "0 -140" },  //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: true,
+                                                    showCloseButton: false,
+                                                    showTitle: true,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+                                                    onInitialized: function (e) { e.component.registerKeyHandler("escape", function (arg) { }) },     // ignore when press 'ESC'  
+                                                    //shadingColor:"rgb(190,190,190,0.9)",
+                                                    //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                                                    //toolbarItems: [
+                                                    //{toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                                                    contentTemplate: () => {
+                                                        return $("<div />").append(
+                                                            $("<p><div id='Add-form'></div></p>"),
+                                                            $("<p><div id='Add-dxDataGrid'></div></p>"),
+                                                            $("<span id='Add-popupexit'></span>"),
+                                                            $("<span style='padding: 5px 15px;'></span>").text(" "),
+                                                            $("<span id='aConfirm'></span>")
+                                                        );
+                                                    },
+                                                    onContentReady: () => {
+                                                        // $("#Add-dxDataGrid").hide(); // hide dataGrid
+                                                    },
+                                                    toolbarItems: [
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>" // Logo
+                                                        },
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            widget: "dxButton",
+                                                            //toolbar: "bottom",
+                                                            location: "after",
+                                                            options: {
+                                                                //text: "EXIT",
+                                                                icon: "fas fa-times",
+                                                                stylingMode: "outlined",
+                                                                type: "danger",
+                                                                onClick: function (e) {
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    //let cRes = aMessageSelect("Exit Without SAVE", "Press 'YES' to Not Save ")
+                                                                    if (aRecNo === 1) {
+                                                                        let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?"); //+ "<br>?? 'YES' ???????????"
+                                                                        result.done(function (dresult) {
+                                                                            if (dresult) {
+                                                                                // not delete
+                                                                            } else {
+                                                                                // delete data
+                                                                                // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
+                                                                                let aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                //alert(aSQLCommand)
+                                                                                //console.log(aXXData[0].ERStatus)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                    popup.hide()
+                                                                }
+                                                            }
+                                                        }]
+
+                                                }).dxPopup("instance");
+
+                                                $("#Add-popupexit").dxButton({
+                                                    icon: "fas fa-times",
+                                                    type: "danger",
+                                                    text: "EXIT",
+                                                    visible: true,
+                                                    onClick: function (e) {
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        // let cRes = aMessageSelect("Exit Without SAVE", "Press 'YES' to Not Save ")
+                                                        if (aRecNo === 1) { //
+                                                            let result = DevExpress.ui.dialog.confirm("<i>" + "Press 'YES' To SAVE " + "</i>", "SAVE BEFORE EXIT ?"); // "<br>?? 'YES' ???????????" +
+                                                            result.done(function (dresult) {
+                                                                if (dresult) {
+                                                                    // not delete
+                                                                } else {
+                                                                    // delete data
+                                                                    // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
+                                                                    let aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + aaiHeadRef + "'"
+                                                                    //alert(aSQLCommand)
+                                                                    //console.log(aXXData[0].ERStatus)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                }
+                                                            });
+                                                        }
+                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+                                                        popup.hide()
+                                                    }
+                                                });
+
+                                                $("#aConfirm").dxButton({
+                                                    hint: "Confirm and send to HOD.",
+                                                    icon: "fas fa-check-circle",
+                                                    type: "success",
+                                                    text: "CONFIRM",
+                                                    visible: aViewG, //true,
+                                                    //width: "120px",
+                                                    //visible: true,
+                                                    onClick: function (e) {
+                                                        let aDivSxx = "Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                        let aFieldSelectedxx = "HeadRefNo,TotalReimburse" //ExtraOnLine].[dbo].[EXPREIM_400]
+                                                        let aFullBodyxx = "Select " + aFieldSelectedxx + " From " + "ExtraOnLine.dbo.EXPREIM_ALL " + aDivSxx; //alert(aFullBody)                                           
+
+                                                        fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBodyxx) }), redirect: "follow" })
+                                                            .then(response => response.json())
+                                                            //
+                                                            .then(ppData => {
+                                                                var aaTotalValue = ppData;
+                                                                var aaTotalReim = aaTotalValue[0].TotalReimburse
+                                                                //alert(aaTotalReim)
+                                                                //alert(aaHODApprover.length)
+                                                                var aaiFoundApp = false;
+                                                                var nnLno = 0;
+                                                                var nnAdno = 0;
+                                                                var aaHODEmail4Chk = ""; //aaHODAppName
+                                                                var aaHODName4Chk = "";
+                                                                var aaHODRange4Chk = "";
+                                                                for (let i = 0; i < aaHODApprover.length; i++) {
+                                                                    if (aaHODApprover[i].ApproverName === asFullName) {
+                                                                        nnAdno = i
+                                                                        aaiFoundApp = true;
+                                                                        //console.log(nnAdno)
+                                                                        //console.log(aaHODApprover[nnAdno].ApproverName)                                                    
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                console.log(nnAdno)
+                                                                if (aaiFoundApp === true && aaHODApprover.length > 1) {
+                                                                    nnAdno = nnAdno + 1
+                                                                }
+                                                                //console.log(i)
+                                                                for (let i = nnAdno; i < aaHODApprover.length; i++) {
+                                                                    if (aaTotalReim <= aaHODApprover[i].LRange02) {
+                                                                        aaHODEmail4Chk = aaHODEmail4Chk + "|" + aaHODApprover[i].ApproverEmail + "|"
+                                                                        aaHODName4Chk = aaHODName4Chk + "|" + aaHODApprover[i].ApproverName + "|"
+                                                                        aaHODRange4Chk = aaHODRange4Chk + aaHODApprover[i].LRange02
+                                                                        nnLno = i
+                                                                        break;
+                                                                    } else {
+                                                                        aaHODEmail4Chk = aaHODEmail4Chk + "|" + aaHODApprover[i].ApproverEmail + "|" + ","
+                                                                        aaHODName4Chk = aaHODName4Chk + "|" + aaHODApprover[i].ApproverName + "|" + ","
+                                                                        aaHODRange4Chk = aaHODRange4Chk + aaHODApprover[i].LRange02 + ","
+                                                                    }
+                                                                }
+                                                                var aaHODAll4Chk = "NAME:[" + aaHODName4Chk + "] MAIL:[" + aaHODEmail4Chk + "] RANG:[" + aaHODRange4Chk + "]";
+
+                                                                var xxChkEmailxx = aTranTextJson(aaHODAll4Chk, "MAIL:", "RANG:")
+                                                                var xxChkNamexx = aTranTextJson(aaHODAll4Chk, "NAME:", "MAIL:")
+                                                                var xxChkRangexx = aTranTextJson(aaHODAll4Chk, "RANG:", "")
+                                                                var xxChkLenxx = xxChkNamexx.length;
+                                                                console.log(aaHODAll4Chk)
+                                                                console.log(xxChkNamexx, xxChkEmailxx, xxChkRangexx)
+
+                                                                // send mail to first Approver 
+                                                                aaHODAppName = xxChkNamexx[0] //aaHODApprover[0].ApproverName; //aaHODApprover[nnLno].ApproverName;
+                                                                aaHODAppEmail = xxChkEmailxx[0] //aaHODApprover[0].ApproverEmail; //aaHODApprover[nnLno].ApproverEmail;
+
+                                                                console.log(aaHODAppEmail, aaHODAppName)
+                                                                // loop aaLoad
+                                                                var aDatabasea = "ExtraOnLine.dbo.EXPREIM";
+                                                                var aKeyField = "HeadRefNo";
+                                                                var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724"
+                                                                var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+                                                                var condition = item => item.Amount === 0 || item.Amount > 40000 || item.EROCode01 === "" || item.ERODesc01 === "" || item.ERODesc02 === "";
+
+                                                                aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
+                                                                    .then(atestCehcka => {
+                                                                        if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aIncomeAlert01, "INPUT ERROR"); }  //(aAllTChecked === "") || (aAllChecked === 0) DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: "��ุณต��อ����ั��ทึ������อมูล��ห����ร��ทุ��ราย��าร����อ�� ��ด Confirm" });
+                                                                        //DevExpress.ui.dialog.alert(messageHtml, title);
+                                                                        else {
+                                                                            let result = DevExpress.ui.dialog.confirm("Are you sure you want to confirm ", "Confirm ") // + aaHODAppName + " (" + aaHODAppEmail + ") ? <br><p style='color:Red; font-size: 12px;' > ��� ��سҵ�Ǩ�ͺ��úѹ�֡��¡�����ú�ء��ͧ㹷ء��÷Ѵ** <br><b><u>����蹹��</u> �з������¡�ù���ԡ��������� </b></p><p style='color: grey; font-size: 10px;'>(" + (xxChkLenxx) + ")</p>", "CONFIRM TO HOD"); // "<br>�� 'YES' ���ͺѹ�֡" +
+                                                                            result.done(function (dresult) {
+                                                                                if (dresult) {
+                                                                                    //if (aContinueChk !== true) {
+                                                                                    let aFREF = aaiHeadRef + "-001"
+                                                                                    console.log(aaiHeadRef)
+                                                                                    console.log(aFREF)
+                                                                                    let aERStatus = "Confirmed (finished)" //"Register"
+                                                                                    let aTrueORFalse = '1'
+                                                                                    let aTrueORFalseB = true
+                                                                                    //let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
+                                                                                    //let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
+                                                                                    var aObjKeyData = { REFNO: aFREF, Confirmed: aTrueORFalseB, ERStatus: aERStatus };
+                                                                                    var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+                                                                                    //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+                                                                                    //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704' ERORefNo6
+                                                                                    let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", Vendor01Note = '" + aaHODAll4Chk + "', Vendor02Note = '" + aaHODAppName + "', ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                    aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                    aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+
+                                                                                    //send Email
+
+                                                                                    //var aaMailTitle = aaOnInitExpGroupDesc.toUpperCase() + " REIMBURSEMENT REQUEST";
+                                                                                    //let aApproverName = aaHODAppName //+ ", [HOD]"        // aaHRAppName  //"Wikran" + " [HOD]"       // HOD Approver Name
+                                                                                    //let aApproverEmail = $.trim(aaHODAppEmail)            // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                                                                                    //let aRequesterName = asFullName //e.data.PayToName    //"Wikran Intaraprajaks"
+                                                                                    //let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                                                                                    // let aSubject = aaOnInitExpGroupDesc + " Expewnses Reimbursement Requested"
+                                                                                    //var aSubject = aaMailTitle
+                                                                                    //let aRefNoa = aaiHeadRef //iData.HeadRefNo
+                                                                                    //let aAddress2Do = "<a href='" + aaPFDMI + "/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
+                                                                                    //let aMessage01 = "<div>���¹ �س" + $.trim(aApproverName) + ",<br>&nbsp;&nbsp;&nbsp;&nbsp;��سҵ�Ǩ�ͺ ���͹��ѵ���¡�� " + aaOnInitExpGroupDesc + " Expenses ����Ѻ REFNO = [" + aRefNoa + "]<br> ����ö�������������� " + aAddress2Do + " (��Ǣ�� Approve --> HOD Approve) <br><br>���ʴ������Ѻ���<br>" + aRequesterName + "</div>"
+                                                                                    //// var aMessage = "<!DOCTYPE html><html><head><style>table { bprder: 1px solid; border-collapse: collapse; width: 50%;}th, td {  text-align: left;  padding: 8px;}tr:nth-child(even){background-color: #ffe6ff }th {  background-color: #027DFC; color: white;}</style></head><body><table><tr><th  style = 'font-size: 22px;'><center />&#9728; " + aaMailTitle + " &#9728;</th></tr><tr><td style = 'font-size: 13px; background-color:#EAF4FF'>"+ aMessage01 +"</td>  </tr></tr></table></body></html>" //#fff7e6 #e6e6e6 #fff7e6    
+                                                                                    //var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                    //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+                                                                                    //
+
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+
+                                                                                    aMessageAlert("Already Confirmed !!") //& send mail to Requester " + aApproverName + " (" + aApproverEmail + ")", "DarkGreen")
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                    popup.hide();
+                                                                                } //if (dresult)
+                                                                            }); //result.done
+                                                                        } //else if
+                                                                    }); // .then  
+                                                                // loop aaLoad
+                                                            });
+                                                    }
+                                                });
+
+                                                $("#print").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: () => {
+                                                        window.print();
+                                                    }
+                                                });
+
+                                                const aform = $("#Add-form").dxForm({
+                                                    formData: iData, //aXXData[0], //iData,
+                                                    showColonAfterLabel: false,
+                                                    labelLocation: "left", //"top",                                                    
+                                                    readOnly: true,
+                                                    colCount: 1,
+                                                    items: [{
+                                                        itemType: "group",
+                                                        //caption: "Refference",
+                                                        //cssClass: "second-group",
+                                                        colCount: 3,
+                                                        items: [{
+                                                            dataField: "HeadRefNo",
+                                                            label: { text: "REF NO" },
+                                                            dataType: "string",
+                                                            value: aaiHeadRef,
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { value: aaiHeadRef, width: 150 },
+                                                        },
+                                                        {
+                                                            dataField: "ReqDate",
+                                                            label: { text: "Submitted Date" },
+                                                            dataType: "date",
+                                                            editorType: "dxDateBox",
+                                                            editorOptions: { value: idDate, displayFormat: "dd/MM/yyyy", width: 150, readOnly: true },	  //showClearButton: true,  //value: new Date(),                
+                                                        },
+                                                        /*
+                                                        {
+                                                            itemType: "empty"
+                                                        },
+                                                        */
+                                                        {
+                                                            dataField: "PayToName",
+                                                            label: { text: "Associate Name", }, // template: labelTemplate("user"),
+                                                            dataType: "string",
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { width: 180, readOnly: true }, //value: asFullName,
+                                                        },
+                                                        // {
+                                                        //     itemType: "empty",
+                                                        //     colSpan: 1,
+                                                        // }, 
+                                                        {
+                                                            dataField: "Department", //ReqDate
+                                                            label: { text: "Dept." },
+                                                            dataType: "dxTextBox",
+                                                            editorOptions: { width: 80 },
+                                                            width: 80,
+                                                        },
+                                                        {
+                                                            dataField: "Vendor02Note",
+                                                            label: { text: "HOD" },
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { readOnly: true, width: 180 },
+                                                        },
+                                                        {
+                                                            dataField: "ERStatus",
+                                                            label: { text: "Status" },
+                                                            editorType: "dxTextBox",
+                                                            editorOptions: { readOnly: true, width: 250 },
+                                                        },
+
+
+                                                        ]
+
+                                                    },
+
+                                                    ]
+
+                                                }).dxForm("instance");
+
+                                                $("#Add-dxDataGrid").dxDataGrid({
+
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "REFNO",
+                                                        loadMode: "omit",
+
+                                                        load: function () { return $.post(aaxSettings).done(); },
+                                                        insert: function (values) {
+                                                            if (aaEnt) {
+                                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                                                                var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                            }
+                                                            else {
+                                                                var ObjRowData = JSON.stringify(values);
+                                                            }
+                                                            sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        },
+                                                        update: function (key, values) {
+                                                            //console.log( aaKeyField );
+                                                            var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                                                            var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                                                            sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        },
+                                                        remove: function (key) {
+                                                            var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                                                            var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                                                            sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                                                        }
+
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: true, //true,
+                                                    columnMinWidth: 10,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    showBorders: true,
+                                                    sorting: {
+                                                        mode: "single" //"multiple"
+                                                    },
+                                                    selection: {
+                                                        mode: 'single' //'multiple'
+                                                    },
+                                                    groupPanel: {
+                                                        visible: false //true //false // can't select other group
+                                                    },
+                                                    filterRow: {
+                                                        visible: false,
+                                                        applyFilter: "auto"
+                                                    },
+                                                    headerFilter: {
+                                                        visible: false //true
+                                                    },
+                                                    grouping: {
+                                                        autoExpandAll: true,
+                                                    },
+                                                    searchPanel: {
+                                                        visible: false //true
+                                                    },
+                                                    paging: {
+                                                        pageSize: 10
+                                                    },
+                                                    pager: {
+                                                        showPageSizeSelector: true,
+                                                        allowedPageSizes: [10, 20, 50, 100],
+                                                        showNavigationButtons: true,
+                                                        showInfo: true
+                                                    },
+                                                    showBorders: true,
+                                                    groupPaging: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    rowAlternationEnabled: false, //true, 2 colors
+                                                    focusedRowEnabled: false,
+                                                    wordWrapEnabled: true,
+                                                    cacheEnabled: false,
+                                                    columnAutoWidth: true,
+
+                                                    onInitNewRow: function (e) {
+                                                        let aaID = 1
+                                                        let axRunRun = aGetDateRef(aaOnInitExpGroupDesc.substring(0, 1));
+                                                        let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                        e.data.ID = aaID
+                                                        e.data.HeadRefNo = axRunRun
+                                                        e.data.REFNO = axLineNo
+                                                        e.data.PayToCode = asStaffID
+                                                        e.data.PayToName = asFullName
+                                                        e.data.Department = asDepartment
+                                                        e.data.Division = asDivision
+                                                        e.data.ERODesc06 = asStaffEmail
+                                                        e.data.ReqDate = aNowDte //new Date()
+                                                        e.data.ExpensesCode = "" //aaOnInitAccCode
+                                                        e.data.ExpensesDescription = aaOnInitAccDesc //aaOnInitAccDesc
+                                                        e.data.Currency = "THB"
+                                                        e.data.Xrate = 1
+                                                        e.data.ExpGroupCode = aaOnInitExpGroupCode
+                                                        e.data.ExpGroupDescEng = aaOnInitExpGroupDesc
+                                                        e.data.ERStatus = "Register"
+                                                        e.data.ERORefNo3 = "" // type of expenses
+                                                        //e.data.EROCheck01 = true
+                                                        //e.data.EROCheck02 = true
+                                                        e.data.NeedPayment = false
+                                                        e.data.RefundedAmount = 0
+                                                        e.data.LimitedAmount = 0 //aaLTotal
+                                                        e.data.ERStatus = "Register"
+                                                    },
+                                                    onEditorPreparing: function (e) {
+                                                        if (e.parentType === "dataRow" && arDataU === 0) {
+                                                            e.editorOptions.disabled = true;
+                                                        } else {     //PSPvNO,PSPvDate
+                                                            if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERStatus" || e.dataField === "PSPvNO" || e.dataField === "PSPvDate" || e.dataField === "LocalAmount" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department")) {
+                                                                e.editorOptions.disabled = true;
+                                                            }
+                                                        }
+                                                    },
+                                                    onCellPrepared: function (e) {
+                                                        if (e.rowType === "data") {
+                                                            e.cellElement.css("vertical-align", "top");
+                                                        }
+                                                    },
+                                                    //
+                                                    //
+                                                    // Editing
+                                                    editing: {
+                                                        mode: "cell",        // popup , row, cell (click to edit)
+                                                        useIcons: true,
+                                                        allowUpdating: aViewG,
+                                                        //allowUpdating: true,
+                                                        allowDeleting: aViewG, //arDataD,
+                                                        allowAdding: false,  //arDataC,
+
+                                                        popup: {
+                                                            title: "Expenses Reimbursement Info",
+                                                            fullScreen: false,
+                                                            showTitle: true,
+                                                            width: 1200,
+                                                            height: 650,
+                                                            position: {
+                                                                my: "top",
+                                                                at: "top",
+                                                                of: "window"
+                                                            },
+                                                            onContentReady: function (e) {
+                                                                e.component.option('toolbarItems[0].visible', aSaveVisible);
+                                                                e.component.option('toolbarItems[0].options.icon', 'save');
+                                                                e.component.option('toolbarItems[0].options.type', 'success');
+                                                                e.component.option('toolbarItems[1].options.text', aCancelText);
+                                                                e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                                                                e.component.option('toolbarItems[1].options.type', aCancelType);
+                                                            }
+                                                        },
+                                                    },
+                                                    // column list
+                                                    columns: [
+                                                        {
+                                                            type: "buttons",
+                                                            //caption: "Editor",
+                                                            width: 40,
+                                                            buttons: [
+                                                                {
+                                                                    hint: "delete",
+                                                                    icon: "fas fa-trash", //fa-trash-alt
+                                                                    visible: function (e) {
+                                                                        return (e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                                                    },
+                                                                    onClick: function (e) {
+                                                                        //$("#gridContainer").dxDataGrid("instance").refresh();
+                                                                        var aLocalMess = "";
+                                                                        var aLocalTitle = "";
+                                                                        var aSQLCommand = "";
+                                                                        var aExitMessage = "All rows of this Reimbursement have deleted !!";
+                                                                        var aFrecN = e.row.data.ID;
+                                                                        if (aFrecN === 1) {
+                                                                            aLocalMess = "<div style='color:Tomato; font-size: 16px'><center><b>THIS IS THE FIRST ROW (NO = 1)</b><br>If you delete first row, program will delete all rows [REFNO = <u>" + e.row.data.HeadRefNo + "</u>]</div> <br> Are you sure you want to delete all rows ?"
+                                                                            aLocalTitle = "DELETE ALL ROWS"
+                                                                        } else {
+                                                                            aLocalMess = "Are you sure you want to delete this row (ROW =" + e.row.data.ID + " )?"
+                                                                            aLocalTitle = "DELETE THIS ROW"
+                                                                        }
+                                                                        let result = DevExpress.ui.dialog.confirm(aLocalMess, aLocalTitle); //+ "<br>?? 'YES' ???????????"
+                                                                        result.done(function (dresult) {
+                                                                            if (dresult) {
+                                                                                // delete data
+                                                                                // DELETE FROM EXPREIM WHERE HeadRefNo = 'M2110120750'
+                                                                                if (aFrecN === 1) {
+                                                                                    aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                                                                } else {
+                                                                                    aSQLCommand = "use ExtraOnLine; DELETE FROM EXPREIM WHERE REFNO = '" + e.row.data.REFNO + "'"
+                                                                                }
+
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                aaLastLineNo = aaLastLineNo - 1
+                                                                                $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                if (aFrecN === 1) {
+                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                    DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: aExitMessage }); //title: "OVER LIMITATION",
+                                                                                    popup.hide();
+                                                                                }
+                                                                            }
+                                                                        });
+                                                                    }
+
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            type: "buttons",
+                                                            width: 40,
+                                                            buttons: [ // Clone first record ID++
+                                                                {
+                                                                    hint: "Add More Line",
+                                                                    icon: "fas fa-plus",
+                                                                    visible: function (e) {
+                                                                        return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                                                    },
+                                                                    onClick: function (e) {
+                                                                        aaLastLineNo = aaLastLineNo + 1
+                                                                        // alert(aaLastLineNo)
+                                                                        // REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,RemitTo1,RemitTo2,RemitTo1Amount,RemitTo2Amount,RemitTo1Diff,RemitTo2Diff,RemitTo1Note,RemitTo2Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6
+                                                                        let aBlankDate = new Date(); //"1900-01-01T00:00:00" //new Date('1900-01-01T00:00')//console.log(aBlankDate) 
+                                                                        let axRunRun = e.row.data.HeadRefNo
+                                                                        let aFieldSelected = "NextID"
+                                                                        let aFullTableName = "ExtraOnLine.dbo.ERnextIDview Where HeadRefNo LIKE '" + axRunRun + "%'"
+                                                                        let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName; //alert(aFullBody)                                           
+                                                                        let myHeaders = new Headers(); myHeaders.append("Content-Type", "application/json");
+                                                                        let raw = JSON.stringify({ "@": aFullBody });
+                                                                        let requestOptions = { method: "POST", headers: myHeaders, body: raw, redirect: "follow" };
+                                                                        let aURL = aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
+
+                                                                        fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBody) }), redirect: "follow" })
+                                                                            .then(response => response.json())
+                                                                            //
+                                                                            .then(aData => {
+                                                                                // start process
+                                                                                let aaID = aData[0].NextID //JSON.stringify(aData); //aData[0].NextID //next no 
+                                                                                let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                                                                //let aObjKeyData = { ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, EROAmount: 0, PBatchDate: aBlankDate,PSPvDate: aBlankDate,ERODate01: aBlankDate,ERODate02: aBlankDate,ERODate03: aBlankDate,ERODate04: aBlankDate,ERODate05: aBlankDate,ERODate06: aBlankDate} //{EntryBy: aaUsrN , EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                                                                                let aObjKeyData = { REFNO: axLineNo, ID: aaID, RefundedAmount: 0, LocalAmount: 0, Amount: 0, AmountBeforeVAT: 0, VAT: 0, EROCode01: "", ERODesc05: "", ERODesc01: "", ERORefNo4: "", ERORefNo3: "", Note: "", ERORefNo1: "", ERORefNo3: "", ERODesc02: "", ERODesc03: "", Vendor01: "", ExpensesCode: "" }
+                                                                                let aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //values 
+                                                                                //var clonedItem = $.extend({}, e.row.data, { REFNO: axRunRun }); //++maxID
+
+                                                                                sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+
+                                                                                e.component.refresh(true); //employees.splice(e.row.rowIndex, 0, clonedItem);
+                                                                                e.component.refresh(true);
+                                                                                e.component.refresh(true);
+                                                                                e.event.preventDefault();
+
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+
+                                                                            })
+                                                                            .catch(e => {
+                                                                                console.log(e);
+                                                                            })
+                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                    }
+                                                                },
+                                                            ]
+                                                        },
+                                                        {
+                                                            dataField: "ID",
+                                                            sortOrder: "asc",
+                                                            dataType: "string",
+                                                            caption: "#",
+                                                            editorOptions: { width: 50 },
+                                                            width: 50
+                                                        },
+                                                        {
+                                                            dataField: "ERODate01",
+                                                            caption: "Date.",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 120,
+                                                            stylingMode: 'filled',
+                                                            editorType: "dxDateBox", //"dxDateBox", //"dxCalendar", function (){return null}
+                                                            editorOptions: {
+                                                                showClearButton: true,
+                                                                format: "dd/MM/yyyy",
+                                                                width: 120,
+                                                                showTodayButton: false,
+                                                            },
+                                                            validationRules: [{ type: "required" }, {
+                                                                type: "range",
+                                                                min: new Date(aYearStrS + "-04-30"), //aYearStrS
+                                                                max: new Date(aYearStrL + "-04-30"), //aYearStrL
+                                                                message: "Please Change Bill Date"
+                                                            }],
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "EROCode01",
+                                                            caption: "Type of Receive/Gift",
+                                                            dataType: "string",
+                                                            editorType: "dxSelectBox",
+                                                            width: 150,
+                                                            editorOptions: {
+                                                                width: 150,
+                                                                dataSource: aaTypeOfGift,
+                                                                displayExpr: function (item) { return item && item.code + " (" + item.thaname + ")"; },
+                                                                valueExpr: "code"
+                                                            },
+                                                            setCellValue: function (newData, value, currentRowData) {
+                                                                newData.EROCode01 = value;
+                                                                var giftItem = aaLimitedAmt.find(item => item.code === value);
+                                                                var giftAmount = giftItem ? giftItem.lmtamt : null;
+                                                                anLimitAmt = giftAmount;
+                                                                console.log(anLimitAmt)
+                                                                newData.EROAmount1 = 0;
+                                                                newData.EROAmount2 = 0;
+                                                                newData.Amount = 0;
+                                                            },
+                                                            visible: true
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc01",
+                                                            caption: "Details of gift or entertainment",
+                                                            dataType: "string",
+                                                            cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                            editorType: "dxTextArea",
+                                                            width: 250,
+                                                            height: 180,
+                                                            editorOptions: { width: 248, height: 220 }, //, height: 80 ,className: "full-height-scrollbar"
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc02",
+                                                            caption: "Purpose",
+                                                            dataType: "string",
+                                                            cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                            editorType: "dxTextArea",
+                                                            width: 250,
+                                                            height: 180,
+                                                            editorOptions: { width: 248, height: 220 },
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc03",
+                                                            caption: "From/With Whom", //Other Lockton Employees present?
+                                                            dataType: "string",
+                                                            cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                            editorType: "dxTextArea",
+                                                            width: 150,
+                                                            height: 180,
+                                                            editorOptions: { width: 140, height: 220 },
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc04",
+                                                            caption: "Other Lockton Employees present", //Other Lockton Employees present?
+                                                            dataType: "string",
+                                                            cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                            editorType: "dxTextArea",
+                                                            width: 200,
+                                                            height: 180,
+                                                            editorOptions: { width: 190, height: 220 },
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo1",
+                                                            caption: "Given/Receive", //Associate Name & Signature
+                                                            dataType: "string",
+                                                            editorType: "dxSelectBox",
+                                                            width: 100,
+                                                            editorOptions: {
+                                                                width: 100,
+                                                                dataSource: [{ code: "Given" }, { code: "Receive" }],
+                                                                displayExpr: "code",
+                                                                //displayExpr: function (item) { return item && item.code + " (" + item.thaname + ")"; },
+                                                                valueExpr: "code"
+                                                            },
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc05",
+                                                            caption: "Vendor Name", //Other Lockton Employees present?
+                                                            dataType: "string",
+                                                            cellTemplate: function (container, options) { var text = options.value ? options.value.replace(/\n/g, "<br>") : ""; container.html(text); },
+                                                            editorType: "dxTextArea",
+                                                            width: 150,
+                                                            height: 180,
+                                                            editorOptions: { width: 140, height: 220 },
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "EROAmount1",
+                                                            caption: "Approximate Value",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorType: "dxNumberBox",
+                                                            editorOptions: { format: "#,##0.00", width: 130 },
+                                                            setCellValue: function (newData, value, currentRowData) {
+                                                                newData.EROAmount1 = value;
+                                                                newData.EROAmount2 = (currentRowData.EROAmount2 === 0 ? 1 : currentRowData.EROAmount2)
+                                                                newData.Amount = (value / (currentRowData.EROAmount2 === 0 ? 1 : currentRowData.EROAmount2));
+                                                            },
+                                                            width: 130,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "EROAmount2",
+                                                            caption: "Head",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 0 },
+                                                            editorType: "dxNumberBox",
+                                                            editorOptions: {
+                                                                format: "#,##0",
+                                                                width: 130,
+                                                            },
+                                                            setCellValue: function (newData, value, currentRowData) {
+                                                                newData.EROAmount2 = value;
+                                                                newData.Amount = (currentRowData.EROAmount1 / value);
+                                                            },
+                                                            width: 130,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Amount",
+                                                            caption: "Average Value",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorType: "dxNumberBox",
+                                                            editorOptions: { format: "#,##0.00", width: 130 },
+                                                            width: 130,
+                                                            validationRules: [
+                                                                {
+                                                                    type: "custom",
+                                                                    validationCallback: function (e) {
+                                                                        if (e.value < anLimitAmt && e.value > 0) {
+                                                                            aMessageAlert("<b>Under limit (" + anLimitAmt + ") don’t need to declare.", "Red");//aMessageAlert("Already UN-Confirmed (Call Request back to Edit)", "Red")
+                                                                            e.data.Amount = 0;
+                                                                            e.data.EROAmount1 = 0;
+                                                                            e.data.EROAmount2 = 1;
+                                                                            return true;
+                                                                        }
+                                                                        return true;
+                                                                    }
+                                                                }
+                                                            ],
+                                                            visible: true,
+                                                        },
+
+
+
+                                                    ],
+
+                                                    summary: {
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "REFNO",
+                                                                summaryType: "count",
+                                                                //summaryType: "max",
+                                                                //valueFormat: "currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0} Items",
+                                                            },
+
+                                                            {
+                                                                column: "RefundedAmount",
+                                                                summaryType: "sum",
+                                                                //summaryType: "max",
+                                                                valueFormat: "#,##0.00", //"currency",
+                                                                //showInGroupFooter: false,
+                                                                //alignByColumn: true            
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+                                                        groupItems: [
+                                                            {
+                                                                column: "ID",
+                                                                summaryType: "count",
+                                                                displayFormat: "{0} Items",
+                                                            },
+
+                                                            {
+                                                                column: "ERORefNo4",
+                                                                summaryType: "count",
+                                                                showInGroupFooter: true,
+                                                                displayFormat: "Total {0} Items",
+                                                            },
+
+                                                            {
+                                                                column: "RefundedAmount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                showInGroupFooter: true,
+                                                                alignByColumn: true,
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+                                                    },
+                                                    // Tool Bar
+                                                    onToolbarPreparing: function (e) {
+                                                        var dataGrid = e.component;
+                                                        e.toolbarOptions.items.unshift(
+
+                                                            {
+                                                                location: "before",
+                                                                widget: "dxButton",
+                                                                options: {
+                                                                    icon: "refresh",
+                                                                    text: "REFRESH",
+                                                                    stylingMode: "outlined",
+                                                                    onClick: () => {
+                                                                        dataGrid.refresh();
+                                                                    }
+                                                                }
+                                                            },
+                                                            {
+                                                                location: "before",
+                                                                template: () => { return $("<div style='padding: 5px 15px;'/>") }
+                                                            },
+                                                            {
+                                                                location: "after",
+                                                                widget: "dxButton",
+                                                                options: {
+                                                                    icon: "fas fa-info",
+                                                                    text: "HELP",
+                                                                    type: "success",
+                                                                    stylingMode: "contained",
+                                                                    onClick: () => {
+                                                                        //dataGrid.refresh();
+                                                                        //aPopupHelp()
+                                                                    }
+                                                                }
+                                                            }
+
+                                                        );
+                                                    }
+
+                                                }).dxDataGrid("instance");
+
+                                                function aPopupHelp() {
+                                                    const popup = $("#popupHelp").dxPopup({
+                                                        title: " HELP - Data Input",
+                                                        height: 800,
+                                                        width: 1000,
+                                                        position: { offset: "40 -100" }, //{my:"top", at:"top", of:window}, <ul><li>
+                                                        visible: true,
+                                                        showCloseButton: true,
+                                                        contentTemplate:
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-plus'></i>" + " ADD MORE ROW</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-plus'></i>" + " �������� ��¡�� </li><li>������¡�� ��������բ����� ¡��� ��Ǣ���ѹ��� ���ʴ����ѹ���</li></ul></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-trash'></i>" + " DELETE ROW</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-trash'></i>" + " ����ź��¡��㹺�÷Ѵ������͡</li><li>�������͡ź ��÷Ѵ��� 1 �ж������繡��ź�����ŷ����� ** ��ͧ���Ѵ���ѧ </ul></li></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-redo'></i>" + " REFRESH</div>" +
+                                                            "<p style = 'color: green; font-size: 14px;'><ul><li>����� icon " + "<i class='fas fa-plus'></i>" + " �������� ��¡�� </li><li>������¡�� ��������բ����� ¡��� ��Ǣ���ѹ��� ���ʴ����ѹ���</li></ul></br></p>" +
+                                                            "<div style = 'color: darkred; font-size: 16px;'><i class='fas fa-star'></i>" + " INPUT VDO</div>" +
+                                                            "<center><div style='max-width: 560px'><div style='position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;'><iframe src='https://lockton-my.sharepoint.com/personal/wikran_lockton_com/_layouts/15/embed.aspx?UniqueId=245d6310-2b34-4609-8c15-4f00051c98fe&embed=%7B%22hvm%22%3Atrue%2C%22ust%22%3Atrue%7D&referrer=StreamWebApp&referrerScenario=EmbedDialog.Create' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen title='PVSUB.mp4' style='border:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; height: 100%; max-width: 100%;'></iframe></div></div></center>"
+                                                    }).dxPopup("instance");
+                                                }
+                                            });
+                                        }
+
+                                        const aPopUpUpLoad = (aFolder) => {
+                                            $(() => {
+                                                const popup = $("#popupUL").dxPopup({
+                                                    title: "Upload File",
+                                                    height: 400,
+                                                    width: 800,
+                                                    position: { offset: "0 -10" }, //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: false,
+                                                    showCloseButton: true,
+                                                    showTitle: true,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+                                                    //shadingColor:"rgb(190,190,190,0.9)",
+
+                                                    contentTemplate: () => {
+                                                        return $("<div />").append(
+                                                            // $("<div style = 'margin-left: 10px'>��������´ - DESCRIPTIONS</div>"),
+                                                            // $("<p><div style = 'margin-left: 10px' id='first-name'></div></p>"),
+                                                            $("<p><div style = 'margin-left: 10px' id='fileUploader'></div></p>"),
+
+                                                        );
+                                                    },
+                                                    /*
+                                                    toolbarItems: [
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                                                        },
+                                                        {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            widget: "dxButton",
+                                                            //toolbar: "bottom",
+                                                            location: "right",
+                                                            options: {
+                                                                icon: "print",
+                                                                //text: "Print",
+                                                                onClick: function () {
+                                                                    window.print()
+                                                                }
+                                                            }
+                                                        }, {
+                                                            toolbar: "top",
+                                                            locateInMenu: 'always',
+                                                            widget: "dxButton",
+                                                            //toolbar: "bottom",
+                                                            location: "after",
+                                                            options: {
+                                                                //text: "EXIT",
+                                                                icon: "fas fa-times",
+                                                                //type: "danger",                
+                                                                onClick: function (e) {
+                                                                    popup.hide();
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                */
+                                                }).dxPopup("instance");
+
+                                                const fileUploader = $('#file-uploader').dxFileUploader({
+                                                    multiple: false,
+                                                    accept: 'image/*', //'*',
+                                                    value: [],
+                                                    uploadMode: 'instantly', //'instantly', 'useButtons'
+                                                    uploadUrl: 'https://js.devexpress.com/Demos/NetCore/FileUploader/Upload',
+                                                    onValueChanged(e) {
+                                                        const files = e.value;
+                                                        if (files.length > 0) {
+                                                            $('#selected-files .selected-item').remove();
+                                                            $.each(files, (i, file) => {
+                                                                const $selectedItem = $('<div />').addClass('selected-item');
+                                                                $selectedItem.append(
+                                                                    $('<span />').html(`Name: ${file.name}<br/>`),
+                                                                    $('<span />').html(`Size ${file.size} bytes<br/>`),
+                                                                    $('<span />').html(`Type ${file.type}<br/>`),
+                                                                    $('<span />').html(`Last Modified Date: ${file.lastModifiedDate}`),
+                                                                );
+                                                                $selectedItem.appendTo($('#selected-files'));
+                                                            });
+                                                            $('#selected-files').show();
+                                                        } else { $('#selected-files').hide(); }
+                                                    },
+                                                }).dxFileUploader('instance');
+
+                                                $("#fileUploader").dxFileUploader({
+                                                    multiple: false,
+                                                    accept: 'image/*',
+                                                    //allowedFileExtensions: [".jpg", ".jpeg", ".png"],
+                                                    maxFileSize: 4000000, // 4 MB
+                                                    uploadUrl: "https://cbsdev3.locktonwattana.com/wwwroot/Uploads",
+                                                    onValueChanged: function (e) {
+                                                        var files = e.value;
+                                                        if (files.length > 0) {
+                                                            var file = files[0];
+                                                            var formData = new FormData();
+                                                            formData.append("file", file);
+                                                            //formdata.append("FilePath",�"test");
+                                                            $.ajax({
+                                                                url: "https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx", //"http://wikran-w10:8081/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx",
+                                                                type: "POST",
+                                                                timeout: 0,
+                                                                headers: { "ref": "44095B6C-CC17-47FD-895B-649E0EAA2BAE", "Content-Type": "multipart/form-data;boundary=<calculated when request is sent>" }, //"Content-Type", "multipart/form-data;boundary=<calculated when request is sent>" //"multipart/form-data"
+                                                                mimeType: "multipart/form-data",
+                                                                data: formData,
+                                                                processData: false,
+                                                                contentType: false,
+                                                                success: function (response) {
+                                                                    console.log("File uploaded successfully!");
+                                                                },
+                                                                error: function (error) {
+                                                                    console.log("Error uploading file: " + error);
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+
+
+                                                $('#first-name').dxTextBox({
+                                                    value: 'John',
+                                                    name: 'FirstName',
+                                                });
+
+                                                $('#last-name').dxTextBox({
+                                                    value: 'Smith',
+                                                    name: 'LastName',
+                                                });
+                                                /*
+                                                    $('#file-uploader').dxFileUploader({
+                                                        selectButtonText: 'Select photo',
+                                                        labelText: '',
+                                                        accept: 'image/*',
+                                                        uploadMode: 'useForm',
+                                                    });
+                                                */
+                                                $('#button').dxButton({
+                                                    text: 'Update profile',
+                                                    type: 'success',
+                                                    onClick() {
+                                                        DevExpress.ui.dialog.alert('Uncomment the line to enable sending a form to the server.', 'Click Handler');
+                                                        // $("#form").submit();
+                                                    },
+                                                });
+                                            });
+                                        }
+
+                                    }) //then fetch (HOR or HR Email get inside better ?)
+                            }) //then fetch (ACCCODE)
+                    });
+                // TOP PRG
+            });  // ajax  
+        }); // load content     
+});  // FIRST PRG  
+

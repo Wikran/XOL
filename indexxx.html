@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>INDEX</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+
+    <link rel="shortcut icon" type="image/jpg" href="./images/lockton-favicon.png">
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'));
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Dynamically load CSS
+            let stylesheets = [
+                "./fontawesome-free-5.15.1-web/css/fontawesome.css",
+                "./fontawesome-free-5.15.1-web/css/brands.css",
+                "./fontawesome-free-5.15.1-web/css/solid.css",
+                "./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css",
+                "./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css",
+                "DevExpressDevExtreme/Lib/css/dx.common.css",
+                "DevExpressDevExtreme/Lib/css/dx.light.css"
+            ];
+            stylesheets.forEach(file => {
+                let link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = file;
+                document.head.appendChild(link);
+            });
+
+            // Dynamically load content from an external file
+            fetch("content.html")
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("contentContainer").innerHTML = html;
+                });
+
+            // Dynamically insert DevExtreme scripts
+            let dxScript = document.createElement("script");
+            dxScript.src = "DevExpressDevExtreme/Lib/js/dx.all.js";
+            document.body.appendChild(dxScript);
+
+            let aThaiScript = document.createElement("script");
+            aThaiScript.src = "aThaiWord.js?v=1.0.2";
+            document.body.appendChild(aThaiScript);
+
+            let subScripts = document.createElement("script");
+            subScripts.src = "./src/subscripts.js";
+            document.body.appendChild(subScripts);
+        });
+    </script>
+
+</head>
+
+<body class="dx-viewport">
+    <div id="contentContainer"></div> <!-- Content will be loaded dynamically -->
+</body>
+
+</html>

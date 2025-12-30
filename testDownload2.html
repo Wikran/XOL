@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Download Declaration File</title>
+
+  <!-- jQuery CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- DevExtreme CDN -->
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+  <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 40px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    #file-popup {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📥 Download Declaration File</h2>
+
+    <div class="row">
+      <div id="filename-input" style="flex: 1;"></div>
+      <div id="browse-button" style="width: 120px;"></div>
+    </div>
+
+    <div id="download-button" style="margin-top: 20px;"></div>
+    <div id="file-popup"></div>
+  </div>
+
+  <script>
+    const baseUrl = "https://cbsdev2.locktonwattana.com/temp/uploads/";
+    const listApi = "https://cbsdev2.locktonwattana.com/temp/list-files.aspx";
+
+    // TextBox for filename
+    const filenameInput = $("#filename-input").dxTextBox({
+      placeholder: "Enter filename (e.g., DeclarationTEMP.xlsx)",
+      value: "DeclarationTEMP.xlsx",
+      width: "100%"
+    }).dxTextBox("instance");
+
+    // Download button
+    $("#download-button").dxButton({
+      text: "Download",
+      type: "success",
+      onClick: function () {
+        const filename = filenameInput.option("value").trim();
+        if (!filename) {
+          DevExpress.ui.notify("Please enter a filename.", "error", 2000);
+          return;
+        }
+
+        const fileUrl = baseUrl + encodeURIComponent(filename);
+        const anchor = document.createElement("a");
+        anchor.href = fileUrl;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+      }
+    });
+
+    // Popup for file list
+    const popup = $("#file-popup").dxPopup({
+      title: "Select a file",
+      visible: false,
+      showTitle: true,
+      closeOnOutsideClick: true,
+      width: 500,
+      height: 500,
+      contentTemplate: function (contentElement) {
+        $("<div>").attr("id", "file-grid").appendTo(contentElement);
+      }
+    }).dxPopup("instance");
+
+    // Browse button
+    $("#browse-button").dxButton({
+      text: "Browse Files",
+      type: "default",
+      onClick: function () {
+        popup.show();
+
+        $.ajax({
+          url: listApi,
+          method: "GET",
+          dataType: "json",
+          success: function (files) {
+            if (!Array.isArray(files)) {
+              DevExpress.ui.notify("Invalid file list format", "error", 2000);
+              return;
+            }
+
+            const fileData = files.map(name => ({ filename: name }));
+
+            $("#file-grid").dxDataGrid({
+              dataSource: fileData,
+              columns: [{ dataField: "filename", caption: "File Name" }],
+              showBorders: true,
+              searchPanel: {
+                visible: true,
+                width: 240,
+                placeholder: "Search files..."
+              },
+              selection: {
+                mode: "single"
+              },
+              onRowClick: function (e) {
+                filenameInput.option("value", e.data.filename);
+                popup.hide();
+              }
+            });
+          },
+          error: function () {
+            DevExpress.ui.notify("Failed to load file list", "error", 3000);
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

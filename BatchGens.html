@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Pre-Approved Batch Generate</title>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="true">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+
+    <!-- DevExtreme JS -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- Excel export libs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <!-- <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #grid {
+            height: 500px;
+        }
+
+        #output {
+            background: #f7f7f7;
+            padding: 12px;
+            border: 1px solid #ddd;
+            max-height: 320px;
+            overflow: auto;
+        }
+
+        /* .dx-button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .dx-button-success {
+            background: #e7f7e7;
+            border-color: #8bc34a;
+        } */
+
+        .note {
+            color: #666;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .file-label {
+            font-size: 12px;
+            color: #333;
+        }
+
+        #btn-export-excel {
+            display: none;
+        }
+
+        #btn-dl-customer {
+            display: none;
+        }
+
+        /* .custom-file {
+            display: inline-block;
+            width: 450px;
+            height: 21px;
+            padding: 2px 8px;
+            background: #eee;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            text-align: center;
+            line-height: 21px;
+        } */
+
+        #input-excel {
+            width: 450px;
+            /* expand width */
+            height: 21px;
+            /* keep height */
+        }
+    </style> -->
+    <!-- <link rel="stylesheet" href="MHODEE123.css"> -->
+    <!-- <script src="fsrc/bundle.min.js"></script> -->
+    <script src="./src/subscript.js"></script>
+</head>
+
+<body>
+    <!-- <h2 style="color: blue;">Pre-Approved Batch Generate</h2>
+    <h4 style="color: #03338c;">Flexible Benefits Cash Advance - Excel Transform</h4> -->
+    <div id="Add-Upload"></div>
+    <div id="uploadPopup"></div>
+    <div id="xuploadPopup"></div>
+    <div id="#xinput-excel"></div>
+    <div class="toolbar">
+        <div class="toolbar-col">
+            <input type="file" id="input-excel" accept=".xlsx" style="display:none" />
+            <div>
+                <input type="file" id="input-template" accept=".xlsx" style="display:none" />
+                <button id="btn-load-template" class="dx-button dx-button-normal" style="display:none">
+                    <i class="fas fa-file-upload"></i> Load Excel Template (FlexibleTEMP.xlsx)
+                </button>
+                <span id="template-name" class="file-label"></span>
+            </div>
+        </div>
+
+        <button id="btn-export-excel" class="dx-button dx-button-success"><i class="fas fa-file-excel"></i> Export
+            Grouped Excel</button>
+        <button id="btn-dl-customer" class="dx-button dx-button-success"><i class="fas fa-file-excel"></i> DL Customer
+            Group</button>
+    </div>
+    <div id="agrid"></div>
+    <div id="grid"></div>
+    <div id="jsonPopup"></div>
+    <div id="fileViewerPopup"></div>
+
+</body>
+
+</html>

@@ -1,9 +1,21 @@
+// Read configuration from <script> tag attributes
+// const scriptTag = document.currentScript;
+// const subFolder = parseInt(scriptTag.getAttribute("subfolder")) || "src";   // default src
+
 const timestamp = Date.now();
 const path = window.location.pathname;
+const subpath = "src"; //subFolder; //"src" //dist
+const subp = "dist"
 const fileName = path.substring(path.lastIndexOf('/') + 1);
+const fileNameOnly = fileName.replace(/\.html$/, '');
 const jsFileName = fileName.replace(/\.html$/, '.js');
 const cssFileName = fileName.replace(/\.html$/, '.css'); // Convert HTML file name to CSS file name
-const scripts = [`./src/bundle.min.js?t=${timestamp}`, `./src/${jsFileName}?t=${timestamp}`];
+const scripts = [`./${subpath}/bundle.min.js?t=${timestamp}`, `./${subpath}/${jsFileName}?t=${timestamp}`];
+console.log(cssFileName)
+console.log(`./${subpath}/${jsFileName}?t=${timestamp}`)
+if (fileNameOnly === "main" ) {} else {  //|| fileNameOnly === "index"
+   localStorage["aPXIXD"] = fileNameOnly;
+}
 
 // Function to load CSS dynamically
 function loadCSS(file) {

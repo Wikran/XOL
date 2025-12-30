@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enhanced DevExtreme dxHtmlEditor</title>
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.1.4/css/dx.light.css">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn3.devexpress.com/jslib/24.1.4/js/dx.all.js"></script>
+  <!-- <script src="editor_dx.js"></script> -->
+</head>
+<body class="dx-viewport">
+  <div class="dx-application" style="margin:20px;">
+    <h2>Enhanced dxHtmlEditor (with Video Support)</h2>
+    <div id="htmlEditor"></div>
+  </div>
+  <script>
+    $(function() {
+  $("#htmlEditor").dxHtmlEditor({
+    height: 500,
+    toolbar: {
+      items: [
+        "bold", "italic", "underline", "link", "image",
+        {
+          name: "insertVideo",
+          icon: "video",
+          hint: "Insert Video",
+          onClick: () => {
+            const url = prompt("Enter Video URL (mp4/webm):");
+            if (url) {
+              const videoTag = `<video controls width="400"><source src="${url}" type="video/mp4"></video>`;
+              const editor = $("#htmlEditor").dxHtmlEditor("instance");
+              editor.insertEmbed(editor.getSelection().index, "html", videoTag);
+            }
+          }
+        },
+        "codeBlock"
+      ]
+    },
+    mediaResizing: { enabled: true },
+    value: "<p>Start editing your rich HTML content here...</p>"
+  });
+});
+  </script>
+</body>
+</html>

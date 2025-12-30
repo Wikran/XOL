@@ -1,9 +1,5 @@
 
-window.onload = function () {
-    setTimeout(function () {
-        location.reload();
-    }, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-}
+// ADMIN TRF
 
 $(document).ready(function () {
     var aDXTheme = localStorage["aDXTheme"]
@@ -66,14 +62,25 @@ var aMulSet02 = {
     aFLabel: "BALANCE"
 }
 
-var aaXToX = localStorage["aaXXoX"];
-var aaXNoX = localStorage["aaXXuX"];
+var aDXTheme = localStorage.getItem("aDXTheme");
+var aaXToX = localStorage.getItem("aaXXoX");
+var aaXNoX = localStorage.getItem("aaXXuX");
+var aaPXXI = localStorage.getItem("aPXIXD");
+var aaMXXT = localStorage.getItem("aDXMenuTitle");
+var aaPXIXD = localStorage.getItem("aPXIXD");
+var aaUsrN = localStorage.getItem("aaXXuX");
 var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // Master Page
-var aaPXXI = localStorage["aPXIXD"];
-var aaMXXT = localStorage["aDXMenuTitle"];
-
+var aaPXIXD = localStorage.getItem("aPXIXD"); //localStorage["aPXIXD"];
+let asStaffID = localStorage.getItem("asSTFID"); //localStorage["asSTFID"];
+var aaEnt = aaPXIXD.includes("X");
 var aaERTYPE = "800" // Travel Requisition
 const aaRunPre = "R"  // Running No Prefix
+
+// var aaXToX = localStorage["aaXXoX"];
+// var aaXNoX = localStorage["aaXXuX"];
+// var aaPXXI = localStorage["aPXIXD"];
+// var aaMXXT = localStorage["aDXMenuTitle"];
+// var aaUsrN = localStorage["aaXXuX"];
 
 const aTranTextJson = (aText, aFMark, aLMark) => { //"NAME:" "EMAIL:"
     var axHODFtext = aText;
@@ -93,130 +100,6 @@ const aTranTextJson = (aText, aFMark, aLMark) => { //"NAME:" "EMAIL:"
     const xxNameArr = JSON.parse(xaChkName);
     return xxNameArr;
 }
-/*
-        function aGenPDF4HTML() {
-            // Step 1: Include the jsPDF library
-
-
-            var doc = new jsPDF();
-
-            // Step 3: Use the html method to add the HTML, JavaScript, and jQuery code to the PDF
-            var html = '<h1>Hello, World!</h1>';
-            doc.html(
-                html, {
-                callback: function (doc) {
-                    console.log("Hello, World!");
-                    $("#example").click(function () { console.log("Button clicked!"); });
-                }
-            }
-            );
-
-            // Step 4: Use the save method to save the PDF
-            doc.save('document.pdf');
-
-        }
-
-        function generatePDF() {
-            var pdf = new jsPDF({
-                orientation: 'p',
-                unit: 'mm',
-                format: 'a5',
-                putOnlyUsedFonts: true
-            });
-            pdf.text("Generate a PDF with JavaScript", 20, 20);
-            pdf.text("published on APITemplate.io", 20, 30);
-            pdf.addPage();
-            pdf.text(20, 20, 'The second page');
-            pdf.save('jsPDF_2Pages.pdf');
-        }
-*/
-/*
-        function aPDFFromHTML(source) {
-            // create new jsPDF instance
-            var doc = new jsPDF();
-
-            // get HTML code to convert to PDF
-            var htmlCode = "<html><body><h1>Hello World!</h1><p>This is a PDF generated from HTML code using jsPDF.</p></body></html>"; //" + source +"
-            //htmlCode = "test test"
-            // set options for jsPDF
-            var options = {
-                pagesplit: true,
-                async: false,
-                onrendered: function () {
-                    // do something once the HTML is rendered
-                }
-            };
-            //console.log(htmlCode)
-            // convert HTML code to PDF
-            doc.html(htmlCode, options);
-
-            //doc.html(htmlCode, options).then(() => doc.save('fileName.pdf'));
-            //});
-
-            // save PDF to local drive
-            doc.save('myPDF.pdf');
-
-        }
-
-        function aPDFFromHTMLXX(source) {
-            var pdf = new jsPDF();
-
-            // Get the HTML element you want to convert to a PDF
-            //var source = document.getElementById("my-html-div");
-
-            // Set the margins for the PDF
-            var margins = {
-                top: 10,
-                bottom: 10,
-                left: 10,
-                width: 200
-            };
-
-            // Convert the HTML to a PDF
-            pdf.fromHTML(
-                source,
-                margins.left,
-                margins.top,
-                {
-                    'width': margins.width
-                },
-                function (dispose) {
-                    pdf.save('Test.pdf');
-                },
-                margins
-            );
-
-        }
-
-        function printPage() {
-            // Remove elements with "display: none"
-            var elements = document.querySelectorAll("[style*='display: none']");
-            for (var i = 0; i < elements.length; i++) {
-                elements[i].style.display = "block";
-            }
-            // Call the print method
-            window.print();
-        }
-*/
-/* function aTestUploadFile() {
-    //const fileInput = document.getElementById('file-input');
-    var fileInput = document.createElement("INPUT");
-    fileInput.setAttribute("type", "file");
-    fileInput.setAttribute("id", "file");
-    document.body.appendChild(fileInput);
-    var myHeaders = new Headers();
-    myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
-    myHeaders.append("Content-Type", "multipart/form-data");
-    var formdata = new FormData();
-    formdata.append("file", fileInput.files[0], "file:///C:/HTML/XOL/images/avatar.png");
-    //formdata.append("file",�fileInput.files[0],�"file:///C:/HTML/XOL/images/userw007.png");
-    formdata.append("FilePath", "test");
-    var requestOptions = { method: 'POST', headers: myHeaders, body: formdata, redirect: 'follow' };
-    fetch("https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAExx", requestOptions)
-        .then(response => response.text()).then(result => console.log(result))
-        .catch(error => console.log('error', error));
-
-} */
 
 function generateTableXX(data, aMSetup) {
     var aTableFontSize = aMSetup.aTableFontSize; //font-size:80%  aTableSize aMulSet01.aTableFontSize
@@ -343,7 +226,7 @@ function generateTable(data) {
     return table;
 }
 
-function objectToArray(jsonObject) {
+function objectToArray(jsonObject) { //not use
     var result = [];
     for (var key in jsonObject) {
         result.push([key, jsonObject[key]]);
@@ -433,7 +316,7 @@ function showPreviousYearPopup(callback) {
     }
 }
 
-const aaGetBusYear = (aFM, aLM, aNowDatev) => { // get Business year 
+const aaGetBusYear = (aFM, aLM, aNowDatev) => { // get Business year Not use
     //let aNowDatev = new Date()
     let aCalYear = aNowDatev.getFullYear();
     let aCalMonth = aNowDatev.getMonth() + 1;
@@ -486,11 +369,7 @@ async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected
         abc = 1;
     }
     return abc;
-}         
-
-var aaPXIXD = localStorage["aPXIXD"];
-var aaEnt = aaPXIXD.includes("X");
-var aaUsrN = localStorage["aaXXuX"];
+}
 
 // FIRST PRG
 showPreviousYearPopup(function (aNowDte) {
@@ -501,10 +380,6 @@ showPreviousYearPopup(function (aNowDte) {
     var aVARs = {};
     var aArrays = {};
     var aObjects = {};
-    var aaEmailArr;
-    var aaMessage2Show;
-    var aaMess2Show;
-    var aaMess3Show;
     LoadSQLData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected)
         .then(result => {
             for (let ii = 0; ii < result.length; ii++) {
@@ -572,6 +447,34 @@ showPreviousYearPopup(function (aNowDte) {
             }
             var aaPFDMI = isLocalHost(); // check API for LOCAL or DMZ
             var aaPFDMZz = aAPIServer2; // // API for DMZ only
+
+            //==== Corporate Card Setup ==========================
+            let aaCARDIDaa = "";
+            const trimmedStaffID = asStaffID.trim();
+            // ค้นหาข้อมูลพนักงานจาก EMPID
+            const aaRESULaa = aObjects.CORPREG.find(item => item.EMPID === trimmedStaffID);
+            //alert(aaRESULaa.CardID)
+            const cardIdList = aaRESULaa && aaRESULaa.CardID
+                ? ["", aaRESULaa.CardID] // "" = no card
+                : [""];
+            const cardIdOptions = cardIdList.map(id => ({
+                CardID: id,
+                Label: id === "" ? "NOT USE" : id  // not use
+            }));
+            if (!aaRESULaa) {
+                console.log("No Staff ID: " + trimmedStaffID);
+            } else if (aaRESULaa.CardID && aaRESULaa.CardID !== "" && aaRESULaa.CardID !== "0") {
+                aaCARDIDaa = aaRESULaa.CardID;
+                //aaRESULaa.CardID.unshift(""); // Result: ["", "12345"]
+                console.log("CardID: " + aaCARDIDaa);
+            } else {
+                console.log("found Staff ID but CardID is empty or = 0");
+            }
+            let HAVECORPCARD = (aaCARDIDaa === "" ? false : true);
+            //======================================================
+
+
+
             //aaPFDMI = aaPFDMZz
             var afqrFull = "pageID='" + aaPXIXD + "' "
             var afURL = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "326459ff-7ea6-4465-a946-9326b783d492" + '/all' //+ aaPXXI
@@ -582,7 +485,7 @@ showPreviousYearPopup(function (aNowDte) {
                 "headers": { "Content-Type": "application/json" },
                 "data": JSON.stringify({ "@": btoa(afqrFull) }), //"pageID='Resigned'"
             };
-            var jqxhr = $.post(afsettings, function (e) { })
+            $.post(afsettings, function (e) { }) // var jqxhr = 
                 .done(function (e) {
                     //console.log("set aaTBKey");
                     aObjMPage = e;
@@ -592,7 +495,8 @@ showPreviousYearPopup(function (aNowDte) {
 
                     // TOP PRG
                     $(() => {
-
+                        var currentHoveredColumn = null; // Variable to track the currently hovered column
+                        var nTime = 0; // Counter to track how many times we've hovered over the current column
                         var aaPFDMI = isLocalHost();
                         //aaPFDMI = aaPFDMZz
                         var aaXToX = localStorage["aaXXoX"];
@@ -601,15 +505,18 @@ showPreviousYearPopup(function (aNowDte) {
                         var aaOnInitExpGroupDesc = "Travel Requisition Form"
                         var aaOnInitAccCode = "55101150003"
                         var aaOnInitAccDesc = "Travel Requisition Form"
-
-                        let axqr2S = "Where EXPGroup LIKE '%" + aaERTYPE + "%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
-                        let axFieldSelected = "ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE,EXPGroup,EXPDesc"
-                        let axFullBody = "Select " + axFieldSelected + " From " + "ExtraOnLine.dbo.ACCOUNTCHART " + axqr2S; //alert(aFullBody)
+                        // Travel Agent
+                        let axqr2S = "Where AgentID <> ''" //"Where EXPGroup LIKE '%" + aaERTYPE + "%'" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
+                        //let axFieldSelected = "ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE,EXPGroup,EXPDesc"
+                        let axFieldSelected = "AgentID, CompanyIDNO, AgentName, ContactPerson, Email, Phone, Address, Country, RegistrationNo, LicenseExpiryDate, Website, Status, EntryDate, EntryBy"
+                        let axFullBody = "Select " + axFieldSelected + " From " + "ExtraOnLine.dbo.TravelAgent " + axqr2S; //"Select " + axFieldSelected + " From " + "ExtraOnLine.dbo.ACCOUNTCHART " + axqr2S; //alert(aFullBody)
                         fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(axFullBody) }), redirect: "follow" })
                             .then(response => response.json())
                             //
                             .then(acData => {
                                 var aaSubGroup01 = acData;
+                                console.log(aaSubGroup01)
+
                                 let aDivisionC = localStorage["asDIV"];
                                 let aDivS = "Where ApproverCode = 'HR' OR ApproverCode = 'FA' "
                                 let aFieldSelected = "ApproveToDivision,ApproverName,ApproverEmail,ApproverCode"
@@ -722,7 +629,6 @@ showPreviousYearPopup(function (aNowDte) {
                                         var asERODesc05 = ""; //Hotel	ERODesc05
                                         var asNote = ""; //Remark	Note
 
-
                                         var aqrFull01 = "and (ERStatus = 'HOD Approved wait for ADMIN' or ERStatus = 'ADMIN Confirmed wait for HR' or ERStatus = 'ADMIN Confirmed (finished)' or ERStatus = 'HR Confirmed (finished)')"
                                         var aqrFull = "ExpGroupCode = '" + aaERTYPE + "' " + aqrFull01
                                         // scopes based permission (View Only Login Name)  ExpensesCode LIKE aaOnInitAccCode
@@ -731,7 +637,6 @@ showPreviousYearPopup(function (aNowDte) {
                                         var aaAllData;
 
                                         $("#gridContainer").dxDataGrid({
-
                                             dataSource: new DevExpress.data.CustomStore({
                                                 key: "REFNO",
                                                 loadMode: "omit",
@@ -917,10 +822,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                                 return (e.row.data.ID === 1 && e.row.data.Confirmed === true && e.row.data.Approved === false) //return !e.row.isEditing; //&& e.row.data.Confirmed === false && e.row.data.ERStatus === "HOD Approved wait for ADMIN"
                                                             },
                                                             onClick: function (e) {
-                                                                //console.log(e.row.data.type)
-                                                                //console.log("head ref no = ", e.row.data.HeadRefNo)
-                                                                //console.log("e.row.data = ", e.row.data)
-                                                                aPopUpAddForm(e.row.data.HeadRefNo, e.row.data, e.row.data.ReqDate);
+                                                                aPopUpAddForm(e.row.data.HeadRefNo, e.row.data, e.row.data.ReqDate, false);
                                                                 $("#gridContainer").dxDataGrid("instance").refresh();
                                                             }
                                                         },
@@ -931,9 +833,6 @@ showPreviousYearPopup(function (aNowDte) {
                                                                 return (e.row.data.ID === 1 && e.row.data.Confirmed === true && e.row.data.Approved === true) //return !e.row.isEditing; //&& e.row.data.Confirmed === false && e.row.data.ERStatus === "HOD Approved wait for ADMIN"
                                                             },
                                                             onClick: function (e) {
-                                                                //console.log(e.row.data.type)
-                                                                //console.log("head ref no = ", e.row.data.HeadRefNo)
-                                                                //console.log("e.row.data = ", e.row.data)
                                                                 aPopUpAddForm(e.row.data.HeadRefNo, e.row.data, e.row.data.ReqDate, true);
                                                                 $("#gridContainer").dxDataGrid("instance").refresh();
                                                             }
@@ -1148,21 +1047,6 @@ showPreviousYearPopup(function (aNowDte) {
                                                                         e.event.preventDefault();
                                                                         $("#gridContainer").dxDataGrid("instance").refresh();
                                                                     })
-                                                                //aPopUpUpLoad()
-                                                                //aTestUploadFile()
-                                                                //aGenPDF4HTML()
-                                                                //generatePDF()
-                                                                //aPrint2PDF4HTML(e.row.data, e.row.data.HeadRefNo);
-                                                                // aPopUpPrintForm(e.row.data, e.row.data.HeadRefNo);
-                                                                /*
-                                                                aPopUpPrintForm(e.row.data, e.row.data.HeadRefNo); // arTAccount[0]
-                                                                e.component.refresh(true);
-                                                                e.component.refresh(true);
-                                                                e.component.refresh(true);
-                                                                e.component.refresh(true);
-                                                                e.event.preventDefault();
-                                                                $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                */
                                                             }
 
                                                         }
@@ -1188,7 +1072,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                 },
                                                 {
                                                     dataField: "PayToName",
-                                                    caption: "Requester",
+                                                    caption: "Requesters",
                                                     editorType: "dxTextBox",
                                                     //cssClass: "verylight-blue",
                                                     width: 150,
@@ -1196,33 +1080,74 @@ showPreviousYearPopup(function (aNowDte) {
                                                 },
                                                 {
                                                     dataField: "Department",
-                                                    caption: "Department",
+                                                    caption: "Dept",
                                                     dataType: "string",
                                                     editorType: "dxTextBox",
                                                     //cssClass: "verylight-blue",
-                                                    width: 80,
+                                                    width: 70,
                                                     visible: true,
                                                 },
                                                 {
                                                     dataField: "ReqDate",
-                                                    caption: "Requested Date",
+                                                    caption: "Req. Date",
                                                     dataType: "date",
                                                     format: "dd/MM/yyyy",
-                                                    width: 120,
+                                                    width: 100,
                                                     visible: true,
                                                 },
                                                 {
-                                                    dataField: "ERORefNo1", // ERODesc03
+                                                    dataField: "EROCheck03",
+                                                    caption: "BOOKING",
+                                                    cellTemplate: function (container, options) {
+                                                        var value = options.value ? "SELF BOOKING" : "ADMIN BOOKING";
+                                                        $("<div>")
+                                                            .text(value)
+                                                            .css("text-align", "left")
+                                                            .appendTo(container);
+                                                    },
+                                                    width: 130,
+                                                },
+                                                {
+                                                    dataField: "ERORefNo1", //ERODesc03
                                                     caption: "Purpose Of Trip",
                                                     dataType: "string",
-                                                    width: 150,
+                                                    lookup: {
+                                                        dataSource: aObjects.aaPurposeTable,
+                                                        valueExpr: "Purpose",
+                                                        displayExpr: "Purpose",
+                                                    },
+                                                    width: 100,
                                                     visible: true,
+                                                },
+                                                {
+                                                    dataField: "EROCheck01",
+                                                    caption: "O/L",
+                                                    cellTemplate: function (container, options) {
+                                                        var value = options.value ? "Overseas" : "Local";
+                                                        $("<div>")
+                                                            .text(value)
+                                                            .css("text-align", "left")
+                                                            .appendTo(container);
+                                                    },
+                                                    width: 90,
+                                                },
+                                                {
+                                                    dataField: "EROCheck02",
+                                                    caption: "ROAMING",
+                                                    cellTemplate: function (container, options) {
+                                                        var value = options.value ? "YES" : "NO";
+                                                        $("<div>")
+                                                            .text(value)
+                                                            .css("text-align", "left")
+                                                            .appendTo(container);
+                                                    },
+                                                    width: 110,
                                                 },
                                                 {
                                                     dataField: "ERODesc02",
                                                     caption: "Destination",
                                                     dataType: "string",
-                                                    width: 150,
+                                                    width: 120,
                                                     visible: true,
                                                 },
                                                 {
@@ -1230,7 +1155,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                     caption: "Travel Start Date",
                                                     dataType: "date",
                                                     format: "dd/MM/yyyy",
-                                                    width: 140,
+                                                    width: 110,
                                                     visible: true,
                                                 },
                                                 {
@@ -1238,7 +1163,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                     caption: "Travel End Date",
                                                     dataType: "date",
                                                     format: "dd/MM/yyyy",
-                                                    width: 140,
+                                                    width: 110,
                                                     visible: true,
                                                 },
                                                 {
@@ -1246,14 +1171,14 @@ showPreviousYearPopup(function (aNowDte) {
                                                     caption: "Estimated Cost",
                                                     dataType: "number",
                                                     format: { type: "fixedPoint", precision: 2 },
-                                                    width: 140,
+                                                    width: 120,
                                                     visible: true,
                                                 },
                                                 {
                                                     dataField: "ERStatus",
                                                     caption: "Status",
                                                     dataType: "string",
-                                                    width: 250,
+                                                    width: 220,
                                                     visible: true,
                                                 },
                                                 {
@@ -1263,156 +1188,76 @@ showPreviousYearPopup(function (aNowDte) {
                                                     width: 140,
                                                     visible: false,
                                                 },
-                                                /*                                                   
-                                                {
-                                                    dataField: "LocalAmount",
-                                                    caption: "Amount",
-                                                    dataType: "number",
-                                                    format: { type: "fixedPoint", precision: 2 },
-                                                    editorOptions: { format: "#,##0.00", width: 120 },
-                                                    width: 120,
-                                                    visible: false,
-                                                },
-                                             
-                                                {
-                                                    dataField: "PayToCode",
-                                                    caption: "Code",
-                                                    dataType: "string",
-                                                    width: 150,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "PayToName",
-                                                    caption: "Name",
-                                                    dataType: "string",                                
-                                                    width: 250,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "Department",
-                                                    caption: "Department",
-                                                    editorOptions: { width: 150 },
-                                                    width: 100,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "Division",
-                                                    caption: "Division",
-                                                    editorOptions: { width: 150 },
-                                                    width: 150,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "ExpensesCode",
-                                                    caption: "Expenses Code",
-                                                    editorType: "dxTextArea",
-                                                    editorOptions: { width: 200 },
-                                                    width: 120,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "ExpensesDescription",
-                                                    caption: "Expenses",
-                                                    editorType: "dxTextArea",
-                                                    editorOptions: { width: 300 },
-                                                    width: 250,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "ERORefNo1",
-                                                    caption: "Plate NO",
-                                                    width: 150,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "ERORefNo2",
-                                                    caption: "Fleet Card NO",
-                                                    width: 150,
-                                                    visible: false,
-                    
-                                                {
-                                                    dataField: "EROCheck01",
-                                                    caption: "Pay Slip",
-                                                    width: 110,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "EROCheck02",
-                                                    caption: "Tax Invoice",
-                                                    width: 110,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "Confirmed",
-                                                    caption: "CF",
-                                                    width: 80,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "NeedPayment",
-                                                    caption: "Refunded",
-                                                    width: 110,
-                                                    visible: false,
-                                                },
-                    
-                                                {
-                                                    dataField: "Note",
-                                                    caption: "Note",
-                                                    editorType: "dxTextArea",
-                                                    editorOptions: { width: 400, height: 80 },
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "PSPvNO",
-                                                    caption: "PS PVNO",
-                                                    editorOptions: { width: 120 },
-                                                    width: 120,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "PSPvDate",
-                                                    caption: "PS PV Date",
-                                                    dataType: "date",
-                                                    format: "dd/MM/yyyy",
-                                                    width: 120,
-                                                    editorOptions: { width: 120 },
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "HODApproved",
-                                                    caption: "HD",
-                                                    width: 60,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "HRApproved",
-                                                    caption: "HR",
-                                                    filterValue: false,
-                                                    width: 60,
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "Approved",
-                                                    caption: "FA",
-                                                    filterValue: false,
-                                                    width: 60,
-                                                    visible: false,
-                                                },
-                                                
-                                                {
-                                                    dataField: "EntryBy",
-                                                    caption: "Entry By",
-                                                    visible: false,
-                                                },
-                                                {
-                                                    dataField: "EntryDate",
-                                                    caption: "Entry Date",
-                                                    dataType: "date",
-                                                    format: "dd/MM/yyyy",
-                                                    visible: false,
-                                                },
-                                                */
                                             ],
+
+                                            onCellHoverChanged: function (e) {
+                                                //console.log(aObjects.aGHeaderHelp)
+                                                // const columnHelp = {
+                                                //     "ERODesc03": "From/With Whom<br>E.g.. Names of client, Insurers,<br> Prospects and their family members<br> (please explain)",
+                                                //     "EROCode01": "Type of Gift/Entertain"
+                                                // };
+                                                const columnHelp = aObjects.aGHeaderHelp;
+                                                if (e.rowType === "header") {
+                                                    const columnDataField = e.column.dataField;
+
+                                                    if (e.eventType === "mouseover") {
+                                                        if (currentHoveredColumn !== columnDataField) {
+                                                            // New column hover, reset nTime and update currentHoveredColumn
+                                                            currentHoveredColumn = columnDataField;
+                                                            nTime = 1; // First time for this column
+                                                        } else {
+                                                            nTime += 1; // Increment nTime if we're still in the same column
+                                                        }
+
+                                                        // Show the popup only when nTime === 1
+                                                        if (nTime === 1) {
+                                                            const columnCaption = e.column.caption; // For popup title
+                                                            const helpText = columnHelp[columnDataField]; // Match dataField with help text
+
+                                                            if (helpText) {
+                                                                $("#popup").dxPopup({
+                                                                    title: `Help: ${columnCaption}`, // Use caption for the popup title
+                                                                    contentTemplate: function () {
+                                                                        return $("<div>").html(helpText); // Use html to render line breaks
+                                                                    },
+                                                                    width: 400,
+                                                                    height: 200,
+                                                                    visible: true,
+                                                                    dragEnabled: true,
+                                                                    closeOnOutsideClick: true,
+                                                                    wrapperAttr: { class: "rounded-popup" }, // Add a custom class
+                                                                    position: {
+                                                                        my: "center top",
+                                                                        at: "center top",
+                                                                        of: window,
+                                                                        offset: "0 120" // Move it up by 200px
+                                                                    }
+                                                                }).dxPopup("show"); // Show the popup
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if (e.eventType === "mouseout") {
+                                                        // Hide the popup and reset the hover counter
+                                                        if (nTime === 1) {
+                                                            //alert("ntime ", nTime)
+                                                            nTime = 0
+                                                            //$("#popup").dxPopup("hide");
+                                                            //console.log(nTime, currentHoveredColumn) 
+                                                        } else {
+                                                            // alert(`help ${nTime}`)
+                                                            // aPopupHelp(`Help: ${columnCaption}`, helpText);   
+                                                            // $("#popup").dxPopup("hide");
+                                                            // currentHoveredColumn = null; // Reset to indicate no column is currently hovered
+                                                            nTime = 0; // Reset the hover counter
+                                                            //$("#popup").dxPopup("hide");
+                                                            //console.log(nTime, currentHoveredColumn)  
+                                                        }
+
+                                                    }
+                                                }
+                                            },
+
                                             // summary
                                             summary: {
                                                 recalculateWhileEditing: true,
@@ -1510,23 +1355,6 @@ showPreviousYearPopup(function (aNowDte) {
                                                         location: "before",
                                                         template: function () { return $("<div style='padding: 5px 85px;'/>") }
                                                     },
-
-                                                    // Add New Record
-                                                    // {
-                                                    //     location: "after",
-                                                    //     widget: "dxButton",
-                                                    //     options: {
-                                                    //         icon: "fas fa-plus-circle",
-                                                    //         text: "Add New",
-                                                    //         type: "success",
-                                                    //         stylingMode: "contained", // "outlined" contained
-                                                    //         onClick: function () {
-                                                    //             let aNewDate = new Date()
-                                                    //             aPopUpAddForm(1, 1, aNowDte);
-                                                    //         }
-                                                    //     }
-                                                    // },
-
                                                     {
                                                         location: "after",
                                                         widget: "dxButton",
@@ -1624,13 +1452,13 @@ showPreviousYearPopup(function (aNowDte) {
                                             dataGrid.refresh();
                                         } */
 
-                                       /*  function aSearchjson(aObjArr, asID) {
-                                            return aObjArr.filter( //aaEmployee
-                                                function (data) {
-                                                    return data.ACCCODE == asID
-                                                }
-                                            );
-                                        } */
+                                        /*  function aSearchjson(aObjArr, asID) {
+                                             return aObjArr.filter( //aaEmployee
+                                                 function (data) {
+                                                     return data.ACCCODE == asID
+                                                 }
+                                             );
+                                         } */
 
                                         /* function aSearchXjson(aObjArr, asID) {
                                             return aObjArr.filter( //aaEmployee
@@ -1712,39 +1540,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                         return (aHTMLsource);
                                                     },
                                                     toolbarItems: [
-                            /*{
-                                toolbar: "top",
-                                locateInMenu: 'always',
-                                html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
-                            },
-                            {
-                                toolbar: "top",
-                                locateInMenu: 'always',
-                                widget: "dxButton",
-                                //toolbar: "bottom",
-                                location: "right",
-                                options: {
-                                    icon: "print",
-                                    //text: "Print",
-                                    onClick: function () {
-                                        window.print()
-                                    }
-                                }
-                            }, {
-                                toolbar: "top",
-                                locateInMenu: 'always',
-                                widget: "dxButton",
-                                //toolbar: "bottom",
-                                location: "after",
-                                options: {
-                                    //text: "EXIT",
-                                    icon: "fas fa-times",
-                                    //type: "danger",                
-                                    onClick: function (e) {
-                                        popup.hide();
-                                    }
-                                }
-                            }*/]
+                                                    ]
 
                                                 }).dxPopup("instance");
 
@@ -1792,20 +1588,7 @@ showPreviousYearPopup(function (aNowDte) {
 
                                                     }
                                                 });
-                                                /*
-                                                $("#asave").dxButton({
-                                                    icon: "save",
-                                                    text: "CONFIRM",
-                                                    type: "success",
-                                                    onClick: function (e) {
-                                                        let ObjRowD = JSON.stringify(iData)
-                                                        sendRequestNew("Update", ObjRowD, aaTBKey, aaPFDMI, atob(aaXToX));
-                                                        // refresh before close popup ?
-                                                        popup.hide();
-                    
-                                                    }
-                                                });
-                                                */
+
 
                                                 const aform = $("#form").dxForm({
                                                     formData: iData,
@@ -2515,7 +2298,7 @@ showPreviousYearPopup(function (aNowDte) {
                                         // popup Add New and Edit  
                                         const aPopUpAddForm = (aRecNo, iData, idDate, iView) => {
                                             var aaPFDMI = isLocalHost();
-                                            var astr = localStorage["aDXTheme"]                                                    
+                                            var astr = localStorage["aDXTheme"]
                                             var aViewF = (iView === undefined) ? false : iView;
                                             var aViewG = (iView === undefined) ? true : !iView;
                                             if (aRecNo === 1) {
@@ -2524,11 +2307,12 @@ showPreviousYearPopup(function (aNowDte) {
                                                 let axRunRun = aGetDateRef(aaRunPre); // aaOnInitExpGroupDesc.substring(0, 1)
                                                 let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
                                                 var aaiHeadRef = axRunRun;
+                                                var asPBatchNo = aaCARDIDaa; //aaRESULaa.CardID;
                                                 /*
                                                     ,ERODesc02: asERODesc02, ERODesc03: asERODesc03, ERODesc04: asERODesc04, ERODesc05: asERODesc05, ERODate02: asERODate02, ERODate03: asERODate03,  Vendor01: asVendor01, Note: asNote, EROAmount1: asEROAmount1
                                                 */
 
-                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: aNowDte, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: asERStatus, ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 0, EROCheck02: 0, NeedPayment: 0, RefundedAmount: asRefundedAmount, LimitedAmount: 0, ERODesc02: asERODesc02, ERODesc03: asERODesc03, ERODesc04: asERODesc04, ERODesc05: asERODesc05, ERODate02: new Date(), ERODate03: new Date(), Vendor01: asVendor01, Note: asNote, EROAmount1: asEROAmount1 }
+                                                var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ERODate01: idDate, ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: aNowDte, ExpensesCode: "", ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: asERStatus, ERORefNo1: "", ERORefNo2: "", ERORefNo3: "", EROCheck01: 0, EROCheck02: 0, NeedPayment: 0, RefundedAmount: asRefundedAmount, LimitedAmount: 0, ERODesc02: asERODesc02, ERODesc03: asERODesc03, ERODesc04: asERODesc04, ERODesc05: asERODesc05, ERODate02: new Date(), ERODate03: new Date(), Vendor01: asVendor01, Note: asNote, EROAmount1: asEROAmount1 , PBatchNo: asPBatchNo }
                                                 var ObjRowData = JSON.stringify(ObjKeyData);
                                                 //console.log("ObjRowData = ", ObjRowData)
                                                 sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
@@ -2543,7 +2327,8 @@ showPreviousYearPopup(function (aNowDte) {
                                                 asERODesc02 = iData.ERODesc02; //Destination	ERODesc02
                                                 asERODesc03 = iData.ERDesc03; //Purpose of Trip
                                                 asEROCheck01 = iData.EROCheck01; //Overseas
-                                                asEROCheck02 = iData.EROCheck02; //Need Roaming                                        
+                                                asEROCheck02 = iData.EROCheck02; //Need Roaming     
+                                                asEROCheck03 = iData.EROCheck03; //Need Roaming                                        
                                                 asERODate02 = iData.ERODate02 //Travel Start Date	
                                                 asERODate03 = iData.ERODate03 //Travel End Date	
                                                 asRefundedAmount = iData.RefundedAmount; //Estimated Cost	
@@ -2552,6 +2337,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                 asEROAmount1 = iData.EROAmount1; //Ticket Price	EROAmount1
                                                 asERODesc05 = iData.ERODesc05; //Hotel	ERODesc05
                                                 asNote = iData.Note; //Remark	Note  
+                                                asPBatchNo = iData.PBatchNo; //aaRESULaa.CardID; 
                                                 //console.log("asERODesc02 = ", asERODesc02)
                                             }
                                             var aaSchRefx = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // (DataGrid View Only This New Item)
@@ -2562,23 +2348,8 @@ showPreviousYearPopup(function (aNowDte) {
                                             $(() => {
                                                 //changeTheme("generic.light")
                                                 var aaLastLineNo = 1;
-                                                /*
-                                                var aXXData = function () {
-                                                    return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aaSchRefx }) // Change aaTBKey to TokenKey for this table 5102300001
-                                                        .fail(function () { throw "Data loading error" });
-                                                };
-                                                
-                                                //var aXXData = function () { return $.post(aaxSettings).done(); }
-                                                //console.log("aXXData = ", aXXData)
-                                                if (iData === 1) {
-
-                                                }
-                                                else {
-
-                                                }*/
                                                 var gbxRateV = 1;
                                                 var accordion;
-
                                                 const popup = $("#popupContainerAdd").dxPopup({
                                                     title: "Travel Requisition Form" + aaaTitle,
                                                     width: '1300px',
@@ -2592,7 +2363,6 @@ showPreviousYearPopup(function (aNowDte) {
                                                     closeOnOutsideClick: false,
                                                     resizeEnabled: true,
                                                     onInitialized: function (e) { e.component.registerKeyHandler("escape", function (arg) { }) }, // ignore when press 'ESC'  
-
                                                     contentTemplate: function () {
                                                         return $("<div />").append(
                                                             $("<p><div id='Add-form'></div></p>"),
@@ -2602,21 +2372,19 @@ showPreviousYearPopup(function (aNowDte) {
                                                             $("<span id='Add-ViewFile'></span>"),
                                                             $("<p><div id='Add-dxDataGrid'></div></p>"),
                                                             $("<span id='Add-popupexit'></span>"),
-                                                            $("<span style='padding: 5px 15px;'></span>").text(" "),                                                                    
+                                                            $("<span style='padding: 5px 15px;'></span>").text(" "),
                                                             $("<span id='aConfirm'></span>"),
-
                                                         );
                                                     },
-                                                    onContentReady: function () {
-                                                        // $("#Add-dxDataGrid").hide(); // hide dataGrid
-                                                    },
+                                                    //onContentReady: function () {
+                                                    // $("#Add-dxDataGrid").hide(); // hide dataGrid
+                                                    //},
                                                     toolbarItems: [
                                                         {
                                                             toolbar: "top",
                                                             locateInMenu: 'always',
                                                             //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>" // Logo
                                                         },
-
                                                         {
                                                             toolbar: "top", // exit (x)
                                                             locateInMenu: 'always',
@@ -2690,42 +2458,42 @@ showPreviousYearPopup(function (aNowDte) {
 
                                                 });
                                                 // popup upload
-                                              
-                                                $("#popupAccordion").dxAccordion({
-                                                    dataSource: [
-                                                        { title: "Personal Information", formData: { firstName: "John", lastName: "Doe" } },
-                                                        { title: "Contact Information", formData: { email: "john.doe@example.com", phone: "123-456-7890" } }
-                                                    ],
-                                                    animationDuration: 300,
-                                                    collapsible: true,
-                                                    multiple: true,
-                                                    itemTemplate: function (data) {
-                                                        return $("<div>").dxForm({
-                                                            formData: data.formData,
-                                                            items: [
-                                                                { dataField: "firstName", label: { text: "First Name" } },
-                                                                { dataField: "lastName", label: { text: "Last Name" } },
-                                                                { dataField: "email", label: { text: "Email" } },
-                                                                { dataField: "phone", label: { text: "Phone" } }
-                                                            ]
-                                                        });
-                                                    },
-                                                    onInitialized: function (e) {
-                                                        accordion = e.component;
-                                                    }
-                                                });
+
+                                                // $("#popupAccordion").dxAccordion({
+                                                //     dataSource: [
+                                                //         { title: "Personal Information", formData: { firstName: "John", lastName: "Doe" } },
+                                                //         { title: "Contact Information", formData: { email: "john.doe@example.com", phone: "123-456-7890" } }
+                                                //     ],
+                                                //     animationDuration: 300,
+                                                //     collapsible: true,
+                                                //     multiple: true,
+                                                //     itemTemplate: function (data) {
+                                                //         return $("<div>").dxForm({
+                                                //             formData: data.formData,
+                                                //             items: [
+                                                //                 { dataField: "firstName", label: { text: "First Name" } },
+                                                //                 { dataField: "lastName", label: { text: "Last Name" } },
+                                                //                 { dataField: "email", label: { text: "Email" } },
+                                                //                 { dataField: "phone", label: { text: "Phone" } }
+                                                //             ]
+                                                //         });
+                                                //     },
+                                                //     onInitialized: function (e) {
+                                                //         accordion = e.component;
+                                                //     }
+                                                // });
                                                 //}
                                                 //});
                                                 //});
-                                                $("#expandButton").on("click", function () {
-                                                    accordion.expandItem(0); // Expand the first item
-                                                    accordion.expandItem(1); // Expand the second item
-                                                });
+                                                // $("#expandButton").on("click", function () {
+                                                //     accordion.expandItem(0); // Expand the first item
+                                                //     accordion.expandItem(1); // Expand the second item
+                                                // });
 
-                                                $("#collapseButton").on("click", function () {
-                                                    accordion.collapseItem(0); // Collapse the first item
-                                                    accordion.collapseItem(1); // Collapse the second item
-                                                });
+                                                // $("#collapseButton").on("click", function () {
+                                                //     accordion.collapseItem(0); // Collapse the first item
+                                                //     accordion.collapseItem(1); // Collapse the second item
+                                                // });
 
                                                 $("#Add-popupexit").dxButton({
                                                     icon: "fas fa-times",
@@ -2802,7 +2570,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                         asEROAmount1 = 0; //Ticket Price	EROAmount1
                                                         asERODesc05 = ""; //Hotel	ERODesc05
                                                         asNote = ""; //Remark	Note
-
+                                                        asPBatchNo = "";
                                                         popup.hide()
                                                     }
                                                 });
@@ -2816,6 +2584,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                     //visible: true,
                                                     visible: aViewG, //true,
                                                     onClick: function (e) {
+                                                        // validation
                                                         const validationResult = aform.validate();
                                                         if (validationResult.isValid) {
                                                             console.log("Form is valid. Proceed with submission.");
@@ -2824,258 +2593,677 @@ showPreviousYearPopup(function (aNowDte) {
                                                             console.log("Form is invalid. Please correct the errors.");
                                                             // Optionally, you can show the error messages or highlight invalid fields
                                                         }
-                                                        //console.log("validationResult: ", validationResult)
-                                                        //console.log("HR = ", aaHODApprover) // To HR
-                                                        let aObjRowData = JSON.stringify(iData); //EROCode04
-                                                        //console.log("Update when Confirm ", aObjRowData)
-                                                        sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
-                                                        sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
-                                                        sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
-                                                            .then(response => {
-                                                                //console.log("Update response: ", response);
-                                                                if (response.success) {
-                                                                    // Assuming you have a data source variable
-                                                                    let dataSource = $("#gridContainer").dxDataGrid("instance").getDataSource();
-                                                                    dataSource.reload().done(() => {
-                                                                        console.log("Data source reloaded");
-                                                                    });
-                                                                } else {
-                                                                    console.error("Update failed: ", response.error);
+                                                        console.log("validationResult: ", validationResult)
+                                                        // check dataGrid
+                                                        const rows = aAddStaff.getDataSource().items(); // Get all rows in the data grid aAddStaff
+                                                        let allValid = true;
+                                                        console.log("aAddStaff rows = ", rows)
+                                                        //alert("pass")
+                                                        rows.forEach(row => {
+                                                            // Make sure that 'id' is the keyExpr you specified in the DataGrid
+                                                            const rowIndex = aAddStaff.getRowIndexByKey(row.ID); // This should now work, as the keyExpr is set
+
+                                                            // Validate the row using the row index
+                                                            if (rowIndex !== -1) {  // Ensure the row index is valid
+                                                                const rowValidationResult = aAddStaff.validateRow(rowIndex);
+
+                                                                if (!rowValidationResult.isValid) {
+                                                                    allValid = false;
+                                                                    console.log(`Row ${rowIndex} is invalid. Errors:`, rowValidationResult.brokenRules);
+                                                                    // Optionally, handle the error (highlight invalid row, show message)
                                                                 }
-                                                            })
-                                                            .catch(error => {
-                                                                console.error("Request error: ", error);
-                                                            });
-                                                        $("#gridContainer").dxDataGrid("instance").refresh();
-                                                        $("#gridContainer").dxDataGrid("instance").refresh();
-                                                        $("#gridContainer").dxDataGrid("instance").refresh();
-                                                        $("#gridContainer").dxDataGrid("instance").refresh();
-                                                        // clear variables
-                                                        //asERStatus = iData.ERStatus;
-                                                        asERODesc02 = ""; //Destination	ERODesc02
-                                                        asERODesc03 = ""; //Purpose of Trip
-                                                        asEROCheck01 = false; //Overseas
-                                                        asEROCheck02 = false; //Need Roaming                                        
-                                                        asERODate02 = new Date() //Travel Start Date	
-                                                        asERODate03 = new Date() //Travel End Date	
-                                                        asRefundedAmount = 0; //Estimated Cost	
-                                                        asVendor01 = ""; //Departure Flight	
-                                                        asERODesc04 = ""; //Arrival Flight	
-                                                        asEROAmount1 = 0; //Ticket Price	EROAmount1
-                                                        asERODesc05 = ""; //Hotel	ERODesc05
-                                                        asNote = ""; //Remark	Note
-                                                        //
-                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                        let aDivSxx = "Where REFNO = '" + aaiHeadRef + "-001'" //HeadRefNo Check RefundedAmount for the first record only
-                                                        let aFieldSelectedxx = "HeadRefNo,RefundedAmount,EROCheck01, EROCheck02,ERODesc06,PayToName" //ExtraOnLine].[dbo].[EXPREIM_400] TotalReimburse,
-                                                        let aFullBodyxx = "Select " + aFieldSelectedxx + " From " + "ExtraOnLine.dbo.TRVREQF " + aDivSxx; //alert(aFullBody)  Estimated Amount                                         
-                                                        //console.log(aFullBodyxx, aaHODApprover);
-                                                        fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBodyxx) }), redirect: "follow" })
-                                                            .then(response => response.json())
+                                                            } else {
+                                                                console.log(`Row with id ${row.id} not found in the grid.`);
+                                                            }
+                                                        });
+
+                                                        if (allValid) {
+                                                            console.log("All rows are valid. Proceed with submission.");
+                                                            // Proceed with your submission logic here
+                                                        } else {
+                                                            console.log("Some rows are invalid. Please correct the errors.");
+                                                        }
+                                                        // validation
+                                                        var aBookingOptions = asEROCheck03 ? "SELF BOOKING [HOD->HR(roaming)]" : "ADMIN BOOKING [HOD->ADMIN->HR(roaming)]"
+                                                        var result = $("#Add-form").dxForm("instance").validate(); //Add-dxDataGrid
+                                                        if (!result.isValid) { DevExpress.ui.dialog.alert("Required Fields not valid, please check", "VALIDATION ERROR") } else {
+                                                            //console.log("validationResult: ", validationResult)
+                                                            //console.log("HR = ", aaHODApprover) // To HR
+                                                            let aObjRowData = JSON.stringify(iData); //EROCode04
+                                                            //console.log("Update when Confirm ", aObjRowData)
+                                                            sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                                                            sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                                                            sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX))
+                                                                .then(response => {
+                                                                    //console.log("Update response: ", response);
+                                                                    if (response.success) {
+                                                                        // Assuming you have a data source variable
+                                                                        let dataSource = $("#gridContainer").dxDataGrid("instance").getDataSource();
+                                                                        dataSource.reload().done(() => {
+                                                                            console.log("Data source reloaded");
+                                                                        });
+                                                                    } else {
+                                                                        console.error("Update failed: ", response.error);
+                                                                    }
+                                                                })
+                                                                .catch(error => {
+                                                                    console.error("Request error: ", error);
+                                                                });
+                                                            $("#gridContainer").dxDataGrid("instance").refresh();
+                                                            $("#gridContainer").dxDataGrid("instance").refresh();
+                                                            $("#gridContainer").dxDataGrid("instance").refresh();
+                                                            $("#gridContainer").dxDataGrid("instance").refresh();
+                                                            // clear variables
+                                                            //asERStatus = iData.ERStatus;
+                                                            asERODesc02 = ""; //Destination	ERODesc02
+                                                            asERODesc03 = ""; //Purpose of Trip
+                                                            asEROCheck01 = false; //Overseas
+                                                            asEROCheck02 = false; //Need Roaming                                        
+                                                            asERODate02 = new Date() //Travel Start Date	
+                                                            asERODate03 = new Date() //Travel End Date	
+                                                            asRefundedAmount = 0; //Estimated Cost	
+                                                            asVendor01 = ""; //Departure Flight	
+                                                            asERODesc04 = ""; //Arrival Flight	
+                                                            asEROAmount1 = 0; //Ticket Price	EROAmount1
+                                                            asERODesc05 = ""; //Hotel	ERODesc05
+                                                            asNote = ""; //Remark	Note
                                                             //
-                                                            .then(ppData => {
-                                                                var aaTotalValue = ppData;
-                                                                var aaTotalReim = aaTotalValue[0].RefundedAmount //TotalReimburse
-                                                                var aaCheckOverseas = aaTotalValue[0].EROCheck01 ? "TRFO" : "TRF";
-                                                                var aaCheckRoaming = aaTotalValue[0].EROCheck02 ? "YES" : "NO";
-                                                                var aaAlertMessage;
-                                                                var aaRecpName;
-                                                                var aaRecpEmail;
-                                                                var aaTitMess;
-                                                                var aaaFAMess;
-                                                                var aaPTName = aaTotalValue[0].PayToName;
-                                                                var aaStaffEM = aaTotalValue[0].ERODesc06
-                                                                let aRefNoa = aaiHeadRef //iData.HeadRefNo
+                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                            $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                            let aDivSxx = "Where REFNO = '" + aaiHeadRef + "-001'" //HeadRefNo Check RefundedAmount for the first record only
+                                                            let aFieldSelectedxx = "HeadRefNo,RefundedAmount,EROCheck01, EROCheck02,ERODesc06,PayToName" //ExtraOnLine].[dbo].[EXPREIM_400] TotalReimburse,
+                                                            let aFullBodyxx = "Select " + aFieldSelectedxx + " From " + "ExtraOnLine.dbo.TRVREQF " + aDivSxx; //alert(aFullBody)  Estimated Amount                                         
+                                                            //console.log(aFullBodyxx, aaHODApprover);
+                                                            fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBodyxx) }), redirect: "follow" })
+                                                                .then(response => response.json())
+                                                                //
+                                                                .then(ppData => {
+                                                                    var aaTotalValue = ppData;
+                                                                    var aaTotalReim = aaTotalValue[0].RefundedAmount //TotalReimburse
+                                                                    var aaCheckOverseas = aaTotalValue[0].EROCheck01 ? "TRFO" : "TRF";
+                                                                    var aaCheckRoaming = aaTotalValue[0].EROCheck02 ? "YES" : "NO";
+                                                                    var aaAlertMessage;
+                                                                    var aaRecpName;
+                                                                    var aaRecpEmail;
+                                                                    var aaTitMess;
+                                                                    var aaaFAMess;
+                                                                    var aaPTName = aaTotalValue[0].PayToName;
+                                                                    var aaStaffEM = aaTotalValue[0].ERODesc06
+                                                                    let aRefNoa = aaiHeadRef //iData.HeadRefNo
 
-                                                                //console.log(aaCheckOverseas, aaCheckRoaming)
-                                                                //console.log(aaHODAppEmail)
-                                                                // console.log(aaTotalValue[0].ERODesc06)
-                                                                // console.log("Requester aaPTName = ", aaPTName, aaStaffEM)
-                                                                // Check empty fields
-                                                                var aDatabasea = "ExtraOnLine.dbo.TRVREQF";
-                                                                var aKeyField = "HeadRefNo" //"HeadRefNo"; "REFNO"
-                                                                var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724" +"-001" 
-                                                                var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
-                                                                var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.RefundedAmount === 0 || item.Vendor01 === "" || item.ERODesc04 === "")) || (item.ID > 1 && (item.Vendor02 === "")) //item.EROCode03 === "" ||
-                                                                var condition = aaCondition  //|| (item.ERODate06 && !isNaN(new Date(item.ERODate05).getTime()))
-                                                                //|| item.Xrate === 0 || (item.Xrate === 1 && item.Currency !== "THB") || (item.Xrate !== 1 && item.Currency === "THB"); !isNaN(item.ERODate01);    
+                                                                    //console.log(aaCheckOverseas, aaCheckRoaming)
+                                                                    //console.log(aaHODAppEmail)
+                                                                    // console.log(aaTotalValue[0].ERODesc06)
+                                                                    // console.log("Requester aaPTName = ", aaPTName, aaStaffEM)
+                                                                    // Check empty fields
+                                                                    var aDatabasea = "ExtraOnLine.dbo.TRVREQF";
+                                                                    var aKeyField = "HeadRefNo" //"HeadRefNo"; "REFNO"
+                                                                    var aKeyIDa = aaiHeadRef //  T2408177541 "T2408152724" +"-001" 
+                                                                    var axFieldSelected = "REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Vendor01,Vendor02,Vendor01Amount,Vendor02Amount,Vendor01Diff,Vendor02Diff,Vendor01Note,Vendor02Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6,HODApproved,ExpGroupCode,ExpGroupDescEng,AmountBeforeVAT,VAT,ConfirmedDate,HODApprovedDate,FAApprovedDate,TotalLocalAmount,TotalAmount,TotalIems,TotalAmountBeforeVAT,TotalVAT,NeedPayment,RefundedAmount,HRApprovedDate";
+                                                                    var aaCondition = item => (item.ID === 1 && (item.ERODesc02 === "" || item.RefundedAmount === 0)) || (item.ID > 1 && (item.Vendor02 === "")) //item.EROCode03 === "" || item.Vendor01 === "" || item.ERODesc04 === ""
+                                                                    var condition = aaCondition  //|| (item.ERODate06 && !isNaN(new Date(item.ERODate05).getTime()))
+                                                                    //|| item.Xrate === 0 || (item.Xrate === 1 && item.Currency !== "THB") || (item.Xrate !== 1 && item.Currency === "THB"); !isNaN(item.ERODate01);    
 
-                                                                let aApproverName = aaHODAppName // HR Name
-                                                                let aApproverEmail = $.trim(aaHODAppEmail) // HR Email
-                                                                let aRequesterName = aaPTName //PayToName (Requester Name)
-                                                                let aRequesterEmail = aaStaffEM //ERODesc06 (Requester Email)
+                                                                    let aApproverName = aaHODAppName // HR Name
+                                                                    let aApproverEmail = $.trim(aaHODAppEmail) // HR Email
+                                                                    let aRequesterName = aaPTName //PayToName (Requester Name)
+                                                                    let aRequesterEmail = aaStaffEM //ERODesc06 (Requester Email)
 
-                                                                //console.log("Overseas = ", aaCheckOverseas, "Roaming = ", aaCheckRoaming)
-                                                                if (aaCheckRoaming === "YES") { //Roaming = 'YES'
-                                                                    aaAlertMessage = "Confirm & send mail to HR - "
-                                                                    aaRecpName = aaHODAppName // HR name
-                                                                    aaRecpEmail = aaHODAppEmail // HR Email
-                                                                    aApproverName = asFullName //aaHODAppName 
-                                                                    aApproverEmail = asStaffEmail; //$.trim(aaHODAppEmail)
-                                                                    aaaFAMess = " ";
-                                                                    aaTitMess = "CONFIRM TO HR"
+                                                                    //console.log("Overseas = ", aaCheckOverseas, "Roaming = ", aaCheckRoaming)
+                                                                    if (aaCheckRoaming === "YES") { //Roaming = 'YES'
+                                                                        aaAlertMessage = "Confirm & send mail to HR - "
+                                                                        aaRecpName = aaHODAppName // HR name
+                                                                        aaRecpEmail = aaHODAppEmail // HR Email
+                                                                        aApproverName = asFullName //aaHODAppName 
+                                                                        aApproverEmail = asStaffEmail; //$.trim(aaHODAppEmail)
+                                                                        aaaFAMess = " ";
+                                                                        aaTitMess = "CONFIRM TO HR"
 
-                                                                } else if (aaCheckRoaming === "NO") { // send to requester Raaming = 'NO'
-                                                                    aaAlertMessage = "Confirm & send mail to Requester - "
-                                                                    aaRecpName = aaPTName;
-                                                                    aaRecpEmail = aaStaffEM;
-                                                                    aApproverName = asFullName; // admin login name
-                                                                    aApproverEmail = asStaffEmail; // admin login email
-                                                                    aaaFAMess = " and Send Mail to FA - " + aaFAAppName + "(" + aaFAAppEmail + ") " // aaFAAppName, aaFAAppEmail
-                                                                    aaTitMess = "CONFIRM TO REQUESTER"
+                                                                    } else if (aaCheckRoaming === "NO") { // send to requester Raaming = 'NO'
+                                                                        aaAlertMessage = "Confirm & send mail to Requester - "
+                                                                        aaRecpName = aaPTName;
+                                                                        aaRecpEmail = aaStaffEM;
+                                                                        aApproverName = asFullName; // admin login name
+                                                                        aApproverEmail = asStaffEmail; // admin login email
+                                                                        aaaFAMess = " and Send Mail to FA - " + aaFAAppName + "(" + aaFAAppEmail + ") " // aaFAAppName, aaFAAppEmail
+                                                                        aaTitMess = "CONFIRM TO REQUESTER"
 
-                                                                }
-                                                                let aAddress2Do = `<a href='${aaPFDMI}/XOL/index.html'>Travel Requisition</a>`;
-                                                                let getvalues = { aApproverName: aApproverName, aApproverEmail: aApproverEmail, aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aRefNoa: aRefNoa, aAddress2Do: aAddress2Do, aRequesterName: aRequesterName, aaaFAMess: aaaFAMess,aaTitMess: aaTitMess,aaAlertMessage: aaAlertMessage,  aaRecpName:  aaRecpName ,aaRecpEmail: aaRecpEmail,aaHODAppName: aaHODAppName, aaHODAppEmail: aaHODAppEmail}
-                                                                aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
-                                                                    .then(atestCehcka => {
-                                                                        //console.log("xx",atestCehcka); // Logs the actual message
-                                                                        //console.log("ALERT01",aArrays.ALERT01[0])
-                                                                        let aAlert001 = aArrays.ALERT03[0].replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
-                                                                        let aTitle001 = aArrays.ALERT03[1].replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
-                                                                        if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aArrays.ALERT01[0], aArrays.ALERT01[1]); }    //
-                                                                        else {                                                                                                                                                                                                                                                         //xxChkLenxx                                                                     
-                                                                            //let result = DevExpress.ui.dialog.confirm(`${aaAlertMessage} ${aaRecpName} (${aaRecpEmail}) ? <br>${aaaFAMess}<p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'></p>`, aaTitMess); //
-                                                                            let result = DevExpress.ui.dialog.confirm(aAlert001, aTitle001);
-                                                                            result.done(function (dresult) {//                                                                                                                                                                                                                          
-                                                                                if (dresult) {
-                                                                                    let aFREF = aaiHeadRef + "-001"
-                                                                                    let aERStatus = aaCheckRoaming === "YES" ? "ADMIN Confirmed wait for HR" : "ADMIN Confirmed (finished)"; //"Register"
-                                                                                    //let aERStatus1 = "ADMIN Confirmed (finished)"
-                                                                                    let aTrueORFalse = '1'
-                                                                                    let aTrueORFalseB = true
-                                                                                    let aNowDateT = aaNowText(aNowDte)
+                                                                    }
+                                                                    let aAddress2Do = `<a href='${aaPFDMI}/XOL/index.html'>Travel Requisition</a>`;
+                                                                    let getvalues = { aApproverName: aApproverName, aApproverEmail: aApproverEmail, aaOnInitExpGroupDesc: aaOnInitExpGroupDesc, aRefNoa: aRefNoa, aAddress2Do: aAddress2Do, aRequesterName: aRequesterName, aaaFAMess: aaaFAMess, aaTitMess: aaTitMess, aaAlertMessage: aaAlertMessage, aaRecpName: aaRecpName, aaRecpEmail: aaRecpEmail, aaHODAppName: aaHODAppName, aaHODAppEmail: aaHODAppEmail }
+                                                                    aaLoadData(isLocalHost(), aDatabasea, aKeyIDa, aKeyField, axFieldSelected, condition)
+                                                                        .then(atestCehcka => {
+                                                                            //console.log("xx",atestCehcka); // Logs the actual message
+                                                                            //console.log("ALERT01",aArrays.ALERT01[0])
+                                                                            let aAlert001 = aArrays.ALERT03[0].replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
+                                                                            let aTitle001 = aArrays.ALERT03[1].replace(/\${(.*?)}/g, (match, p1) => getvalues[p1] || match);
+                                                                            if (atestCehcka === 1) { DevExpress.ui.dialog.alert(aArrays.ALERT01[0], aArrays.ALERT01[1]); }    //
+                                                                            else {                                                                                                                                                                                                                                                         //xxChkLenxx                                                                     
+                                                                                //let result = DevExpress.ui.dialog.confirm(`${aaAlertMessage} ${aaRecpName} (${aaRecpEmail}) ? <br>${aaaFAMess}<p style='color:Red; font-size: 12px;' ></b></p><p style='color: grey; font-size: 10px;'></p>`, aaTitMess); //
+                                                                                let result = DevExpress.ui.dialog.confirm(aAlert001, aTitle001);
+                                                                                result.done(function (dresult) {//                                                                                                                                                                                                                          
+                                                                                    if (dresult) {
+                                                                                        let aFREF = aaiHeadRef + "-001"
+                                                                                        let aERStatus = aaCheckRoaming === "YES" ? "ADMIN Confirmed wait for HR" : "ADMIN Confirmed (finished)"; //"Register"
+                                                                                        //let aERStatus1 = "ADMIN Confirmed (finished)"
+                                                                                        let aTrueORFalse = '1'
+                                                                                        let aTrueORFalseB = true
+                                                                                        let aNowDateT = aaNowText(aNowDte)
 
-                                                                                    var aObjKeyData = { REFNO: aFREF, Approved: aTrueORFalseB, ERStatus: aERStatus }; //, ReqDate: aNowDte
-                                                                                    var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
-                                                                                    //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
-                                                                                    //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704' ERORefNo6
-                                                                                    //let aSQLCommand = "use ExtraOnLine; UPDATE TRVREQF  SET Approved = " + aTrueORFalse + ", Vendor01Note = '" + aaHODAll4Chk + "', Vendor02Note = '" + aaHODAppName + "', ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                                                    let aSQLCommand = "use ExtraOnLine; UPDATE TRVREQF  SET Approved = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
-                                                                                    aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
-                                                                                    aSQLAction(aaPFDMI, aSQLCommand)
-                                                                                    aSQLAction(aaPFDMI, aSQLCommand)
-                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
+                                                                                        var aObjKeyData = { REFNO: aFREF, Approved: aTrueORFalseB, ERStatus: aERStatus }; //, ReqDate: aNowDte
+                                                                                        var aObjRowData = JSON.stringify($.extend({}, iData, aObjKeyData));
+                                                                                        //sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+                                                                                        //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704' ERORefNo6
+                                                                                        //let aSQLCommand = "use ExtraOnLine; UPDATE TRVREQF  SET Approved = " + aTrueORFalse + ", Vendor01Note = '" + aaHODAll4Chk + "', Vendor02Note = '" + aaHODAppName + "', ERORefNo6 = '" + aaHODAppEmail + "', ERStatus = '" + aERStatus + "', ReqDate = '" + aNowDateT + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                        let aSQLCommand = "use ExtraOnLine; UPDATE TRVREQF  SET Approved = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + aaiHeadRef + "'"
+                                                                                        aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                                                                                        aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                        aSQLAction(aaPFDMI, aSQLCommand)
+                                                                                        $("#gridContainer").dxDataGrid("instance").refresh();
 
-                                                                                    //send Email
-                                                                                    var aaMailTitle = " TRAVEL REQUISITION "; //aaOnInitExpGroupDesc.toUpperCase() +
-                                                                                    var aSubject = aaMailTitle                                                                
-                                                                                    let aMessage01 = "";
-                                                                                    //let aMessage02  = aEmailTRF[0] + $.trim(aaHODAppName) + aEmailTRF[1] + aaOnInitExpGroupDesc + aEmailTRF[2] + aRefNoa + aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aEmailTRF[5];;
-                                                                                    if (aaCheckRoaming === "YES") {
-                                                                                        aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaHODAppName) + aArrays.aEmailTRF[1] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
-                                                                                    } else {
-                                                                                        aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaRecpName) + aArrays.aEmailTRF[13] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
+                                                                                        //send Email
+                                                                                        var aaMailTitle = " TRAVEL REQUISITION "; //aaOnInitExpGroupDesc.toUpperCase() +
+                                                                                        var aSubject = aaMailTitle
+                                                                                        let aMessage01 = "";
+                                                                                        //let aMessage02  = aEmailTRF[0] + $.trim(aaHODAppName) + aEmailTRF[1] + aaOnInitExpGroupDesc + aEmailTRF[2] + aRefNoa + aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aEmailTRF[5];;
+                                                                                        if (aaCheckRoaming === "YES") {
+                                                                                            aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaHODAppName) + aArrays.aEmailTRF[1] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
+                                                                                        } else {
+                                                                                            aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaRecpName) + aArrays.aEmailTRF[13] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
+                                                                                        }
+                                                                                        //alert(aMessage02)
+                                                                                        //alert(aMessage01)
+                                                                                        var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                        //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)  
+                                                                                        if (aaCheckRoaming === "YES") { // Roaming = "YES"
+                                                                                            aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaHODAppName) + aArrays.aEmailTRF[1] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
+                                                                                            aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                            //alert("ROAMING = YES, HODAppName = " + aaHODAppName +"HODAppEmail = " + aaHODAppEmail + "RequesterEmail = " + aRequesterEmail  +" Message " + aMessage) //+ " Subject " + aSubject
+                                                                                            aSendMailDMZ(" " + aaHODAppName, aaHODAppEmail, aRequesterEmail, "", "", aSubject, aMessage); //to HR or Requester
+                                                                                            aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
+                                                                                        } else { // Roaming = "NO"
+                                                                                            //alert(" ROAMING = YES, HODAppName = " + aaHODAppName +"HODAppEmail = " + aaHODAppEmail + "RequesterEmail = " + aRequesterEmail  +" Message " + aMessage) //+ " Subject " + aSubject
+                                                                                            aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaRecpName) + aArrays.aEmailTRF[13] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
+                                                                                            aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                            //alert(" ROAMING = NO ,aaRecpName = " + aaRecpName +"RecpEmail = " + aaRecpEmail + "RequesterEmail = " + aRequesterEmail +" Message " + aMessage01) // " Subject " + aSubject +
+                                                                                            aSendMailDMZ(" " + aaRecpName, aaRecpEmail, aRequesterEmail, "", "", aSubject, aMessage);
+                                                                                            aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
+                                                                                            //aaFAAppName, aaFAAppEmail
+                                                                                            aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaFAAppName) + aArrays.aEmailTRF[13] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
+                                                                                            aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
+                                                                                            //alert(" ROAMING = NO ,FA = " + aaFAAppName +"FAEmail = " + aaFAAppEmail + "RequesterEmail " + aRequesterEmail +" Message " + aMessage) //+ " Subject " + aSubject 
+                                                                                            aSendMailDMZ(" " + aaFAAppName, aaFAAppEmail, aRequesterEmail, "", "", aSubject, aMessage);
+                                                                                            aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
+                                                                                        }
+
+                                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                        $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                                                        $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                                                                        $("#gridContainer").dxDataGrid("instance").refresh();
+
+                                                                                        //aMessageAlert("Already Confirmed & send mail " + aaRecpName + " (" + aaRecpEmail + ")", "DarkGreen")
+                                                                                        popup.hide();
                                                                                     }
-                                                                                    //alert(aMessage02)
-                                                                                    //alert(aMessage01)
-                                                                                    var aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
-                                                                                    //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)  
-                                                                                    if (aaCheckRoaming === "YES") { // Roaming = "YES"
-                                                                                        aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaHODAppName) + aArrays.aEmailTRF[1] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
-                                                                                        aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
-                                                                                        //alert("ROAMING = YES, HODAppName = " + aaHODAppName +"HODAppEmail = " + aaHODAppEmail + "RequesterEmail = " + aRequesterEmail  +" Message " + aMessage) //+ " Subject " + aSubject
-                                                                                        aSendMailDMZ(" " + aaHODAppName, aaHODAppEmail, aRequesterEmail, "", "", aSubject, aMessage); //to HR or Requester
-                                                                                        aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
-                                                                                    } else { // Roaming = "NO"
-                                                                                        //alert(" ROAMING = YES, HODAppName = " + aaHODAppName +"HODAppEmail = " + aaHODAppEmail + "RequesterEmail = " + aRequesterEmail  +" Message " + aMessage) //+ " Subject " + aSubject
-                                                                                        aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaRecpName) + aArrays.aEmailTRF[13] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
-                                                                                        aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
-                                                                                        //alert(" ROAMING = NO ,aaRecpName = " + aaRecpName +"RecpEmail = " + aaRecpEmail + "RequesterEmail = " + aRequesterEmail +" Message " + aMessage01) // " Subject " + aSubject +
-                                                                                        aSendMailDMZ(" " + aaRecpName, aaRecpEmail, aRequesterEmail, "", "", aSubject, aMessage);
-                                                                                        aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
-                                                                                        //aaFAAppName, aaFAAppEmail
-                                                                                        aMessage01 = aArrays.aEmailTRF[0] + $.trim(aaFAAppName) + aArrays.aEmailTRF[13] + aaOnInitExpGroupDesc + aArrays.aEmailTRF[2] + aRefNoa + aArrays.aEmailTRF[3] + aAddress2Do + "<br>" + aApproverName + aArrays.aEmailTRF[5];
-                                                                                        aMessage = "<!DOCTYPE html><html><head><style>table { border-collapse: collapse; width: 50%;} th {border: 1px; border-radius: 8px 8px 0px 0px; text-align: left; padding: 8px;}tr:nth-child(even) {background-color: #ffe6ff}th {background-color: #027DFC; color: white;}</style></head><body><div style='background-color: #F8F8F8'><br><br><center><table><tr><th style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 22px;'><center>" + aaMailTitle + "</center></th></tr><tr><td style='font-family: Tahoma, Arial, Helvetica, sans-serif; font-size: 13px; background-color:#EAF4FF;'><div style='margin: 5px 2px 10px 10px;'>" + aMessage01 + "</div></td></tr></table></center><br><br><br></div></body></html>"
-                                                                                        //alert(" ROAMING = NO ,FA = " + aaFAAppName +"FAEmail = " + aaFAAppEmail + "RequesterEmail " + aRequesterEmail +" Message " + aMessage) //+ " Subject " + aSubject 
-                                                                                        aSendMailDMZ(" " + aaFAAppName, aaFAAppEmail, aRequesterEmail, "", "", aSubject, aMessage);
-                                                                                        aMessageAlert("Already Confirmed <br> EMAIL <br>" + aMessage, "DarkGreen")
-                                                                                    }
-
-                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                    $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
-                                                                                    $("#gridContainer").dxDataGrid("instance").refresh();
-
-                                                                                    //aMessageAlert("Already Confirmed & send mail " + aaRecpName + " (" + aaRecpEmail + ")", "DarkGreen")
-                                                                                    popup.hide();
-                                                                                }
-                                                                            });
-                                                                            //1
-                                                                        } //aaLoadData
-                                                                    }); // then check                                                                 
-                                                            });
+                                                                                });
+                                                                                //1
+                                                                            } //aaLoadData
+                                                                        }); // then check                                                                 
+                                                                });
+                                                        }
                                                     }
                                                 });
+
+                                                // const aform = $("#Add-form").dxForm({
+                                                //     formData: iData, //aXXData[0], //iData,                                              
+                                                //     showColonAfterLabel: false,
+                                                //     labelLocation: "top",//"left", //"top",
+                                                //     readOnly: aViewF, //false, //true
+                                                //     items: [
+                                                //         {
+                                                //             itemType: "group",
+                                                //             colCount: 5,
+                                                //             items: [{
+                                                //                 dataField: "HeadRefNo",
+                                                //                 label: { text: "REF NO" },
+                                                //                 editorType: "dxTextBox",
+                                                //                 editorOptions: { width: 150, readOnly: true }, //value: aaiHeadRef,
+                                                //                 cssClass: "verylight-blue",
+                                                //                 colSpan: 1,
+                                                //             },
+                                                //             {
+                                                //                 dataField: "PayToName",
+                                                //                 label: { text: "Requester." },
+                                                //                 editorType: "dxTextBox",
+                                                //                 editorOptions: { width: 150, readOnly: true }, //value: asFullName,
+                                                //                 cssClass: "verylight-blue",
+                                                //                 colSpan: 1,
+                                                //             },
+                                                //             {
+                                                //                 dataField: "Department",
+                                                //                 label: { text: "Department." },
+                                                //                 editorType: "dxTextBox",
+                                                //                 editorOptions: { width: 150, readOnly: true }, //value: asDepartment,value: asDepartment,
+                                                //                 cssClass: "verylight-blue",
+                                                //                 width: 150,
+                                                //                 colSpan: 1,
+                                                //             },
+                                                //             {
+                                                //                 dataField: "ReqDate",
+                                                //                 label: { text: "Requested Date" },
+                                                //                 editorType: "dxDateBox",
+                                                //                 editorOptions: { displayFormat: "dd/MM/yyyy", width: 150, readOnly: true },//showClearButton: true, value: idDate, 
+                                                //                 cssClass: "verylight-blue",
+                                                //                 colSpan: 1,
+                                                //             },
+
+                                                //             {
+                                                //                 dataField: "ERStatus",
+                                                //                 label: { text: "STATUS" },
+                                                //                 editorType: "dxTextBox",
+                                                //                 editorOptions: { Width: 300, readOnly: true },
+                                                //                 cssClass: "verylight-blue",
+                                                //                 colSpan: 1,
+                                                //             },
+                                                //             ]
+                                                //         },
+                                                //         {
+                                                //             //itemType: "group",
+                                                //             itemType: "tabbed",
+                                                //             tabPanelOptions: { deferRendering: false },
+                                                //             //caption: "Refference",
+                                                //             //cssClass: "second-group",
+                                                //             //colCount: 5,
+
+                                                //             tabs: [
+                                                //                 {
+                                                //                     title: "TRAVEL INFO",
+                                                //                     icon: "fas fa-info-circle",
+                                                //                     iconPosition: "start",
+                                                //                     colCount: 5,
+                                                //                     items: [
+                                                //                         {
+                                                //                             dataField: "ERORefNo1",
+                                                //                             label: { text: "Purpose of Trip." }, //,cssClass: "bold-label" }, 
+                                                //                             editorType: "dxSelectBox", //dxSelectBox dxLookup
+                                                //                             editorOptions: {
+                                                //                                 dataSource: aaPurposeTable,
+                                                //                                 searchExpr: "Purpose",
+                                                //                                 valueExpr: "Purpose",
+                                                //                                 displayExpr: "Purpose",
+                                                //                                 searchEnabled: true,
+                                                //                                 width: 180,
+                                                //                                 //value: aNewDiva,
+                                                //                                 readOnly: true,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     asERORefNo1 = e.value;
+                                                //                                 }
+                                                //                                 /*onValueChanged: function(args) {
+
+                                                //                                     let newDivision = args.value;
+                                                //                                     let newDepartment = args.value.slice(0, 4) //calculateNewDepartment(newDivision);
+                                                //                                     let formInstance = $("#PopupChangeDiv").dxForm("instance");
+                                                //                                     asNewDept = args.value;
+                                                //                                     var asNewDiv = args.value.slice(0, 4);
+                                                //                                     gbNewDiv = args.value;
+                                                //                                     gbNewDept = args.value.slice(0, 4);
+                                                //                                     // Update NewDepartment in the form dynamically
+                                                //                                     formInstance.updateData("EROCode03", newDepartment);
+                                                //                                 },*/
+                                                //                             },
+                                                //                             cssClass: "verylight-blue",
+                                                //                             visible: true,
+                                                //                             colSpan: 2,
+                                                //                             //validationRules: [{ type: "required", message: "Purpose of Trip is required" }]                                                                            
+                                                //                         },
+
+                                                //                         {
+                                                //                             dataField: "ERODate02",
+                                                //                             label: { text: "Travel Start Date" },
+                                                //                             editorType: "dxDateBox",
+                                                //                             editorOptions: {
+                                                //                                 displayFormat: "dd/MM/yyyy",
+                                                //                                 width: 150,
+                                                //                                 readOnly: true,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     var formInstance = $("#Add-form").dxForm("instance");
+                                                //                                     formInstance.updateData("ERODate03", e.value);
+                                                //                                     formInstance.updateData("ERODate05", e.value);
+                                                //                                     asERODate02 = e.value;
+                                                //                                     iData.ERODate05 = e.value;
+                                                //                                     //var xdataGrid = $("#Add-dxDataGrid").dxDataGrid({}).dxDataGrid("instance");                                                                         
+                                                //                                     //var xdataSource = xdataGrid.getDataSource();
+                                                //                                     //xdataSource.reload();                                                                                    
+
+                                                //                                     aSaveMemToDB(iData, aaTBKey, aaPFDMI, aaXToX)
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                     //var formInstance2 = $("#Add-dxDataGrid").dxDataGrid("instance");
+                                                //                                     //formInstance2.updateData("ERODate05", e.value);                                                                                    
+                                                //                                 },
+
+                                                //                             },	  //showClearButton: true,  //value: new Date(),   value: idDate,
+                                                //                             //setCellValue: function (newData, value, currentRowData) {
+                                                //                             //   newData.ERODate05 = value;
+                                                //                             //   newData.ERODate06 = value;
+                                                //                             //},
+                                                //                             showClearButton: true,
+                                                //                             colSpan: 1,
+                                                //                             validationRules: [{ type: "required", message: "Travel Start Date is required" }]
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "ERODate03",
+                                                //                             label: { text: "Travel End Date" },
+                                                //                             editorType: "dxDateBox",
+                                                //                             editorOptions: {
+                                                //                                 displayFormat: "dd/MM/yyyy", width: 150, readOnly: true,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     var formInstance = $("#Add-form").dxForm("instance");
+                                                //                                     formInstance.updateData("ERODate06", e.value);
+                                                //                                     asERODate03 = e.value;
+                                                //                                     iData.ERODate06 = e.value;
+                                                //                                     aSaveMemToDB(iData, aaTBKey, aaPFDMI, aaXToX)
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                 }
+                                                //                             },	  //showClearButton: true,  //value: new Date(), 
+                                                //                             showClearButton: true,
+                                                //                             colSpan: 1,
+                                                //                             validationRules: [{ type: "required", message: "Travel End Date is required" }]
+                                                //                         },
+                                                //                         /*{
+                                                //                             dataField: "EROCheck03",
+                                                //                             label: { text: "Conference" },
+                                                //                             editorType: "dxCheckBox",
+                                                //                         }, */
+                                                //                         {
+                                                //                             itemType: "Empty",
+                                                //                             colSpan: 1,
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "ERODesc03",
+                                                //                             label: { text: "Purpose Of Trip Description" }, //,cssClass: "bold-label" }, Purpose of Trip
+                                                //                             editorType: "dxTextArea",
+                                                //                             editorOptions: {
+                                                //                                 width: 400, readOnly: true,
+                                                //                                 height: 50,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     asERODesc03 = e.value;
+                                                //                                 }
+                                                //                             },
+                                                //                             cssClass: "verylight-blue",
+                                                //                             visible: true,
+                                                //                             colSpan: 5,
+                                                //                             //validationRules: [{ type: "required", message: "Purpose of Trip is required" }]
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "ERODesc02",
+                                                //                             label: { text: "Destination/Country" },
+                                                //                             editorType: "dxTextArea",
+                                                //                             editorOptions: {
+                                                //                                 width: 400, height: 50, readOnly: true,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     asERODesc02 = e.value;
+                                                //                                 }
+                                                //                             },
+                                                //                             cssClass: "verylight-blue",
+                                                //                             validationRules: [{ type: "required", message: "Destination is required" }],
+                                                //                             visible: true,
+                                                //                             colSpan: 2,
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "EROCheck01",
+                                                //                             label: { text: "Overseas" },
+                                                //                             editorType: "dxCheckBox",
+                                                //                             editorOptions: {
+                                                //                                 //value: false, // Initial value
+                                                //                                 readOnly: true,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     asEROCheck01 = e.value;
+                                                //                                     aAddStaff.columnOption("PSPvDate", "visible", e.value);
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                 }
+                                                //                             }
+                                                //                         },
+
+                                                //                         {
+                                                //                             dataField: "EROCheck02",
+                                                //                             label: { text: "Need Roaming" },
+                                                //                             editorType: "dxCheckBox",
+                                                //                             editorOptions: {
+                                                //                                 //readOnly: asEROCheck01,
+                                                //                                 readOnly: true,
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     asEROCheck02 = e.value;
+                                                //                                     aAddStaff.columnOption("ROAMING INFORMATION", "visible", e.value); //HR Arrange for Roaming
+                                                //                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                                                //                                 }
+
+
+                                                //                             }, //readOnly: !aRoamL // Initial value, can be true or false
+                                                //                             visible: true, //true // Initially hidden
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "RefundedAmount",
+                                                //                             label: { text: "Estimated Cost" },
+                                                //                             dataType: "dxNumberBox",
+                                                //                             //format: { type: "fixedPoint", precision: 2 },
+                                                //                             hint: "Estimated Cost can not be zero !!!",
+                                                //                             editorOptions: {
+                                                //                                 readOnly: true,
+                                                //                                 format: "#,##0.00", width: 150, elementAttr: { class: "right-align-number" },
+                                                //                                 hint: "Estimated Cost can not be zero !!!",
+                                                //                                 onValueChanged: function (e) {
+                                                //                                     asRefundedAmount = e.value;
+                                                //                                 }
+                                                //                             }, //showSpinButtons: true, readOnly: true,
+                                                //                             cssClass: "verylight-blue",
+                                                //                             colSpan: 1,
+                                                //                             validationRules: [{ type: "required" }, {
+                                                //                                 type: "range",
+                                                //                                 min: 1, //aYearStrS
+                                                //                                 max: 9999999, //aYearStrL
+                                                //                                 message: "Please ensure that the estimated cost is entered and is greater than zero.",
+                                                //                             }],
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "ERODate05",
+                                                //                             label: { text: "Date" },
+                                                //                             dataType: "dxNumberBox",
+                                                //                             visible: false
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "ERODate06",
+                                                //                             label: { text: "Date" },
+                                                //                             dataType: "dxNumberBox",
+                                                //                             visible: false
+                                                //                         },
+
+                                                //                     ],
+                                                //                     onFieldDataChanged: function (e) {
+                                                //                         if (e.dataField === "ERODate02") {
+                                                //                             e.component.updateData("ERODate03", e.value);
+                                                //                         }
+                                                //                     },
+
+                                                //                 },
+                                                //                 {
+                                                //                     title: "ARRANGEMENT",
+                                                //                     icon: "fas fa-clock",
+                                                //                     iconPosition: "start",
+                                                //                     colCount: 5,
+                                                //                     items: [
+
+                                                //                         {
+                                                //                             dataField: "Vendor01",
+                                                //                             label: { text: "Departure Flight" }, //,cssClass: "bold-label" }, 
+                                                //                             editorType: "dxTextArea",
+                                                //                             editorOptions: { width: 400, height: 80 }, //value: asFullName,
+                                                //                             cssClass: "verylight-green",
+                                                //                             visible: true,
+                                                //                             colSpan: 2,
+                                                //                             validationRules: [{ type: "required" }],
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "ERODesc04",
+                                                //                             label: { text: "Arrival Flight" },
+                                                //                             editorType: "dxTextArea",
+                                                //                             editorOptions: { width: 400, height: 80 },
+                                                //                             cssClass: "verylight-green",
+                                                //                             visible: true,
+                                                //                             colSpan: 2,
+                                                //                             validationRules: [{ type: "required" }],
+                                                //                         },
+                                                //                         /* {
+                                                //                              itemType: "Empty",
+                                                //                              colSpan: 1,
+                                                //                          },*/
+                                                //                         {
+                                                //                             dataField: "EROAmount1",
+                                                //                             label: { text: "Ticket Price (per person)" },
+                                                //                             dataType: "dxNumberBox",
+                                                //                             editorOptions: { format: "#,##0.00", width: 150, elementAttr: { class: "right-align-number" } }, //showSpinButtons: true, readOnly: true,
+                                                //                             colSpan: 1,
+                                                //                         },
+                                                //                         /*{
+                                                //                             itemType: "Empty",
+                                                //                             colSpan: 4,
+                                                //                         },*/
+                                                //                         {
+                                                //                             dataField: "ERODesc05",
+                                                //                             label: { text: "HOTEL" },
+                                                //                             editorType: "dxTextArea",
+                                                //                             editorOptions: { width: 400, height: 80 },
+                                                //                             cssClass: "verylight-green",
+                                                //                             visible: true,
+                                                //                             colSpan: 2,
+                                                //                         },
+                                                //                         {
+                                                //                             dataField: "Note",
+                                                //                             label: { text: "Remark" },
+                                                //                             editorType: "dxTextArea",
+                                                //                             editorOptions: { width: 400, height: 80 },
+                                                //                             cssClass: "verylight-green",
+                                                //                             visible: true,
+                                                //                             colSpan: 2,
+                                                //                         },
+                                                //                         {
+                                                //                             itemType: "Empty",
+                                                //                             colSpan: 1,
+                                                //                         },
+
+                                                //                     ]
+                                                //                 },
+                                                //                 {
+                                                //                     title: "",
+                                                //                     icon: "fas fa-minus-circle",
+                                                //                     iconPosition: "start",
+                                                //                 }
+                                                //             ]
+
+
+                                                //         } // tab here }]
+                                                //     ]
+
+                                                // }).dxForm("instance");
+
 
                                                 const aform = $("#Add-form").dxForm({
                                                     formData: iData, //aXXData[0], //iData,                                              
                                                     showColonAfterLabel: false,
                                                     labelLocation: "top",//"left", //"top",
-                                                    readOnly: aViewF, //false, //true
 
                                                     items: [
                                                         {
                                                             itemType: "group",
                                                             colCount: 5,
-                                                            items: [{
-                                                                dataField: "HeadRefNo",
-                                                                label: { text: "REF NO" },
-                                                                editorType: "dxTextBox",
-                                                                editorOptions: { width: 150, readOnly: true }, //value: aaiHeadRef,
-                                                                cssClass: "verylight-blue",
-                                                                colSpan: 1,
-                                                            },
-                                                            {
-                                                                dataField: "PayToName",
-                                                                label: { text: "Requester." },
-                                                                editorType: "dxTextBox",
-                                                                editorOptions: { width: 150, readOnly: true }, //value: asFullName,
-                                                                cssClass: "verylight-blue",
-                                                                colSpan: 1,
-                                                            },
-                                                            {
-                                                                dataField: "Department",
-                                                                label: { text: "Department." },
-                                                                editorType: "dxTextBox",
-                                                                editorOptions: { width: 150, readOnly: true }, //value: asDepartment,value: asDepartment,
-                                                                cssClass: "verylight-blue",
-                                                                width: 150,
-                                                                colSpan: 1,
-                                                            },
-                                                            {
-                                                                dataField: "ReqDate",
-                                                                label: { text: "Requested Date" },
-                                                                editorType: "dxDateBox",
-                                                                editorOptions: { displayFormat: "dd/MM/yyyy", width: 150, readOnly: true },//showClearButton: true, value: idDate, 
-                                                                cssClass: "verylight-blue",
-                                                                colSpan: 1,
-                                                            },
+                                                            items: [
+                                                                {
+                                                                    itemType: "simple",
+                                                                    label: { text: " " },
+                                                                    template: function () {
+                                                                        return $("<div>").text(asEROCheck03 ? "SELF BOOKING" : "ADMIN BOOKING").css({
+                                                                            "color": asEROCheck03 ? "purple" : "darkgreen",
+                                                                            "font-size": "15px",
+                                                                            "font-weight": "bold",
+                                                                            "background-color": "AliceBlue",
+                                                                            "text-align": "center",
+                                                                            "border": "1px solid lightblue",
+                                                                            "border-radius": "4px",
+                                                                            "width": "130px",
+                                                                            "padding": "5px"
+                                                                        });
+                                                                    }
+                                                                },
+                                                                {
+                                                                    dataField: "HeadRefNo",
+                                                                    label: { text: "REF NO", cssClass: "custom-label" },
+                                                                    editorType: "dxTextBox",
+                                                                    editorOptions: { width: 150, readOnly: true }, //value: aaiHeadRef,
+                                                                    cssClass: "verylight-blue",
+                                                                    readOnly: true,
+                                                                    colSpan: 1,
+                                                                },
+                                                                {
+                                                                    dataField: "PayToName",
+                                                                    label: { text: "Requester." },
+                                                                    editorType: "dxTextBox",
+                                                                    editorOptions: { width: 150, readOnly: true }, //value: asFullName,
+                                                                    cssClass: "verylight-blue",
+                                                                    readOnly: true,
+                                                                    colSpan: 1,
+                                                                },
+                                                                // {
+                                                                //     dataField: "PBatchNo",
+                                                                //     label: { text: "Corporate Card", cssClass: "custom-label" },
+                                                                //     editorType: "dxSelectBox",
+                                                                //     editorOptions: {
+                                                                //         width: 180,
+                                                                //         //showClearButton: true,
+                                                                //         readOnly: false,
+                                                                //         dataSource: cardIdOptions,
+                                                                //         valueExpr: "CardID",
+                                                                //         displayExpr: "Label",
+                                                                //         searchEnabled: true,
+                                                                //         value: asPBatchNo,
+                                                                //         onValueChanged: function (e) {
+                                                                //             asPBatchNo = e.value;
+                                                                //         },
+                                                                //     },
+                                                                //     visible: HAVECORPCARD,
+                                                                //     cssClass: "verylight-blue",
+                                                                //     colSpan: 1,
+                                                                // },
+                                                                {
+                                                                    dataField: "ReqDate",
+                                                                    label: { text: "Requested Date" },
+                                                                    editorType: "dxDateBox",
+                                                                    editorOptions: { displayFormat: "dd/MM/yyyy", width: 150, readOnly: true },//showClearButton: true, value: idDate, 
+                                                                    cssClass: "verylight-blue",
+                                                                    readOnly: true,
+                                                                    colSpan: 1,
+                                                                },
 
-                                                            {
-                                                                dataField: "ERStatus",
-                                                                label: { text: "STATUS" },
-                                                                editorType: "dxTextBox",
-                                                                editorOptions: { Width: 300, readOnly: true },
-                                                                cssClass: "verylight-blue",
-                                                                colSpan: 1,
-                                                            },
+                                                                {
+                                                                    dataField: "ERStatus",
+                                                                    label: { text: "STATUS" },
+                                                                    editorType: "dxTextBox",
+                                                                    editorOptions: { Width: 300, readOnly: true },
+                                                                    cssClass: "verylight-blue",
+                                                                    readOnly: true,
+                                                                    colSpan: 1,
+                                                                },
                                                             ]
                                                         },
                                                         {
-                                                            //itemType: "group",
                                                             itemType: "tabbed",
                                                             tabPanelOptions: { deferRendering: false },
-                                                            //caption: "Refference",
-                                                            //cssClass: "second-group",
-                                                            //colCount: 5,
-
                                                             tabs: [
                                                                 {
                                                                     title: "TRAVEL INFO",
                                                                     icon: "fas fa-info-circle",
                                                                     iconPosition: "start",
+
                                                                     colCount: 5,
                                                                     items: [
                                                                         {
@@ -3083,34 +3271,23 @@ showPreviousYearPopup(function (aNowDte) {
                                                                             label: { text: "Purpose of Trip." }, //,cssClass: "bold-label" }, 
                                                                             editorType: "dxSelectBox", //dxSelectBox dxLookup
                                                                             editorOptions: {
-                                                                                dataSource: aaPurposeTable,
+                                                                                dataSource: aObjects.aaPurposeTable, //aaPurposeTable,
                                                                                 searchExpr: "Purpose",
                                                                                 valueExpr: "Purpose",
                                                                                 displayExpr: "Purpose",
                                                                                 searchEnabled: true,
                                                                                 width: 180,
-                                                                                //value: aNewDiva,
                                                                                 readOnly: true,
+                                                                                //value: aNewDiva,
                                                                                 onValueChanged: function (e) {
                                                                                     asERORefNo1 = e.value;
                                                                                 }
-                                                                                /*onValueChanged: function(args) {
-                                                                                    
-                                                                                    let newDivision = args.value;
-                                                                                    let newDepartment = args.value.slice(0, 4) //calculateNewDepartment(newDivision);
-                                                                                    let formInstance = $("#PopupChangeDiv").dxForm("instance");
-                                                                                    asNewDept = args.value;
-                                                                                    var asNewDiv = args.value.slice(0, 4);
-                                                                                    gbNewDiv = args.value;
-                                                                                    gbNewDept = args.value.slice(0, 4);
-                                                                                    // Update NewDepartment in the form dynamically
-                                                                                    formInstance.updateData("EROCode03", newDepartment);
-                                                                                },*/
+
                                                                             },
                                                                             cssClass: "verylight-blue",
                                                                             visible: true,
                                                                             colSpan: 2,
-                                                                            //validationRules: [{ type: "required", message: "Purpose of Trip is required" }]                                                                            
+                                                                            validationRules: [{ type: "required", message: "Purpose of Trip is required" }]
                                                                         },
 
                                                                         {
@@ -3138,11 +3315,7 @@ showPreviousYearPopup(function (aNowDte) {
                                                                                     //formInstance2.updateData("ERODate05", e.value);                                                                                    
                                                                                 },
 
-                                                                            },	  //showClearButton: true,  //value: new Date(),   value: idDate,
-                                                                            //setCellValue: function (newData, value, currentRowData) {
-                                                                            //   newData.ERODate05 = value;
-                                                                            //   newData.ERODate06 = value;
-                                                                            //},
+                                                                            },
                                                                             showClearButton: true,
                                                                             colSpan: 1,
                                                                             validationRules: [{ type: "required", message: "Travel Start Date is required" }]
@@ -3168,22 +3341,39 @@ showPreviousYearPopup(function (aNowDte) {
                                                                             colSpan: 1,
                                                                             validationRules: [{ type: "required", message: "Travel End Date is required" }]
                                                                         },
-                                                                        /*{
-                                                                            dataField: "EROCheck03",
-                                                                            label: { text: "Conference" },
-                                                                            editorType: "dxCheckBox",
-                                                                        }, */
                                                                         {
-                                                                            itemType: "Empty",
+                                                                            dataField: "PBatchNo",
+                                                                            label: { text: "Corporate Card", cssClass: "custom-label" },
+                                                                            editorType: "dxSelectBox",
+                                                                            editorOptions: {
+                                                                                width: 180,
+                                                                                //showClearButton: true,
+                                                                                readOnly: false,
+                                                                                dataSource: cardIdOptions,
+                                                                                valueExpr: "CardID",
+                                                                                displayExpr: "Label",
+                                                                                searchEnabled: true,
+                                                                                value: asPBatchNo,
+                                                                                onValueChanged: function (e) {
+                                                                                    asPBatchNo = e.value;
+                                                                                },
+                                                                            },
+                                                                            visible: HAVECORPCARD && !iData.EROCheck03,
+                                                                            cssClass: "verylight-blue",
                                                                             colSpan: 1,
                                                                         },
+                                                                        // {
+                                                                        //     itemType: "Empty",
+                                                                        //     colSpan: 1,
+                                                                        // },
                                                                         {
                                                                             dataField: "ERODesc03",
                                                                             label: { text: "Purpose Of Trip Description" }, //,cssClass: "bold-label" }, Purpose of Trip
                                                                             editorType: "dxTextArea",
                                                                             editorOptions: {
-                                                                                width: 400, readOnly: true,
+                                                                                width: 400,
                                                                                 height: 50,
+                                                                                readOnly: true,
                                                                                 onValueChanged: function (e) {
                                                                                     asERODesc03 = e.value;
                                                                                 }
@@ -3285,70 +3475,179 @@ showPreviousYearPopup(function (aNowDte) {
 
                                                                 },
                                                                 {
-                                                                    title: "ARRANGEMENT",
+                                                                    title: "FLIGHT & HOTEL",
                                                                     icon: "fas fa-clock",
                                                                     iconPosition: "start",
-                                                                    colCount: 5,
+                                                                    colCount: 6,
                                                                     items: [
-
                                                                         {
                                                                             dataField: "Vendor01",
                                                                             label: { text: "Departure Flight" }, //,cssClass: "bold-label" }, 
                                                                             editorType: "dxTextArea",
-                                                                            editorOptions: { width: 400, height: 80 }, //value: asFullName,
+                                                                            editorOptions: {
+                                                                                width: 400,
+                                                                                height: 50,
+                                                                            }, //value: asFullName, //asEROCheck03
                                                                             cssClass: "verylight-green",
-                                                                            visible: true,
-                                                                            colSpan: 2,
+                                                                            colSpan: 1,
                                                                             validationRules: [{ type: "required" }],
+                                                                        },
+                                                                        {
+                                                                            itemType: "Empty",
+                                                                            colSpan: 1,
                                                                         },
                                                                         {
                                                                             dataField: "ERODesc04",
                                                                             label: { text: "Arrival Flight" },
                                                                             editorType: "dxTextArea",
-                                                                            editorOptions: { width: 400, height: 80 },
+                                                                            editorOptions: {
+                                                                                width: 400, height: 50,
+                                                                            },
                                                                             cssClass: "verylight-green",
                                                                             visible: true,
-                                                                            colSpan: 2,
                                                                             validationRules: [{ type: "required" }],
+                                                                            colSpan: 1,
                                                                         },
-                                                                        /* {
-                                                                             itemType: "Empty",
-                                                                             colSpan: 1,
-                                                                         },*/
+                                                                        {
+                                                                            itemType: "Empty",
+                                                                            colSpan: 1,
+                                                                        },
                                                                         {
                                                                             dataField: "EROAmount1",
                                                                             label: { text: "Ticket Price (per person)" },
                                                                             dataType: "dxNumberBox",
-                                                                            editorOptions: { format: "#,##0.00", width: 150, elementAttr: { class: "right-align-number" } }, //showSpinButtons: true, readOnly: true,
+                                                                            editorOptions: {
+                                                                                format: "#,##0.00", width: 150,
+                                                                                elementAttr: { class: "right-align-number" }
+                                                                            }, //showSpinButtons: true, readOnly: true,
+                                                                            validationRules: [
+                                                                                { type: "required", message: "Ticket Price is required" },
+                                                                                {
+                                                                                    type: "range",
+                                                                                    min: 0.01,  // Ensures value is greater than 0
+                                                                                    message: "Ticket Price must be greater than 0"
+                                                                                }
+                                                                            ],
                                                                             colSpan: 1,
                                                                         },
-                                                                        /*{
+                                                                        {
                                                                             itemType: "Empty",
-                                                                            colSpan: 4,
-                                                                        },*/
+                                                                            colSpan: 1,
+                                                                        },
                                                                         {
                                                                             dataField: "ERODesc05",
                                                                             label: { text: "HOTEL" },
                                                                             editorType: "dxTextArea",
-                                                                            editorOptions: { width: 400, height: 80 },
+                                                                            editorOptions: {
+                                                                                width: 400, height: 50,
+                                                                            },
                                                                             cssClass: "verylight-green",
                                                                             visible: true,
-                                                                            colSpan: 2,
+                                                                            colSpan: 1,
+                                                                        },
+                                                                        {
+                                                                            itemType: "Empty",
+                                                                            colSpan: 1,
                                                                         },
                                                                         {
                                                                             dataField: "Note",
                                                                             label: { text: "Remark" },
                                                                             editorType: "dxTextArea",
-                                                                            editorOptions: { width: 400, height: 80 },
+                                                                            editorOptions: {
+                                                                                width: 400, height: 50,
+                                                                            },
                                                                             cssClass: "verylight-green",
                                                                             visible: true,
-                                                                            colSpan: 2,
+                                                                            colSpan: 1,
                                                                         },
                                                                         {
                                                                             itemType: "Empty",
-                                                                            colSpan: 1,
+                                                                            colSpan: 3,
                                                                         },
 
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    title: "AGENT INFO", // for SELF BOOKING
+                                                                    icon: "fas fa-user-circle",
+                                                                    iconPosition: "start",
+                                                                    /*Travel Agent EROCode06,InvoicNo	ERORefNo5,InvoiceDate	ERODate04
+                                                                    InvoiceAmt	EROAmount6,InvoiceNote	ERORefNo6,Travel Agent Name	ERORefNo4*/
+                                                                    colCount: 8,
+                                                                    items: [
+                                                                        {
+                                                                            dataField: "ERORefNo4", // Updated field name
+                                                                            label: { text: "Travel Agent" }, // Label for the field
+                                                                            editorType: "dxSelectBox", // Using dxSelectBox
+                                                                            editorOptions: {
+                                                                                width: 250,
+                                                                                placeholder: "Select or enter an agent...",
+                                                                                searchEnabled: true, // Enables search functionality
+                                                                                acceptCustomValue: true, // Allow manual input
+                                                                                dataSource: aArrays.aTravelAgent, // The travel agents data array
+                                                                                onCustomItemCreating: function (e) {
+                                                                                    let newAgent = e.text.trim();
+                                                                                    if (newAgent.length > 0) {
+                                                                                        //let dataSource = e.component.option("dataSource");
+                                                                                        // Prevent duplicate entries
+                                                                                        let dataSource = e.component.option("dataSource");
+                                                                                        if (!dataSource.includes(newAgent)) {
+                                                                                            //if (!dataSource.some(item => item.AgentName === newAgent)) {
+                                                                                            //let newItem = { AgentID: newAgent, AgentName: newAgent }; // Create new entry
+                                                                                            dataSource.push(newAgent); // Add to list
+                                                                                            e.component.option("dataSource", dataSource); // Update list
+                                                                                        }
+                                                                                        e.customItem = newAgent; // Set user input as the value
+                                                                                    }
+                                                                                }
+                                                                            },
+                                                                            cssClass: "verylight-green", // Styling
+                                                                            colSpan: 2 // Layout control
+                                                                        },
+                                                                        {
+                                                                            itemType: "Empty",
+                                                                            colSpan: 6,
+                                                                        },
+                                                                        {
+                                                                            dataField: "ERORefNo5",
+                                                                            label: { text: "InvoicNo" },
+                                                                            editorType: "dxTextBox",
+                                                                            editorOptions: {
+                                                                                width: 100,
+                                                                            },
+                                                                            cssClass: "verylight-green",
+                                                                            visible: true,
+                                                                            colSpan: 1,
+                                                                        },
+                                                                        {
+                                                                            dataField: "ERODate04", //InvoiceDate	ERODate04
+                                                                            label: { text: "Invoice Date" },
+                                                                            editorType: "dxDateBox",
+                                                                            editorOptions: {
+                                                                                displayFormat: "dd/MM/yyyy",
+                                                                                width: 150,
+                                                                                showClearButton: true,
+                                                                            },
+                                                                            cssClass: "verylight-green",
+                                                                            showClearButton: true,
+                                                                            colSpan: 1,
+                                                                        },
+                                                                        {
+                                                                            dataField: "EROAmount6",
+                                                                            label: { text: "Invoice Amount" },
+                                                                            dataType: "dxNumberBox",
+                                                                            editorOptions: {
+                                                                                format: "#,##0.00",
+                                                                                width: 150,
+                                                                                elementAttr: { class: "right-align-number" },
+                                                                            },
+                                                                            cssClass: "verylight-green",
+                                                                            colSpan: 1,
+                                                                        },
+                                                                        {
+                                                                            itemType: "Empty",
+                                                                            colSpan: 5,
+                                                                        },
                                                                     ]
                                                                 },
                                                                 {
@@ -3360,9 +3659,19 @@ showPreviousYearPopup(function (aNowDte) {
 
 
                                                         } // tab here }]
-                                                    ]
+                                                    ],
+                                                    onInitialized: function (e) {
+                                                        // Trigger validation immediately using the defined validation group
+                                                        //const validationResult = DevExpress.validationEngine.validateGroup("formValidationGroup");
+
+                                                        //if (!validationResult.isValid) {
+                                                        //    console.log("Form is invalid upon initialization.");
+                                                        // }
+                                                    }
 
                                                 }).dxForm("instance");
+
+
 
                                                 const aAddStaff = $("#Add-dxDataGrid").dxDataGrid({
 
@@ -3550,146 +3859,25 @@ showPreviousYearPopup(function (aNowDte) {
                                                     },
                                                     // column list
                                                     columns: [
-                                                        /* {
-                                                             type: "buttons",
-                                                             width: 30, //80
-                                                             buttons: [
-                                                                 {
-                                                                     hint: "delete",
-                                                                     icon: "trash", //"fas fa-trash-alt", //fa-trash
-                                                                     //elementAttr: { class: "custom-icon-size"}, // Apply the custom icon size class
-                                                                     //cssClass: "custom-icon-size",
-                                                                     visible: function (e) {
-                                                                         return (e.row.data.Confirmed === false) //return !e.row.isEditing;
-                                                                     },
-                                                                     onClick: function (e) {
-                                                                         //$("#gridContainer").dxDataGrid("instance").refresh();
-                                                                         var aLocalMess = "";
-                                                                         var aLocalTitle = "";
-                                                                         var aSQLCommand = "";
-                                                                         var aExitMessage = "All rows of this Reimbursement have deleted !!";
-                                                                         var aFrecN = e.row.data.ID;
-                                                                         if (aFrecN === 1) {
-                                                                             aLocalMess = "<div style='color:Tomato; font-size: 16px'><center><b>THIS IS THE FIRST ROW (NO = 1)</b><br>If you delete first row, program will delete all rows [REFNO = <u>" + e.row.data.HeadRefNo + "</u>]</div> <br> Are you sure you want to delete all rows ?"
-                                                                             aLocalTitle = "DELETE ALL ROWS"
-                                                                         } else {
-                                                                             aLocalMess = "Are you sure you want to delete this row (ROW =" + e.row.data.ID + " )?"
-                                                                             aLocalTitle = "DELETE THIS ROW"
-                                                                         }
-                                                                         let result = DevExpress.ui.dialog.confirm(aLocalMess, aLocalTitle); //+ "<br>?? 'YES' ???????????"
-                                                                         result.done(function (dresult) {
-                                                                             if (dresult) {
-                                                                                 // delete data
-                                                                                 // DELETE FROM TRVREQF WHERE HeadRefNo = 'M2110120750'
-                                                                                 if (aFrecN === 1) {
-                                                                                     aSQLCommand = "use ExtraOnLine; DELETE FROM TRVREQF WHERE HeadRefNo = '" + e.row.data.HeadRefNo + "'"
-                                                                                 } else {
-                                                                                     aSQLCommand = "use ExtraOnLine; DELETE FROM TRVREQF WHERE REFNO = '" + e.row.data.REFNO + "'"
-                                                                                 }
-                                                                                 //alert(aSQLCommand)
-                                                                                 aSQLAction(aaPFDMI, aSQLCommand)
-                                                                                 aSQLAction(aaPFDMI, aSQLCommand)
-                                                                                 aSQLAction(aaPFDMI, aSQLCommand)
-                                                                                 aaLastLineNo = aaLastLineNo - 1
-                                                                                 $("#gridContainer").dxDataGrid("instance").refresh();
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                 if (aFrecN === 1) {
-                                                                                     $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                     var aThisThemes = localStorage["aDXTheme"];
-                                                                                     //changeTheme(aThisThemes)
-                                                                                     DevExpress.ui.dialog.alert({ showTitle: false, messageHtml: aExitMessage });
-                                                                                     popup.hide();
-                                                                                 }
-                                                                             }
-                                                                         });
-                                                                     }
- 
-                                                                 }
-                                                             ]
-                                                         },
-                                                         {
-                                                             type: "buttons",
-                                                             width: 30,
-                                                             buttons: [// Clone first record ID++
-                                                                 {
-                                                                     hint: "Add More Line",
-                                                                     icon: "fas fa-plus",
-                                                                     visible: function (e) {
-                                                                     const aadataGrid = $("#Add-dxDataGrid").dxDataGrid("instance");
-                                                                     const aapageSize = aadataGrid.option('paging.pageSize'); // check page size [5,10,15]
-                                                                     return(((e.row.data.ID - 1) % aapageSize === 0 && e.row.data.ID >= 1) && e.row.data.Confirmed === false)
-                                                                 },
-                                                                     onClick: (e) => {
-                                                                         aaLastLineNo = aaLastLineNo + 1
-                                                                         //alert(aaLastLineNo)
-                                                                         //REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,RemitTo1,RemitTo2,RemitTo1Amount,RemitTo2Amount,RemitTo1Diff,RemitTo2Diff,RemitTo1Note,RemitTo2Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6
-                                                                         let aBlankDate = new Date(); //"1900-01-01T00:00:00" //new Date('1900-01-01T00:00')//console.log(aBlankDate) 
-                                                                         let axRunRun = e.row.data.HeadRefNo
-                                                                         let aFieldSelected = "NextID"
-                                                                         let aFullTableName = "ExtraOnLine.dbo.TRnextIDview Where HeadRefNo LIKE '" + axRunRun + "%'"
-                                                                         let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName; //alert(aFullBody)                                           
-                                                                         let myHeaders = new Headers(); myHeaders.append("Content-Type", "application/json");
-                                                                         let raw = JSON.stringify({ "@": btoa(aFullBody) });
-                                                                         let requestOptions = { method: "POST", headers: myHeaders, body: raw, redirect: "follow" };
-                                                                         let aURL = aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232";
- 
-                                                                         fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": btoa(aFullBody) }), redirect: "follow" })
-                                                                             .then(response => response.json())
-                                                                             //
-                                                                             .then(aData => {
-                                                                                 // start process
-                                                                                 let aaID = aData[0].NextID //JSON.stringify(aData); //aData[0].NextID //next no 
-                                                                                 let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
-                                                                                 //let aObjKeyData = { ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, EROAmount: 0, PBatchDate: aBlankDate,PSPvDate: aBlankDate,ERODate01: aBlankDate,ERODate02: aBlankDate,ERODate03: aBlankDate,ERODate04: aBlankDate,ERODate05: aBlankDate,ERODate06: aBlankDate} //{EntryBy: aaUsrN , EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };                                                                             
-                                                                                 let aObjKeyData = { REFNO: axLineNo, ID: aaID, LocalAmount: 0, Amount: 0, RefundedAmount: 0, Note: "", ERORefNo1: "", ERORefNo3: "", ERORefNo4: "", ERODesc02: "", ERODesc03: "", ERODesc04: "", ExpensesCode: "", Currency: "THB", Xrate: 1, Vendor02: "",  EROCode01: "", EROCode02: "", EROCode03: "", EROCode04: "", EROCode05: "" }
-                                                                                 let aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //values 
-                                                                                 //var clonedItem = $.extend({}, e.row.data, { REFNO: axRunRun }); //++maxID
-                                                                                 //console.log("aObjKeyData = ",aObjKeyData)
-                                                                                 sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
- 
-                                                                                 e.component.refresh(true); //employees.splice(e.row.rowIndex, 0, clonedItem);
-                                                                                 e.component.refresh(true);
-                                                                                 e.component.refresh(true);
-                                                                                 e.event.preventDefault();
- 
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                                 $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
- 
-                                                                             })
-                                                                             .catch(e => {
-                                                                                 console.log(e);
-                                                                             })
-                                                                         $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                         $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
-                                                                     }
-                                                                 },
-                                                             ]
-                                                         },*/
                                                         {
                                                             dataField: "ID",
                                                             sortOrder: "asc",
                                                             caption: "#",
                                                             editorOptions: { width: 40, readOnly: true },
-                                                            //alignment: 'top',
                                                             width: 40
                                                         },
                                                         {
                                                             dataField: "Vendor02",
-                                                            caption: "Full name (as show in passport)",
+                                                            caption: "Full name (as show in passport)*",
                                                             editorType: "dxTextBox",
                                                             width: 180,
                                                             editorOptions: { width: 180, },
-                                                            //validationRules: [{ type: "required" }],
                                                             visible: true,
                                                         },
                                                         {
                                                             dataField: "EROCode01",
-                                                            caption: "Deparatment/Position",
-                                                            width: 150,
+                                                            caption: "Department",
+                                                            width: 120,
                                                             editorType: "dxTextBox",
                                                             editorOptions: { width: 150, },
                                                             visible: true,
@@ -3704,21 +3892,110 @@ showPreviousYearPopup(function (aNowDte) {
                                                         },
                                                         {
                                                             dataField: "PSPvDate",
-                                                            caption: "Send Passport Copy to Admin",
-                                                            cssClass: "colorRED",
+                                                            caption: "Send Passport Copy to Admin*",
                                                             dataType: "date",
                                                             format: "dd/MM/yyyy",
+                                                            value: new Date(),
                                                             width: 120,
-                                                            editorOptions: { width: 120, showClearButton: true },
+                                                            editorOptions: {
+                                                                width: 120,
+                                                                showClearButton: true,
+                                                                useMaskBehavior: true,
+                                                                pickerType: "calendar",
+                                                                value: new Date(),
+                                                                hint: "Select the send Email Date"
+                                                            },
                                                             visible: true,
                                                         },
                                                         {
-                                                            dataField: "EROCode02",
-                                                            caption: "Royal Orchid Plus",
-                                                            editorType: "dxTextBox",
-                                                            width: 100,
-                                                            editorOptions: { width: 100 },
+                                                            caption: "Frequent Flyer Program",
                                                             visible: true,
+                                                            width: 300,
+                                                            headerCellTemplate: function (header, info) {
+                                                                $('<div>')
+                                                                    .html(info.column.caption)
+                                                                    .addClass('centered-header')
+                                                                    .appendTo(header);
+                                                                header.parent().css("backgroundColor", "#efb4fce5"); //#f4d2fce5; #e7d5ff #efb4fce5
+                                                            },
+                                                            columns: [
+                                                                {
+                                                                    dataField: "ERORefNo3",
+                                                                    caption: "Airline Name",
+                                                                    editorType: "dxSelectBox",
+                                                                    width: 130,
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#f2c4fce5"); //#f4d2fce5; #e7d5ff #efb4fce5
+                                                                    },
+                                                                    editorOptions: {
+                                                                        width: 130,
+                                                                        placeholder: "Select or type an airline...",
+                                                                        searchEnabled: true,  // Enables live search
+                                                                        acceptCustomValue: true, // Allow typing new values
+                                                                        // dataSource: [
+                                                                        //     "American Airlines", "Delta Airlines", "United Airlines", "Emirates",
+                                                                        //     "Qatar Airways", "Lufthansa", "Singapore Airlines", "British Airways"
+                                                                        // ],
+                                                                        dataSource: aArrays.aAirLinesList, // Use your array here
+                                                                        onCustomItemCreating: function (e) {
+                                                                            let newAirline = e.text.trim();
+                                                                            if (newAirline.length > 0) {
+                                                                                let dataSource = e.component.option("dataSource");
+                                                                                if (!dataSource.includes(newAirline)) {
+                                                                                    dataSource.push(newAirline); // Add new airline to list
+                                                                                    e.component.option("dataSource", dataSource); // Update list
+                                                                                }
+                                                                                e.customItem = newAirline; // Set new value
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    visible: true
+                                                                },
+                                                                {
+                                                                    dataField: "EROCode02",
+                                                                    caption: "Frequent #",
+                                                                    editorType: "dxTextBox",
+                                                                    headerCellTemplate: function (header, info) {
+                                                                        $('<div>')
+                                                                            .html(info.column.caption)
+                                                                            .addClass('centered-header')
+                                                                            .appendTo(header);
+                                                                        header.parent().css("backgroundColor", "#f2c4fce5"); //#f4d2fce5; #e7d5ff #efb4fce5
+                                                                    },
+                                                                    width: 100,
+                                                                    editorOptions: { width: 80 },
+                                                                    visible: true,
+                                                                },
+                                                            ],
+                                                        },
+                                                        {
+                                                            dataField: "OtherRefNo",
+                                                            caption: "Seat Class",  // Updated caption to reflect seat class
+                                                            editorType: "dxSelectBox",
+                                                            width: 120,
+                                                            editorOptions: {
+                                                                width: 120,
+                                                                placeholder: "Select or type a seat class...",
+                                                                searchEnabled: true,  // Enables live search
+                                                                acceptCustomValue: true, // Allow typing new values
+                                                                dataSource: aArrays.aSeatClassList, // Use your class list array
+                                                                onCustomItemCreating: function (e) {
+                                                                    let newClass = e.text.trim();
+                                                                    if (newClass.length > 0) {
+                                                                        let dataSource = e.component.option("dataSource");
+                                                                        if (!dataSource.includes(newClass)) {
+                                                                            dataSource.push(newClass); // Add new class to list
+                                                                            e.component.option("dataSource", dataSource); // Update list
+                                                                        }
+                                                                        e.customItem = newClass; // Set new value
+                                                                    }
+                                                                }
+                                                            },
+                                                            visible: true
                                                         },
                                                         {
                                                             dataField: "EROAmount2",
@@ -3727,18 +4004,21 @@ showPreviousYearPopup(function (aNowDte) {
                                                             format: { type: "fixedPoint", precision: 2 },
                                                             editorType: "dxNumberBox",
                                                             editorOptions: { format: "#,##0.00", width: 120 },
-                                                            width: 120,
+                                                            width: 110,
                                                             visible: true,
-                                                        }, {
+                                                        },
+                                                        {
                                                             dataField: "ERODesc01",
                                                             caption: "Hotel",
                                                             headerCellTemplate: function (header, info) {
                                                                 $('<div>')
                                                                     .html(info.column.caption)
+                                                                    .addClass('centered-header')
                                                                     .appendTo(header);
-                                                                header.parent().css("backgroundColor", "#e6fdeb");
+                                                                header.css("text-align", "center"); // Ensure text is centered
+                                                                header.parent().css("backgroundColor", "#f2c4fce5");
                                                             },
-                                                            width: 150,
+                                                            width: 120,
                                                             editorType: "dxTextBox",
                                                             editorOptions: { width: 150, },
                                                             visible: true,
@@ -3750,13 +4030,13 @@ showPreviousYearPopup(function (aNowDte) {
                                                                 $('<div>')
                                                                     .html(info.column.caption)
                                                                     .appendTo(header);
-                                                                header.parent().css("backgroundColor", "#e6fdeb");
+                                                                header.parent().css("backgroundColor", "#f2c4fce5");
                                                             },
                                                             dataType: "number",
                                                             format: { type: "fixedPoint", precision: 2 },
                                                             editorType: "dxNumberBox",
                                                             editorOptions: { format: "#,##0.00", width: 120 },
-                                                            width: 120,
+                                                            width: 100,
                                                             visible: true,
                                                         },
                                                         {
@@ -3764,8 +4044,8 @@ showPreviousYearPopup(function (aNowDte) {
                                                             caption: "Date From",
                                                             dataType: "date",
                                                             format: "dd/MM/yyyy",
-                                                            width: 120,
-                                                            editorOptions: { width: 120, showClearButton: true },
+                                                            width: 110,
+                                                            editorOptions: { width: 110, }, // showClearButton: true, value: iData.ERODate02,
                                                             visible: true,
                                                         },
                                                         {
@@ -3773,22 +4053,23 @@ showPreviousYearPopup(function (aNowDte) {
                                                             caption: "Date To",
                                                             dataType: "date",
                                                             format: "dd/MM/yyyy",
-                                                            width: 120,
-                                                            editorOptions: { width: 120, showClearButton: true },
+                                                            //value: iData.ERODate03,
+                                                            width: 110,
+                                                            editorOptions: { width: 110, }, //showClearButton: true, value: iData.ERODate03
                                                             visible: true,
                                                         },
                                                         {
                                                             dataField: "EROCode03",
-                                                            caption: "Company's Mobile Phone",
+                                                            caption: "Company's Mobile Phone*",
                                                             editorType: "dxTextBox",
-                                                            width: 120,
-                                                            editorOptions: { width: 120 },
+                                                            width: 100,
+                                                            editorOptions: { width: 100 },
                                                             visible: true,
                                                         },
                                                         {
-                                                            caption: 'ROAMING INFORMATION', //HR Arrange for Roaming
+                                                            caption: "ROAMING INFORMATION",
                                                             visible: true,
-                                                            width: 220,
+                                                            width: 300,
                                                             headerCellTemplate: function (header, info) {
                                                                 $('<div>')
                                                                     .html(info.column.caption)
@@ -3807,9 +4088,16 @@ showPreviousYearPopup(function (aNowDte) {
                                                                             .appendTo(header);
                                                                         header.parent().css("backgroundColor", "#e7d5ff");
                                                                     },
-                                                                    editorType: "dxTextBox",
-                                                                    width: 100,
-                                                                    editorOptions: { width: 100, }, // readOnly: !aRoamL
+                                                                    editorType: "dxSelectBox",
+                                                                    width: 80,
+                                                                    editorOptions: {
+                                                                        width: 80,
+                                                                        dataSource: aObjects.aaYesNoList, //aaYesNoList
+                                                                        searchExpr: "Code",
+                                                                        valueExpr: "Code",
+                                                                        displayExpr: "Code",
+                                                                        searchEnabled: true,
+                                                                    }, // readOnly: !aRoamL
                                                                     visible: true,
                                                                 },
                                                                 {
@@ -3822,9 +4110,16 @@ showPreviousYearPopup(function (aNowDte) {
                                                                             .appendTo(header);
                                                                         header.parent().css("backgroundColor", "#e7d5ff");
                                                                     },
-                                                                    editorType: "dxTextBox",
-                                                                    width: 100,
-                                                                    editorOptions: { width: 100, }, // readOnly: !aRoamL
+                                                                    editorType: "dxSelectBox",
+                                                                    width: 80,
+                                                                    editorOptions: {
+                                                                        width: 80,
+                                                                        dataSource: aObjects.aaYesNoList, //aaYesNoList
+                                                                        searchExpr: "Code",
+                                                                        valueExpr: "Code",
+                                                                        displayExpr: "Code",
+                                                                        searchEnabled: true,
+                                                                    }, // readOnly: !aRoamL
                                                                     visible: true,
                                                                 },
                                                                 {
@@ -3838,8 +4133,8 @@ showPreviousYearPopup(function (aNowDte) {
                                                                         header.parent().css("backgroundColor", "#e1cbf5");
                                                                     },
                                                                     editorType: "dxTextBox",
-                                                                    width: 200,
-                                                                    editorOptions: { width: 200, }, // readOnly: !aRoamL
+                                                                    width: 180,
+                                                                    editorOptions: { width: 180, }, // readOnly: !aRoamL
                                                                     visible: true,
                                                                 },
                                                                 {

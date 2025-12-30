@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Excel Report Export — Template Driven</title>
+
+<link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.1.3/css/dx.light.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="./fsrc/bundle.min.js"></script>
+
+<style>
+body{font-family:system-ui,Arial;margin:18px;}
+#gridContainer{height:420px;margin-top:10px;}
+button{margin-right:8px;padding:8px 12px;border-radius:6px;}
+#status{margin-top:8px;color:#333;}
+</style>
+</head>
+<body>
+
+<h2>📊 Report Generator (Template Driven)</h2>
+<button id="loadDbBtn">Load Database Data</button>
+<button id="exportBtn">Export to Excel</button>
+<div id="status"></div>
+<div id="gridContainer"></div>
+
+<script>
+let gridInstance = null;
+let currentData = [];
+let columnMap = [];
+let placeholderRowIdx = null;
+let directiveRowIdx = null;
+let filterRowIdx = null;
+let templateColFormats = {};
+let templateColWidths = {};
+let templateColHeaders = {};
+
+function setStatus(msg){ $("#status").text(msg); }
+
+function guessDataType(n){
+  if(!n) return "string";
+  n=n.toLowerCase();
+  if(/(amount|total|score|price|qty|quantity|number|count)/.test(n)) return "number";
+  if(/(date|day|time)/.test(n)) return "date";
+  return "string";
+}
+
+function parseTemplateWorksheet(ws){
+  columnMap=[]; placeholderRowIdx=null; directiveRowIdx=null; filterRowIdx=null;
+  templateColFormats={}; templateColWidths={}; templateColHeaders={};
+
+  for(let r=1;r<=200;r++){
+    const vals = (ws.getRow(r).values||[]).slice(1);
+    if(vals.some(v=>typeof v==="string" && v.includes("{{"))){
+      placeholderRowIdx=r; directiveRowIdx=r+1; filterRowIdx=r+2; break;
+    }
+  }
+  const headerArr = (ws.getRow(placeholderRowIdx-1).values||[]).slice(1);
+  const phArr = (ws.getRow(placeholderRowIdx).values||[]).slice(1);
+  const dirArr = (ws.getRow(directiveRowIdx).values||[]).slice(1);
+
+  const maxCols = Math.max(headerArr.length, phArr.length, dirArr.length);
+  for(let c=1;c<=maxCols;c++){
+    const phRaw = phArr[c-1], dirRaw = dirArr[c-1];
+    let placeholder=null, directive=null;
+    if(typeof phRaw==="string"){
+      const m = phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+      if(m) placeholder=m[1].toLowerCase();
+    }
+    if(typeof dirRaw==="string"){
+      const dm = dirRaw.match(/\{\s*(sum|average|count)\s*\}/i);
+      if(dm) directive=dm[1].toLowerCase();
+    }
+    const col = ws.getColumn(c);
+    templateColFormats[c] = col.numFmt || ws.getRow(placeholderRowIdx).getCell(c).numFmt || null;
+    templateColWidths[c] = col.width || 15;
+    templateColHeaders[c] = headerArr[c-1] || placeholder || "";
+    columnMap.push({colIndex:c,placeholder,directive,dataType:placeholder?guessDataType(placeholder):null});
+  }
+}
+
+/* --- SEPARATED --- Load DB and show in grid, but also return data --- */
+async function loadDatabaseData({expGroupCode="700",fieldMap={}}={}){
+  setStatus("Loading template & data...");
+  const tplRes=await fetch("template.xlsx",{cache:"no-store"});
+  if(!tplRes.ok) throw new Error("template.xlsx missing");
+  const buf=await tplRes.arrayBuffer();
+  const wb=new ExcelJS.Workbook();
+  await wb.xlsx.load(buf);
+  const ws=wb.getWorksheet("Report");
+  parseTemplateWorksheet(ws);
+
+  // read SQL filter row if exists
+  let sqlExtra="";
+  if(filterRowIdx){
+    const vals=(ws.getRow(filterRowIdx).values||[]).slice(1);
+    const found=vals.find(v=>typeof v==="string" && v.trim().startsWith("[") && v.trim().endsWith("]"));
+    if(found) sqlExtra = found.trim().slice(1,-1);
+  }
+
+  const aaTBKey="5ad2685d-4114-4aa5-aa87-67368f4a3559";
+  const aaPFDMI=isLocalHost();
+  const aaXToX="QTc1RkNDNzUtOEZCNi00NDYwLUIzRjYtNzA3MEI0NDM3OTMw";
+  let aqrFull=`ExpGroupCode = '${expGroupCode}'`;
+  if(sqlExtra) aqrFull += " " + sqlExtra;
+
+  const aurl = aaPFDMI+'/DMQ/XOL/'+atob(aaXToX)+'/'+aaTBKey+'/all';
+  const aSettings={url:aurl,method:"POST",timeout:0,headers:{"Content-Type":"application/json"},data:JSON.stringify({"@":btoa(aqrFull)})};
+  const dbRaw=await $.ajax(aSettings);
+
+  const placeholders = columnMap.filter(c=>c.placeholder).map(c=>c.placeholder);
+  const hasNo=placeholders.includes("no");
+  const dataPh=placeholders.filter(p=>p!=="no");
+
+  const sample=dbRaw[0]||{};
+  const finalMap={};
+  dataPh.forEach(ph=>{
+    if(fieldMap[ph]) finalMap[ph]=fieldMap[ph];
+    else {
+      const f=Object.keys(sample).find(k=>k.toLowerCase()===ph.toLowerCase());
+      finalMap[ph]=f||ph;
+    }
+  });
+
+  const mapped=dbRaw.map((r,i)=>{
+    const o={};
+    dataPh.forEach(ph=>{o[ph]=r[finalMap[ph]];});
+    if(hasNo)o.no=i+1;return o;
+  });
+
+  // build columns for grid using template headers
+  const cols=[];
+  for(const cm of columnMap){
+    if(!cm.placeholder) continue;
+    if(cm.placeholder==="no"){cols.push({dataField:"no",caption:"NO",dataType:"number"});continue;}
+    const dt=cm.dataType||guessDataType(cm.placeholder);
+    const col={dataField:cm.placeholder,caption:templateColHeaders[cm.colIndex]||cm.placeholder,dataType:dt};
+    cols.push(col);
+  }
+
+  if(!gridInstance){
+    gridInstance=$("#gridContainer").dxDataGrid({
+      dataSource:mapped,columns:cols,showBorders:true,columnAutoWidth:true,wordWrapEnabled:true
+    }).dxDataGrid("instance");
+  }else{
+    gridInstance.option("columns",cols);
+    gridInstance.option("dataSource",mapped);
+  }
+
+  currentData=mapped;
+  setStatus(`Loaded ${mapped.length} rows`);
+  return mapped; // <----- RETURN DATA
+}
+
+/* --- SEPARATED --- Export using data passed as parameter --- */
+async function exportReport(data){
+  if(!data||!data.length){alert("No data");return;}
+  setStatus("Exporting...");
+
+  const tplRes=await fetch("template.xlsx",{cache:"no-store"});
+  const buf=await tplRes.arrayBuffer();
+  const wb=new ExcelJS.Workbook();
+  await wb.xlsx.load(buf);
+  const ws=wb.getWorksheet("Report");
+  parseTemplateWorksheet(ws);
+
+  const start=placeholderRowIdx;
+  const map={}; columnMap.forEach(c=>{if(c.placeholder)map[c.placeholder]=c.colIndex;});
+
+  data.forEach((r,i)=>{
+    const row=ws.getRow(start+i);
+    if(map["no"]){row.getCell(map["no"]).value=i+1;row.getCell(map["no"]).numFmt="0";}
+    for(const [ph,val] of Object.entries(r)){
+      if(ph==="no") continue;
+      const idx=map[ph]; if(!idx) continue;
+      const cell=row.getCell(idx);
+      const cm=columnMap.find(x=>x.placeholder===ph);
+      const dt=cm?.dataType||guessDataType(ph);
+      if(dt==="date"&&val){
+        let d=val instanceof Date?val:new Date(val);
+        if(!Number.isNaN(d.getTime())){cell.value=d;cell.numFmt=templateColFormats[idx]||"dd/mm/yyyy";} else cell.value=val;
+      }else if(dt==="number"){
+        const n=Number(val);cell.value=Number.isNaN(n)?val:n;cell.numFmt=templateColFormats[idx]||"#,##0.00";
+      }else cell.value=val;
+    }
+    row.commit();
+  });
+
+  // summary row
+  const end=start+data.length-1;
+  const sumRow=ws.getRow(end+1);
+  for(const cm of columnMap){
+    if(!cm.directive||!cm.placeholder) continue;
+    const L=String.fromCharCode(64+cm.colIndex);
+    const f=cm.directive==="sum"?`SUM(${L}${start}:${L}${end})`:
+          cm.directive==="average"?`AVERAGE(${L}${start}:${L}${end})`:
+          `COUNTA(${L}${start}:${L}${end})`;
+    const c=sumRow.getCell(cm.colIndex);
+    c.value={formula:f};
+    c.numFmt=templateColFormats[cm.colIndex]|| (cm.dataType==="date"?"dd/mm/yyyy":cm.directive==="count"?"0":"#,##0.00");
+  }
+
+  // restore column widths from template
+  for(const [c,w] of Object.entries(templateColWidths)){
+    ws.getColumn(Number(c)).width = w || 15;
+  }
+
+  ws.getRow(directiveRowIdx).hidden=true;
+  wb.calcProperties.fullCalcOnLoad=true;
+  const out=await wb.xlsx.writeBuffer();
+  saveAs(new Blob([out]),"Report.xlsx");
+  setStatus("Export complete");
+}
+
+$("#loadDbBtn").on("click", async ()=>{
+  const data = await loadDatabaseData();
+  currentData = data; // store for later
+});
+$("#exportBtn").on("click", ()=>exportReport(currentData));
+</script>
+
+</body>
+</html>

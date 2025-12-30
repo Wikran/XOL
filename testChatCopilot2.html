@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copilot Chat with MSAL.js</title>
+    <script src="https://alcdn.msauth.net/browser/2.18.0/js/msal-browser.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .chat-box {
+            width: 400px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Chat with Microsoft Copilot</h1>
+
+<div class="chat-box" id="chatBox">
+    <!-- Chat messages will appear here -->
+</div>
+
+<input type="text" id="userInput" placeholder="Type your message here...">
+<button onclick="sendMessage()">Send Message</button>
+
+<script>
+            // application client : 7ad32bf4-0bcf-468b-8a97-dde9dca12749
+            // director tenant id : 2946b013-c232-420e-9d11-f17dcc4f7fc2
+            // secret value hmx8Q~kyW6NymAYTLpSxc6Y8wxQ.6yYzzuDVVaOw
+            // secret client id: 5e1beabe-21a9-4651-ab35-e4e6d90d75b0
+    // MSAL Configuration
+    var redUri = 'http://localhost:8089';
+    const msalConfig = {
+        auth: {
+            clientId: "7ad32bf4-0bcf-468b-8a97-dde9dca12749", // Replace with your Azure App Registration Client ID
+            authority: "https://login.microsoftonline.com/2946b013-c232-420e-9d11-f17dcc4f7fc2", // Replace with your tenant ID
+            redirectUri: redUri, // Ensure this matches the Redirect URI configured in Azure
+        },
+        cache: {
+            cacheLocation: "sessionStorage", // Cache token in sessionStorage
+            storeAuthStateInCookie: true,
+        },
+    };
+
+    const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+    // Function to login and get the access token
+    async function login() {
+        try {
+            const loginRequest = {
+                scopes: ["User.Read", "Chat.ReadWrite", "ChatMessage.Send"], // Permissions you need
+            };
+
+            const loginResponse = await msalInstance.loginPopup(loginRequest);
+            console.log("Login successful:", loginResponse);
+            return loginResponse.accessToken; // Use this token to make API requests
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
+    }
+
+    // Function to call the Copilot API (Microsoft Graph)
+    async function callCopilotApi(accessToken, prompt) {
+        try {
+            const response = await fetch("https://graph.microsoft.com/v1.0/me/chats/messages", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    body: {
+                        content: prompt, // The user's message to the Copilot API
+                    },
+                }),
+            });
+
+            const result = await response.json();
+            console.log("Copilot response:", result);
+            return result;
+        } catch (error) {
+            console.error("Error calling Copilot API:", error);
+            return "Error processing the request.";
+        }
+    }
+
+    // Function to handle sending the message
+    async function sendMessage() {
+        const userInput = document.getElementById("userInput").value;
+        if (!userInput.trim()) return;
+
+        const accessToken = await login(); // Get access token via MSAL.js
+        if (!accessToken) return; // If login failed, stop further execution
+
+        const copilotResponse = await callCopilotApi(accessToken, userInput); // Call Copilot API
+
+        // Update the chatbox with the user's message and Copilot's response
+        const chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+        chatBox.innerHTML += `<p><strong>Copilot:</strong> ${copilotResponse?.body?.content || "No response"}</p>`;
+
+        // Scroll to the bottom of the chatbox
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        // Clear the input field
+        document.getElementById("userInput").value = "";
+    }
+</script>
+
+</body>
+</html>
+

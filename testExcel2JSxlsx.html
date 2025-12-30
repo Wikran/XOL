@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Excel to JSON Export with DevExtreme + Grouped Excel</title>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+
+    <!-- DevExtreme JS -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- Export support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        #output {
+            background: #f7f7f7;
+            padding: 12px;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow: auto;
+        }
+
+        #grid {
+            height: 500px;
+        }
+
+        .dx-button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .dx-button-success {
+            background: #e7f7e7;
+            border-color: #8bc34a;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Excel to JSON Export</h2>
+
+    <div class="toolbar">
+        <input type="file" id="input-excel" accept=".xlsx" />
+        <button id="btn-download" class="dx-button dx-button-normal"><i class="fas fa-download"></i> Download
+            JSON</button>
+        <button id="btn-popup" class="dx-button dx-button-normal"><i class="fas fa-file-alt"></i> View JSON
+            (Popup)</button>
+        <button id="btn-export-excel" class="dx-button dx-button-success"><i class="fas fa-file-excel"></i> Export
+            Grouped Excel</button>
+    </div>
+
+    <div id="grid"></div>
+
+    <h3>JSON preview</h3>
+    <pre id="output"></pre>
+
+    <!-- Popup container -->
+    <div id="jsonPopup"></div>
+
+    <script>
+            (function () {
+                let jsonData = [];
+                let gridInstance = null;
+                let popupInstance = null;
+
+                // Client group mapping
+                const clientGroupcode = [
+                    { "ID": "00001", "CompanyGroup": "BASF Group", "ClientCode": "BAS11250", "CompanyName": "BASF (Thai) Limited", "CashAdvance": 300000 },
+                    { "ID": "00002", "CompanyGroup": "BASF Group", "ClientCode": "BAS28234", "CompanyName": "BASF Chemcat (Thailand) Limited", "CashAdvance": 300000 },
+                    { "ID": "00003", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "PHA56845", "CompanyName": "Kiatnakin Phatra Asset Management Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00004", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "KIA50093", "CompanyName": "Kiatnakin Phatra Bank Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00005", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "PHA56844", "CompanyName": "Kiatnakin Phatra Securities Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00006", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "PHA56843", "CompanyName": "KKP Capital Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00007", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "KKP59460", "CompanyName": "KKP Dime Securities Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00008", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "CMI56842", "CompanyName": "KKP Tower Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00009", "CompanyGroup": "Osotspa Group", "ClientCode": "OSO56296", "CompanyName": "Osotspa Beverage Co., Ltd.", "CashAdvance": 300000 },
+                    { "ID": "00010", "CompanyGroup": "Osotspa Group", "ClientCode": "OSO56295", "CompanyName": "Osotspa Public Company Limited", "CashAdvance": 300000 },
+                    { "ID": "00011", "CompanyGroup": "Osotspa Group", "ClientCode": "WAL56297", "CompanyName": "Osotspa Innovation Centre ", "CashAdvance": 300000 },
+                    { "ID": "00012", "CompanyGroup": "Osotspa Group", "ClientCode": "GRE57931", "CompanyName": "Greensville ", "CashAdvance": 300000 },
+                    { "ID": "00013", "CompanyGroup": "Mazda Group", "ClientCode": "MAZ59722", "CompanyName": "Mazda Powertrain Manufacturing (Thailand)", "CashAdvance": 100000 },
+                    { "ID": "00014", "CompanyGroup": "Promise", "ClientCode": "PRO60092", "CompanyName": "Promise (Thailand) Co., Ltd.", "CashAdvance": 100000 },
+                    { "ID": "00015", "CompanyGroup": "SCB X Group", "ClientCode": "SCB59297", "CompanyName": "SCB Tech X Company Limited", "CashAdvance": 100000 },
+                    { "ID": "00016", "CompanyGroup": "Thai Takenaka", "ClientCode": "THA60069", "CompanyName": "Thai Takenaka International Co.,Ltd.", "CashAdvance": 100000 },
+                    { "ID": "00017", "CompanyGroup": "NITMX", "ClientCode": "NAT60687", "CompanyName": "National ITMX", "CashAdvance": 200000 },
+                    { "ID": "S251117_52468", "CompanyGroup": "BASF Group", "ClientCode": "BAS", "CompanyName": "BASF Coatings Co., Ltd.", "CashAdvance": 300000 },
+                    { "ID": "S251118_22100", "CompanyGroup": "Kiatnakin Phatra Financial Group", "ClientCode": "KKPFG", "CompanyName": "KKPFG", "CashAdvance": 300000 }
+                ];
+
+                // Helpers
+                function normalizeCellValue(cell) {
+                    const v = cell && cell.value;
+                    if (v == null) return "";
+                    if (typeof v === "object") {
+                        if (v.text) return String(v.text).trim();
+                        if (v.result != null) return String(v.result).trim();
+                        if (v.richText) return v.richText.map(rt => rt.text).join("").trim();
+                        if (v instanceof Date) return formatDate(v);
+                        if (v.hyperlink && v.text) return String(v.text).trim();
+                        return String(v).trim();
+                    }
+                    return String(v).trim();
+                }
+                function formatDate(d) {
+                    const pad = (n) => (n < 10 ? "0" + n : n);
+                    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+                }
+                function getCellText(cell) {
+                    const v = cell && cell.value;
+                    if (v == null) return "";
+                    if (typeof v === "object" && v.text) return String(v.text).trim();
+                    return String(v).trim();
+                }
+                function extractDateAfterTo(text) {
+                    if (!text) return "";
+                    // Example: "DataDate:01/11/2025 to 30/11/2025 ReportDate:17/11/2025"
+                    const m = text.match(/\bto\b\s+([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/i);
+                    return m ? m[1] : "";
+                }
+                function splitCompanyField(raw) {
+                    const str = String(raw || "").trim();
+                    if (!str) return { Company: "", Address: "", TaxNo: "" };
+                    const result = { Company: "", Address: "", TaxNo: "" };
+                    const segments = str.split(/(?=Company:|Address:|TaxNo:)/g);
+                    segments.forEach(seg => {
+                        const idx = seg.indexOf(":");
+                        if (idx === -1) return;
+                        const key = seg.slice(0, idx).trim();
+                        const val = seg.slice(idx + 1).trim();
+                        if (key === "Company") result.Company = val;
+                        else if (key === "Address") result.Address = val;
+                        else if (key === "TaxNo") result.TaxNo = val;
+                    });
+                    return result;
+                }
+                function enrichWithGroup(record) {
+                    const companyPrefix = (record.Company || "").toLowerCase().substring(0, 12);
+                    const match = clientGroupcode.find(c => c.CompanyName.toLowerCase().substring(0, 12) === companyPrefix);
+                    if (match) {
+                        record.CompanyGroup = match.CompanyGroup;
+                        record.CompanyName = match.CompanyName;
+                        record.ClientCode = match.ClientCode;
+                        record.CashAdvance = match.CashAdvance;
+                    } else {
+                        // Fallbacks if no mapping found
+                        record.CompanyGroup = "";
+                        record.CompanyName = record.Company || "";
+                        record.ClientCode = "";
+                        record.CashAdvance = "";
+                    }
+                    return record;
+                }
+
+                // Init Grid
+                function initGrid(data) {
+                    const columns = buildColumnsFromData(data);
+                    if (!gridInstance) {
+                        gridInstance = $("#grid").dxDataGrid({
+                            dataSource: data,
+                            columnAutoWidth: true,
+                            showBorders: true,
+                            rowAlternationEnabled: true,
+                            scrolling: { mode: "virtual" },
+                            filterRow: { visible: true },
+                            searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                            headerFilter: { visible: true },
+                            grouping: { contextMenuEnabled: true },
+                            groupPanel: { visible: true },
+                            columns
+                        }).dxDataGrid("instance");
+                    } else {
+                        gridInstance.option("dataSource", data);
+                        gridInstance.option("columns", columns);
+                    }
+                }
+                function buildColumnsFromData(data) {
+                    if (!data || data.length === 0) return [];
+                    const keys = Object.keys(data[0]);
+                    return keys.map(k => ({ dataField: k, caption: k }));
+                }
+
+                // Init Popup
+                function initPopup() {
+                    if (!popupInstance) {
+                        popupInstance = $("#jsonPopup").dxPopup({
+                            title: "JSON content",
+                            width: 800,
+                            height: 600,
+                            showCloseButton: true,
+                            visible: false,
+                            contentTemplate: function () {
+                                const container = $("<div>").css({ height: "100%", display: "flex", flexDirection: "column" });
+                                const pre = $("<pre>").css({ flex: "1 1 auto", overflow: "auto", background: "#f7f7f7", padding: "12px", border: "1px solid #ddd" });
+                                pre.text(JSON.stringify(jsonData, null, 2));
+                                container.append(pre);
+                                return container;
+                            }
+                        }).dxPopup("instance");
+                    } else {
+                        popupInstance.option("contentTemplate", function () {
+                            const container = $("<div>").css({ height: "100%", display: "flex", flexDirection: "column" });
+                            const pre = $("<pre>").css({ flex: "1 1 auto", overflow: "auto", background: "#f7f7f7", padding: "12px", border: "1px solid #ddd" });
+                            pre.text(JSON.stringify(jsonData, null, 2));
+                            container.append(pre);
+                            return container;
+                        });
+                    }
+                }
+
+                // File input handler
+                document.getElementById('input-excel').addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    try {
+                        const buffer = await file.arrayBuffer();
+                        const workbook = new ExcelJS.Workbook();
+                        await workbook.xlsx.load(buffer);
+
+                        const worksheet = workbook.worksheets[0]; // First sheet
+
+                        // Extract DateText from B1 (after "to")
+                        const b1 = getCellText(worksheet.getCell('B1'));
+                        const dateText = extractDateAfterTo(b1);
+
+                        // Header row is row 2
+                        const headerRow = worksheet.getRow(2);
+                        const headersArr = headerRow.values; // 1-based array
+                        const headers = headersArr.map(h => (typeof h === 'string' ? h.trim() : h));
+
+                        const results = [];
+
+                        worksheet.eachRow((row, rowNumber) => {
+                            if (rowNumber < 3) return; // start at row 3
+
+                            const record = {};
+                            let empty = true;
+
+                            row.eachCell((cell, colNumber) => {
+                                const header = headers[colNumber];
+                                if (!header || typeof header !== 'string' || header.trim() === '') return;
+
+                                const value = normalizeCellValue(cell);
+
+                                if (header.toLowerCase() === 'company') {
+                                    const companyParts = splitCompanyField(value);
+                                    Object.assign(record, companyParts);
+                                    if (companyParts.Company || companyParts.Address || companyParts.TaxNo) empty = false;
+                                } else {
+                                    record[header] = value;
+                                    if (value !== null && value !== undefined && value !== '') empty = false;
+                                }
+                            });
+
+                            record.DateText = dateText;
+                            enrichWithGroup(record); // add CompanyGroup, CompanyName, ClientCode, CashAdvance
+
+                            if (!empty) results.push(record);
+                        });
+
+                        jsonData = results;
+
+                        // Show JSON
+                        document.getElementById('output').textContent = JSON.stringify(jsonData, null, 2);
+
+                        // Init/refresh grid and popup
+                        initGrid(jsonData);
+                        initPopup();
+
+                        DevExpress.ui.notify("Excel loaded and JSON generated.", "success", 2000);
+                    } catch (err) {
+                        console.error(err);
+                        DevExpress.ui.notify("Failed to load Excel. Check file format or console logs.", "error", 3000);
+                    }
+                });
+
+                // Download JSON button
+                document.getElementById('btn-download').addEventListener('click', () => {
+                    if (!jsonData || jsonData.length === 0) {
+                        DevExpress.ui.notify("No JSON data to download.", "warning", 2000);
+                        return;
+                    }
+                    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json;charset=utf-8" });
+                    saveAs(blob, "export.json");
+                });
+
+                // Show popup button
+                document.getElementById('btn-popup').addEventListener('click', () => {
+                    if (!popupInstance) initPopup();
+                    popupInstance.show();
+                });
+
+                // Export grouped Excel button
+                document.getElementById('btn-export-excel').addEventListener('click', async () => {
+                    if (!jsonData || jsonData.length === 0) {
+                        DevExpress.ui.notify("No data to export.", "warning", 2000);
+                        return;
+                    }
+
+                    const workbook = new ExcelJS.Workbook();
+                    const sheet = workbook.addWorksheet("Grouped Export");
+
+                    // Title + Header
+                    const titleRow = sheet.addRow(["Company Grouped Export"]);
+                    titleRow.font = { bold: true, size: 14 };
+                    sheet.addRow(["CompanyGroup", "CompanyName", "Product Name", "Quantity", "Price", "Product Cost", "DateText"]);
+
+                    // Group by Company
+                    const grouped = {};
+                    jsonData.forEach(r => {
+                        const company = r.Company || "Unknown";
+                        if (!grouped[company]) grouped[company] = [];
+                        const qty = Number(r.Quantity) || 0;
+                        const cost = Number(r["Product Cost"]) || 0;
+                        const price = qty ? cost / qty : 0;
+                        grouped[company].push({
+                            CompanyGroup: r.CompanyGroup || "",
+                            CompanyName: company, //r.CompanyName || company,
+                            ProductName: r["Product Name"],
+                            Quantity: qty,
+                            Price: price,
+                            ProductCost: cost,
+                            DateText: r.DateText
+                        });
+                    });
+
+                    // Write groups with subtotals
+                    Object.keys(grouped).forEach(company => {
+                        sheet.addRow([]); // blank line
+                        const companyHeader = sheet.addRow([company]);
+                        companyHeader.font = { bold: true };
+
+                        let subtotalQty = 0;
+                        let subtotalCost = 0;
+
+                        grouped[company].forEach(item => {
+                            const row = sheet.addRow([
+                                item.CompanyGroup,
+                                item.CompanyName,
+                                item.ProductName,
+                                item.Quantity,
+                                item.Price,
+                                item.ProductCost,
+                                item.DateText
+                            ]);
+                            // Optional number formatting
+                            row.getCell(4).numFmt = "#,##0"; // Quantity
+                            row.getCell(5).numFmt = "#,##0.00"; // Price
+                            row.getCell(6).numFmt = "#,##0"; // Product Cost
+
+                            subtotalQty += item.Quantity;
+                            subtotalCost += item.ProductCost;
+                        });
+
+                        // Subtotal row; put company name in subtotal label cell (second col)
+                        const subtotalRow = sheet.addRow([
+                            grouped[company][0].CompanyGroup || "",
+                            company + " Total",
+                            "",
+                            subtotalQty,
+                            "",
+                            subtotalCost,
+                            ""
+                        ]);
+                        subtotalRow.font = { bold: true };
+                        subtotalRow.getCell(4).numFmt = "#,##0";
+                        subtotalRow.getCell(6).numFmt = "#,##0";
+                    });
+
+                    // Auto-width
+                    sheet.columns.forEach(col => {
+                        let maxLength = 10;
+                        col.eachCell({ includeEmpty: true }, cell => {
+                            const val = cell.value ? cell.value.toString() : "";
+                            if (val.length > maxLength) maxLength = val.length;
+                        });
+                        col.width = Math.min(maxLength + 2, 60);
+                    });
+
+                    // Save file
+                    const buffer = await workbook.xlsx.writeBuffer();
+                    saveAs(new Blob([buffer], { type: "application/octet-stream" }), "GroupedExport.xlsx");
+                });
+            })();
+    </script>
+</body>
+
+</html>

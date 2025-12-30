@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Excel Report Export — SQL + Format</title>
+
+<link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.1.3/css/dx.light.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="./fsrc/bundle.min.js"></script>
+
+<style>
+body{font-family:system-ui,Arial;margin:18px;}
+#gridContainer{height:420px;margin-top:10px;}
+button{margin-right:8px;padding:8px 12px;border-radius:6px;}
+#status{margin-top:8px;color:#333;}
+</style>
+</head>
+<body>
+
+<h2>📊 Report Generator (SQL + Format)</h2>
+<button id="loadDbBtn">Load Database Data</button>
+<button id="exportBtn">Export to Excel</button>
+<div id="status"></div>
+<div id="gridContainer"></div>
+
+<script>
+let gridInstance = null;
+let currentData = [];
+let columnMap = [];
+let placeholderRowIdx = null;
+let directiveRowIdx = null;
+let filterRowIdx = null;
+let templateColFormats = {};
+
+function setStatus(msg){ $("#status").text(msg); }
+
+function colLetter(i){
+  let s="";while(i>0){const r=(i-1)%26;s=String.fromCharCode(65+r)+s;i=Math.floor((i-1)/26);}return s;
+}
+function guessDataType(n){
+  if(!n) return "string";
+  n=n.toLowerCase();
+  if(/(amount|total|score|price|qty|quantity|number|count)/.test(n)) return "number";
+  if(/(date|day|time)/.test(n)) return "date";
+  return "string";
+}
+
+function parseTemplateWorksheet(ws){
+  columnMap=[]; placeholderRowIdx=null; directiveRowIdx=null; filterRowIdx=null; templateColFormats={};
+  for(let r=1;r<=200;r++){
+    const vals = (ws.getRow(r).values||[]).slice(1);
+    if(vals.some(v=>typeof v==="string" && v.includes("{{"))){
+      placeholderRowIdx=r; directiveRowIdx=r+1; filterRowIdx=r+2; break;
+    }
+  }
+  const phRow = (ws.getRow(placeholderRowIdx).values||[]).slice(1);
+  const dirRow = (ws.getRow(directiveRowIdx).values||[]).slice(1);
+  const maxCols = Math.max(phRow.length, dirRow.length);
+  for(let c=1;c<=maxCols;c++){
+    const phRaw=phRow[c-1], dirRaw=dirRow[c-1];
+    let placeholder=null, directive=null;
+    if(typeof phRaw==="string"){
+      const m = phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+      if(m) placeholder=m[1].toLowerCase();
+    }
+    if(typeof dirRaw==="string"){
+      const dm = dirRaw.match(/\{\s*(sum|average|count)\s*\}/i);
+      if(dm) directive=dm[1].toLowerCase();
+    }
+    const cell = ws.getRow(placeholderRowIdx).getCell(c);
+    if(cell && cell.numFmt) templateColFormats[c] = cell.numFmt;
+    columnMap.push({colIndex:c,placeholder,directive,dataType:placeholder?guessDataType(placeholder):null});
+  }
+}
+
+async function loadDatabaseData({expGroupCode="700",fieldMap={}}={}){
+  setStatus("Loading...");
+  const tplRes=await fetch("template.xlsx",{cache:"no-store"});
+  if(!tplRes.ok) throw new Error("template.xlsx missing");
+  const buf=await tplRes.arrayBuffer();
+  const wb=new ExcelJS.Workbook();
+  await wb.xlsx.load(buf);
+  const ws=wb.getWorksheet("Report");
+  parseTemplateWorksheet(ws);
+
+  // read SQL filter row if exists
+  let sqlExtra="";
+  if(filterRowIdx){
+    const vals=(ws.getRow(filterRowIdx).values||[]).slice(1);
+    const found=vals.find(v=>typeof v==="string" && v.trim().startsWith("[") && v.trim().endsWith("]"));
+    if(found){
+      sqlExtra = found.trim().slice(1,-1); // remove [ ]
+    }
+  }
+
+  const aaTBKey="5ad2685d-4114-4aa5-aa87-67368f4a3559";
+  const aaPFDMI=isLocalHost();
+  const aaXToX="QTc1RkNDNzUtOEZCNi00NDYwLUIzRjYtNzA3MEI0NDM3OTMw";
+  let aqrFull=`ExpGroupCode = '${expGroupCode}'`;
+  if(sqlExtra) aqrFull += " " + sqlExtra;
+  console.log(aqrFull)
+  const aurl = aaPFDMI+'/DMQ/XOL/'+atob(aaXToX)+'/'+aaTBKey+'/all';
+  const aSettings={url:aurl,method:"POST",timeout:0,headers:{"Content-Type":"application/json"},data:JSON.stringify({"@":btoa(aqrFull)})};
+  const dbRaw=await $.ajax(aSettings);
+
+  const placeholders = columnMap.filter(c=>c.placeholder).map(c=>c.placeholder);
+  const hasNo=placeholders.includes("no");
+  const dataPh=placeholders.filter(p=>p!=="no");
+
+  const sample=dbRaw[0]||{};
+  const finalMap={};
+  dataPh.forEach(ph=>{
+    if(fieldMap[ph]) finalMap[ph]=fieldMap[ph];
+    else {
+      const f=Object.keys(sample).find(k=>k.toLowerCase()===ph.toLowerCase());
+      finalMap[ph]=f||ph;
+    }
+  });
+
+  const mapped=dbRaw.map((r,i)=>{
+    const o={};
+    dataPh.forEach(ph=>{o[ph]=r[finalMap[ph]];});
+    if(hasNo)o.no=i+1;return o;
+  });
+
+  const cols=[];
+  for(const cm of columnMap){
+    if(!cm.placeholder) continue;
+    if(cm.placeholder==="no"){cols.push({dataField:"no",caption:"NO",dataType:"number",format:{type:"fixedPoint",precision:0}});continue;}
+    const dt=cm.dataType||guessDataType(cm.placeholder);
+    const col={dataField:cm.placeholder,caption:cm.placeholder,dataType:dt};
+    if(dt==="number") col.format="#,##0.00";
+    if(dt==="date") col.format="dd/MM/yyyy";
+    cols.push(col);
+  }
+
+  if(!gridInstance){
+    gridInstance=$("#gridContainer").dxDataGrid({
+      dataSource:mapped,columns:cols,showBorders:true,columnAutoWidth:true,wordWrapEnabled:true
+    }).dxDataGrid("instance");
+  }else{
+    gridInstance.option("columns",cols);
+    gridInstance.option("dataSource",mapped);
+  }
+
+  currentData=mapped;
+  setStatus(`Loaded ${mapped.length} rows`);
+}
+
+function appendSummaryRow(ws,data){
+  if(!data.length) return;
+  const start=placeholderRowIdx;
+  const end=start+data.length-1;
+  const row=ws.getRow(end+1);
+  for(const cm of columnMap){
+    if(!cm.directive||!cm.placeholder) continue;
+    const L=colLetter(cm.colIndex);
+    const f=cm.directive==="sum"?`SUM(${L}${start}:${L}${end})`:
+          cm.directive==="average"?`AVERAGE(${L}${start}:${L}${end})`:
+          `COUNTA(${L}${start}:${L}${end})`;
+    const v = cm.directive==="count"?data.length:
+              data.reduce((a,b)=>a+Number(b[cm.placeholder]||0),0);
+    const c=row.getCell(cm.colIndex);
+    c.value={formula:f,result:v};
+    const fmt=templateColFormats[cm.colIndex]||(cm.dataType==="date"?"dd/mm/yyyy":cm.placeholder==="no"||cm.directive==="count"?"0":"#,##0.00");
+    c.numFmt=fmt;
+  }
+  ws.getRow(directiveRowIdx).hidden=true;
+}
+
+async function exportReport(){
+  if(!currentData.length){alert("No data");return;}
+  const tplRes=await fetch("template.xlsx",{cache:"no-store"});
+  const buf=await tplRes.arrayBuffer();
+  const wb=new ExcelJS.Workbook();
+  await wb.xlsx.load(buf);
+  const ws=wb.getWorksheet("Report");
+  parseTemplateWorksheet(ws);
+  const start=placeholderRowIdx;
+
+  const map={}; columnMap.forEach(c=>{if(c.placeholder)map[c.placeholder]=c.colIndex;});
+
+  currentData.forEach((r,i)=>{
+    const excelRow=ws.getRow(start+i);
+    if(map["no"]){excelRow.getCell(map["no"]).value=i+1;excelRow.getCell(map["no"]).numFmt="0";}
+    for(const [ph,val] of Object.entries(r)){
+      if(ph==="no") continue;
+      const idx=map[ph]; if(!idx) continue;
+      const c=excelRow.getCell(idx);
+      const cm=columnMap.find(x=>x.placeholder===ph);
+      const dt=cm?.dataType||guessDataType(ph);
+      if(dt==="date"&&val){
+        let d=val instanceof Date?val:new Date(val);
+        if(!Number.isNaN(d.getTime())){c.value=d;c.numFmt="dd/mm/yyyy";} else c.value=val;
+      }else if(dt==="number"){
+        const n=Number(val);c.value=Number.isNaN(n)?val:n;c.numFmt="#,##0.00";
+      }else c.value=val;
+    }
+    excelRow.commit();
+  });
+
+  appendSummaryRow(ws,currentData);
+
+  ws.columns.forEach((col,idx)=>{
+    let max=6;
+    col.eachCell({includeEmpty:true},cell=>{
+      let v=cell.value,txt="";
+      if(v!==null&&v!==undefined){
+        if(typeof v==="object"){
+          if(v.richText)txt=v.richText.map(r=>r.text).join("");
+          else if(v.result!==undefined)txt=String(v.result);
+          else if(v.formula)txt=v.formula;
+          else if(v instanceof Date)txt=v.toISOString().slice(0,10);
+          else txt=String(v);
+        } else txt=String(v);
+      }
+      max=Math.max(max,txt.length+2);
+    });
+    const cm=columnMap.find(x=>x.colIndex===idx+1);
+    const isDate=cm && (cm.dataType==="date"||guessDataType(cm.placeholder)==="date");
+    col.width=isDate?Math.min(Math.max(max,6),12):Math.min(Math.max(max,6),40);
+  });
+
+  wb.calcProperties.fullCalcOnLoad=true;
+  const out=await wb.xlsx.writeBuffer();
+  saveAs(new Blob([out]),"Report.xlsx");
+  setStatus("Exported!");
+}
+
+$("#loadDbBtn").on("click",()=>loadDatabaseData());
+$("#exportBtn").on("click",()=>exportReport());
+</script>
+
+</body>
+</html>

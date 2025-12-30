@@ -1,0 +1,408 @@
+                                        // Print Form //not use                                        
+                                        const aPopUpPrintForm = (iData, aaHeadRefNo) => { //, eData, acData
+                                            var aaiHeadRef = aaHeadRefNo;
+                                            var aaSchRef = "HeadRefNo LIKE '%" + aaiHeadRef + "%'" // scopes based permission (View Only Login Name)
+                                            var aaPFDMI = isLocalHost();
+                                            var astr = localStorage["aDXTheme"]
+                                            if (astr.includes("dark")) {
+                                                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmwhite.png' width='88'></center></div>"
+                                            } else {
+                                                var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"
+                                            }
+
+                                            $(() => {
+                                                var gbxRateV = 1;
+                                                let atopmargin = "5px";
+                                                let abodyleftm = "5px";
+                                                let abodylefts = "15px";
+                                                var aAppArr = iData.Vendor01Note
+                                                //console.log("text ", aAppArr)
+                                                var xxChkNamexx = aTranTextJson(aAppArr, "NAME:", "MAIL:")
+                                                //console.log("array ", xxChkNamexx)
+                                                var anNameLen = xxChkNamexx.length
+                                                var aChkApprove = 0;
+                                                var aDate00 = iData.ERODate02.toString();
+                                                var aDateD00 = aDate00.substring(8, 10) + "/" + aDate00.substring(5, 7) + "/" + aDate00.substring(0, 4)
+                                                var aDate01 = iData.ERODate03.toString();
+                                                var aDateD01 = aDate01.substring(8, 10) + "/" + aDate01.substring(5, 7) + "/" + aDate01.substring(0, 4)
+                                                var aDate02 = iData.ERODate04.toString();
+                                                var aDateD02 = aDate02.substring(8, 10) + "/" + aDate02.substring(5, 7) + "/" + aDate02.substring(0, 4)
+                                                let aSubD = iData.ReqDate.toString();
+                                                let aSubmitD = aSubD.substring(8, 10) + "/" + aSubD.substring(5, 7) + "/" + aSubD.substring(0, 4)
+                                                //console.log(aDateD00 + aDateD01 + aDateD02)
+                                                if (anNameLen === 1) {
+                                                    if (aDateD00 !== "01/01/1901") {
+                                                        aChkApprove = 1;
+                                                    } else {
+                                                        aChkApprove = 0;
+                                                    }
+                                                } if (anNameLen === 2) {
+                                                    if (aDateD00 !== "01/01/1901" && aDateD01 !== "01/01/1901") {
+                                                        aChkApprove = 1;
+                                                    } else {
+                                                        aChkApprove = 0;
+                                                    }
+                                                } if (anNameLen === 3) {
+                                                    if (aDateD00 !== "01/01/1901" && aDateD01 !== "01/01/1901" && aDateD02 !== "01/01/1901") {
+                                                        aChkApprove = 1;
+                                                    } else {
+                                                        aChkApprove = 0;
+                                                    }
+                                                }
+                                                //console.log(aChkApprove)
+                                                //let aSubmitD =  aSubD.getFullYear() + "/" + aSubD.getMonth() + "/" + aSubD.getDate()
+                                                let atitledtl = "Travel Requisition Form";
+                                                let aAlertMessage = "<big>��?�?�?��?����� ���������?��?�����?� **</big>";
+                                                let arectanglehtml = "<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><rect x='1' y='1' width='100' height='100' stroke='black' stroke-width='0.2' fill='none' /></svg>";
+                                                let arspace = (no) => { return "&nbsp;".repeat(no) }; //= "&nbsp;".repeat(30);
+                                                let arlineno = (nor) => { return "<br>".repeat(nor) };
+                                                var aAppLineDtl = "";
+                                                var aReqLineDtl = "";
+                                                if (aChkApprove === 1) {
+                                                    if (anNameLen === 1) {
+                                                        aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>�����?�� (Requester)</b></small><br><br><br></div>";
+                                                        aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���?��?� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>"; //+ arspace(5) + xxChkNamexx[1] + arspace(5) +"(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>";
+                                                    }
+                                                    if (anNameLen === 2) {
+                                                        aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>�����?�� (Requester)</b></small><br><br><br><br></div>";
+                                                        aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���?��?� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" + arspace(5) + xxChkNamexx[1] + arspace(5) + "(" + aDateD01 + ")<br>"; // + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>";
+                                                    }
+                                                    if (anNameLen === 3) {
+                                                        aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>�����?�� (Requester)</b></small><br><br><br><br><br></div>";
+                                                        aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���?��?� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" + arspace(5) + xxChkNamexx[1] + arspace(5) + "(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] + arspace(5) + "(" + aDateD02 + ")<br>" + "</div>";
+                                                    }
+                                                } else {
+                                                    aReqLineDtl = " " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>�����?�� (Requester)</b></small><br><br><br></div>";
+                                                    aAppLineDtl = "<div class='colorRBGlightgrey';><small><b>���?��?� (Approver)</b></small><br><br><br>"; //+ arspace(5) + xxChkNamexx[1] + arspace(5) +"(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>";
+                                                }
+
+
+                                                var aheaderhtml = "<h4 style='text-align: left;'><img src='data:image/png;base64,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' height='42.30000000000001' width='95'> </h4>"
+                                                const popup = $("#popupContainer").dxPopup({
+                                                    title: "Travel Requisition Form",
+                                                    maxWidth: "1300px",
+                                                    maxHeight: "5000px;",
+                                                    position: { offset: "0 0" }, //{offset: "0 -180"},
+                                                    //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                                                    visible: true,
+                                                    fullScreen: true,
+                                                    showCloseButton: false,
+                                                    showTitle: false,
+                                                    dragEnabled: true,
+                                                    closeOnOutsideClick: false,
+                                                    resizeEnabled: true,
+                                                    contentTemplate: () => {
+                                                        return $("<div />").append(
+                                                            $("<div style = 'margin-left: " + atopmargin + "'>" + aheaderhtml + " </div>"),
+                                                            //$("<div style = 'margin-left: " + atopmargin + "'>" + aTableFromData + " </div>"),
+                                                            $("<b><div style = 'font-size: 22px; margin-left: " + atopmargin + "; text-align:left; border-left: 10px solid grey;  border-bottom: 2px solid grey;'>" + arspace(1) + atitledtl + "</div></b>"),
+                                                            $("<p style='margin-left: " + atopmargin + "; text-align:left;'>REF.NO: <b>" + aaiHeadRef + "</b>" + arspace(10) + "DATE: <b>" + aSubmitD + "</b></span><span style='float:right;' id='popupprint'></span></p>"),
+                                                            $("<div style = 'margin-left: " + abodyleftm + "' id='form'></div>" + arlineno(1)),
+                                                            $("<div style = 'margin-left: " + abodyleftm + "'>��������? - DESCRIPTIONS</div>"),
+                                                            //$("<div style = 'margin-left: " + atopmargin + "'>" + aTableFromData + " </div>"),
+                                                            $("<p><div style = 'margin-left: " + abodyleftm + "' id='detail-dxDataGrid'></div></p>"),
+                                                            $("<p style = 'margin-left: " + abodyleftm + "'>�����??�?�� - ACCOUNTING INFORMATION</p>"),
+                                                            //$("<div style = 'margin-left: " + atopmargin + "'>" + aTableFromAC + " </div>"),
+                                                            $("<p><div style = 'margin-left: " + abodyleftm + "' id='ACCChart-dxDataGrid'></div></p>"),
+                                                            $("<span style='font-size: 12px; font-weight: bold; color: black; border: 0px solid gray; padding: 1px 1px; margin-left: " + abodyleftm + "'>" + aAlertMessage + "</span>" + arlineno(2)),
+                                                            //$(" " + arlineno(2) + "<span>" + arspace(2) + "</span><div class='colorRBGlightgrey';><small><b>�����?�� (Requester)</b></small><br><br><br><br><br></div>"),
+                                                            $(aReqLineDtl),
+                                                            $("<span>" + arspace(28) + "</span>"),
+                                                            $(aAppLineDtl),
+                                                            //$("<div class='colorRBGlightgrey';><small><b>���?��?� (Approver)</b></small><br><br>" + arspace(5) + xxChkNamexx[0] + arspace(5) + "(" + aDateD00 + ")<br>" + arspace(5) + xxChkNamexx[1] + arspace(5) +"(" + aDateD01 + ")<br>" + arspace(5) + xxChkNamexx[2] +  arspace(5) + "(" + aDateD02 + ")<br>" + "</div>"),
+                                                        );
+                                                    },
+                                                }).dxPopup("instance");
+
+                                                $("#popupexit").dxButton({
+                                                    icon: "fas fa-times",
+                                                    type: "danger",
+                                                    //text: "EXIT",
+                                                    //width: "120px",
+                                                    visible: true,
+                                                    onClick: function () {
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#popupprint").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        window.print()
+                                                        popup.hide();
+                                                    }
+                                                });
+
+                                                $("#print").dxButton({
+                                                    icon: "print",
+                                                    //text: "Print",
+                                                    onClick: function () {
+                                                        window.print();
+                                                    }
+                                                });
+
+                                                const apxform = $("#form").dxForm({
+                                                    formData: iData,
+                                                    showColonAfterLabel: false,
+                                                    labelLocation: "top",
+                                                    colCount: 1,
+                                                    items: [{
+                                                        itemType: "group",
+                                                        //caption: "Refference",
+                                                        colCount: 4,
+                                                        cssClass: "colorBGlightgrey",
+                                                        items: [
+                                                            {
+                                                                dataField: "PayToName",
+                                                                label: { text: "Pay To" },
+                                                                editorOptions: { value: iData.PayToName + " (" + iData.PayToCode + ")", width: 200, readOnly: true },
+                                                            },
+                                                        ]
+                                                    },
+                                                    ]
+                                                }).dxForm("instance");
+
+                                                $("#detail-dxDataGrid").dxDataGrid({
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "REFNO",
+                                                        loadMode: "omit",
+                                                        load: function () {
+                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": btoa(aaSchRef) }) // Change aaTBKey to TokenKey for this table 5102300001
+                                                                .fail(function () { throw "Data loading error" });
+                                                        },
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false,
+                                                    columnMinWidth: 20,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    showBorders: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    /*onRowPrepared: function (e) {
+                                                        e.rowElement.css({ height: 60 });
+                                                    },*/
+                                                    wordWrapEnabled: true,
+                                                    columns: [
+                                                        {
+                                                            dataField: "ID",
+                                                            sortOrder: "asc",
+                                                            dataType: "string",
+                                                            //headerCellTemplate: $('<b style="color: white">NO</b>'),
+                                                            caption: " ",
+                                                            width: 40
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo4",
+                                                            caption: "Bill No",
+                                                            dataType: "string",
+                                                            width: 80,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODate01",
+                                                            caption: "Bill Date",
+                                                            dataType: "date",
+                                                            format: "dd/MM/yyyy",
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc02",
+                                                            caption: "Description",
+                                                            dataType: "string",
+                                                            editorType: "dxTextBox",
+                                                            width: 190,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo1", //ERODesc03
+                                                            caption: "Purpose",
+                                                            dataType: "string",
+                                                            width: 150,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERODesc04",
+                                                            caption: "Company/Personal Name",
+                                                            dataType: "string",
+                                                            width: 130,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ERORefNo3",
+                                                            caption: "Type of Reimbursement..",
+                                                            dataType: "string",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "Account Code",
+                                                            dataType: "string",
+                                                            width: 100,
+                                                            visible: false,
+                                                        },
+                                                        {
+                                                            dataField: "Amount",
+                                                            caption: "Original currency",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorType: "dxNumberBox",
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Currency",
+                                                            caption: "Currency", //aCurrenciesList
+                                                            dataType: "string",
+                                                            width: 60,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Xrate",
+                                                            caption: "X-Rate",
+                                                            dataType: "number",
+                                                            editorOptions: { format: "#,##0.00", width: 60 },
+                                                            format: "#,##0.00",
+                                                            width: 60,
+                                                            visible: true,
+                                                        },
+
+                                                        {
+                                                            dataField: "RefundedAmount",
+                                                            caption: "Estimated Cost",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            editorOptions: { format: "#,##0.00", width: 100, },
+                                                            width: 100,
+                                                        },
+
+                                                    ],
+                                                    // summary
+                                                    summary: {//ReqDate
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "ERORefNo4",
+                                                                summaryType: "count",
+                                                                displayFormat: "TOTAL",
+                                                            },
+                                                            {
+                                                                column: "RefundedAmount",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00", //"currency",
+                                                                //          showInGroupFooter: false,
+                                                                //          alignByColumn: true            
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+
+                                                    },
+
+                                                }).dxDataGrid("instance");
+
+                                                $("#ACCChart-dxDataGrid").dxDataGrid({
+
+                                                    dataSource: new DevExpress.data.CustomStore({
+                                                        key: "HeadRefNo",
+                                                        loadMode: "omit",
+                                                        load: function () {
+                                                            return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + "891F052B-E489-41E3-A254-A038B66C0444" + '/all', { "@": btoa(aaSchRef) }) // Change aaTBKey to TokenKey for this table 5102300001
+                                                                .fail(function () { throw "Data loading error" });
+                                                        },
+                                                    }),
+
+                                                    allowColumnReordering: true,
+                                                    allowColumnResizing: false,
+                                                    columnMinWidth: 20,
+                                                    columnChooser: {
+                                                        enabled: false //false // true
+                                                    },
+                                                    //HeadRefNo,DR,ExpensesCode,EAccDesc,DRAMT,CR,CRCODE,CRName,CRAMT
+                                                    showBorders: true,
+                                                    showColumnLines: true,
+                                                    showRowLines: true,
+                                                    columns: [
+                                                        {
+                                                            dataField: "DC",
+                                                            caption: " ",
+                                                            editorOptions: { width: 70 },
+                                                            width: 70
+                                                        },
+                                                        {
+                                                            dataField: "ExpensesCode",
+                                                            caption: "CODE",
+                                                            editorOptions: { width: 100 },
+                                                            width: 100,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "EAccDesc",
+                                                            caption: "Account Name",
+                                                            editorType: "dxTextBox",
+                                                            width: 200,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "Division",
+                                                            caption: "Division",
+                                                            editorType: "dxTextBox",
+                                                            width: 80,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "DRAMT",
+                                                            caption: "Debit Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            //format: "#,##0.00",
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+                                                        {
+                                                            dataField: "CRAMT",
+                                                            caption: "Credit Amount",
+                                                            dataType: "number",
+                                                            format: { type: "fixedPoint", precision: 2 },
+                                                            width: 120,
+                                                            visible: true,
+                                                        },
+
+
+                                                    ],
+                                                    // summary
+                                                    summary: {
+                                                        recalculateWhileEditing: true,
+                                                        skipEmptyValues: false,
+                                                        totalItems: [
+                                                            {
+                                                                column: "Division",
+                                                                //summaryType: "count",
+                                                                displayFormat: "BALANCE",
+                                                            },
+                                                            {
+                                                                column: "DRAMT",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+
+                                                            {
+                                                                column: "CRAMT",
+                                                                summaryType: "sum",
+                                                                valueFormat: "#,##0.00",
+                                                                displayFormat: "{0}",
+                                                            },
+                                                        ],
+
+                                                    },
+
+                                                }).dxDataGrid("instance");
+
+                                            });
+                                        }

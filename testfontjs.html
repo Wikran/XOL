@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>DevExtreme + Font Awesome Demo</title>
+
+  <!-- DevExtreme CSS -->
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/22.2.5/css/dx.light.css">
+
+  <!-- Font Awesome 5.15.1 (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/solid.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/brands.min.css">
+
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 24px; }
+    .fa-icon { font-size: 18px; margin-right: 8px; vertical-align: middle; }
+    #gridContainer { margin-top: 12px; }
+    .dx-popup-content { line-height: 1.8; }
+  </style>
+</head>
+<body>
+
+  <h2><i class="fas fa-table fa-icon"></i> User Table</h2>
+  <div id="gridContainer"></div>
+  <div id="popupContainer"></div>
+
+  <!-- jQuery FIRST -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- JSZip (optional for export features) -->
+  <script src="https://cdn3.devexpress.com/jslib/22.2.5/js/jszip.min.js"></script>
+  <!-- DevExtreme Core -->
+  <script src="https://cdn3.devexpress.com/jslib/22.2.5/js/dx.all.js"></script>
+
+  <script>
+    $(function() {
+      const users = [
+        { id: 1, name: "Alice", email: "alice@example.com", social: "Facebook", active: true },
+        { id: 2, name: "Bob", email: "bob@example.com", social: "Twitter", active: false },
+        { id: 3, name: "Charlie", email: "charlie@example.com", social: "GitHub", active: true }
+      ];
+
+      // Initialize DataGrid
+      $("#gridContainer").dxDataGrid({
+        dataSource: users,
+        keyExpr: "id",
+        showBorders: true,
+        columnAutoWidth: true,
+        columns: [
+          { dataField: "name", caption: "Name" },
+          { dataField: "email", caption: "Email" },
+          {
+            dataField: "social",
+            caption: "Social",
+            cellTemplate: function(container, options) {
+              const iconMap = {
+                Facebook: "fab fa-facebook",
+                Twitter: "fab fa-twitter",
+                GitHub: "fab fa-github"
+              };
+              $("<i>").addClass(iconMap[options.value] + " fa-icon").appendTo(container);
+              $("<span>").text(options.value).appendTo(container);
+            }
+          },
+          {
+            dataField: "active",
+            caption: "Status",
+            cellTemplate: function(container, options) {
+              const isActive = !!options.value;
+              const cls = isActive ? "fas fa-check-circle" : "fas fa-times-circle";
+              const color = isActive ? "#21ba45" : "#db2828";
+              $("<i>").addClass(cls + " fa-icon").css("color", color).appendTo(container);
+              $("<span>").text(isActive ? "Active" : "Inactive").appendTo(container);
+            }
+          },
+          {
+            type: "buttons",
+            buttons: [{
+              hint: "Show Info",
+              template: function() {
+                return $("<i>").addClass("fas fa-info-circle fa-icon");
+              },
+              onClick: function(e) {
+                showPopup(e.row.data);
+              }
+            }]
+          }
+        ]
+      });
+
+      // Initialize Popup
+      const popup = $("#popupContainer").dxPopup({
+        title: "User Info",
+        visible: false,
+        showCloseButton: true,
+        width: 360,
+        height: "auto",
+        dragEnabled: true,
+        contentTemplate: function() {
+          return $("<div>").attr("id", "popupContent");
+        }
+      }).dxPopup("instance");
+
+      function showPopup(data) {
+        const html = `
+          <div>
+            <div><i class="fas fa-user fa-icon"></i> ${data.name}</div>
+            <div><i class="fas fa-envelope fa-icon"></i> ${data.email}</div>
+            <div><i class="fab fa-${data.social.toLowerCase()} fa-icon"></i> ${data.social}</div>
+            <div>
+              <i class="${data.active ? 'fas fa-check-circle' : 'fas fa-times-circle'} fa-icon"
+                 style="color:${data.active ? '#21ba45' : '#db2828'}"></i>
+              ${data.active ? 'Active' : 'Inactive'}
+            </div>
+          </div>
+        `;
+        $("#popupContent").html(html);
+        popup.option("title", `User Info — ${data.name}`);
+        popup.show();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -13,51 +13,26 @@
     <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
     <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
 
-    <!-- Icon -->
     <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
     <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
     <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
     <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
     <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
 
-    <!--DevExtreme Theme -->
+    <!-- Keep only the common CSS -->
     <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
-    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
-        data-active="true">
-    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
-        data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.blue.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.dark.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.orange.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.purple.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.teal.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
-    <link rel="dx-theme" data-theme="material.lime.light.compact"
-        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
 
-    <!-- <link rel="stylesheet" href="style_main.css"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-    <script src="./src/subscript.js"></script> 
+    <!-- Load theme dynamically -->
+    <script src="./src/themeLoader.js"></script>
+    <!-- <script src="./src/autoLogout.js"></script> -->
+    <!-- Example: 20 min logout, 1 min warning -->
+    <script src="./src/autoLogout.js" data-logout-time="45" data-warning-time="3">
+    </script>
+
+    <script src="./src/subscript.js"></script>
+
 </head>
 
 <body class="dx-viewport">
@@ -66,12 +41,10 @@
         <span class="tright" id="aUsrName"></span>
         <span class="tright avatar"><img id="avatar" src="images/user.png" width="23px"
                 style="vertical-align:middle; margin:0px 3px"></span>
-        <!-- <span class="tright" id="version" 
-                style="vertical-align:middle; margin: 27px 65px; color:lightcyan; position:absolute; right:0;">version 24.10.04</span>  -->
+
         <span class="tright" id="version"
             style="vertical-align:middle; margin: -10px 28px; color:lightcyan; position:absolute; right:1;">version
-            25.01.01</span>
-
+            25.07.01</span>
     </div>
     <div id="setb" class="area">
         <ul class="circles">

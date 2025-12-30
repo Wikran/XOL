@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Template Export Report</title>
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; }
+    .toolbar { margin-bottom: 16px; display: flex; gap: 10px; }
+    button { padding: 8px 14px; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+    #gridContainer { height: 460px; }
+    .note { color: #666; font-size: 13px; margin-top: 10px; }
+    .status { font-size: 12px; color: #444; }
+  </style>
+</head>
+<body>
+  <h2>รายงานจาก Template.xlsx</h2>
+  <div class="toolbar">
+    <button id="downloadTemplateBtn">📥 ดาวน์โหลด Template.xlsx</button>
+    <button id="exportBtn">📤 Export รายงาน</button>
+    <span class="status" id="statusText">สถานะ: พร้อม</span>
+  </div>
+  <div id="gridContainer"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <script>
+    const data = [
+      { name: "วิกรานต์", role: "Developer", score: 95, date: "2025-09-12", dept: "R&D" },
+      { name: "สมชาย", role: "Tester", score: 88, date: "2025-09-11", dept: "QA" },
+      { name: "อารีย์", role: "Manager", score: 92, date: "2025-09-10", dept: "Ops" }
+    ];
+
+    const grid = $("#gridContainer").dxDataGrid({
+      dataSource: data,
+      showBorders: true,
+      columnAutoWidth: true,
+      rowAlternationEnabled: true,
+      columns: [
+        { dataField: "name", caption: "ชื่อ" },
+        { dataField: "role", caption: "ตำแหน่ง" },
+        { dataField: "score", caption: "คะแนน", dataType: "number" },
+        { dataField: "date", caption: "วันที่", dataType: "date", format: "yyyy-MM-dd" },
+        { dataField: "dept", caption: "แผนก" }
+      ]
+    }).dxDataGrid("instance");
+
+    const STATUS = document.getElementById("statusText");
+    function setStatus(t) { STATUS.textContent = "สถานะ: " + t; }
+
+    function extractPlaceholder(v) {
+      if (typeof v !== "string") return null;
+      const m = v.match(/\{\{\s*(.+?)\s*\}\}/);
+      return m ? m[1] : null;
+    }
+
+    function colLetter(i) { return String.fromCharCode(65 + i); }
+
+    async function tryFetchTemplate(url = "template.xlsx") {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) return null;
+        const buf = await res.arrayBuffer();
+        const wb = new ExcelJS.Workbook();
+        await wb.xlsx.load(buf);
+        const ws = wb.getWorksheet("Report");
+        if (!ws) return null;
+        return { wb, ws };
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+
+    async function buildDefaultTemplate() {
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet("Report");
+      ws.mergeCells("A1:F1");
+      ws.getCell("A1").value = "รายงานสรุป";
+      ws.getCell("A1").alignment = { horizontal: "center" };
+      ws.getRow(2).values = ["NO","ชื่อ","ตำแหน่ง","คะแนน","วันที่","แผนก"];
+      ws.getRow(3).values = ["{{no}}","{{name}}","{{role}}","{{score}}","{{date}}","{{dept}}"];
+      ws.columns = [{width:6},{width:20},{width:20},{width:10},{width:14},{width:14}];
+      return wb;
+    }
+
+    function autoFit(ws, colCount, rows) {
+      for (let i=0;i<colCount;i++) {
+        const maxLen = Math.max(...rows.map(r => (r[i]||"").toString().length), 6);
+        ws.getColumn(i+1).width = Math.min(maxLen+2, 40);
+      }
+    }
+
+    async function exportReport() {
+      setStatus("กำลังโหลด template...");
+      const tpl = await tryFetchTemplate() || await buildDefaultTemplate();
+      const wb = tpl.wb || tpl;
+      const ws = tpl.ws || wb.getWorksheet("Report");
+
+      // Find header row (row2)
+      const headers = ws.getRow(2).values.slice(1).map(v=>String(v).trim());
+      const startRow = ws.getRow(3).values.slice(1).some(v=>extractPlaceholder(v)) ? 2 : 1;
+
+      // add running number in data
+      const rows = data.map((r,i)=>({no:i+1,...r}));
+
+      // Export grid
+      await DevExpress.excelExporter.exportDataGrid({
+        component: grid,
+        worksheet: ws,
+        topLeftCell: {row:startRow, column:2}, // leave col1 for NO
+        customizeCell: ({gridCell, excelCell}) => {
+          if (gridCell.rowType === "data") {
+            if (gridCell.column.dataField === "score") excelCell.numFmt="0";
+            if (gridCell.column.dataField === "date") excelCell.numFmt="yyyy-mm-dd";
+          }
+        }
+      });
+
+      // Fill NO column
+      rows.forEach((r,i)=>{
+        ws.getCell(`A${startRow+i}`).value = i+1;
+        ws.getCell(`A${startRow+i}`).alignment = {horizontal:"center"};
+      });
+
+      const lastRow = startRow + rows.length;
+      const totalRow = lastRow + 1;
+
+      // Summary row
+      ws.getCell(`A${totalRow}`).value = "รวม/เฉลี่ย/จำนวน";
+      ws.getCell(`A${totalRow}`).font = {bold:true};
+      const scoreCol = headers.indexOf("คะแนน");
+      if (scoreCol>=0) {
+        const letter = colLetter(scoreCol+1); // +1 for NO column
+        ws.getCell(`${letter}${totalRow}`).value = {
+          formula:`SUM(${letter}${startRow}:${letter}${lastRow-1})`
+        };
+        ws.getCell(`${letter}${totalRow}`).numFmt="0";
+      }
+      ws.getCell(`B${totalRow}`).value = { formula:`COUNTA(B${startRow}:B${lastRow-1})` };
+      ws.getCell(`C${totalRow}`).value = { formula:`AVERAGE(D${startRow}:D${lastRow-1})` };
+
+      autoFit(ws, headers.length+1, ws.getSheetValues());
+
+      const buf = await wb.xlsx.writeBuffer();
+      saveAs(new Blob([buf],{type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"รายงาน.xlsx");
+      setStatus("ส่งออกเสร็จสิ้น");
+    }
+
+    document.getElementById("exportBtn").onclick = exportReport;
+    document.getElementById("downloadTemplateBtn").onclick = async ()=>{
+      const wb = await buildDefaultTemplate();
+      const buf = await wb.xlsx.writeBuffer();
+      saveAs(new Blob([buf],{type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"template.xlsx");
+    };
+  </script>
+</body>
+</html>

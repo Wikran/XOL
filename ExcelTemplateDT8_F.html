@@ -1,0 +1,256 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Excel Template Processor — Directives (text/num/formula/sum/average/count)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body { font-family: system-ui, Arial; padding: 20px; }
+    input, button { margin: 6px 0; }
+    pre { background:#f5f5f5; padding:10px; max-height:300px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <h2>Excel Template Processor</h2>
+  <p>Drop your template <strong>.xlsx</strong> file (template must contain a sheet named <code>Report</code> or will use the first sheet). The template should contain a row with placeholders like <code>{{amount}}</code> (that row), the next row is the <em>directive row</em> (e.g. <code>{sum}</code> or <code>{text: "Total Amount"}</code>), then data rows below. This tool writes the totals row immediately after the data block.</p>
+
+  <input id="fileInput" type="file" accept=".xlsx" />
+  <button id="processBtn">Process template & download</button>
+  <div style="margin-top:12px">
+    <strong>Notes:</strong>
+    <ul>
+      <li>Directive formats supported:
+        <ul>
+          <li><code>{text: Total Amount}</code> or <code>{text: "Total Amount"}</code></li>
+          <li><code>{num: 5000}</code></li>
+          <li><code>{formula: =A1+A2}</code> or <code>{formula: A1+A2}</code></li>
+          <li><code>{sum}</code>, <code>{average}</code>, <code>{count}</code> — these generate Excel formulas across the data rows</li>
+        </ul>
+      </li>
+      <li>Rules: the processor tries <code>text/num/formula</code> first (user override). If none written and directive is <code>sum/average/count</code>, then it writes SUM/AVERAGE/COUNTA across the data range.</li>
+      <li>Totals row is placed right after the last non-empty data row.</li>
+    </ul>
+  </div>
+
+  <h3>Log</h3>
+  <pre id="log">Ready.</pre>
+
+<script>
+(function(){
+  const logEl = document.getElementById('log');
+  function log(...args){ logEl.textContent += '\\n' + args.map(a=> (a && a.message) ? a.message : a); }
+
+  function colLetter(col) {
+    let s = '';
+    while (col > 0) {
+      const rem = (col - 1) % 26;
+      s = String.fromCharCode(65 + rem) + s;
+      col = Math.floor((col - 1) / 26);
+    }
+    return s;
+  }
+
+  function parseTemplateWorkbook(wb) {
+    const ws = wb.getWorksheet('Report') || wb.worksheets[0];
+    if (!ws) throw new Error("Worksheet 'Report' not found and no worksheets available.");
+
+    // find placeholder row (contains {{...}}) and set directive row = placeholderRow + 1
+    let placeholderRowIdx = null;
+    let directiveRowIdx = null;
+    const maxSearch = Math.max(1000, ws.rowCount || 1000);
+    for (let r = 1; r <= maxSearch; r++) {
+      const row = ws.getRow(r);
+      const vals = row.values || [];
+      for (let c = 1; c < vals.length; c++) {
+        const v = vals[c];
+        if (typeof v === 'string' && /\{\{\s*[^}]+\s*\}\}/.test(v)) {
+          placeholderRowIdx = r;
+          directiveRowIdx = r + 1;
+          break;
+        }
+      }
+      if (placeholderRowIdx) break;
+    }
+    if (!placeholderRowIdx) throw new Error('No {{placeholder}} row found in the worksheet.');
+
+    const headerRow = Math.max(1, placeholderRowIdx - 1);
+    const headerVals = (ws.getRow(headerRow).values || []).slice(1);
+    const phVals = (ws.getRow(placeholderRowIdx).values || []).slice(1);
+    const dirVals = (ws.getRow(directiveRowIdx).values || []).slice(1);
+    const maxCols = Math.max(headerVals.length, phVals.length, dirVals.length);
+
+    const columnMap = [];
+    for (let c = 1; c <= maxCols; c++) {
+      const phRaw = phVals[c - 1];
+      const dirRaw = dirVals[c - 1];
+      let placeholder = null;
+      if (typeof phRaw === 'string') {
+        const m = phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+        if (m) placeholder = m[1].trim().toLowerCase();
+      }
+
+      let directiveType = null;
+      let directiveValue = null;
+      if (typeof dirRaw === 'string') {
+        // try key:value first
+        const kv = dirRaw.match(/\{\s*(text|num|number|formula|sum|average|count)\s*:\s*([^}]+)\s*\}/i);
+        if (kv) {
+          directiveType = kv[1].toLowerCase();
+          directiveValue = String(kv[2] || '').trim();
+          // strip surrounding quotes for values like "Total Amount"
+          if (/^['"].+['"]$/.test(directiveValue)) directiveValue = directiveValue.replace(/^['"]|['"]$/g, '');
+          // strip leading '=' from formula value (ExcelJS uses formula without leading '=')
+          if (directiveType === 'formula') directiveValue = directiveValue.replace(/^\s*=\s*/, '');
+        } else {
+          // fallback simple {sum} / {average} / {count} / {text}
+          const simple = dirRaw.match(/\{\s*(sum|average|count|text)\s*\}/i);
+          if (simple) directiveType = simple[1].toLowerCase();
+        }
+      }
+
+      columnMap.push({
+        colIndex: c,
+        placeholder,
+        directiveType,
+        directiveValue
+      });
+    }
+
+    // data rows start AFTER directive row
+    const firstDataRow = directiveRowIdx + 1;
+    // find last non-empty data row across mapped columns
+    let lastDataRow = firstDataRow - 1;
+    const lastRowToCheck = Math.max(ws.rowCount || 0, firstDataRow + 500); // some guard
+    for (let r = firstDataRow; r <= lastRowToCheck; r++) {
+      const row = ws.getRow(r);
+      if (!row) break;
+      const vals = row.values || [];
+      let anyNonEmpty = false;
+      for (let c = 1; c <= columnMap.length; c++) {
+        const v = vals[c];
+        if (v !== undefined && v !== null && String(v).trim() !== '') { anyNonEmpty = true; break; }
+      }
+      if (anyNonEmpty) lastDataRow = r;
+      else {
+        // if we've already seen data and now get an empty row, we can break (end of block)
+        if (r > firstDataRow && lastDataRow >= firstDataRow) break;
+      }
+    }
+
+    const totalsRowIndex = lastDataRow + 1;
+    return {
+      ws, headerRow, placeholderRowIdx, directiveRowIdx, firstDataRow, lastDataRow, totalsRowIndex, columnMap
+    };
+  }
+
+  function applyDirectives(parsed) {
+    const { ws, headerRow, totalsRowIndex, firstDataRow, lastDataRow, columnMap } = parsed;
+    const headerTemplateRow = ws.getRow(headerRow);
+    const totalsRow = ws.getRow(totalsRowIndex);
+
+    for (const cm of columnMap) {
+      if (!cm.placeholder) continue;
+      const tCell = totalsRow.getCell(cm.colIndex);
+      const dt = cm.directiveType;
+      const dv = cm.directiveValue;
+
+      // 1) attempt text/num/formula first (user override)
+      if (dt === 'text' && dv !== null && dv !== undefined) {
+        tCell.value = dv;
+      } else if ((dt === 'num' || dt === 'number') && dv !== null && dv !== undefined) {
+        // try to parse number, remove commas and common currency symbols
+        const cleaned = String(dv).replace(/[,\s]+/g, '').replace(/[^\d\.\-]/g, '');
+        const n = Number(cleaned);
+        tCell.value = Number.isNaN(n) ? dv : n;
+      } else if (dt === 'formula' && dv !== null && dv !== undefined) {
+        const f = String(dv).trim().replace(/^\s*=\s*/, '');
+        if (f) tCell.value = { formula: f };
+      }
+
+      // helper: is the cell still empty
+      const isEmptyCell = (cell) => {
+        if (cell === undefined || cell === null) return true;
+        const v = cell.value;
+        if (v === undefined || v === null || v === '') return true;
+        // ExcelJS formula objects look like { formula: 'A1+A2', result: ... }
+        if (typeof v === 'object' && v.formula === undefined && Object.keys(v).length === 0) return true;
+        return false;
+      };
+
+      // 2) if directive is sum/average/count -> set formula across data rows only if cell still empty
+      if ((dt === 'sum' || dt === 'average' || dt === 'count') && isEmptyCell(tCell)) {
+        if (lastDataRow >= firstDataRow) {
+          const L = colLetter(cm.colIndex);
+          const rng = `${L}${firstDataRow}:${L}${lastDataRow}`;
+          let formula = '';
+          if (dt === 'sum') formula = `SUM(${rng})`;
+          else if (dt === 'average') formula = `AVERAGE(${rng})`;
+          else if (dt === 'count') formula = `COUNTA(${rng})`;
+          if (formula) tCell.value = { formula };
+        } else {
+          // no data rows: count->0, sum->0, average->leave blank
+          if (dt === 'count') tCell.value = 0;
+          else if (dt === 'sum') tCell.value = 0;
+        }
+      }
+
+      // 3) fallback: if directiveType missing but directiveValue contains {sum} etc. (rare)
+      if ((!dt || dt === null) && typeof cm.directiveValue === 'string') {
+        const s = cm.directiveValue.trim().toLowerCase();
+        if (s.indexOf('sum') >= 0 && isEmptyCell(tCell) && lastDataRow >= firstDataRow) {
+          const L = colLetter(cm.colIndex);
+          tCell.value = { formula: `SUM(${L}${firstDataRow}:${L}${lastDataRow})` };
+        }
+      }
+
+      // 4) copy header style to totals cell (safe deep clone)
+      try {
+        const hCell = headerTemplateRow.getCell(cm.colIndex);
+        if (hCell) {
+          if (hCell.font) tCell.font = JSON.parse(JSON.stringify(hCell.font));
+          if (hCell.alignment) tCell.alignment = JSON.parse(JSON.stringify(hCell.alignment));
+          if (hCell.border) tCell.border = JSON.parse(JSON.stringify(hCell.border));
+          if (hCell.fill) tCell.fill = JSON.parse(JSON.stringify(hCell.fill));
+          if (hCell.numFmt) tCell.numFmt = hCell.numFmt;
+        }
+      } catch (e) {
+        // ignore style copy errors
+      }
+    }
+
+    totalsRow.commit();
+  }
+
+  document.getElementById('processBtn').addEventListener('click', async function () {
+    const input = document.getElementById('fileInput');
+    if (!input.files || input.files.length === 0) { alert('Please choose an .xlsx template file first.'); return; }
+    const file = input.files[0];
+    log('Loading file:', file.name);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(arrayBuffer);
+      const parsed = parseTemplateWorkbook(wb);
+      log('Parsed template. firstDataRow=' + parsed.firstDataRow + ' lastDataRow=' + parsed.lastDataRow + ' totalsRow=' + parsed.totalsRowIndex);
+      applyDirectives(parsed);
+      log('Applied directives. Writing workbook...');
+      const buf = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const outName = file.name.replace(/\.xlsx?$/i, '') + '_processed.xlsx';
+      saveAs(blob, outName);
+      log('Downloaded:', outName);
+    } catch (err) {
+      log('Error:', err.message || err);
+      alert('Error: ' + (err.message || err));
+    }
+  });
+
+  // expose helpers for debugging
+  window.__colLetter = colLetter;
+  window.__parseTemplateWorkbook = parseTemplateWorkbook;
+  window.__applyDirectives = applyDirectives;
+})();
+</script>
+</body>
+</html>

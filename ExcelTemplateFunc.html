@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <title>Excel Report Exporter</title>
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+  <style>
+    body{font-family:system-ui,Arial;margin:18px;}
+    .toolbar{margin-bottom:12px;display:flex;gap:10px;align-items:center;}
+    button{padding:8px 12px;border-radius:6px;cursor:pointer;}
+    #gridContainer{height:420px;}
+    .status{font-size:13px;color:#333;margin-left:8px;}
+  </style>
+</head>
+<body>
+  <h3>📊 Excel Report Export from Template</h3>
+
+  <div class="toolbar">
+    <button id="loadDbBtn">🔄 โหลดข้อมูลจากฐานข้อมูล</button>
+    <button id="exportBtn">📤 ส่งออก Excel</button>
+    <span class="status" id="statusText">สถานะ: พร้อม</span>
+  </div>
+
+  <div id="gridContainer"></div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+<script>
+/* ===========================
+   📌 CONFIG & GLOBAL STATE
+=========================== */
+let reportData = [];
+
+const captionMap = new Map([
+  ["name","name"], ["ชื่อ","name"],
+  ["role","role"], ["ตำแหน่ง","role"],
+  ["score","score"], ["คะแนน","score"],
+  ["date","date"], ["วันที่","date"],
+  ["dept","dept"], ["แผนก","dept"], ["department","dept"]
+]);
+
+const placeholderAlias = new Map([
+  ["dep","dept"]
+]);
+
+const STATUS = document.getElementById("statusText");
+const setStatus = txt => STATUS.textContent = "สถานะ: " + txt;
+
+/* ===========================
+   📌 INIT DATAGRID
+=========================== */
+const gridInstance = $("#gridContainer").dxDataGrid({
+  dataSource: [],
+  showBorders: true,
+  columnAutoWidth: true,
+  rowAlternationEnabled: true,
+  export: { enabled: false }
+}).dxDataGrid("instance");
+
+/* helper: push DB data into grid */
+function setReportData(dataArray){
+  reportData = dataArray;
+  gridInstance.option("dataSource", reportData);
+}
+
+/* ===========================
+   📌 PLACEHOLDER UTILS
+=========================== */
+function extractPlaceholder(v){
+  if(typeof v !== "string") return null;
+  const m = v.match(/^\s*\{\{\s*([a-zA-Z0-9_]+)\s*\}\}\s*$/);
+  return m ? (placeholderAlias.get(m[1]) || m[1]).toLowerCase() : null;
+}
+function extractDirective(v){
+  if(typeof v !== "string") return null;
+  const m = v.match(/^\s*\{\s*(sum|average|count)\s*\}\s*$/i);
+  return m ? m[1].toLowerCase() : null;
+}
+function colLetterFromIndex(i){
+  let s = "";
+  while(i>0){
+    const rem = (i-1)%26;
+    s = String.fromCharCode(65+rem)+s;
+    i = Math.floor((i-1)/26);
+  }
+  return s;
+}
+
+/* ===========================
+   📌 LOAD TEMPLATE
+=========================== */
+async function loadTemplateWorkbook(url="template.xlsx"){
+  try{
+    const res = await fetch(url, {cache:"no-store"});
+    if(!res.ok) return null;
+    const ab = await res.arrayBuffer();
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(ab);
+    const ws = wb.getWorksheet("Report");
+    if(!ws) return null;
+    return {wb, ws};
+  }catch{ return null; }
+}
+
+function parseTemplateStructure(ws){
+  let placeholderRowIdx=null;
+  for(let r=1;r<=10;r++){
+    const row = ws.getRow(r).values.slice(1);
+    if(row.some(v=>typeof v==="string" && v.trim().startsWith("{{"))){
+      placeholderRowIdx = r; break;
+    }
+  }
+  const headerRowIdx = placeholderRowIdx-1;
+  const directiveRowIdx = placeholderRowIdx+1;
+  const headers = ws.getRow(headerRowIdx).values.slice(1);
+  const placeholders = ws.getRow(placeholderRowIdx).values.slice(1);
+
+  const columns=[];
+  for(let i=0;i<headers.length;i++){
+    const ph = extractPlaceholder(placeholders[i]);
+    const df = ph || captionMap.get(String(headers[i]).toLowerCase()) || null;
+    const isNo = ph==="no";
+    columns.push({colIndex:i+1,header:headers[i],placeholder:placeholders[i],dataField:df,isNo});
+  }
+  return {headerRowIdx, placeholderRowIdx, directiveRowIdx, columns};
+}
+
+/* ===========================
+   📌 EXCEL EXPORT
+=========================== */
+function autoFitColumns(ws,startRow,endRow,columns){
+  for(const col of columns){
+    let maxLen=0;
+    for(let r=startRow;r<=endRow;r++){
+      let v=ws.getRow(r).getCell(col.colIndex).value;
+      if(v instanceof Date) v = v.toISOString().slice(0,10);
+      if(v!=null) maxLen = Math.max(maxLen, String(v).length);
+    }
+    let width = Math.min(Math.max(maxLen+2,6),36);
+    if(col.dataField==="date") width = 12; // fix for date column
+    ws.getColumn(col.colIndex).width = width;
+  }
+}
+
+async function exportReport(){
+  if(!reportData || reportData.length===0){
+    alert("ไม่มีข้อมูล กรุณาโหลดจากฐานข้อมูลก่อน");
+    return;
+  }
+  setStatus("โหลด template...");
+  const tpl = await loadTemplateWorkbook(); if(!tpl){ alert("template.xlsx not found"); return; }
+  const wb = tpl.wb, ws = tpl.ws;
+
+  const {headerRowIdx, placeholderRowIdx, directiveRowIdx, columns} = parseTemplateStructure(ws);
+  const dataStartRow = headerRowIdx+1;
+  const directiveVals = ws.getRow(directiveRowIdx).values.slice(1);
+  const noCol = columns.find(c=>c.isNo);
+  const hasNo = !!noCol;
+
+  // build grid columns
+  const gridCols = columns.filter(c=>!c.isNo && c.dataField)
+    .map(c=>({dataField:c.dataField, caption:c.header}));
+  gridInstance.option("columns", gridCols);
+  gridInstance.option("dataSource", reportData);
+
+  await DevExpress.excelExporter.exportDataGrid({
+    component: gridInstance,
+    worksheet: ws,
+    topLeftCell: { row: dataStartRow, column: columns.find(c=>!c.isNo)?.colIndex || 1 },
+    customizeCell: ({gridCell,excelCell})=>{
+      if(gridCell?.column?.dataField==="score") excelCell.value = Number(gridCell.value);
+      if(gridCell?.column?.dataField==="date") excelCell.numFmt = "yyyy-mm-dd";
+    }
+  });
+
+  // Add NO if exists
+  if(hasNo){
+    for(let i=0;i<reportData.length;i++){
+      ws.getRow(dataStartRow+i).getCell(noCol.colIndex).value = i+1;
+    }
+  }
+
+  // Add summary formulas
+  const lastDataRow = dataStartRow+reportData.length-1;
+  const summaryRowIdx = lastDataRow+1;
+  wb.calcProperties = { fullCalcOnLoad:true };
+  for(let i=0;i<columns.length;i++){
+    const dir = extractDirective(directiveVals[i]);
+    if(!dir) continue;
+    const c = columns[i];
+    const letter = colLetterFromIndex(c.colIndex);
+    const range = `${letter}${dataStartRow}:${letter}${lastDataRow}`;
+    if(dir==="sum") ws.getCell(`${letter}${summaryRowIdx}`).value = {formula:`SUM(${range})`};
+    if(dir==="average") ws.getCell(`${letter}${summaryRowIdx}`).value = {formula:`AVERAGE(${range})`};
+    if(dir==="count") ws.getCell(`${letter}${summaryRowIdx}`).value = {formula:`COUNTA(${range})`};
+  }
+
+  autoFitColumns(ws, headerRowIdx, summaryRowIdx, columns);
+
+  const buf = await wb.xlsx.writeBuffer();
+  saveAs(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"รายงาน.xlsx");
+  setStatus("ส่งออกเสร็จสิ้น");
+}
+
+/* ===========================
+   📌 BUTTON HANDLERS
+=========================== */
+document.getElementById("loadDbBtn").addEventListener("click", async()=>{
+  // ⚡ Replace this part with your real DB fetch
+  const fakeDB = [
+    { name:"วิกรานต์", role:"Dev", score:95, date:"2025-09-12", dept:"R&D" },
+    { name:"สมชาย",   role:"Tester", score:88, date:"2025-09-11", dept:"QA" }
+  ];
+  setReportData(fakeDB);
+  setStatus("โหลดข้อมูลแล้ว");
+});
+
+document.getElementById("exportBtn").addEventListener("click", exportReport);
+</script>
+</body>
+</html>

@@ -1,0 +1,3938 @@
+    //Payment Batch
+        // window.onload = function () {
+        //     setTimeout(function () {
+        //         location.reload();
+        //     }, 3000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
+        // }
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"]
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+        
+        window.jsPDF = window.jspdf.jsPDF;
+        applyPlugin(window.jsPDF);
+        console.clear();
+        var aaPFDMI = isLocalHost();
+        var aaXToX = localStorage["aaXXoX"];
+        var aaXNoX = localStorage["aaXXuX"];
+        var aaXTXB = "326459ff-7ea6-4465-a946-9326b783d492"; // Master Page
+        var aaPXXI = localStorage["aPXIXD"];
+
+        var jqxhr = $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaXTXB + '/' + aaPXXI, function (e) {
+            console.log("success");
+            aObjMPage = e;
+            aaKeyField = aObjMPage[0].PrimaryKey;
+            aaTBKey = aObjMPage[0].TBKey;
+            localStorage.setItem("aaXKFX", aaKeyField);
+            localStorage.setItem("aaXTBX", aaTBKey);
+        })
+            .done(function (e) {
+                console.log("second success");
+                aObjMPage = e;
+                aaKeyField = aObjMPage[0].PrimaryKey;
+                aaTBKey = aObjMPage[0].TBKey;
+                localStorage.setItem("aaXKFX", aaKeyField);
+                localStorage.setItem("aaXTBX", aaTBKey);
+            })
+            .fail(function () {
+                console.log("error");
+            })
+            .always(function () {
+                console.log("complete");
+            });
+        /*
+                function aGetDataModel(aServerURL, aPUBToken, aTBToken, aOBJName) {
+                    let aaACcT = aTBToken //"95ee65ae-df03-46b0-85e0-980c511f4357"
+                    var jqOTHs = $.post(aServerURL + '/DMQ/XOL/' + aPUBToken + '/' + aTBToken + '/all', function (e) {
+                        //console.log( "success EXP" );
+                        aaExpLU = e;
+                        localStorage.setItem(aOBJName, JSON.stringify(aaExpLU));
+                        //localStorage.setItem("names", JSON.stringify(names)); 
+                    })
+                        .done(function (e) {
+                            //console.log( "second success EXP" );   
+                        })
+                        .fail(function () {
+                            console.log("error EXP");
+                        })
+                        .always(function () {
+                            console.log("complete EXP");
+                        });
+                }
+        
+                function aSQLAction(aDMZServer, aCommands) {  //aFullTableName,aFieldSelected
+                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+        
+                    let aFullBody = aCommands //"Select " + aFieldSelected + " From " + aFullTableName ; //alert(aFullBody)
+                    var myHeaders = new Headers();
+                    myHeaders.append("Content-Type", "application/json");
+                    var raw = JSON.stringify({
+                        "@": aFullBody
+                    });
+        
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: 'follow'
+                    };
+        
+                    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalNonQueryToken;
+        
+                    fetch(aURL, requestOptions)
+                        .then(response => response.json())
+                        //
+                        .then(aData => {
+                            //                                   
+                        })
+                        .catch(e => {
+                            console.log(e);
+                        });
+        
+                }
+        
+        
+                // Function for Load Master Data for dropdown and others 
+                // "https://cbsdev2.locktonwattana.com","[lockthbnk-ap14].ExtraOnLine.dbo.XOLStaff","EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress","aaOBJDT"
+        
+                async function aGetDataAPI(aDMZServer, aFullTableName, aFieldSelected, aOBJsName) {
+                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+                    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
+        
+                    var myHeaders = new Headers();
+                    myHeaders.append("Content-Type", "application/json");
+                    var raw = JSON.stringify({
+                        "@": aFullBody
+                    });
+        
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: 'follow'
+                    };
+        
+                    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
+        
+                    await fetch(aURL, requestOptions)
+                        .then(response => response.json())
+                        //
+                        .then(aData => {
+                            localStorage.setItem(aOBJsName, JSON.stringify(aData));
+                        })
+                        .catch((e) => {
+                            console.log(e)
+                        })
+                }
+        
+                async function aGetD2V(aDMZServer, aFullTableName, aFieldSelected, aOBJsName) {
+                    let aLocalSQLToken = "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232"; // with select command
+                    let aLocalNonQueryToken = "9DE8BDB8-8EE0-48D0-A506-9AD24F151F9A"; // no select command
+                    let aaXPUB = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Public Key
+                    let aFullBody = "Select " + aFieldSelected + " From " + aFullTableName;
+                    var myHeaders = new Headers();
+                    myHeaders.append("Content-Type", "application/json");
+                    var raw = JSON.stringify({
+                        "@": aFullBody
+                    });
+        
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: 'follow'
+                    };
+        
+                    let aURL = aDMZServer + "/DMQ/XOL/" + aaXPUB + "/" + aLocalSQLToken;
+        
+                    await fetch(aURL, requestOptions)
+                        .then(response => response.json())
+                        //
+                        .then(aData => {
+                            localStorage.setItem(aOBJsName, JSON.stringify(aData));
+                        })
+                        .catch((e) => {
+                            console.log(e)
+                        })
+        
+                }
+        
+        
+        
+                //var aRunChar = "ER-" + String( aNowDatev.getFullYear()).substring(2, 4) + String( 100 + aNowDatev.getMonth()).substring(1,3) + String( 100 + aNowDatev.getDate()).substring(1,3) + String( 100 + aNowDatev.getHours()).substring(1,3) + String( 100 + aNowDatev.getMilliseconds()).substring(1,3);
+                function xaGetDateRef() {
+                    //axRunRun = ""
+                    let aNowDatev = new Date()
+                    let aYear2 = String(aNowDatev.getFullYear()).substring(2, 4);
+                    let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
+                    let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
+                    let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
+                    let aDateNow2 = String(Date.now()).substring(5, 13)
+                    //axRunRun = "ER" + aDateNow2
+                    //alert(aDateNow2)
+                    return "ER" + aDateNow2 //+ aYear2 + aMonth2 + aDate2 + aHour2;
+                }
+                
+                const aGetDateRef = (aERSuf) => {
+                    //axRunRun = ""
+                    let aNowDatev = new Date()
+                    let aYear2 = String(aNowDatev.getFullYear()).substring(2, 4);
+                    let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
+                    let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
+                    let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
+                    let aDateNow2 = aYear2 + aMonth2 + aDate2 + String(Date.now()).substring(5, 9) // 5,16
+                    //let aERCode = "5102300001"
+                    //let aERSuf = "F"
+                    //axRunRun = "ER" + aDateNow2
+                    return aERSuf + aDateNow2 //+ aYear2 + aMonth2 + aDate2 + aHour2;
+                }
+                */
+        const aESTPaymentDate = () => {
+            let aNowDatev = new Date()
+            let aYear2 = String(aNowDatev.getFullYear()) //.substring(2, 4);
+            let aMonth2 = String(101 + aNowDatev.getMonth()).substring(1, 3);
+            let aNewYear = (aMonth2 === "12") ? String(aNowDatev.getFullYear() + 1) : aYear2;
+            let aNewMonth = (aMonth2 === "12") ? "01" : String(101 + aNowDatev.getMonth() + 1).substring(1, 3);
+            let aNewDate = (aNewMonth === "04" && aNowDatev.getMonth() === 3) ? "30" : "05";
+            //let aESTPDate = aNewDate + "/" + aNewMonth + "/" + aNewYear
+            let aDate2 = String(100 + aNowDatev.getDate()).substring(1, 3);
+            let aHour2 = String(100 + aNowDatev.getHours()).substring(1, 3);
+            //let aDateNow2 = aYear2 + aMonth2 + aDate2 + String(Date.now()).substring(5, 9) // 5,16
+            let aMinute2 = String(100 + aNowDatev.getMinutes()).substring(1, 3);
+            let aSecond2 = String(100 + aNowDatev.getSeconds()).substring(1, 3);
+            let aESTPDate = aNewYear + "-" + aNewMonth + "-" + aNewDate + "T" + aHour2 + ":" + aMinute2 + ":" + aSecond2
+            /*
+            console.log(aNewYear)
+            console.log(aNewMonth)
+            console.log(aNewDate)
+            */
+            return aESTPDate
+        }
+        //alert(aESTPaymentDate())
+        //alert(new Date(aESTPaymentDate()))
+  //</script>
+ 
+  var aaPXIXD = localStorage["aPXIXD"];
+  var aaEnt = aaPXIXD.includes("X");
+  var aaKeyField = localStorage["aaXKFX"];
+  var aaTBKey = localStorage["aaXTBX"];
+  var aaUsrN = localStorage["aaXXuX"];
+
+  var asFullName = localStorage["asFTNAME"]; // Login Full Name
+  var asStaffID = $.trim(localStorage["asSTFID"]);
+  var asDepartment = localStorage["asDEPT"];
+  var asDivision = $.trim(localStorage["asDIV"]);
+  var asStaffEmail = localStorage["asEMAIL"]; // Login Email
+  var aaHRAppName = asFullName
+  var aaHRAppEmail = asStaffEmail
+  var aHRDivGrp = "(select ApproveToDivision from Approver Where ApproverCode = 'HR' and ApproverEmpID = '" + asStaffID + "')"
+
+  var asERAppSta = '%FA Verified and Approved'
+  var asERStatus = '%Approved wait for FA' //HR Approved wait for FA Confirmed wait for HR
+  var aqrFull = "ERStatus LIKE '" + asERAppSta + "'" //"ERStatus LIKE '" + asERStatus + "' OR ERStatus LIKE '" + asERAppSta + "'"  //" and Division IN " + aHODDivGrp  // scopes based permission (View Only Login Name)  ExpensesCode LIKE aaOnInitAccCode Division "ExpGroupCode LIKE '%" + aaERTYPE + "%' and " +
+  // "ERStatus LIKE '" + asERAppSta + "' AND PBatchNo = ''"
+
+  $(function () {
+      var aaERTYPE = "300"
+      var aaOnInitExpGroupCode = "300"
+      var aaOnInitExpGroupDesc = "Medical"
+      var aaOnInitAccCode = "5204100003"
+      var aaOnInitAccDesc = "ค่ารักษาพยาบาล" 
+
+      // Load Data for [Expenses] DropDown Selection 
+      //var aaPFDMI = localStorage["aPXIXD"];   //"https://cbsdev2.locktonwattana.com" 
+      //var aaDMZSn = "https://cbsdev2.locktonwattana.com";
+      var aaPFDMI = isLocalHost();
+      var aaXToX = localStorage["aaXXoX"];
+      /*
+      aGetDataModel(aaPFDMI, atob(aaXToX), "95ee65ae-df03-46b0-85e0-980c511f4357", "aaOBJAccExp") //ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE
+      var aaExpExp = JSON.parse(localStorage.getItem("aaOBJAccExp")); //JSON.parse(localStorage.getItem("names"))
+
+      aGetDataAPI(aaDMZSn, "[lockthbnk-ap14].SIBISDB.dbo.Currency", "Code,Name,(select TOP 1 DefaultRate From [lockthbnk-ap14].SIBISDB.dbo.ExchangeRate Where FromCurrency = Currency.code and ToCurrency = 'THB' ORDER by PeriodYear Desc, PeriodMonth Desc) as xRate", "aaOBJCurr")
+      var aaCurrency = JSON.parse(localStorage.getItem("aaOBJCurr"));
+      //select  Code,Name, (select TOP 1 DefaultRate From [lockthbnk-ap14].SIBISDB.dbo.ExchangeRate Where FromCurrency = Currency.code and ToCurrency = 'THB' ORDER by PeriodYear Desc, PeriodMonth Desc) as xRate from Currency
+      */
+      var aMMaMx = localStorage["MMaMx"];
+      var aRRgRs = aMMaMx.split('0');
+      var aDDeDx = aRRgRs[0];
+      var aRrgSx = aRRgRs[1];
+      if (jQuery.type(aRrgSx) === "undefined") {
+          aRrgSx = "377B";
+      }
+      let nDataPos = 1;
+      let nExcelPos = 2;
+      let nPDFPos = 3;
+      let nRPTPos = 4;
+      var arDataC = aRolesAction(aRrgSx, nDataPos, 1);
+      var arDataU = aRolesAction(aRrgSx, nDataPos, 2);
+      if (arDataU === 1) {
+          var aUpdateText = "Update";
+          var aSaveVisible = 1;
+          var aCancelText = "Cancel";
+          var aCancelicon = "close";
+          var aCancelType = "danger";
+      } else {
+          var aUpdateText = "xxx";
+          var aSaveVisible = 0;
+          var aCancelText = "EXIT";
+          var aCancelicon = "fas fa-sign-out-alt";
+          var aCancelType = "success";
+      }
+      var arDataD = aRolesAction(aRrgSx, nDataPos, 3);
+      var arExcelEx = aRolesAction(aRrgSx, nExcelPos, 2);
+      var arPDFEx = aRolesAction(aRrgSx, nPDFPos, 2);
+      var aNowDatev = new Date()
+
+
+      //var aaTBKey = "ec0f26bc-c294-4928-ac02-227b512b7401"
+
+      /* function logEvent(eventName) {
+           var logList = $("#events ul"),
+               newItem = $("<li>", { text: eventName });
+           logList.prepend(newItem);
+       }*/
+      let changedBySelectBox;
+      let titleSelectBox;
+      let clearSelectionButton;
+      var aaTT
+      var aConfirma = "NO"
+      var aNewStaffName = "" //ttt
+      var aNewStaffID = ""
+      var aToday = new Date();
+      //var aTMonth = (aToday.getMonth() + 1).ToString
+      //alert(aTMonth)
+      $("#gridContainer").dxDataGrid({
+
+          dataSource: new DevExpress.data.CustomStore({
+              key: "HeadRefNo",
+              loadMode: "omit",
+              load: function () {
+                  return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aqrFull }) // Change aaTBKey to TokenKey for this table
+                      .fail(function () { throw "Data loading error" });
+              },
+              insert: function (values) {
+                  if (aaEnt) {
+                      var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                      var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                  }
+                  else {
+                      var ObjRowData = JSON.stringify(values);
+                  }
+                  sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+              },
+              update: function (key, values) {
+                  //console.log( aaKeyField );
+                  var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                  var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                  sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+              },
+              remove: function (key) {
+                  var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                  var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                  sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+              }
+          }),
+
+          allowColumnReordering: true,
+          allowColumnResizing: true,
+          columnMinWidth: 10,
+          columnChooser: {
+              enabled: true
+          },
+          showBorders: true,
+          sorting: {
+              mode: "multiple"
+          },
+          selection: {
+              mode: 'multiple',//'multiple' 'single'
+          },
+          groupPanel: {
+              visible: true //false // can't select other group
+          },
+          filterRow: {
+              visible: true,
+              applyFilter: "auto"
+          },
+          filterPanel: {
+              visible: true
+          },
+          headerFilter: {
+              visible: true
+          },
+          filterValue: [['PBatchNo', '=', '']],
+          grouping: {
+              autoExpandAll: true,
+          },
+          filterBuilderPopup: {
+              position: {
+                  of: window, at: 'top', my: 'top', offset: { y: 5 },
+              },
+          },
+          searchPanel: {
+              visible: true
+          },
+          paging: {
+              pageSize: 10
+          },
+          pager: {
+              showPageSizeSelector: true,
+              allowedPageSizes: [10, 20, 50, 80],
+              showNavigationButtons: true,
+              showInfo: true
+          },
+          showBorders: true,
+          groupPaging: true,
+          showColumnLines: true,
+          showRowLines: true,
+          rowAlternationEnabled: false, //true,
+
+          // Export to Excel 		
+          export: {
+              enabled: arExcelEx,
+              allowExportSelectedData: true
+          },
+          onExporting: function (e) {
+              const workbook = new ExcelJS.Workbook();
+              const worksheet = workbook.addWorksheet('DATA');
+              DevExpress.excelExporter.exportDataGrid({
+                  worksheet: worksheet,
+                  component: e.component
+              }).then(function () {
+                  workbook.xlsx.writeBuffer().then(function (buffer) {
+                      saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'EXPREIM' + '.xlsx');
+                  });
+              });
+              e.cancel = true;
+          },
+          //onEditingStart: function(e){
+          //    grid.option("editing.popup.title", "Editing");
+          //},
+          onInitNewRow: function (e) {
+              //e.component.__addingStart = true; 
+              //gridContainer.option("editing.popup.title", "Adding Expenses Reimbursement");
+              let aaID = 1
+              let axRunRun = aGetDateRef();
+              let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+              e.data.ID = aaID
+              e.data.HeadRefNo = axRunRun
+              e.data.REFNO = axLineNo
+              e.data.PayToCode = asStaffID
+              e.data.PayToName = asFullName
+              e.data.Department = asDepartment
+              e.data.ReqDate = new Date()
+          },
+          onEditorPreparing: function (e) {
+              if (e.parentType === "dataRow" && arDataU === 0) {
+                  e.editorOptions.disabled = true;
+              } else {
+                  if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department" || e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "TotalLocalAmount" || e.dataField === "ERStatus")) {
+                      e.editorOptions.disabled = true;
+                  } //|| e.dataField === "ExpensesCode" || e.dataField === "ExpGroupDescEng" || e.dataField === "LocalAmount" || e.dataField === "ERStatus" || e.dataField === "ERORefNo3"
+              }
+          },
+          //
+          //
+          // Editing
+          editing: {
+              mode: "row",
+              useIcons: true,
+              allowUpdating: true,
+              allowDeleting: arDataD,
+              allowAdding: 0, //arDataC,
+
+              popup: {
+                  title: "Expenses Reimbursement Info",
+                  fullScreen: false,
+                  showTitle: true,
+                  width: 1200,
+                  height: 650,
+                  position: {
+                      my: "top",
+                      at: "top",
+                      of: "window"
+                  },
+                  onContentReady: function (e) {
+                      e.component.option('toolbarItems[0].visible', aSaveVisible);
+                      e.component.option('toolbarItems[0].options.icon', 'save');
+                      e.component.option('toolbarItems[0].options.type', 'success');
+                      e.component.option('toolbarItems[1].options.text', aCancelText);
+                      e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                      e.component.option('toolbarItems[1].options.type', aCancelType);
+                  }
+              },
+          },
+          // column list
+          columns: [
+              {
+                  type: "buttons",
+                  width: 60,
+                  visible: false,
+                  buttons: [
+                      {
+                          hint: "Email to Requester",
+                          icon: "fas fa-envelope",
+                          visible: function (e) {
+                              return (e.row.data.Approved === false) //return !e.row.isEditing; && e.row.data.Confirmed === false
+                          },
+                          onClick: function (e) {
+                              aPopUpAddForm(e.row.data);
+                              $("#gridContainer").dxDataGrid("instance").refresh();
+                          }
+                      },
+                      {
+                          hint: "Add a item",
+                          icon: "add",
+                          visible: false,
+                          //visible: function(e) {
+                          //    //return !e.row.isEditing;
+                          //    return (e.row.data.Approved === false) //false;
+                          //},
+                          onClick: function (e) {
+                              //REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,RemitTo1,RemitTo2,RemitTo1Amount,RemitTo2Amount,RemitTo1Diff,RemitTo2Diff,RemitTo1Note,RemitTo2Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6
+                              let aBlankDate = "1900-01-01T00:00:00" //new Date('1900-01-01T00:00')
+                              //console.log(aBlankDate)
+                              let axRunRun = e.row.data.HeadRefNo
+                              let aaTT = aGetD2V(aaPFDMI, "[WIKRAN-W10].ExtraOnLine.dbo.ERnextIDview Where HeadRefNo LIKE '" + axRunRun + "%'", "NextID", "aaOBJnn")
+                              let aNextNOa = JSON.parse(localStorage.getItem("aaOBJnn"));
+                              let aaID = aNextNOa[0].NextID
+                              let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                              //let aObjKeyData = { ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, EROAmount: 0, PBatchDate: aBlankDate,PSPvDate: aBlankDate,ERODate01: aBlankDate,ERODate02: aBlankDate,ERODate03: aBlankDate,ERODate04: aBlankDate,ERODate05: aBlankDate,ERODate06: aBlankDate} //{EntryBy: aaUsrN , EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                              let aObjKeyData = { REFNO: axLineNo, ID: aaID, LocalAmount: 0, Amount: 0, Note: "", ERORefNo1: "" }
+                              let aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //values
+                              //var clonedItem = $.extend({}, e.row.data, { REFNO: axRunRun }); //++maxID
+                              //alert(aObjRowData)
+                              sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                              //employees.splice(e.row.rowIndex, 0, clonedItem);
+                              e.component.refresh(true);
+                              e.component.refresh(true);
+                              e.component.refresh(true);
+                              e.event.preventDefault();
+                          }
+                      },
+                      {
+                          hint: "Approve",
+                          icon: "fas fa-check-circle",
+                          visible: function (e) {
+                              return (e.row.data.Approved === false) //return !e.row.isEditing; && e.row.data.HODApproved === false && e.row.data.Approved === false
+                          },
+                          onClick: function (e) {
+                              // mark Confirmed field
+                              let aERStatus = "FA Verified and Approved" //"Register" //FA Verified and Approved //HR Approved wait for FA
+                              let aTrueORFalse = (e.row.data.Approved === true ? '0' : '1');
+                              let aTrueORFalseB = (e.row.data.Approved === true ? false : true);
+                              var aObjKeyData = { REFNO: e.row.data.REFNO, Approved: aTrueORFalseB, ERStatus: aERStatus, FAApprovedDate: new Date() };
+                              var aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData));
+                              sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+
+                              //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
+                              let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET FAApprovedDate = GETDATE(), Approved = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                              aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                              aSQLAction(aaPFDMI, aSQLCommand)
+                              aSQLAction(aaPFDMI, aSQLCommand)
+
+
+                              e.component.refresh(true);
+                              e.component.refresh(true);
+                              e.component.refresh(true);
+                              e.event.preventDefault();
+
+                              //send Email
+
+                              let aApproverName = aaHRAppName + ", [FA]"     //aaHRAppName //"Wikran" + " [HOD]"         // HOD Approver Name
+                              let aApproverEmail = $.trim(aaHRAppEmail)      // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                              let aRequesterName = e.row.data.PayToName //e.data.PayToName //"Wikran Intaraprajaks"
+                              let aRequesterEmail = e.row.data.ERODesc06 //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                              let aSubject = aaOnInitExpGroupDesc + " Expenses Reimbursement Approved (HR)"
+                              let aAddress2Do = "<a href='https://cbsdev2.locktonwattana.com/XOL/index.html'>Expenses Reimburse</a>";
+                              let aMessage = "<div><br>����͹��ѵ�:" + $.trim(aRequesterName) + ",<br>��¡��: " + aaOnInitExpGroupDesc + " REFNO = [" + e.row.data.HeadRefNo + "] <br>�ҡ: " + aAddress2Do + " <br>���͹��ѵ�:" + aApproverName + "<br>͹��ѵ����º��������</div>"
+
+                              aSendMailDMZ(" " + aRequesterName, aRequesterEmail, aApproverEmail, "", "", aSubject, aMessage)
+
+                              e.component.refresh(true);
+                              e.component.refresh(true);
+                              e.component.refresh(true);
+                              e.event.preventDefault();
+                              $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                              aMessageAlert("Already Confirmed", "DarkGreen")
+                          }
+                      },
+                  ]
+              },
+              {
+                  type: "buttons",
+                  width: 80,
+                  visible: false,
+                  buttons: ["edit"]
+
+              },
+              {
+                  dataField: "HeadRefNo",
+                  caption: "REF NO",
+                  sortOrder: "desc",
+                  //groupIndex: 0,
+                  width: 120,
+              },
+              //"HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpGroupCode,ExpGroupDescEng,Confirmed,ConfirmedDate,HODApproved,HODApprovedDate,HRApproved,HRApprovedDate,Approved,FAApprovedDate,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Currency,Xrate,TotalAmount,TotalLocalAmount,TotalReimburse,ERStatus,ReqEmail,APPEmail,APPName,LimitAmount,LimitPerTime,MaternityLimit,nRecord",
+              {
+                  dataField: "PBatchNo",
+                  caption: "Pay Batch No",
+                  width: 120,
+              },
+              {
+                  dataField: "PBatchDate",
+                  caption: "Batch Date",
+                  dataType: "date",
+                  calculateCellValue: function (rowData) {
+                      if (rowData.PBatchDate.substring(0, 4) === "1901") {
+                          return ''
+                      } else {                                                       
+                          let aDateF = new Date(rowData.PBatchDate.substring(0, 10))
+                          let formattedDate = aDateF.toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric"
+                          });
+                          return formattedDate 
+                      }
+
+                  },
+                  format: "dd/MM/yyyy",
+                  width: 120,
+              },
+              {
+                  dataField: "PSPvDate",
+                  caption: "EST.Payment",
+                  dataType: "date",
+                  calculateCellValue: function (rowData) {
+                      if (rowData.PSPvDate.substring(0, 4) === "1901") {
+                          return ''
+                      } else {
+                          let aDateF = new Date(rowData.PSPvDate.substring(0, 10))
+                          let formattedDate = aDateF.toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric"
+                          });
+                          return formattedDate
+                      }
+                  },
+                  format: "dd/MM/yyyy",
+                  width: 120,
+              },
+              {
+                  dataField: "nRecord",
+                  //sortOrder: "asc",
+                  caption: "NO",
+                  //format: "###0",
+                  //editorOptions: { width: 40 },
+                  //disabled: true,
+                  width: 70
+              },
+              {
+                  dataField: "ReqDate",
+                  caption: "Req.Date",
+                  dataType: "date",
+                  format: "dd/MM/yyyy",
+                  //editorOptions: { width: 120 },
+                  //validationRules: [{ type: "required" }],
+                  //editorType:"dxCalendar",
+                  //value: [new Date()],
+                  //format:"dd/MM/yyyy",
+                  width: 130,
+              },
+              // FAApprovedDate
+              {
+                  dataField: "FAApprovedDate",
+                  caption: "FA Approved Date",
+                  dataType: "date",
+                  format: "dd/MM/yyyy",
+                  width: 120,
+                  editorOptions: { width: 120 },
+              },
+              {
+                  dataField: "PayToCode",
+                  caption: "Staff ID",
+                  width: 100,
+                  editorOptions: { width: 150 },
+                  visible: true,
+              },
+              {
+                  dataField: "PayToName",
+                  caption: "Name",
+                  //editorOptions: { width: 300 },
+                  width: 200,
+                  //visible: false,
+              },
+              {
+                  dataField: "Department",
+                  caption: "Department",
+                  editorOptions: { width: 150 },
+                  width: 100,
+                  visible: false,
+              },
+              {
+                  dataField: "Division",
+                  caption: "Division",
+                  editorOptions: { width: 150 },
+                  width: 80,
+                  visible: false,
+              },
+              {
+                  dataField: "ExpensesCode",
+                  caption: "Expenses Code",
+                  editorType: "dxTextArea",
+                  //editorOptions: { width: 200 },
+                  width: 120,
+                  visible: false,
+              },
+              {
+                  dataField: "ExpGroupDescEng",//"ExpensesDescription",
+                  caption: "Expenses",
+                  //editorType: "dxTextArea",
+                  //editorOptions: { width: 200 },
+                  width: 180,
+              },
+              {
+                  dataField: "Currency",
+                  caption: "Currency",
+                  value: "THB",
+                  editorType: "dxTextArea",
+                  editorOptions: { width: 200 },
+                  value: "THB",
+                  visible: false,
+              },
+              {
+                  dataField: "Xrate",
+                  caption: "X-Rate",
+                  dataType: "number",
+                  //format:{ type:"fixedPoint", precision: 6 },
+                  editorType: "dxNumberBox",
+                  editorOptions: { format: "#,##0.000000", width: 150 },
+                  value: 1,
+                  visible: false,
+              },
+              {
+                  dataField: "TotalAmount",
+                  caption: "Expenses Amount",
+                  dataType: "number",
+                  format: { type: "fixedPoint", precision: 2 },
+                  setCellValue: function (newData, value, currentRowData) {
+                      newData.Amount = value;
+                      newData.LocalAmount = value * (1 / currentRowData.Xrate);
+                  },
+                  editorType: "dxNumberBox",
+                  editorOptions: { format: "#,##0.00", width: 320 },
+                  visible: false,
+              },
+              {
+                  dataField: "TotalLocalAmount", //TotalLocalAmount,TotalReimburse
+                  caption: "Bill Amount",
+                  dataType: "number",
+                  format: { type: "fixedPoint", precision: 2 },
+                  editorOptions: { format: "#,##0.00", width: 120 },
+                  width: 120,
+              },
+              /*
+              {
+                  dataField: "ERORefNo3",//"ExpensesDescription",
+                  caption: "Sub Expenses",
+                  width: 200,
+              },
+              {
+                  dataField: "ERODesc06",//"Email",
+                  caption: "Email",
+                  width: 200,
+                  visible: false,
+              },     
+              */
+              {
+                  dataField: "TotalReimburse", //ERORefNo3
+                  caption: "Reimburse",
+                  dataType: "number",
+                  format: { type: "fixedPoint", precision: 2 },
+                  editorOptions: { format: "#,##0.00", width: 120 },
+                  width: 120,
+              },
+              {
+                  dataField: "Confirmed",
+                  caption: "Confirm",
+                  width: 30,
+                  visible: false,
+              },
+
+              {
+                  dataField: "ERStatus",
+                  caption: "Status",
+                  width: 180,
+              },
+
+              {
+                  dataField: "PSPvNO",
+                  caption: "PS PVNO",
+                  editorOptions: { width: 120 },
+                  width: 120,
+                  visible: false,
+              },
+              /*
+              {
+                  dataField: "PSPvDate",
+                  caption: "PS PV Date",
+                  dataType: "date",
+                  format: "dd/MM/yyyy",
+                  width: 120,
+                  visible: false,
+              },
+              */
+              {
+                  dataField: "EntryBy",
+                  caption: "Entry By",
+                  editorOptions: { width: 150 },
+                  visible: false,
+              },
+              {
+                  dataField: "Approved",
+                  caption: "Approve",
+                  //width: 10,
+                  visible: false,
+              },
+
+
+
+          ],
+          onSelectionChanged(selectedItems) {
+              const data = selectedItems.selectedRowsData;
+              aaTT = selectedItems.selectedRowsData;
+              if (data.length > 0) {
+                  /*$('#selected-items-container').text(
+                      data
+                          .map((value) => `${value.FirstName} ${value.LastName}`)
+                          .join(', '),
+                  );*/
+                  //aaTT = aaTT + data
+                  //aaTT = data
+                  console.log(data)
+                  console.log(aaTT.length)
+              } else {
+                  //$('#selected-items-container').text('Nobody has been selected');
+              }
+              if (!changedBySelectBox) {
+                  //titleSelectBox.option('value', null);
+              }
+
+              changedBySelectBox = false;
+              clearSelectionButton.option('disabled', !data.length);
+          },
+          // summary
+          summary: {
+              recalculateWhileEditing: true,
+              skipEmptyValues: false,
+              totalItems: [
+                  {
+                      column: "HeadRefNo",
+                      summaryType: "count",
+                      //          summaryType: "max",
+                      //          valueFormat: "currency",
+                      //          showInGroupFooter: false,
+                      //          alignByColumn: true            
+                      displayFormat: "{0} Items",
+                  },
+                  {
+                      column: "TotalAmount",
+                      summaryType: "sum",
+                      //          summaryType: "max",
+                      valueFormat: "#,##0.00",
+                      //          showInGroupFooter: false,
+                      //          alignByColumn: true            
+                      displayFormat: "{0}",
+                  },
+                  {
+                      column: "TotalReimburse",
+                      summaryType: "sum",
+                      valueFormat: "#,##0.00",
+                      //showInGroupFooter: true,
+                      //alignByColumn: true,           
+                      displayFormat: "{0}",
+                  },
+              ],
+
+              groupItems: [
+                  {
+                      column: "ExpensesCode",
+                      summaryType: "count",
+                      displayFormat: "{0} Items",
+                  },
+                  {
+                      column: "TotalAmount",
+                      summaryType: "sum",
+                      valueFormat: "#,##0.00",
+                      showInGroupFooter: true,
+                      alignByColumn: true,
+                      displayFormat: "{0}",
+                  },
+                  {
+                      column: "TotalReimburse",
+                      summaryType: "sum",
+                      valueFormat: "#,##0.00",
+                      showInGroupFooter: true,
+                      alignByColumn: true,
+                      displayFormat: "{0}",
+                  },
+              ],
+
+          },
+          // Tool Bar
+          onToolbarPreparing: function (e) {
+              var dataGrid = e.component;
+              e.toolbarOptions.items.unshift(
+                  /*
+                  {
+                      location: "before",
+                      template: function () { return $("<div style='padding: 5px 5px;'/>") }
+                  },
+                  {
+                      location: "before",
+                      template: function () {
+                          return $("<div />")
+                              //.addClass("informer")
+                              .append(
+                                  $("<span style='font-size: 13px; font-weight: bold; color: white; background-color: DarkRed; border-radius: 3px; border: 0px; padding: 1px 30px; ' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                      .text("FA APPROVAL"),
+                                  $("<br><center />"),
+                                  $("<i class= 'fas fa-user-circle''><span />")   //; style='color: DarkGreen;
+                                      //.addClass("name")
+                                      .text(" " + $.trim(asFullName)),
+                              );
+                      }
+                  },
+                  {
+                      location: "before",
+                      template: function () { return $("<div style='padding: 5px 95px;'/>") }
+                  },
+                  */
+                  {
+                      widget: 'dxButton',
+                      location: 'after',
+                      options: {
+                          text: 'Batch Set ',
+                          icon: 'fas fa-pen-square',
+                          type: "default",
+                          stylingMode: "outlined",
+                          //disabled: true,
+                          //onInitialized(e) {
+                          //    clearSelectionButton = e.component;
+                          //},
+                          //onClick() {
+                          onClick: function (e) {
+                              //dataGrid.clearSelection();
+                              //console.log(e.data)
+                              if (aaTT === undefined || aaTT.length === 0) {
+                                  DevExpress.ui.dialog.alert({
+                                      showTitle: false,
+                                      position: { offset: "0 -320" },
+                                      messageHtml: "<center style='color:Red;'>ERROR !! <br>Please TICK item before PROCESS </center>"
+                                  });
+                              } else {
+                                  let recordCount = aaTT.length //totalCount() //e.data.length;
+                                  let firstRec = aaTT[0].HeadRefNo
+                                  let i = 0;
+                                  let aSQLCommand = "";
+                                  //let aBatchNo = "B" + String(aToday.getFullYear()).substring(2, 4) + String(aToday.getMonth() + 1).padStart(2, '0') + String(aToday.getDate()).padStart(2, '0');
+                                  let aBatchNo = aGetDateRef("B")
+                                  let aDateTT = "";
+                                  let nr = 0;
+                                  let nnLoop = 20;
+                                  var aRetn = 0;
+                                  var aGroupOfIDNO = "";
+                                  var aEstPDateT = aESTPaymentDate();
+                                  var aEstPDate = new Date(aESTPaymentDate());
+                                  var aLastComma = ",";
+                                  var aaPFDMZz = aaPFDMI;
+                                  let aLocalMess = "<div style='color:darkgreen; font-size: 14px'>BATCH NO = " + aBatchNo + "<br>BATCH DATE = " + new Date() + "<br>EST.PAYMENT DATE = " + aEstPDate + "</div> <br> Are you sure you want to continue ?";
+                                  let aLocalTitle = "GENERATE BATCH?"
+
+                                  if (recordCount <= 0) {
+
+                                      DevExpress.ui.dialog.alert({
+                                          showTitle: false,
+                                          position: { offset: "0 -120" },
+                                          messageHtml: "<center style='color:Red;'>ERROR !! <br> Please TICK item before PROCESS <br> ????? TICK ????????????????????????? </center>"
+                                      });
+
+                                  }
+                                  if (recordCount > 0) { //&& aNewStaffName !== "" && aNewStaffID !== ""
+                                      $("#gridContainer").dxDataGrid("instance").refresh();
+                                      let result = DevExpress.ui.dialog.confirm(aLocalMess, aLocalTitle);
+                                      result.done(function (dresult) {
+                                          if (dresult) {
+                                              //$("#gridContainer").dxDataGrid("instance").refresh();
+                                              //$("#gridContainer").dxDataGrid("instance").refresh();
+                                              //$("#gridContainer").dxDataGrid("instance").refresh();
+                                              // Loop
+                                              aSQLCommand = "use ExtraOnline; "
+                                              aGroupOfIDNO = ""
+                                              for (i = 0; i < recordCount; i++) { //[lockthbnk-ap14].
+                                                  //aSQLCommand = "use SIBISDB; UPDATE RENEWALLIST SET STAFFNAME = '" + $.trim(aNewStaffName) + "',STAFFID = '" + $.trim(aNewStaffID) + "' Where IDNO LIKE '%" + $.trim(aaTT[i].IDNO) + "%'; "
+                                                  //aSQLCommand = aSQLCommand + " UPDATE RENEWALLIST SET STAFFNAME = '" + $.trim(aNewStaffName) + "',STAFFID = '" + $.trim(aNewStaffID) + "' Where IDNO LIKE '%" + $.trim(aaTT[i].IDNO) + "%'; "
+                                                  if (i === recordCount - 1) { aLastComma = "" } else { aLastComma = "," }
+                                                  aGroupOfIDNO = aGroupOfIDNO + "'" + aaTT[i].HeadRefNo + "'" + aLastComma
+                                                  //aSQLAction(aaPFDMZz, aSQLCommand) //1
+                                                  /*
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand) //10  
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  aSQLAction(aaPFDMZz, aSQLCommand) //20 
+                                                  */
+                                                  //setTimeout(function(){ }, 5500);
+                                                  //aSQLAction(aaPFDMZz, aSQLCommand)
+                                                  //aMessageAlert(aSQLCommand, "Red") //"Total " + recordCount aaTT[i].IDNO
+                                                  //aMessageAlert("Staff changed " + recordCount + "item(s)", "DarkGreen") //"Total " + recordCount aaTT[i].IDNO
+                                                  //console.log(aSQLCommand)
+                                                  //console.log(aRetn)
+                                              }
+
+                                              //      PBatchNo PBatchDate PSPvDate
+                                              aSQLCommand = "use ExtraOnline; UPDATE EXPREIM SET PBatchNo = '" + aBatchNo + "',PBatchDate = getDate(),PSPvDate = '" + aEstPDateT + "' Where HeadRefNo IN (" + aGroupOfIDNO + "); "
+                                              //alert(aSQLCommand)
+                                              //console.log(aSQLCommand)
+
+                                              // update to server
+                                              aSQLAction(aaPFDMZz, aSQLCommand)  //1                                           
+                                              /*
+                                              DevExpress.ui.dialog.alert({
+                                                  showTitle: false,
+                                                  position: { offset: "0 -120" },
+                                                  messageHtml: "<center style='color:DarkGreen;'>Send Process to RUN in background !! <br>" + "Change Staff to <br>  " + aNewStaffName + "[" + aNewStaffID + "]" + "<br>" + recordCount + " item(s) <br> Please Refresh again !!</center>"
+                                              });
+                                              */
+                                              dataGrid.clearSelection();
+                                              dataGrid.clearSelection();
+
+                                              $("#gridContainer").dxDataGrid("instance").refresh();
+                                              $("#gridContainer").dxDataGrid("instance").refresh();
+                                              //$("#gridContainer").dxDataGrid("instance").refresh();
+                                          }
+                                      });
+                                  }
+                                  //aNewStaff(e.data); //e.data
+                              }
+                          },
+                      },
+                  },
+                  {
+                      widget: 'dxButton',
+                      location: 'after',
+                      options: {
+                          icon: "fas fa-minus-circle",
+                          type: "default",
+                          text: 'Clear Selection',
+                          stylingMode: "contained",
+                          //disabled: true,
+                          onInitialized(e) {
+                              clearSelectionButton = e.component;
+                          },
+                          onClick() {
+                              dataGrid.clearSelection();
+                          },
+                      },
+                  },
+                  /*
+                  {
+                      location: "after",
+                      widget: "dxButton",
+                      type: "success",
+                      options: {
+                          icon: "fas fa-table",
+                          text: 'Pivot',
+                          type: "default",
+                          stylingMode: "outlined",
+                          width: 140,
+                          onClick: function (e) {
+                              aPivotPopUp(); //e.data
+                          }
+                      }
+                  },
+                  */
+                  {
+                      location: "after",
+                      widget: "dxButton",
+                      type: "success",
+                      options: {
+                          icon: 'collapse',
+                          text: 'Collapse All',
+                          width: 140,
+                          onClick: function (e) {
+                              var expanding = e.component.option("text") === "Expand All";
+                              dataGrid.option("grouping.autoExpandAll", expanding);
+                              e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                              e.component.option("icon", expanding ? "collapse" : "expand");
+                          }
+                      }
+                  },
+                  {
+                      location: "after",
+                      widget: "dxButton",
+                      visible: arPDFEx,
+                      options: {
+                          icon: "pdffile",
+                          //text: "Export to PDF",
+                          onClick: function () {
+                              const doc = new jsPDF();
+                              //doc.addFont("font/ANGSA.ttf", "angsana", "normal");
+                              doc.addFont("font/Prompt-ExtraLight.ttf", "Prompt", "normal");
+                              doc.setFont("Prompt", "normal");
+                              DevExpress.pdfExporter.exportDataGrid({
+                                  jsPDFDocument: doc,
+                                  component: dataGrid,
+                                  customizeCell: function (options) {
+                                      const { gridCell, pdfCell } = options;
+
+                                      //if(gridCell.rowType === 'data') {
+                                      pdfCell.styles = {
+                                          font: 'Prompt',
+                                          fontSize: 12
+                                      }
+                                      //}
+                                  }
+                              }).then(function () {
+                                  doc.save('EXPREIM' + '.pdf');
+                              });
+                          }
+                      }
+                  },
+                  {
+                      location: "after",
+                      widget: "dxButton",
+                      options: {
+                          icon: "refresh",
+                          onClick: function () {
+                              dataGrid.refresh();
+                          }
+                      }
+                  }
+              );
+          }
+
+      }).dxDataGrid("instance");
+      /*
+      function sendRequestNew(Action, Data, TokenKey, domain, AccessKey) {
+          let Url = domain + '/DMP/XOL/' + AccessKey + '/' + Action + '/' + TokenKey + '/true/true';
+          console.log('Goal...Repuest Web API : ' + Data);
+          var settings = { "url": Url, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": Data, };
+          $.ajax(settings).done(function (response) { console.log(response); });
+      }
+      */
+      function aNewStaff(iData) { //,aaSS,nOfRec
+          //console.log(aaSS)
+          jQuery(function ($) {
+              // ...
+              //var gbxRateV = 1;
+              const popup = $("#aNewStaffPopUp").dxPopup({
+                  title: "FA Payment BATCH Setup",
+                  width: '800px',
+                  height: '250px',
+                  position: { offset: "0 -240" }, //{offset: "0 -180"},
+                  //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                  visible: true,
+                  fullScreen: false,
+                  showCloseButton: false,
+                  showTitle: true,
+                  dragEnabled: true,
+                  closeOnOutsideClick: false,
+                  resizeEnabled: true,
+                  //shadingColor:"rgb(190,190,190,0.9)",
+                  //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                  //toolbarItems: [
+                  //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                  contentTemplate: function () {
+                      return $("<div />").append(
+                          $("<p><div id='aNewStaffform'></div></p>"), //acStatus
+                          $("<p><div id='ConfirmR' style='margin:5px;'></div>"),
+                          $("<div id='aExitR' style='margin:5px;'></div></p>"),
+                          //$("<p><div id='aSchxx' style='margin:5px;'></div>"), //acStatus
+                          //$("<div id='asave' style='margin:5px;'></div>"),                               
+                          //$("<p><div id='aSchxx' style='margin:5px;'></div>"), //acStatus
+                          //$("<div id='asave' style='margin:5px;'></div>"),
+                          //$("<p><div id='account-chart' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                          //$("<div id='popupexit' style='margin:5px;'></div></p>"),
+                          //$("<p><div id='fu-datagrida'></div></p>"),                              
+                      );
+                  },
+                  toolbarItems: [
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                      },
+                      /*
+                       {
+                           toolbar: "top",
+                           locateInMenu: 'always',
+                           widget: "dxButton",
+                           //toolbar: "bottom",
+                           location: "right",
+                           options: {
+                               icon: "print",
+                               //text: "Print",
+                               onClick: function () {
+                                   window.print()
+                               }
+                           }
+                       },
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          widget: "dxButton",
+                          //toolbar: "bottom",
+                          location: "after",
+                          options: {
+                              //text: "EXIT",
+                              icon: "fas fa-times",
+                              type: "danger",
+                              onClick: function (e) {
+                                  aNewStaffName = "";
+                                  aNewStaffID = "";
+                                  popup.hide();
+                              }
+                          }
+                      }*/
+                  ]
+
+              }).dxPopup("instance");
+
+              $("#aNewStaffform").dxForm({
+                  formData: iData,
+                  showColonAfterLabel: false,
+                  labelLocation: "top",
+                  colCount: 1,
+                  onFieldDataChanged: function (e) {
+                      var updatedField = e.dataField;
+                      var newValue = e.value;
+                      if (updatedField === "STAFFNAME") {
+                          aNewStaffName = newValue;
+                      }
+                      if (updatedField === "STAFFID") {
+                          aNewStaffID = newValue;
+                      }
+                      console.log(updatedField)
+                      //aNewStaffName = e.value;
+                      //assff = newValue
+                      //console.log(e.dataField)
+                      //alert(aNewStaffName)
+                      // Event handling commands go here
+                  },
+                  items: [{
+                      itemType: "group",
+                      //caption: "Refference",
+                      colCount: 3,
+                      items: [{
+                          dataField: "STAFFNAME",
+                          label: { text: "Staff Name" },
+                          editorType: 'dxSelectBox',
+
+                          width: 250,
+                          editorOptions: {
+                              dataSource: {
+                                  paginate: true,
+                                  store: new DevExpress.data.CustomStore({
+                                      key: "Agent",
+                                      loadMode: "raw",
+                                      cacheRawData: true,
+                                      load: function () {
+                                          let aFullSQL = "Select Agent,Name from [lockthbnk-ap14].SIBISDB.dbo.StaffAgentActiveView" // Agent,Name,Address1,PostCode
+                                          let aURL = "https://cbsdev2.locktonwattana.com" + "/DMQ/XOL/" + atob(aaXToX) + "/" + aaLocalSQLToken;
+                                          return $.post(aURL, { "@": aFullSQL })
+                                      }
+                                  })
+                              },
+                              width: 250,
+                              valueExpr: "Name",
+                              displayExpr: "Name",
+                              searchEnabled: true,
+                              /*onValueChanged: e => {
+                                  const pos1 = form.option('formData.STAFFID');
+                                  console.log((form.option('items[3].editorOptions.value', pos1)))//(form.option('items[3].editorOptions.value', pos1))
+                              }*/
+                          },
+                          validationRules: [{ type: 'required', message: 'Staff Name is required' }],
+
+                      },
+                      {
+                          dataField: "STAFFID",
+                          label: { text: "Staff ID" },
+                          editorType: 'dxSelectBox',
+                          width: 250,
+
+                          editorOptions: {
+                              dataSource: {
+                                  paginate: true,
+                                  store: new DevExpress.data.CustomStore({
+                                      key: "Agent",
+                                      loadMode: "raw",
+                                      cacheRawData: true,
+                                      load: function () {
+                                          let aFullSQL = "Select Agent,Name from [lockthbnk-ap14].SIBISDB.dbo.StaffAgentActiveView" // Agent,Name,Address1,PostCode
+                                          let aURL = "https://cbsdev2.locktonwattana.com" + "/DMQ/XOL/" + atob(aaXToX) + "/" + aaLocalSQLToken;
+                                          return $.post(aURL, { "@": aFullSQL })
+                                      }
+                                  })
+                              },
+                              valueExpr: "Agent",
+                              displayExpr: "Name",
+                              width: 250,
+                              searchEnabled: true,
+
+                          },
+                          validationRules: [{ type: 'required', message: 'Staff ID is required' }],
+                          //disabled: true,
+                          //editorType: "dxDateBox",
+                          //editorOptions: { displayFormat: "dd/MM/yyyy", width: 150 },	  //showClearButton: true,                  
+                      },
+                      {
+                          itemType: "empty"
+                      },
+                      ]
+                  }]
+
+              }).dxForm("instance");
+
+              $("#aExitR").dxButton({
+                  icon: "fas fa-times",
+                  type: "danger",
+                  hint: "Cancel and Exit",
+                  //stylingMode: "outlined",
+                  text: "CANCEL",
+                  width: "120px",
+                  visible: true,
+                  onClick: function () {
+                      //Check if Local Amount = 0 then delete Records
+                      aNewStaffName = "";
+                      aNewStaffID = "";
+                      $("#gridContainer").dxDataGrid("instance").refresh();
+                      //$("#gridContainer").dxDataGrid("instance").refresh();
+                      popup.hide();
+                  }
+              });
+
+              $("#ConfirmR").dxButton({
+                  //stylingMode: "outlined",
+                  icon: "fas fa-check",
+                  text: "Confirm",
+                  type: "success",
+                  useSubmitBehavior: true,
+                  width: "120px",
+                  visible: true,
+                  onClick: function () {
+                      if (aNewStaffName === "" || aNewStaffID === "") {
+                          DevExpress.ui.dialog.alert({
+                              showTitle: false,
+                              position: { offset: "0 -320" },
+                              messageHtml: "<center style='color:red;'>Please select New Staff<br>  ?????????? New Staff </center>"
+                          });
+                      } else {
+                          DevExpress.ui.dialog.alert({
+                              showTitle: false,
+                              position: { offset: "0 -320" },
+                              messageHtml: "<center style='color:ForestGreen;'> New Staff<br>" + aNewStaffName + "[" + aNewStaffID + "]" + "</center>"
+                          });
+                          popup.hide();
+                      }
+                      //Check if Local Amount = 0 then delete Records
+                      //alert(aaSS[0].ID)
+                      //alert(nOfRec)
+                      //alert(aNewStaffName)
+                      //$("#gridContainer").dxDataGrid("instance").refresh();
+                      //$("#gridContainer").dxDataGrid("instance").refresh();
+
+                  }
+              });
+
+          });
+          //return aNewStaffName
+      }
+
+      function aDataGridRF() {
+          dataGrid.refresh();
+      }
+
+      function aSearchjson(aObjArr, asID) {
+          return aObjArr.filter( //aaEmployee
+              function (data) {
+                  return data.ACCCODE == asID
+              }
+          );
+      }
+
+      function aSearchXjson(aObjArr, asID) {
+          return aObjArr.filter( //aaEmployee
+              function (data) {
+                  return data.Code == asID
+              }
+          );
+      }
+
+
+      function dropDownBoxEditorTemplate(cellElement, cellInfo) { //dropDownBoxCURR
+          //   console.log("cellInfo")
+          //   console.log(cellInfo.value)
+          return $("<div>").dxDropDownBox({
+              dropDownOptions: { width: 600 },
+              dataSource: aaExpExp,
+              value: cellInfo.value,
+              valueExpr: "ACCCODE",
+              displayExpr: "ACCCODE",
+              contentTemplate: function (e) {
+                  return $("<div>").dxDataGrid({
+                      dataSource: aaExpExp,
+                      //remoteOperations: true,
+                      columns: [{ dataField: "TDESC", caption: "Description", width: 400 }, { dataField: "ACCCODE", caption: "Exp. Code", width: 100 }], //ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE
+                      hoverStateEnabled: true,
+                      paging: { enabled: true, pageSize: 15 },
+                      filterRow: { visible: true },
+                      showBorders: true,
+                      scrolling: { mode: "virtual" },
+                      selection: { mode: "single" },
+                      height: 250,
+                      selectedRowKeys: [cellInfo.value],
+                      //focusedRowEnabled: true,
+                      focusedRowKey: cellInfo.value,
+                      onSelectionChanged: function (sArgs) {
+                          //console.log(aArgs.selectedRowKeys[0])
+                          e.component.option("value", sArgs.selectedRowKeys[0].ACCCODE);
+                          cellInfo.setValue(sArgs.selectedRowKeys[0].ACCCODE);
+                          //console.log("v")
+                          //console.log(cellInfo.value)
+                          if (sArgs.selectedRowKeys.length > 0) {
+                              e.component.close();
+                          }
+
+                      }
+                  });
+              },
+          });
+      }
+
+      function dropDownBoxCURR(cellElement, cellInfo) { //dropDownBoxCURR
+          //   console.log("cellInfo")
+          //   console.log(cellInfo.value)
+          return $("<div>").dxDropDownBox({
+              dropDownOptions: { width: 500 },
+              dataSource: aaCurrency,
+              value: cellInfo.value,
+              valueExpr: "Code",
+              displayExpr: "Code",
+              contentTemplate: function (e) {
+                  return $("<div>").dxDataGrid({
+                      dataSource: aaCurrency,
+                      //remoteOperations: true,
+                      columns: [{ dataField: "Name", caption: "Currency", width: 200 }, { dataField: "Code", caption: "Code", width: 100 }, { dataField: "xRate", caption: "X-Rate", width: 100, format: "#,##0.000000" }], //ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE
+                      hoverStateEnabled: true,
+                      paging: { enabled: true, pageSize: 15 },
+                      filterRow: { visible: true },
+                      showBorders: true,
+                      scrolling: { mode: "virtual" },
+                      selection: { mode: "single" },
+                      height: 250,
+                      selectedRowKeys: [cellInfo.value],
+                      //focusedRowEnabled: true,
+                      focusedRowKey: cellInfo.value,
+                      onSelectionChanged: function (sArgs) {
+                          //console.log(aArgs.selectedRowKeys[0])
+                          e.component.option("value", sArgs.selectedRowKeys[0].Code);
+                          cellInfo.setValue(sArgs.selectedRowKeys[0].Code);
+                          //console.log("v")
+                          //console.log(cellInfo.value)
+                          if (sArgs.selectedRowKeys.length > 0) {
+                              e.component.close();
+                          }
+
+                      }
+                  });
+              },
+          });
+      }
+
+      function aPopUpForm(iData, aWithOTP) {
+          if (aWithOTP === undefined) {
+              var aWOTP = 0;
+          } else {
+              var aWOTP = 1;
+          }
+          //alert(iData.HeadRefNo )
+          var apwds = "";
+          var ausrs = "";
+          var aOTP = "";
+          var aaPFDMI = isLocalHost();
+          //var aOTPm = generateOTP();
+          var aii = 0;
+          var astr = localStorage["aDXTheme"]
+          if (astr.includes("dark")) {
+              var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmwhite.png' width='88'></center></div>"
+          } else {
+              var alImg = "<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"
+          }
+          // define the $ as jQuery for multiple uses
+          jQuery(function ($) {
+              // ...
+              var gbxRateV = 1;
+              const popup = $("#popupContainer").dxPopup({
+                  title: "Expenses Reimbursement",
+                  width: '1300px',
+                  position: { offset: "0 -140" }, //{offset: "0 -180"},
+                  //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                  visible: true,
+                  fullScreen: true,
+                  showCloseButton: false,
+                  showTitle: true,
+                  dragEnabled: true,
+                  closeOnOutsideClick: false,
+                  resizeEnabled: true,
+                  //shadingColor:"rgb(190,190,190,0.9)",
+                  //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                  //toolbarItems: [
+                  //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                  contentTemplate: function () {
+                      return $("<div />").append(
+                          $("<p><div id='form'></div></p>"),
+                          $("<p><span id='asave'></span></p>"),
+                          // $("<p><div id='visibleform'></div></p>"),
+                          //$("<p><center><div id='username'></div></center></p>"),
+                          // $("<p><center><div id='password'></div></center></p>"),
+                          // $("<p><center><div id='OTP'></div></center></p>"),
+                          // $("<p <div id='popover1'>Please get OTP from your register e-Mail, put here and then press [LOGIN]</div></p>"),
+                          // $("<p><span id='print'></span></p>"), 
+                          // $("<span id='popupexit'></span>")                              
+                      );
+                  },
+                  toolbarItems: [
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                      },
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          widget: "dxButton",
+                          //toolbar: "bottom",
+                          location: "right",
+                          options: {
+                              icon: "print",
+                              //text: "Print",
+                              onClick: function () {
+                                  window.print()
+                              }
+                          }
+                      }, {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          widget: "dxButton",
+                          //toolbar: "bottom",
+                          location: "after",
+                          options: {
+                              //text: "EXIT",
+                              icon: "fas fa-times",
+                              //type: "danger",                
+                              onClick: function (e) {
+                                  popup.hide();
+                              }
+                          }
+                      }]
+
+                  /* onContentReady: function() { 
+                           $("#OTP").hide(); 
+                   }*/
+              }).dxPopup("instance");
+
+              $("#visibleform").dxCheckBox({
+                  text: "Visible Form",
+                  value: true,
+                  onValueChanged: function (data) {
+                      //visible:true,
+                      form.option("visible", data.value);
+                  }
+              });
+
+              $("#popupexit").dxButton({
+                  icon: "fas fa-times",
+                  type: "danger",
+                  //text: "EXIT",
+                  //width: "120px",
+                  visible: true,
+                  onClick: function () {
+                      popup.hide();
+                  }
+              });
+
+              $("#print").dxButton({
+                  icon: "print",
+                  //text: "Print",
+                  onClick: function () {
+                      window.print();
+                  }
+              });
+
+              $("#asave").dxButton({
+                  icon: "save",
+                  text: "SAVE",
+                  type: "success",
+                  onClick: function (e) {
+                      //window.print();
+                      //let aUpdateText = "Update"
+                      //var ObjKeyData = {"REFNO": $.trim(key)};   //[aaKeyField] key.trim
+                      //var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                      //sendRequestNew(aUpdateText,ObjRowData,aaTBKey,aaPFDMI,atob(aaXToX));            
+                      //alert (iData.REFNO)
+                      //alert (iData.LocalAmount)
+                      //alert (jQuery.type(iData.LocalAmount))
+                      let ObjRowD = JSON.stringify(iData)
+                      sendRequestNew("Update", ObjRowD, aaTBKey, aaPFDMI, atob(aaXToX));
+                      //e.component.refresh(true);
+                      //e.component.refresh(true);
+                      //e.component.refresh(true);
+                      //e.event.preventDefault();
+                      popup.hide();
+
+                  }
+              });
+
+
+              const aform = $("#form").dxForm({
+                  formData: iData,
+                  showColonAfterLabel: false,
+                  labelLocation: "top",
+                  colCount: 1,
+                  items: [{
+                      itemType: "group",
+                      //caption: "Refference",
+                      colCount: 4,
+                      items: [{
+                          dataField: "HeadRefNo",
+                          label: { text: "REF NO" },
+                          disabled: true,
+                          editorOptions: { width: 150 },
+                      },
+                      {
+                          dataField: "ReqDate",
+                          label: { text: "Date" },
+                          disabled: true,
+                          editorType: "dxDateBox",
+                          editorOptions: { displayFormat: "dd/MM/yyyy", width: 150 },	  //showClearButton: true,                  
+                      },
+                      {
+                          dataField: "PayToName",
+                          label: { text: "Pay To" },
+                          disabled: true,
+                          editorOptions: { width: 250 },
+                      },
+                      //{
+                      //    itemType: "empty"
+                      //},                           
+                      {
+                          dataField: "ExpensesDescription",
+                          label: { text: "Expenses" },
+                          disabled: true,
+                          editorOptions: { width: 250 },
+                      },
+
+
+                      ]
+
+                  },
+                  {
+                      itemType: "group",
+                      //caption: "Amount",
+                      colCount: 4,
+                      items: [{
+                          dataField: "Currency",
+                          //label: {text: "Currency"},
+                          value: "THB",
+                          width: 80,
+                          validationRules: [{ type: "required" }],
+                          /*lookup: {
+                                      dataSource: aaCurrency, //Code,Name
+                                      valueExpr: "Code",
+                                      displayExpr: "Code",
+                                  },                            
+                          editCellTemplate: dropDownBoxCURR,*/
+
+                          editorType: "dxDropDownBox",
+                          editorOptions: {
+                              dataSource: aaCurrency, //Code,Name
+                              valueExpr: "Code",
+                              displayExpr: "Code",
+                              width: 380,
+                              contentTemplate: function (e) {
+                                  return $("<div>").dxDataGrid({
+                                      dataSource: aaCurrency,
+                                      //remoteOperations: true,
+                                      columns: [{ dataField: "Code", caption: "Code", width: 80 }, { dataField: "Name", caption: "Currency", width: 150 }, { dataField: "xRate", caption: "X-Rate", width: 80, format: "#,##0.000000" }], //ACCCODE,EDESC,ALTERACC,MAPPING,TDESC,NOTE
+                                      hoverStateEnabled: true,
+                                      paging: { enabled: true, pageSize: 15 },
+                                      searchPanel: { visible: true },
+                                      headerFilter: { visible: true },
+                                      filterRow: { visible: true },
+                                      showBorders: true,
+                                      scrolling: { mode: "virtual" },
+                                      selection: { mode: "single" },
+                                      height: 250,
+                                      //selectedRowKeys: [cellInfo.value],                                      
+                                      //focusedRowKey: cellInfo.value,
+                                      onSelectionChanged: function (sArgs) {
+                                          //alert(gbxRateV)
+                                          console.log(sArgs.selectedRowKeys[0].xRate)
+                                          gbxRateV = sArgs.selectedRowKeys[0].xRate
+                                          //alert(gbxRateV)
+                                          e.component.option("value", sArgs.selectedRowKeys[0].Code);
+                                          //cellInfo.setValue(sArgs.selectedRowKeys[0].Code);
+                                          //console.log("v")
+                                          //console.log(cellInfo.value)
+                                          if (sArgs.selectedRowKeys.length > 0) {
+                                              e.component.close();
+                                          }
+
+                                      }
+                                  });
+                              },
+                          },
+
+                          onFieldDataChanged: function (e) {
+                              var updatedField = e.dataField;
+                              var newValue = e.value;
+                              alert(updatedField)
+                              alert(newValue)
+                              // Event handling commands go here
+                          },
+                          setCellValue: function (newData, value, currentRowData) {
+
+                              if (arDataU === 1) {
+                                  newData.Currency = value;
+                                  let aResult = aSearchXjson(aaCurrency, value);
+                                  newData.Xrate = aResult[0].xRate;
+                                  //newData.LocalAmount = currentRowData.Amount * (1/aResult[0].xRate);
+                              }
+                          },
+
+                      },
+                      //{
+                      //itemType: "empty"
+                      //},                             
+                      {
+                          dataField: "Xrate",
+                          label: { text: "X-Rate" },
+                          dataType: "number",
+                          //format:{ type:"fixedPoint", precision: 6 },
+                          editorType: "dxNumberBox",
+                          editorOptions: {
+                              value: gbxRateV,
+                              format: "#,##0.000000",
+                              width: 150,
+                          },
+                          onValueChanged: function (data) {
+                              console.log(data.value);
+                          }
+                          //value: gbxRateV,
+                          //visible: false,
+                      },
+                      //{
+                      //    itemType: "empty"                               
+                      //},
+                      {
+                          itemType: "tabbed",
+                          width: 350,
+                          tabPanelOptions: {
+                              deferRendering: false
+                          },
+                          tabs: [{
+                              title: "HOD Approval",
+                              items: ["Confirmed"]
+                          },
+                          {
+                              title: "HR Approval",
+                              items: [
+                                  {
+                                      dataField: "HRApproved",
+                                      label: { text: "HR Approved" },
+                                      allowEditing: false,
+                                  },
+                              ]
+                          },
+                          {
+                              title: "FA Approval",
+                              items: [
+                                  {
+                                      dataField: "Approved",
+                                      label: { text: "FA Approved" },
+                                  },
+                                  {
+                                      dataField: "PBatchNo",
+                                      label: { text: "Pay Batch NO" },
+                                      editorOptions: { width: 150 },
+                                  },
+                                  {
+                                      dataField: "PBatchDate",
+                                      label: { text: "Data" },
+                                      disabled: true,
+                                      editorType: "dxDateBox",
+                                      editorOptions: { displayFormat: "dd/MM/yyyy", width: 150 },
+                                  }
+                              ]
+                          }
+                          ]
+                      }
+
+                      ]
+                  },
+                  {
+                      itemType: "group",
+                      caption: "Details",
+                      colCount: 7,
+                      items: [
+                          {
+                              dataField: "ID",
+                              sortOrder: "asc",
+                              label: { text: "NO" },
+                              editorOptions: { format: "###0", rtlEnabled: true, width: 40 },
+                          },
+                          {
+                              dataField: "ERORefNo1",
+                              label: { text: "Fleet Card NO" },
+                              //disabled: true,
+                              editorOptions: { width: 150 },
+                          },
+                          {
+                              dataField: "ERORefNo2",
+                              label: { text: "Plate No" },
+                              editorOptions: { width: 150 },
+                          },
+                          {
+                              dataField: "ERODate01",
+                              label: { text: "Date" },
+                              editorType: "dxDateBox",
+                              editorOptions: { displayFormat: "dd/MM/yyyy", width: 150 },
+                          },
+                          {
+                              dataField: "LocalAmount",
+                              label: { text: "Amount" },
+                              editorType: "dxNumberBox",
+                              //format:{ type:"fixedPoint", precision: 2 },
+                              //format: "#,##0.00",
+                              editorOptions: { format: "#,##0.00", rtlEnabled: true, width: 150 },
+                          },
+                          {
+                              dataField: "EROCheck01",
+                              label: { text: "Pay Slip" },
+                          },
+                          {
+                              dataField: "EROCheck02",
+                              label: { text: "Tax Invoice" },
+                          },
+                      ]
+
+                  },
+                  {
+                      itemType: "group",
+                      //caption: "Details",
+                      colCount: 2,
+                      items: [
+                          {
+                              dataField: "ERODesc01",
+                              label: { text: "Note" },
+                              editorType: "dxTextArea",
+                              editorOptions: { width: 800, height: 100 },
+
+                          },
+                          // {
+                          //      itemType: "button",
+                          //      buttonOptions: {
+                          //          icon: "save",
+                          //          text: "SAVE",
+                          //          useSubmitBehavior: true
+                          //      }
+                          //  }
+                      ]
+                  }
+
+                  ]
+
+              }).dxForm("instance");
+
+              $("#aformSave").on("submit", function (e) {
+                  console.log("Done")
+                  alert(e)
+                  setTimeout(function () {
+                      alert("Submitted");
+                      alert(e)
+                  }, 1000);
+
+                  e.preventDefault();
+              });
+
+              /*$("#username").dxTextBox({
+                      mode: "text",
+                      placeholder: "Enter username",
+                      showClearButton: true,
+                      onValueChanged: function (e) {
+                          const previousValue = e.previousValue;
+                          ausrs = e.value;
+                          // Event handling commands go here
+                          // DevExpress.ui.notify(newValue);
+                      },
+                      width: "250px",
+                      value: ""
+              }).dxTextBox("instance");
+                      
+              $("#password").dxTextBox({
+                      mode: "password",
+                      placeholder: "Enter password",
+                      showClearButton: true,
+                      onValueChanged: function (e) {
+                          const previousValue = e.previousValue;
+                          apwds = e.value;
+                          // Event handling commands go here
+                          // DevExpress.ui.notify(newValue);
+                      },
+                      width: "250px",
+                      value: ""
+              }).dxTextBox("instance");
+          
+              $("#OTP").dxTextBox({
+                      mode: "text",
+                      placeholder: "put OTP and press LOGIN",
+                      showClearButton: true,
+                      onValueChanged: function (e) {
+                          const previousValue = e.previousValue;
+                          aOTP = e.value;
+                          // Event handling commands go here
+                          // DevExpress.ui.notify(newValue);
+                      },
+                      width: "250px",
+                      value: ""
+              }).dxTextBox("instance");
+          
+              $("#popover1").dxPopover({
+                  target: "#OTP",
+                  showEvent: "mouseenter",
+                  hideEvent: "mouseleave",
+                  position: "top",
+                  width: 300
+              });*/
+
+
+              $("#icon-dones").dxButton({
+                  icon: "fas fa-key",
+                  type: "success",
+                  text: "LOGIN",
+                  width: "120px",
+                  visible: true,
+                  onClick: function (e) {
+                      //console.clear();	
+                      //var aUname = document.getElementById("uname").value;
+                      //var aPswd = document.getElementById("pswd").value; 			
+                      if (jQuery.type(ausrs) === "undefined") {
+                          var aUname = ""
+                      } else {
+                          var aUname = ausrs
+                      };
+                      if (jQuery.type(apwds) === "undefined") {
+                          var aPswd = ""
+                      } else {
+                          var aPswd = apwds;
+                      };
+                      if (aUname === "" || aPswd === "") {
+                          DevExpress.ui.dialog.alert({
+                              showTitle: false,
+                              messageHtml: "<center style='color:Red;'>Username and Password can not be blank !!</center>"
+                          });
+                      }
+                      else {
+                          localStorage.setItem("aaPFDMI", aaPFDMI);
+                          localStorage.setItem("aaXXuX", aUname);
+                          var aaXTGO = "A75FCC75-8FB6-4460-B3F6-7070B4437930"; //Guest
+                          var aaTBXX = "01f518c9-c818-4e9f-85cb-6245ee1a2637";
+                          //var aaLng = aaLoginGet(aaPFDMI,aUname, aPswd); //aaLoginaa(aUname,aPswd);
+                          //alert(aUname);
+                          var aLtext = "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                          //alert(aLtext);
+                          //"@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                          var myHeaders = new Headers();
+                          myHeaders.append("Content-Type", "application/json");
+                          var raw = JSON.stringify({
+                              "@": "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+                          });
+
+                          var requestOptions = {
+                              method: 'POST',
+                              headers: myHeaders,
+                              body: raw,
+                              redirect: 'follow'
+                          };
+
+                          let aURL = aaPFDMI + "/DMQ/XOL/" + aaXTGO + "/" + aaTBXX + "/all"; // + aUname;
+
+                          fetch(aURL, requestOptions)
+                              .then(response => response.json())
+                              //  .then(data => {console.log(data)});
+                              .then(aData => {
+                                  //console.log('Success:', aData);
+                                  //console.log(aData[0].IDUsr);
+                                  //console.log(aData[0].Gright);
+                                  //console.log(aData[0].Pword);
+                                  //console.log(result);
+                                  //localStorage.setItem("aaXXoX", aData[0].TKey); 
+                                  //localStorage.setItem("aaXrXg", response.KeyRights);                        
+                                  if (aPswd === aData[0].Pword) {
+                                      var aal = btoa(aData[0].Gright);
+                                      var aat = btoa(aData[0].Tkey);
+                                      var aLGName = aData[0].LGName;
+                                      var aemail = aData[0].email;
+                                      var aotpx = aData[0].otp;
+                                      var apict = aData[0].PictureLoc;
+                                      //console.log(aLGName)
+                                      //console.log(aemail)
+                                      //console.log(aotpx)
+                                      //alert(aal);
+                                      //alert(aData[0].Pword);
+                                      //alert(aPswd === aData[0].Pword);
+                                      localStorage.setItem("aaXrXg", aal);
+                                      localStorage.setItem("aaXXoX", aat);
+                                      localStorage.setItem("aaXpXt", apict);
+
+                                      if (aOTP === aOTPm || aWOTP === 0) {
+                                          //aGoTo("index02.html");
+                                          aGoTo("index03.html");
+                                      } else {
+                                          aii++;
+                                          $("#username").hide();
+                                          $("#password").hide();
+                                          $("#OTP").show(20);
+                                          if (aii <= 1) {
+                                              var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
+                                              // 
+                                              //                                       aRecipient, aRCPeMail               ,aSendereMail        , aCCeMail, aBcceMail,aSubject,aMessage "Dear Wikran <br/><br/>&nbsp;&nbsp; OTP = <br/><br/><br/>Regards,<br />XOL Admin."
+                                              var lSentM = aSendMailDMZ("Khun " + aLGName, aemail, "XOL-admin@lockton.com", "wikran@hotmail.com", "", "OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aLGName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+
+                                              DevExpress.ui.dialog.alert({
+                                                  showTitle: false,
+                                                  messageHtml: "<center style='color:ForestGreen;'> Sendind OTP to your e-Mail, please check </center>"
+                                              });
+                                          } else {
+                                              DevExpress.ui.dialog.alert({
+                                                  showTitle: false,
+                                                  messageHtml: "<center style='color:Red;'> Please check OTP from your e-Mail again !!" + aii + "</center>"
+                                              });
+                                          }
+                                      }
+
+                                  } else {
+
+                                      DevExpress.ui.dialog.alert({
+                                          showTitle: false,
+                                          messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
+                                      });
+                                  }
+
+                              })
+                              .catch(error => {
+                                  console.error('Error:', error);
+                                  DevExpress.ui.dialog.alert({
+                                      showTitle: false,
+                                      messageHtml: "<center><b style='color:Tomato;'>Please Try Again!!</b></center>"
+                                  });
+                              });
+
+                      }
+                  }
+              });
+
+          });
+      }
+
+      function aPopUpAddForm(iData) { // popup Add New
+          var aaPFDMI = isLocalHost();
+          var astr = localStorage["aDXTheme"]
+          var aanewNoteValue = "ccccc"
+          // define the $ as jQuery for multiple uses
+          jQuery(function ($) {
+              /*
+              var aXXData = function () {
+                  return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aaSchRefx }) // Change aaTBKey to TokenKey for this table 5102300001
+                      .fail(function () { throw "Data loading error" });
+              };
+              var gbxRateV = 1;
+              console.log(aXXData[0])
+              */
+              const popup = $("#popupContainerAdd").dxPopup({
+                  title: "Notification Mail",
+                  width: '1300px',
+                  height: '600px',
+                  position: { offset: "0 -160" }, //{offset: "0 -180"},
+                  //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                  visible: true,
+                  fullScreen: false,
+                  showCloseButton: false,
+                  showTitle: true,
+                  dragEnabled: true,
+                  closeOnOutsideClick: false,
+                  resizeEnabled: true,
+                  //shadingColor:"rgb(190,190,190,0.9)",
+                  //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                  //toolbarItems: [
+                  //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                  contentTemplate: function () {
+                      return $("<div />").append(
+                          $("<p><div id='Add-form'></div></p>"),//aSendMail
+                          $("<p><div id='aSendMail'></div></p>"),
+                          //$("<p><span id='asave'></span></p>"),
+                          ///$("<p><center><div id='Add-dxDataGrid'></div></center></p>"),
+                          // $("<p <div id='popover1'>Please get OTP from your register e-Mail, put here and then press [LOGIN]</div></p>"),
+                          // $("<p><span id='print'></span></p>"), 
+                          // $("<span id='popupexit'></span>")                              
+                      );
+                  },
+                  onContentReady: function () {
+                      // $("#Add-dxDataGrid").hide(); // hide dataGrid
+                  },
+                  toolbarItems: [
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>" // Logo
+                      },
+                      /*
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          widget: "dxButton",
+                          //toolbar: "bottom",
+                          location: "right",
+                          options: {
+                              icon: "print",
+                              //text: "Print",
+                              onClick: function () {
+                                  window.print()
+                              }
+                          }
+                      },*/
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          widget: "dxButton",
+                          //toolbar: "bottom",
+                          location: "after",
+                          options: {
+                              //text: "EXIT",
+                              icon: "fas fa-times",
+                              stylingMode: "outlined",
+                              type: "danger",
+                              onClick: function (e) {
+                                  $("#gridContainer").dxDataGrid("instance").refresh();
+                                  popup.hide();
+                              }
+                          }
+                      }]
+
+              }).dxPopup("instance");
+
+              $("#visibleform").dxCheckBox({
+                  text: "Visible Form",
+                  value: true,
+                  onValueChanged: function (data) {
+                      //visible:true,
+                      form.option("visible", data.value);
+                  }
+              });
+
+              $("#Add-popupexit").dxButton({
+                  icon: "fas fa-times",
+                  type: "danger",
+                  //text: "EXIT",
+                  //width: "120px",
+                  visible: true,
+                  onClick: function () {
+                      popup.hide();
+                  }
+              });
+
+              $("#print").dxButton({
+                  icon: "print",
+                  //text: "Print",
+                  onClick: function () {
+                      window.print();
+                  }
+              });
+
+              $("#asave").dxButton({
+                  icon: "fas fa-thumbs-up",
+                  text: "CONFIRM",
+                  hint: "Confirm and Save",
+                  stylingMode: "outlined",
+                  type: "default",
+                  onClick: function (e) {
+
+                      var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment, Division: asDivision, ERODesc06: asStaffEmail, ReqDate: new Date(), ExpensesCode: aaOnInitAccCode, ExpensesDescription: aaOnInitAccDesc, Currency: "THB", Xrate: 1, ExpGroupCode: aaOnInitExpGroupCode, ExpGroupDescEng: aaOnInitExpGroupDesc, ERStatus: "Register", EROCheck03: 1, EROCheck04: 1, NeedPayment: 0, RefundedAmount: 0, LimitedAmount: aaLMontyly, EROCode01: "OPD" }
+                      //{ EntryBy: aaUsrN, EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                      //var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                      var ObjRowData = JSON.stringify(ObjKeyData);
+                      console.log(ObjRowData)
+                      sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                      /*
+                          let aaID = 1
+                          let axRunRun = aGetDateRef(aaOnInitExpGroupDesc.substring(0, 1));
+                          let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                          e.data.ID = aaID //
+                          e.data.HeadRefNo = axRunRun //
+                          e.data.REFNO = axLineNo //
+                          e.data.PayToCode = asStaffID //
+                          e.data.PayToName = asFullName //
+                          e.data.Department = asDepartment //
+                          e.data.Division = asDivision //
+                          e.data.ERODesc06 = asStaffEmail //
+                          e.data.ReqDate = new Date() //
+                          e.data.ExpensesCode = aaOnInitAccCode //
+                          e.data.ExpensesDescription = aaOnInitAccDesc //
+                          e.data.Currency = "THB" // not for overseas
+                          e.data.Xrate = 1        // not for overseas
+                          e.data.ExpGroupCode = aaOnInitExpGroupCode
+                          e.data.ExpGroupDescEng = aaOnInitExpGroupDesc
+                          e.data.ERStatus = "Register"
+                          //e.data.ERORefNo1 = aaPlateNo
+                          //e.data.ERORefNo2 = aaFCardNo
+                          //e.data.ERORefNo3 = "Fleet Card"
+                          e.data.EROCheck03 = true // have a bill
+                          e.data.EROCheck04 = true // doctor recommend
+                          e.data.NeedPayment = true
+                          e.data.RefundedAmount = 0
+                          e.data.LimitedAmount = aaLTotal //Medical Only
+                          e.data.EROCode01 = "OPD"
+                      */
+
+                      $("#Add-dxDataGrid").show();
+                      $("#asave").hide();
+                      $("#Add-dxDataGrid").dxDataGrid("instance").refresh();
+                  }
+              });
+              $("#aSendMail").dxButton({
+                  icon: "fas fa-paper-plane",
+                  type: "success",
+                  text: "SEND",
+                  //width: "120px",
+                  visible: true,
+                  onClick: function () {
+                      //send Email
+                      console.log(aaHRAppEmail)
+                      console.log(aaHRAppName)
+                      console.log(asFullName)
+                      console.log(asStaffEmail)
+                      console.log(iData.ERStatus)
+                      let aApproverName = aaHRAppName //+ " [HR]"         //aaHRAppName //"Wikran" + " [HR]"         // HR Approver Name
+                      let aApproverEmail = $.trim(aaHRAppEmail) // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                      let aRequesterName = iData.PayToName //e.data.PayToName //"Wikran Intaraprajaks"
+                      let aRequesterEmail = iData.ReqEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                      let aSubject = iData.ERStatus //aaOnInitExpGroupDesc 
+                      let aAddress2Do = "<a href='https://cbsdev2.locktonwattana.com/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
+                      let aMessage = "<div>���¹ �س" + $.trim(aRequesterName) + "<br>" + iData.Note + "<br>REFNO = [" + iData.HeadRefNo + "]<br> at (" + aAddress2Do + ")" + " <br><br>Regards,<br>" + aaHRAppName + " [FA]" + "</div>"
+                      //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
+                      //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+
+                      aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+                      console.log(aMessage)
+                      aMessageAlert("Already send Mail !!", "Red")
+                      popup.hide();
+                  }
+              });
+
+              const aform = $("#Add-form").dxForm({
+                  formData: iData, //iData, aXXData[0],
+                  showColonAfterLabel: false,
+                  labelLocation: "top",
+                  //readOnly: true,
+                  onFieldDataChanged: function (e) {
+                      let aaDataRowNo
+                      if (e.dataField === "ERStatus") {
+                          //let cityEditor = e.component.getEditor("CityID");
+                          //cityEditor.getDataSource().filter(['StateID', '=', e.value]);
+                          //cityEditor.getDataSource().load();
+                          //cityEditor.
+                          //e.component.updateData("CityID", null);
+                          aaDataRowNo = $.inArray(e.value, arSTATUS) //e.component.getEditor("Note");
+                          //arSTANOTE[$.inArray(e.value, arSTATUS)]
+                          //alert(e.value)
+                          aaDataRowNo = $.inArray(e.value, arSTATUS)
+                          //alert(aaDataRowNo)
+                          //alert(arSTANOTE[aaDataRowNo])
+                          aanewNoteValue = arSTANOTE[aaDataRowNo]
+                          //alert(aanewNoteValue)
+                          e.component.updateData("Note", aanewNoteValue);
+                      }
+                      //if(e.dataField === Note") {
+                      //    e.data.Note = aanewNoteValue
+                      //}                     
+                  },
+                  colCount: 1,
+                  items: [{
+                      itemType: "group",
+                      //caption: "Refference",
+                      //cssClass: "second-group",
+                      colCount: 4,
+                      items: [{
+                          dataField: "HeadRefNo",
+                          label: { text: "REF NO" },
+                          //disabled: true,
+                          //value: aaiHeadRef,
+                          editorType: "dxTextBox",
+                          editorOptions: { readOnly: true, width: 150 }, //value: aaiHeadRef,
+                      },
+                      {
+                          dataField: "ReqDate",
+                          label: { text: "Submitted Date" },
+                          //disabled: true,
+                          editorType: "dxDateBox",
+                          editorOptions: { readOnly: true, displayFormat: "dd/MM/yyyy", width: 150 },	  //showClearButton: true,                  
+                      },
+                      {
+                          dataField: "PayToName",
+                          label: { text: "Pay To" },
+                          editorType: "dxTextBox",
+                          editorOptions: { readOnly: true, width: 180 },
+                      },
+                      /*{
+                          itemType: "empty"
+                      }, */
+                      {
+                          dataField: "ExpGroupDescEng",
+                          label: { text: "Expenses" },
+                          //disabled: true,
+                          editorOptions: { readOnly: true, width: 180 }, //value: aaOnInitAccDesc,
+                          //visible: false,
+                      },
+                      //e.data.LimitedAmount = aaLMontyly  
+                      {
+                          dataField: "LimitedAmount",
+                          label: { text: "Limit" },
+                          //disabled: true,
+                          //editorOptions: { value: aaLMontyly, width: 180 },
+                          visible: false,
+                      },
+
+                      ]
+
+                  },
+                  {
+                      itemType: "group",
+                      //caption: "Amount",
+                      colCount: 4,
+                      items: [
+                          {
+                              dataField: "Currency",
+                              label: { text: "Currency" },
+                              value: "THB",
+                              editorOptions: { readOnly: true, value: 'THB', width: 100 },
+                          },
+                          {
+                              dataField: "Xrate",
+                              label: { text: "X-Rate" },
+                              editorType: "dxNumberBox",
+                              editorOptions: { readOnly: true, value: 1, format: "#,##0.000000", width: 100 },
+                              //visible: false,
+                          },
+
+                          /*{
+                              dataField: "RefundedAmount",
+                              label: { text: "Reimbursement" },
+                              editorType: "dxNumberBox",
+                              editorOptions: { readOnly: true, format: "#,##0.00",rtlEnabled: true, width: 200 },
+
+                          },                            
+                              
+                              {
+                                  dataField: "ERORefNo1",
+                                  label: { text: "Plate No" },
+                                  editorType: "dxTextBox",
+                                  editorOptions: { value: aaPlateNo, width: 180 },
+                              },
+                              {
+                                  dataField: "ERORefNo2",
+                                  label: { text: "Fleet Card NO" },
+                                  editorType: "dxTextBox",
+                                  editorOptions: { value: aaFCardNo, width: 180 },
+                              },
+                              */
+                      ]
+                  },
+                  {
+                      itemType: "group",
+                      caption: " ",
+                      colCount: 4,
+                      items: [
+                          {
+                              dataField: "ReqEmail",
+                              label: { text: "Email TO" },
+                              editorType: "dxTextBox", //editorType:"dxDropDownBox", "dxTextBox"
+                              editorOptions: { width: 250 },
+
+                          },
+                          {
+                              dataField: "ERStatus",
+                              label: { text: "Subject" },
+                              editorType: "dxSelectBox", //editorType:"dxDropDownBox", "dxTextBox"
+                              validationRules: [{ type: 'required', message: 'Subject is required' }],
+                              editorOptions: { items: arSTATUS, width: 250 },
+                              lookup: {
+                                  dataSource: arSTATUS,
+                                  valueExpr: "CODE",
+                                  displayExpr: "CODE",
+                              },
+
+                              /*setCellValue: function(newData, value, currentRowData) {
+                                   newData.ERStatus = value;
+                                   newData.Note = arSTANOTE[$.inArray(value, arSTATUS)]
+                                   console.log(arSTANOTE[$.inArray(value, arSTATUS)])
+                               },*/
+                          },
+                          {
+                              itemType: "empty"
+                          },
+                          {
+                              itemType: "empty"
+                          },
+                          {
+                              dataField: "Note",
+                              label: { text: "Comment" },
+                              validationRules: [{ type: 'required', message: 'Comment is required' }],
+                              editorType: "dxTextArea",
+                              editorOptions: { width: 500, height: 150 },
+                          },
+                          {
+                              itemType: "empty"
+                          },
+
+                          /* {
+                            itemType: "empty"
+                        },                                                        
+                        {
+                            dataField: "Xrate",
+                            label: { text: "X-Rate" },
+                            editorType: "dxNumberBox",
+                            editorOptions: { value: 1, format: "#,##0.000000", width: 100 },
+                            //visible: false,
+                        },
+                           
+                            {
+                                dataField: "ERORefNo1",
+                                label: { text: "Plate No" },
+                                editorType: "dxTextBox",
+                                editorOptions: { value: aaPlateNo, width: 180 },
+                            },
+                            {
+                                dataField: "ERORefNo2",
+                                label: { text: "Fleet Card NO" },
+                                editorType: "dxTextBox",
+                                editorOptions: { value: aaFCardNo, width: 180 },
+                            },
+                            */
+                      ]
+                  },
+                      //{
+                      //    itemType: "group",
+                      //    caption: "Details",
+                      //}
+                  ]
+
+              }).dxForm("instance");
+
+              $("#Add-dxDataGrid").dxDataGrid({
+
+
+                  dataSource: new DevExpress.data.CustomStore({
+                      key: "REFNO",
+                      loadMode: "omit",
+                      load: function () {
+                          return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aaSchRefx }) // Change aaTBKey to TokenKey for this table 5102300001
+                              .fail(function () { throw "Data loading error" });
+                      },
+                      insert: function (values) {
+                          if (aaEnt) {
+                              var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                              var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                          }
+                          else {
+                              var ObjRowData = JSON.stringify(values);
+                          }
+                          sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                      },
+                      update: function (key, values) {
+                          var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                          var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
+                          sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                      },
+                      remove: function (key) {
+                          var ObjKeyData = { "REFNO": $.trim(key) };   //[aaKeyField] key.trim
+                          var ObjRowData = JSON.stringify($.extend({}, ObjKeyData));
+                          sendRequestNew("Delete", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+                      }
+                  }),
+
+                  allowColumnReordering: true,
+                  allowColumnResizing: true,
+                  columnMinWidth: 10,
+                  columnChooser: {
+                      enabled: false //false // true
+                  },
+                  showBorders: true,
+                  sorting: {
+                      mode: "multiple"
+                  },
+                  selection: {
+                      mode: 'single' // single //multiple
+                  },
+                  groupPanel: {
+                      visible: false // false can't select other group
+                  },
+                  filterRow: {
+                      visible: false, // false true
+                      applyFilter: "auto"
+                  },
+                  headerFilter: {
+                      visible: false //true  // false true
+                  },
+                  grouping: {
+                      autoExpandAll: true //false //true,
+                  },
+                  searchPanel: {
+                      visible: false //true
+                  },
+                  paging: {
+                      pageSize: 10
+                  },
+                  pager: {
+                      showPageSizeSelector: true,
+                      allowedPageSizes: [10, 20, 50, 100],
+                      showNavigationButtons: true,
+                      showInfo: true
+                  },
+                  showBorders: true,
+                  groupPaging: true,
+                  showColumnLines: true,
+                  showRowLines: true,
+                  rowAlternationEnabled: false, // 2 Tones Line Color
+
+                  /*// Export to Excel 		
+                  export: {
+                      enabled: arExcelEx,
+                      allowExportSelectedData: true //true
+                  },
+                  onExporting: function (e) {
+                      const workbook = new ExcelJS.Workbook();
+                      const worksheet = workbook.addWorksheet('DATA');
+                      DevExpress.excelExporter.exportDataGrid({
+                          worksheet: worksheet,
+                          component: e.component
+                      }).then(function () {
+                          workbook.xlsx.writeBuffer().then(function (buffer) {
+                              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'EXPREIM' + '.xlsx');
+                          });
+                      });
+                      e.cancel = true;
+                  },*/
+                  //onEditingStart: function(e){
+                  //    grid.option("editing.popup.title", "Editing");
+                  //},
+                  /*
+                  onRowPrepared(e) {
+                      if(e.rowType === "groupFooter") {  
+                          e.cells[1].cellElement.innerText = "Total:"
+                          e.cells[1].cellElement.style.overflow = "visible"
+                      }  
+                  },
+                  */
+                  onInitNewRow: function (e) {
+                      //e.component.__addingStart = true; 
+                      //gridContainer.option("editing.popup.title", "Adding Expenses Reimbursement");
+                      let aaID = 1
+                      let axRunRun = aGetDateRef(aaOnInitExpGroupDesc.substring(0, 1));
+                      let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                      e.data.ID = aaID
+                      e.data.HeadRefNo = axRunRun
+                      e.data.REFNO = axLineNo
+                      e.data.PayToCode = asStaffID
+                      e.data.PayToName = asFullName
+                      e.data.Department = asDepartment
+                      e.data.Division = asDivision
+                      e.data.ERODesc06 = asStaffEmail
+                      e.data.ReqDate = new Date()
+                      e.data.ExpensesCode = aaOnInitAccCode
+                      e.data.ExpensesDescription = aaOnInitAccDesc
+                      e.data.Currency = "THB" // not for overseas
+                      e.data.Xrate = 1        // not for overseas
+                      e.data.ExpGroupCode = aaOnInitExpGroupCode
+                      e.data.ExpGroupDescEng = aaOnInitExpGroupDesc
+                      e.data.ERStatus = "Register"
+                      //e.data.ERORefNo1 = aaPlateNo
+                      //e.data.ERORefNo2 = aaFCardNo
+                      //e.data.ERORefNo3 = "Fleet Card"
+                      e.data.EROCheck03 = true // have a bill
+                      e.data.EROCheck04 = true // doctor recommend
+                      e.data.NeedPayment = true
+                      e.data.RefundedAmount = 0
+                      e.data.LimitedAmount = aaLTotal //Medical Only
+                      e.data.EROCode01 = "OPD"
+                      e.data.ERODate01 = new Date()
+                  },
+                  onEditorPreparing: function (e) {
+                      if (e.parentType === "dataRow" && arDataU === 0) {
+                          e.editorOptions.disabled = true;
+                      } else {     //PSPvNO,PSPvDate
+                          if (e.parentType === "dataRow" && (e.dataField === "EntryBy" || e.dataField === "EntryDate" || e.dataField === "ERStatus" || e.dataField === "PSPvNO" || e.dataField === "PSPvDate" || e.dataField === "LocalAmount" || e.dataField === "ReqDate" || e.dataField === "HeadRefNo" || e.dataField === "PayToCode" || e.dataField === "PayToName" || e.dataField === "Department" || e.dataField === "EROCode01" || e.dataField === "RefundedAmount")) {
+                              e.editorOptions.disabled = true;
+                          }
+                      }
+                  },
+                  //onRowPrepared: function(e) {
+                  //if (e.rowType === "data" ){ //e.rowElement.style.backgroundColor = 'yellow'
+                  // e.cellElement.css("color", e.data.Confirmed === true ? "grey" : "black");
+                  //     e.rowElement.css("backgroud", "grey" );
+                  //    e.rowElement.find("td").css('background', 'grey' );
+                  //    e.rowElement.style.backgroundColor = 'grey'
+                  //}
+                  //},
+
+                  //
+                  //
+                  // Editing
+                  editing: {
+                      mode: "row", // popup , row, cell (click to edit)
+                      useIcons: true,
+                      allowUpdating: true,
+                      allowDeleting: arDataD,
+                      allowAdding: false, //arDataC,
+
+                      popup: {
+                          title: "Expenses Reimbursement Info",
+                          fullScreen: false,
+                          showTitle: true,
+                          width: 1200,
+                          height: 650,
+                          position: {
+                              my: "top",
+                              at: "top",
+                              of: "window"
+                          },
+                          onContentReady: function (e) {
+                              e.component.option('toolbarItems[0].visible', aSaveVisible);
+                              e.component.option('toolbarItems[0].options.icon', 'save');
+                              e.component.option('toolbarItems[0].options.type', 'success');
+                              e.component.option('toolbarItems[1].options.text', aCancelText);
+                              e.component.option('toolbarItems[1].options.icon', aCancelicon);
+                              e.component.option('toolbarItems[1].options.type', aCancelType);
+                          }
+                      },
+                  },
+                  // column list
+                  columns: [
+                      {
+                          type: "buttons",
+                          caption: "Editor",
+                          width: 80,
+                          buttons: ["edit", "delete"],
+                          visible: { visible: function (e) { return (e.row.data.Confirmed === false) } }
+                      },
+                      {
+                          type: "buttons",
+                          //caption: "+",
+                          width: 40,
+                          buttons: [// Clone first record ID++
+                              {
+                                  hint: "Add More Line",
+                                  icon: "add",
+                                  visible: function (e) {
+                                      return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                  },
+                                  onClick: function (e) {
+                                      //REFNO,ID,HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpensesCode,ExpensesDescription,Currency,Xrate,Amount,LocalAmount,Confirmed,Approved,Note,EntryBy,EntryDate,HRApproved,ERStatus,LimitedAmount,OtherRefNo,PBatchNo,PBatchDate,PSPvNO,PSPvDate,RemitTo1,RemitTo2,RemitTo1Amount,RemitTo2Amount,RemitTo1Diff,RemitTo2Diff,RemitTo1Note,RemitTo2Note,ERODate01,ERODate02,ERODate03,ERODate04,ERODate05,ERODate06,ERODesc01,ERODesc02,ERODesc03,ERODesc04,ERODesc05,ERODesc06,EROCheck01,EROCheck02,EROCheck03,EROCheck04,EROCheck05,EROCheck06,EROCode01,EROCode02,EROCode03,EROCode04,EROCode05,EROCode06,ERORefNo1,ERORefNo2,ERORefNo3,ERORefNo4,ERORefNo5,ERORefNo6,EROAmount1,EROAmount2,EROAmount3,EROAmount4,EROAmount5,EROAmount6,EROSum1,EROSum2,EROSum3,EROSum4,EROSum5,EROSum6
+                                      let aBlankDate = "1900-01-01T00:00:00" //new Date('1900-01-01T00:00') //console.log(aBlankDate) //"Confirmed wait for HR"
+                                      let axRunRun = e.row.data.HeadRefNo
+                                      aGetD2V(aaPFDMI, "ExtraOnLine.dbo.ERnextIDview Where HeadRefNo LIKE '" + axRunRun + "%'", "NextID", "aaOBJnn") //[WIKRAN-W10]. searh from view
+                                      let aNextNOa = JSON.parse(localStorage.getItem("aaOBJnn"));
+                                      let aaID = aNextNOa[0].NextID //next no
+                                      let axLineNo = $.trim(axRunRun) + "-" + String(aaID).padStart(3, '0')
+                                      //let aObjKeyData = { ID: aaID, HeadRefNo: axRunRun, REFNO: axLineNo, EROAmount: 0, PBatchDate: aBlankDate,PSPvDate: aBlankDate,ERODate01: aBlankDate,ERODate02: aBlankDate,ERODate03: aBlankDate,ERODate04: aBlankDate,ERODate05: aBlankDate,ERODate06: aBlankDate} //{EntryBy: aaUsrN , EntryDate: new Date(), PayToCode: asStaffID, PayToName: asFullName, Department: asDepartment };
+                                      let aObjKeyData = { REFNO: axLineNo, ID: aaID, LocalAmount: 0, Amount: 0 }
+                                      let aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //values //var clonedItem = $.extend({}, e.row.data, { REFNO: axRunRun }); //++maxID
+
+                                      sendRequestNew("Insert", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX)); //employees.splice(e.row.rowIndex, 0, clonedItem);
+
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.event.preventDefault();
+                                      $("#gridContainer").dxDataGrid("instance").refresh();
+                                  }
+                              },
+                          ]
+
+                      },
+                      {
+                          dataField: "HeadRefNo",
+                          caption: "REF NO",
+                          sortOrder: "desc",
+                          groupIndex: 0,
+                          width: 180,
+                      },
+                      {
+                          dataField: "ID",
+                          sortOrder: "asc",
+                          caption: "NO",
+                          editorOptions: { width: 40 },
+                          width: 40
+                      },
+                      {
+                          dataField: "ReqDate",
+                          caption: "Submitted Date",
+                          dataType: "date",
+                          format: "dd/MM/yyyy",
+                          editorOptions: { width: 100 },
+                          validationRules: [{ type: "required" }],
+                          width: 100,
+                      },
+                      {
+                          dataField: "PayToCode",
+                          caption: "Code",
+                          editorOptions: { width: 150 },
+                          width: 150,
+                          visible: false,
+                      },
+                      {
+                          dataField: "PayToName",
+                          caption: "Name",
+                          editorOptions: { width: 300 },
+                          width: 250,
+                          visible: false,
+                      },
+                      {
+                          dataField: "Department",
+                          caption: "Department",
+                          editorOptions: { width: 150 },
+                          width: 100,
+                          visible: false,
+                      },
+                      {
+                          dataField: "Division",
+                          caption: "Division",
+                          editorOptions: { width: 150 },
+                          width: 150,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ExpensesCode",
+                          caption: "Expenses Code",
+                          /*
+                          lookup: {
+                                   dataSource: aaExpExp,
+                                   valueExpr: "ACCCODE",
+                                   displayExpr: "ACCCODE",
+                               }, 
+                          validationRules: [{ type: "required" }],
+                          editCellTemplate: dropDownBoxEditorTemplate,
+                          setCellValue: function(newData, value, currentRowData) {
+                                     if(arDataU === 1){
+                                       let aResult = aSearchjson(aaExpExp,value);
+                                       newData.ExpensesCode = value;
+                                       newData.ExpensesDescription = aResult[0].TDESC; 
+                                     }
+                                   }, 
+                          */
+                          editorType: "dxTextArea",
+                          editorOptions: { width: 200 },
+                          width: 120,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ExpensesDescription",
+                          caption: "Expenses",
+                          editorType: "dxTextArea",
+                          editorOptions: { width: 300 },
+                          width: 250,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ERORefNo1",
+                          caption: "Plate NO",
+                          width: 150,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ERORefNo2",
+                          caption: "Fleet Card NO",
+                          width: 150,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ERODesc03",
+                          caption: "Hospital/Clinic Name",
+                          /*
+                          lookup: {
+                              dataSource: aaHospital, //Code,Name
+                              valueExpr: "HOSPITAL",
+                              displayExpr: "HOSPITAL",
+                          },
+                          */
+                          validationRules: [{ type: "required" }],
+                          //editCellTemplate: dropDownHospital,
+                          //editorType:"dxTextArea",
+                          editorOptions: { width: 120 }, //, height: 80
+                          width: 120,
+                          //visible: false,
+                      },
+                      {
+                          dataField: "ERORefNo4",
+                          caption: "Bill No",
+                          width: 110,
+                          editorOptions: { width: 110 },
+                          validationRules: [{ type: "required" }],
+                          visible: false,
+                      },
+                      {
+                          dataField: "ERODate01",
+                          caption: "Bill Date",
+                          dataType: "date",
+                          format: "dd/MM/yyyy",
+                          width: 120,
+                          editorOptions: { width: 120 },
+                          validationRules: [{ type: "required" }],
+                      },
+                      // Medical
+                      {
+                          dataField: "EROCode01",
+                          caption: "IPD/OPD",
+                          /* lookup: {
+                               dataSource: arIPDOPD,
+                               valueExpr: "CODE",
+                               displayExpr: "CODE",
+                           },*/
+                          editorOptions: { width: 100 },
+                          width: 100,
+                          validationRules: [{ type: "required" }],
+                          visible: false,
+                      },
+                      {
+                          dataField: "EROCode02",
+                          caption: "Emp. Type",
+                          /*lookup: {
+                              dataSource: arEMPTYPE,
+                              valueExpr: "CODE",
+                              displayExpr: "CODE",
+                          },
+                          setCellValue: function (newData, value, currentRowData) {
+                              newData.EROCode02 = value;
+                              if ($.trim(value) === "Employee") {
+                                  newData.EROCode02 = value;
+                                  newData.ERODesc01 = currentRowData.PayToName
+                              }
+                          },*/
+                          editorOptions: { width: 110 },
+                          width: 110,
+                          //visible: false,
+                      },
+                      {
+                          dataField: "ERODesc01",
+                          caption: "Patient Name",
+                          //editorType:"dxTextArea",
+                          editorOptions: { width: 150 }, //, height: 80
+                          width: 150,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ERODesc06",
+                          caption: "User Email",
+                          //editorType:"dxTextArea",
+                          editorOptions: { width: 150 }, //, height: 80
+                          width: 150,
+                          visible: false,
+                      },
+                      {
+                          dataField: "Currency",
+                          caption: "Currency",
+                          value: "THB",
+                          /*
+                          lookup: {
+                                   dataSource: aaCurrency, //Code,Name
+                                   valueExpr: "Code",
+                                   displayExpr: "Code",
+                               }, 
+                          validationRules: [{ type: "required" }],
+                          editCellTemplate: dropDownBoxCURR,
+                          setCellValue: function(newData, value, currentRowData) {
+                                     if(arDataU === 1){
+                                       newData.Currency = value;
+                                       let aResult = aSearchXjson(aaCurrency,value);
+                                       newData.Xrate = aResult[0].xRate; 
+                                       //newData.LocalAmount = currentRowData.Amount * (1/aResult[0].xRate);
+                                     }
+                                   },           
+                          editorType:"dxTextArea",
+                          */
+                          editorOptions: { width: 100 },
+                          width: 100,
+                          visible: false,
+                      },
+                      {
+                          dataField: "Xrate",
+                          caption: "X-Rate",
+                          dataType: "number",
+                          //format:{ type:"fixedPoint", precision: 6 },
+                          editorType: "dxNumberBox",
+                          editorOptions: { format: "#,##0.000000", width: 100 },
+                          format: "#,##0.000000",
+                          width: 100,
+                          value: 1,
+                          visible: false,
+                      },
+
+                      {
+                          dataField: "Amount",
+                          caption: "Actual Amount",
+                          dataType: "number",
+                          format: { type: "fixedPoint", precision: 2 },
+                          setCellValue: function (newData, value, currentRowData) {
+                              let aaLocalAmt = value * (1 / currentRowData.Xrate);
+                              newData.Amount = value;
+                              newData.LocalAmount = aaLocalAmt //value * (1/currentRowData.Xrate); 
+                              newData.ERORefNo3 = ""
+
+                          },
+                          editorType: "dxNumberBox",
+                          editorOptions: { format: "#,##0.00", width: 130 },
+                          width: 130,
+                          //visible: true,	
+                      },
+                      {
+                          dataField: "LocalAmount",
+                          caption: "Local Amount",
+                          dataType: "number",
+                          format: { type: "fixedPoint", precision: 2 },
+                          editorOptions: { format: "#,##0.00", width: 120 },
+                          width: 120,
+                          visible: false,
+                      },
+
+                      {
+                          dataField: "ERORefNo3",
+                          caption: "Exp. Type",
+                          /*lookup: {
+                              dataSource: aaSubGroup,
+                              valueExpr: "ExpSubGroup",
+                              displayExpr: "ExpSubGroup"
+                          },
+                          setCellValue: function (newData, value, currentRowData) {
+                              newData.ERORefNo3 = value;
+
+                              if ($.trim(value) === "Dental (SSO)") {
+                                  newData.RefundedAmount = 0;
+                                  newData.NeedPayment = false; //(value = "Fleet Card" ? false : true);
+                                  newData.EROCheck01 = true;
+                                  newData.EROCheck02 = true;
+                              }
+                              else {
+                                  let nThisAmount = currentRowData.LocalAmount;
+                                  aGetD2V(aaPFDMI, "ExtraOnLine.dbo.MSumDView Where PayToCode = '" + aaEmpID + "' and QYear = 2021", "TRefundAmt,MRemained", "aaOBJnnT")
+                                  let arResult = JSON.parse(localStorage.getItem("aaOBJnnT"));
+                                  let aaTTAmt = arResult[0].TRefundAmt //Total Amount 
+                                  let aaRemain = aaLTotal - aaTTAmt //(LimitAmount - Toral Usage Amount)
+                                  let aaCheckAmt = aaLTotal - (aaTTAmt + nThisAmount) // (Limit Amount - (Total Usage + This Value) ) : if  check amt < 0 then OVER Limitation **
+                                  let aTRem = (aaRemain === 0 ? "0" : aaRemain.toString());
+                                  let aaAMessage = "<div  style='color:Tomato;'><center><b><i class='fas fa-exclamation-triangle'></i> OVER LIMITATION</b></br></br> The remaining amount = " + aTRem + "</br>Please Try again !!!</center></div>";
+                                  //console.log(aaHeadRefNO)
+                                  //console.log(aaTTAmt)
+                                  //console.log(aaRemain)
+                                  //console.log(aTRem)
+                                  //console.log(aaAMessage)                
+                                  //aaCheckAmt = value                                                         
+                                  if (aaCheckAmt >= 0) {
+                                      newData.NeedPayment = true;
+                                      newData.RefundedAmount = nThisAmount;
+                                  } else {
+                                      DevExpress.ui.dialog.alert({
+                                          showTitle: false,
+                                          //title: "OVER LIMITATION",
+                                          messageHtml: aaAMessage
+                                      });
+                                  }
+                                  newData.EROCheck01 = false;
+                                  newData.EROCheck02 = false;
+                              }
+                          },*/
+                          validationRules: [{ type: "required" }],
+                          editorOptions: { width: 120 },
+                          width: 120,
+                          //editorOptions: {width: 150},
+                      },
+                      {
+                          dataField: "ERODesc02",
+                          caption: "Disease", //dropDownDisease
+                          /*
+                          lookup: {
+                              dataSource: function (options) {
+                                  return {
+                                      store: aaDisease,
+                                      filter: options.data ? ["Type", "=", options.data.ERORefNo3] : null //options.data.StateID
+                                  };
+                              },
+                              valueExpr: "Disease",
+                              displayExpr: "Disease",
+                          },
+                          */
+                          validationRules: [{ type: "required" }],
+                          //editorType:"dxTextArea",
+                          editorOptions: { width: 250 }, //, height: 80
+                          width: 150,
+                          //visible: false,
+                      },
+                      {
+                          dataField: "Note",
+                          caption: "Note",
+                          //editorType:"dxTextArea",
+                          editorOptions: { width: 100 }, //, height: 80
+                          width: 100,
+                          visible: false,
+                      },
+                      /*  
+                      {
+                          dataField: "EROCheck01",
+                          caption: "Pay Slip",
+                         //alignment: "center",
+                          width: 110,
+                          visible: false,
+                      },                      
+                      {
+                          dataField: "EROCheck02",
+                          caption: "Tax Invoice",
+                          //alignment: "center",
+                          width: 110,
+                          visible: false,
+                      },
+                      */
+
+                      {
+                          dataField: "NeedPayment",
+                          caption: "Refunded",
+                          //alignment: "center",
+                          width: 110,
+                          visible: false,
+                      },
+                      {
+                          dataField: "RefundedAmount",
+                          caption: "Reimbursement",
+                          dataType: "number",
+                          format: { type: "fixedPoint", precision: 2 },
+                          editorOptions: { format: "#,##0.00", width: 120 },
+                          width: 120,
+                          //visible: false,
+                      },
+                      {
+                          dataField: "LimitedAmount",
+                          caption: "Limited",
+                          dataType: "number",
+                          format: { type: "fixedPoint", precision: 2 },
+                          editorOptions: { format: "#,##0.00", width: 120 },
+                          width: 120,
+                          visible: false,
+                      },
+
+                      //PBatchNo,PBatchDate,PSPvNO,PSPvDate
+                      {
+                          dataField: "PSPvNO",
+                          caption: "PS PVNO",
+                          //editorType:"dxTextArea",
+                          editorOptions: { width: 120 },
+                          width: 120,
+                          visible: false,
+                      },
+                      /*
+                      {
+                          dataField: "PSPvDate",
+                          caption: "PS PV Date",
+                          dataType: "date",
+                          format: "dd/MM/yyyy",
+                          width: 120,
+                          editorOptions: { width: 120 },
+                          visible: false,
+                          //validationRules: [{ type: "required" }],
+                      },
+                      */
+                      {
+                          dataField: "Confirmed",
+                          caption: "CF",
+                          //filterOperations: ["contains", "="],
+                          //selectedFilterOperation: "contains",
+                          //filterValue: false,   
+                          width: 60,
+                          visible: false,
+                      },
+                      {
+                          dataField: "HODApproved",
+                          caption: "HD",
+                          width: 60,
+                          //filterValue: false, 
+                          visible: false,
+                      },
+                      {
+                          dataField: "HRApproved",
+                          caption: "HR",
+                          filterValue: false,
+                          width: 60,
+                          visible: false,
+                      },
+                      {
+                          dataField: "Approved",
+                          caption: "FA",
+                          filterValue: false,
+                          width: 60,
+                          visible: false,
+                      },
+                      {
+                          dataField: "ERStatus",
+                          caption: "Status",
+                          width: 180,
+                          //editorType:"dxTextArea",
+                          //editorOptions: {width: 400, height: 80},
+                          //visible: false,
+                      },
+                      {
+                          dataField: "EntryBy",
+                          caption: "Entry By",
+                          //alue: [aaUsrN],
+                          editorOptions: { width: 150 },
+                          visible: false,
+                      },
+                      {
+                          dataField: "EntryDate",
+                          caption: "Entry Date",
+                          //value: [aNowDatev],
+                          dataType: "date",
+                          format: "dd/MM/yyyy",
+                          editorOptions: { width: 150 },
+                          visible: false,
+                      },
+
+                      {
+                          type: "buttons",
+                          width: 60,
+                          visible: false,
+                          buttons: [
+                              {
+                                  hint: "UN-Confirm",
+                                  icon: "fas fa-times-circle",
+                                  visible: function (e) {
+                                      return (e.row.data.ID === 1 && e.row.data.Confirmed === true) //return !e.row.isEditing;
+                                  },
+                                  onClick: function (e) {
+                                      // mark Confirmed field
+                                      let aERStatus = "Register" ///"Confirmed wait for HR"
+                                      let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
+                                      let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
+                                      var aObjKeyData = { REFNO: e.row.data.REFNO, Confirmed: aTrueORFalseB, ERStatus: aERStatus };   //[aaKeyField] key.trim
+                                      var aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData)); //value
+                                      sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
+
+                                      //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
+                                      let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                      aSQLAction(aaPFDMI, aSQLCommand)
+                                      aSQLAction(aaPFDMI, aSQLCommand)
+                                      aSQLAction(aaPFDMI, aSQLCommand)
+
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.event.preventDefault();
+
+                                      //send Email
+                                      console.log(aaHRAppEmail)
+                                      console.log(aaHRAppName)
+                                      console.log(asFullName)
+                                      console.log(asStaffEmail)
+                                      let aApproverName = aaHRAppName + " [HR]"         //aaHRAppName //"Wikran" + " [HR]"         // HR Approver Name
+                                      let aApproverEmail = $.trim(aaHRAppEmail) // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                                      let aRequesterName = asFullName //e.data.PayToName //"Wikran Intaraprajaks"
+                                      let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                                      let aSubject = aaOnInitExpGroupDesc + " (UN-Confirmed)"
+                                      let aAddress2Do = "<a href='https://cbsdev2.locktonwattana.com/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
+                                      let aMessage = "<div>���¹ �س" + $.trim(aApproverName) + "<br>Please noted that Medical Expenses for REFNO = [" + e.row.data.HeadRefNo + "]<br> at (" + aAddress2Do + "). has un-confirmed <br><br>Regards,<br>" + aRequesterName + "</div>"
+                                      //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
+                                      //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+
+                                      //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.event.preventDefault();
+                                      $("#gridContainer").dxDataGrid("instance").refresh();
+                                      $("#gridContainer").dxDataGrid("instance").refresh();
+                                      aMessageAlert("Already UN-Confirmed", "Red")
+
+                                  }
+                              },
+                              {
+                                  hint: "Confirm",
+                                  icon: "fas fa-check-circle",
+                                  visible: function (e) {
+                                      return (e.row.data.ID === 1 && e.row.data.Confirmed === false) //return !e.row.isEditing;
+                                  },
+                                  onClick: function (e) {
+                                      // mark Confirmed field
+                                      let aERStatus = "Confirmed wait for HR" //"Register"
+                                      let aTrueORFalse = (e.row.data.Confirmed === true ? '0' : '1');
+                                      let aTrueORFalseB = (e.row.data.Confirmed === true ? false : true);
+                                      var aObjKeyData = { REFNO: e.row.data.REFNO, Confirmed: aTrueORFalseB, ERStatus: aERStatus };
+                                      var aObjRowData = JSON.stringify($.extend({}, e.row.data, aObjKeyData));
+                                      sendRequestNew("Update", aObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));  // Update the ID = 1 of REFNO
+
+                                      //use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = 1 Where HeadRefNo = 'M2108063704'
+                                      let aSQLCommand = "use ExtraOnLine; UPDATE EXPREIM  SET Confirmed = " + aTrueORFalse + ", ERStatus = '" + aERStatus + "' Where HeadRefNo = '" + e.row.data.HeadRefNo + "'"
+                                      aSQLAction(aaPFDMI, aSQLCommand) // Update Confirmed for all HeadReNo
+                                      aSQLAction(aaPFDMI, aSQLCommand)
+                                      aSQLAction(aaPFDMI, aSQLCommand)
+
+
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.event.preventDefault();
+
+                                      //send Email
+                                      console.log(aaHRAppEmail)
+                                      console.log(aaHRAppName)
+                                      console.log(asFullName)
+                                      console.log(asStaffEmail)
+                                      let aApproverName = aaHRAppName + " [HR]"     //aaHRAppName //"Wikran" + " [HR]"         // HR Approver Name
+                                      let aApproverEmail = $.trim(aaHRAppEmail)      // aaHRAppEmail //"wikran@asia.lockton.com" // HR Approver
+                                      let aRequesterName = asFullName //e.data.PayToName //"Wikran Intaraprajaks"
+                                      let aRequesterEmail = asStaffEmail //e.data.ERODesc06 //"wikran@asia.lockton.com"
+                                      let aSubject = aaOnInitExpGroupDesc + " Reimbursement Requested"
+                                      let aAddress2Do = "<a href='https://cbsdev2.locktonwattana.com/XOL/index.html'>Expenses Reimburse</a>"; //<a href='https://www.w3schools.com'>Visit W3Schools</a>
+                                      let aMessage = "<div>���¹ �س" + $.trim(aApproverName) + ",<br>Please verify and approve " + aaOnInitExpGroupDesc + " for REFNO = [" + e.row.data.HeadRefNo + "]<br> at (" + aAddress2Do + "). <br><br>Regards,<br>" + aRequesterName + "</div>"
+
+                                      //aSendMailDMZ(" " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.event.preventDefault();
+                                      $("#gridContainer").dxDataGrid("instance").refresh();  // Refresh GridData
+                                      $("#gridContainer").dxDataGrid("instance").refresh();
+                                      aMessageAlert("Already Confirmed", "DarkGreen")
+                                  }
+                              },
+                              {
+                                  hint: "send mail",
+                                  icon: "fas fa-envelope",
+                                  visible: false,
+                                  //visible: function(e) {                        
+                                  //    return (e.row.data.ID === 1) //return !e.row.isEditing;
+                                  //},
+                                  onClick: function (e) {
+                                      //send Email
+                                      let aApproverName = "Wikran"                   // HR Approver Name
+                                      let aApproverEmail = "wikran@asia.lockton.com" // HR Approver
+                                      let aRequesterName = "Wikran Intaraprajaks"
+                                      let aRequesterEmail = "wikran@asia.lockton.com"
+                                      let aSubject = "Please approve a Medical Expenses Reimbursement"
+                                      let aAddress2Do = "https://cbsdev2.locktonwattana.com/XOL/index.html";
+                                      let aMessage = "<div>Dear Khun " + $.trim(aApproverName) + "<br>Please verify and approve " + aaOnInitExpGroupDesc + " for REFNO = [" + e.row.data.HeadRefNo + "]<br> at (" + aAddress2Do + "). <br><br>Regards,<br>" + aRequesterName + "</div>"
+                                      //let aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>Please Approve at &nbsp;'+ aAddress2Do +'</center></strong></span></h2></td></tr></tbody></table>'                          
+                                      //aSendMailDMZ("Khun " + aApproverName , aApproverEmail ,"XOL-Requester",aRequesterEmail,"","Please approve a Medical Expenses Reimbursement" , "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aApproverName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+                                      aSendMailDMZ("Khun " + aApproverName, aApproverEmail, aRequesterEmail, "", "", aSubject, aMessage)
+                                      aMessageAlert("Already Send Mail", "Orange")
+                                  }
+                              },
+                              {
+                                  hint: "Print",
+                                  icon: "fas fa-print", //"fas fa-marker", "fas fa-print", "print"
+                                  visible: function (e) {
+                                      //return !e.row.isEditing;
+                                      return (e.row.data.ID === 1) //false; && e.row.data.Confirmed === true
+                                  },
+                                  onClick: function (e) {
+                                      aPopUpForm(e.row.data, e.row.data.HeadRefNo);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.component.refresh(true);
+                                      e.event.preventDefault();
+                                      dataGrid.refresh();
+                                  }
+
+                              }
+
+                          ]
+                      },
+                  ],
+                  //
+                  // summary
+                  summary: {
+                      recalculateWhileEditing: true,
+                      skipEmptyValues: false,
+                      totalItems: [
+                          {
+                              column: "ERODesc01",
+                              summaryType: "count",
+                              //          summaryType: "max",
+                              //          valueFormat: "currency",
+                              //          showInGroupFooter: false,
+                              //          alignByColumn: true            
+                              displayFormat: "Grand Total {0} Items",
+                          },
+                          {
+                              column: "Amount",
+                              summaryType: "sum",
+                              valueFormat: "#,##0.00",
+                              displayFormat: "{0}",
+                          },
+                          {
+                              column: "LocalAmount",
+                              summaryType: "sum",
+                              //          summaryType: "max",
+                              valueFormat: "#,##0.00", //"currency",
+                              //          showInGroupFooter: false,
+                              //          alignByColumn: true            
+                              displayFormat: "{0}",
+                          },
+                          {
+                              column: "RefundedAmount",
+                              summaryType: "sum",
+                              //          summaryType: "max",
+                              valueFormat: "#,##0.00", //"currency",
+                              //          showInGroupFooter: false,
+                              //          alignByColumn: true            
+                              displayFormat: "{0}",
+                          },
+                      ],
+                      groupItems: [
+                          {
+                              column: "ID",
+                              summaryType: "count",
+                              //alignByColumn: true, 
+                              //showInGroupFooter: true,
+                              displayFormat: "{0} Items",
+                          },
+                          {
+                              column: "ERODesc01",
+                              summaryType: "count",
+                              alignByColumn: true,
+                              showInGroupFooter: true,
+                              displayFormat: "Total {0} Items",
+                          },
+                          {
+                              column: "Amount",
+                              summaryType: "sum",
+                              valueFormat: "#,##0.00",
+                              alignByColumn: true,
+                              showInGroupFooter: true,
+                              displayFormat: "{0}",
+                          },
+                          {
+                              column: "LocalAmount",
+                              summaryType: "sum",
+                              valueFormat: "#,##0.00", //"currency",
+                              //          showInGroupFooter: false,
+                              showInGroupFooter: true,
+                              alignByColumn: true,
+                              displayFormat: "{0}",
+                          },
+                          {
+                              column: "RefundedAmount",
+                              summaryType: "sum",
+                              valueFormat: "#,##0.00", //"currency",
+                              //          showInGroupFooter: false,
+                              showInGroupFooter: true,
+                              alignByColumn: true,
+                              displayFormat: "{0}",
+                          },
+                      ],
+                  },
+                  // Tool Bar
+                  onToolbarPreparing: function (e) {
+                      var dataGrid = e.component;
+                      e.toolbarOptions.items.unshift(
+                          /*
+                          {
+                              location: "before",
+                              template: function () { return $("<div style='padding: 5px 5px;'/>") }
+                          },
+                          {
+                              location: "before",
+                              template: function () {
+                                  return $("<div />")
+                                      //.addClass("informer")
+                                      .append(
+                                          $("<span style='font-size: 13px; font-weight: bold; color: white; background-color: LightSeaGreen; border-radius: 3px; border: 0px; padding: 1px 30px; ' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                              //.addClass("count")
+                                              //.text(getGroupCount("CustomerStoreState")),
+                                              .text(aaOnInitExpGroupDesc.toUpperCase() + " EXPENSES FOR"),
+                                          $("<br><center />"),
+                                          $("<i class= 'fas fa-user-circle''><span />")   //; style='color: DarkGreen;
+                                              //.addClass("name")
+                                              .text(" " + $.trim(asFullName)),
+                                      );
+                              }
+                          },
+                          */
+                          {
+                              location: "before",
+                              template: function () { return $("<div style='padding: 5px 8px; '/>") }
+                          },
+                          {
+                              location: "before",
+                              template: function () {
+                                  return $("<div />")  //    height: 70px; width: 130px; text-align: center;  color: #fff;
+                                      .append(
+                                          $("<span style='font-size: 13px; font-weight: bold; color: lightgrey; background-color: Indigo; border-radius: 3px; border: 0px; padding: 1px 10px;' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                              .text("LIMIT/YEAR"),
+                                          $("<br>"),
+                                          $("<i class= 'fas fa-coins'; style='color: Indigo;'>;"),
+                                          $("<span />")
+                                              .text('   ' + String(aaLTotal).replace(/(.)(?=(\d{3})+$)/g, '$1,') + '.00'),
+                                      );
+                              }
+                          },
+                          {
+                              location: "before",
+                              template: function () { return $("<div style='padding: 5px 8px; '/>") }
+                          },
+                          {
+                              location: "before",
+                              template: function () {
+                                  return $("<div />")  //    height: 70px; width: 130px; text-align: center;  color: #fff;
+                                      .append(
+                                          $("<span style='font-size: 13px; font-weight: bold; color: LightYellow; background-color: Red; border-radius: 3px; border: 0px; padding: 1px 12px; ' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px; opacity: 0.5;
+                                              .text("USAGE AMT"),
+                                          $("<br>"),
+                                          $("<i class= 'fas fa-coins'; style='color: OrangeRed;' >;"),
+                                          $("<span />")
+                                              .text('   ' + String(aaTTUsed).replace(/(.)(?=(\d{3})+$)/g, '$1,') + '.00'),
+                                      );
+                              }
+                          },
+                          {
+                              location: "before",
+                              template: function () { return $("<div style='padding: 5px 8px; '/>") }
+                          },
+                          {
+                              location: "before",
+                              template: function () {
+                                  return $("<div />")  //    height: 70px; width: 130px; text-align: center;  color: #fff;
+                                      .append(
+                                          $("<span style='font-size: 13px; font-weight: bold; color: lightblue; background-color: RoyalBlue; border-radius: 3px; border: 0px; padding: 1px 10px;' />") //text-align: center; color:blue; border-radius: 5px; border: 2px solid #73AD21; width: 250px; height: 10px;
+                                              .text("REMAINING "),
+                                          $("<br>"),
+                                          $("<i class= 'fas fa-coins'; style='color: DodgerBlue;' >;"),
+                                          $("<span />")
+                                              .text('   ' + String(aaTTRm).replace(/(.)(?=(\d{3})+$)/g, '$1,') + '.00'),
+                                      );
+                              }
+                          },
+                          {
+                              location: "before",
+                              template: function () { return $("<div style='padding: 5px 85px;'/>") }
+                          },
+                          //aPopUpAddForm
+                          //{
+                          //    location: "after",
+                          //    widget: "dxButton",
+                          //    options: {
+                          //        icon: "fas fa-plus-circle",
+                          //        text: "Add New",
+                          //        type: "success",
+                          //        stylingMode: "outlined",
+                          //        onClick: function () {
+                          //            aPopUpAddForm();
+                          //        }
+                          //    }
+                          //},
+                          /*  
+                          {
+                          location: "before",
+                          widget: "dxTextBox", 
+                          options: {
+                              value: " [" + aaOnInitExpGroupDesc + "] " + "FOR " + $.trim(asFullName) ,
+                              width: 500,
+                              readOnly: true,
+                          },
+                          },
+                              
+                          {
+                          location: "after",
+                          widget: "dxNumberBox", 
+                          options: {
+                              value: aaLTotal,
+                              width: 100,
+                              format:  "#,##0.00",
+                              readOnly: true,
+                          },
+                      
+                          }, 
+                      */
+                          /*   {
+                                 location: "after",
+                                 widget: "dxButton",
+                                 options: {
+                                     icon: 'collapse',
+                                     text: 'Collapse All',
+                                     //type: "danger",
+                                     width: 140,
+                                     onClick: function (e) {
+                                         var expanding = e.component.option("text") === "Expand All";
+                                         dataGrid.option("grouping.autoExpandAll", expanding);
+                                         e.component.option("text", expanding ? "Collapse All" : "Expand All");
+                                         e.component.option("icon", expanding ? "collapse" : "expand");
+                                     }
+                                 }
+                             },
+                             {
+                                 location: "after",
+                                 widget: "dxButton",
+                                 visible: arPDFEx,
+                                 options: {
+                                     icon: "exportpdf",
+                                     //text: "Export to PDF",
+                                     Hint: "Export to PDF File",
+                                     onClick: function () {
+                                         const doc = new jsPDF();
+                                         //doc.addFont("font/ANGSA.ttf", "angsana", "normal");
+                                         doc.addFont("font/Pridi-Regular.ttf", "Pridi", "normal"); // load thai font (in font location Google Font)
+                                         doc.setFont("Pridi", "normal"); // set to thai font
+                                         DevExpress.pdfExporter.exportDataGrid({
+                                             jsPDFDocument: doc,
+                                             component: dataGrid,
+                                             customizeCell: function (options) {
+                                                 const { gridCell, pdfCell } = options;
+
+                                                 //if(gridCell.rowType === 'data') {
+                                                 //set font and font size
+                                                 pdfCell.styles = {
+                                                     font: 'Pridi',
+                                                     fontSize: 10
+                                                 }
+                                                 //}
+                                             }
+                                         }).then(function () {
+                                             doc.save('EXPREIM' + '.pdf');
+                                         });
+                                     }
+                                 }
+                             },*/
+                          {
+                              location: "after",
+                              widget: "dxButton",
+                              options: {
+                                  icon: "refresh",
+                                  onClick: function () {
+                                      dataGrid.refresh();
+                                  }
+                              }
+                          }
+                      );
+                  }
+
+              }).dxDataGrid("instance");
+
+
+
+          });
+      }
+
+      function aPivotPopUp() { //, aaHeadRefNo, taData
+          //var aqrIDNo = "IDNO = '" + iData.IDNO + "'"
+          //var aqrStatus = "Status = 'Lapse'"
+          //var aaRWIDNOa = iData.IDNO
+          //var aaRWSfIDa = iData.STAFFID
+          //var aaRWSfNmea = iData.STAFFNAME.substring(0, 20)
+          //var aaRWDNNoa = iData.InvRefNo
+          //var aaRWStatusa = iData.Status
+          //var aaDbNmea = "SIBISDB"
+          //var aTableNamea = "RWFollowUp"
+          //var aaiHeadRef = aaHeadRefNo;
+          //var aaSchRef = "HeadRefNo LIKE '%" + aaHeadRefNo + "%'" // scopes based permission (View Only Login Name)
+          let drillDownDataSource = {};
+          // define the $ as jQuery for multiple uses
+          jQuery(function ($) {
+              // ...
+              //var gbxRateV = 1;
+              const popup = $("#PivotPopUp").dxPopup({
+                  title: "Pivot",
+                  width: '1300px',
+                  position: { offset: "0 -140" }, //{offset: "0 -180"},
+                  //position: {offset: "40 -200"}, //{my:"top", at:"top", of:window},
+                  visible: true,
+                  fullScreen: true,
+                  showCloseButton: false,
+                  showTitle: true,
+                  dragEnabled: true,
+                  closeOnOutsideClick: false,
+                  resizeEnabled: true,
+                  //shadingColor:"rgb(190,190,190,0.9)",
+                  //toolbarItems: [{toolbar:"top", html: "<span id='popupexit'></span>"}],
+                  //toolbarItems: [
+                  //    {toolbar:"top", html:"<div padding-top: -7px;><center><img src='./images/locktonlogo70mmblack.png' width='88'></center></div>"}],            
+                  contentTemplate: function () {
+                      return $("<div />").append(
+                          $("<p><div id='aAgentPivot'></div></p>"), //acStatus
+                          $("<div id='popupexit' style='margin:5px;'></div></p>"),
+                          //$("<p><div id='Status-dxDataGrid'></div></p>"),
+                          //$("<p><div id='aSchxx' style='margin:5px;'></div>"), //acStatus
+                          //$("<div id='asave' style='margin:5px;'></div>"),
+                          //$("<p><div id='account-chart' style='padding-top: -10px; font-size: 9pt;'></div></p>"),
+                          //$("<p><div id='fu-datagrida'></div></p>"),                              
+                      );
+                  },
+                  toolbarItems: [
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          //html: "<div padding-top: -7px;><img src='./images/locktonlogo70mmblack.png' width='85'></div>"
+                      },
+                      /*
+                       {
+                           toolbar: "top",
+                           locateInMenu: 'always',
+                           widget: "dxButton",
+                           //toolbar: "bottom",
+                           location: "right",
+                           options: {
+                               icon: "print",
+                               //text: "Print",
+                               onClick: function () {
+                                   window.print()
+                               }
+                           }
+                       },*/
+                      {
+                          toolbar: "top",
+                          locateInMenu: 'always',
+                          widget: "dxButton",
+                          //toolbar: "bottom",
+                          location: "after",
+                          options: {
+                              //text: "EXIT",
+                              icon: "fas fa-times",
+                              //type: "danger",                
+                              onClick: function (e) {
+                                  popup.hide();
+                              }
+                          }
+                      }]
+
+              }).dxPopup("instance");
+
+
+              $("#popupexit").dxButton({
+                  icon: "fas fa-times",
+                  type: "danger",
+                  stylingMode: "outlined",
+                  text: "EXIT",
+                  width: "120px",
+                  visible: true,
+                  onClick: function () {
+                      //Check if Local Amount = 0 then delete Records
+                      $("#gridContainer").dxDataGrid("instance").refresh();
+                      //$("#gridContainer").dxDataGrid("instance").refresh();
+                      popup.hide();
+                  }
+              });
+
+              $("#print").dxButton({
+                  icon: "print",
+                  //text: "Print",
+                  onClick: function () {
+                      window.print();
+                  }
+              });
+
+
+              $('#aAgentPivot').dxPivotGrid({
+                  allowSorting: true,
+                  allowFiltering: true,
+                  allowSortingBySummary: true,
+                  allowExpandAll: true,
+                  height: 620,
+                  showBorders: true,
+                  fieldChooser: {
+                      allowSearch: true,
+                  },
+                  fieldPanel: {
+                      visible: true,
+                      showFilterFields: true,
+                  },
+                  //rowHeaderLayout: 'tree',
+                  headerFilter: {
+                      allowSearch: true,
+                  },
+                  scrolling: {
+                      mode: 'virtual',
+                  },
+                  export: {
+                      enabled: true,
+                  },
+                  onCellClick(e) {
+                      if (e.area === 'data') {
+                          const pivotGridDataSource = e.component.getDataSource();
+                          const rowPathLength = e.cell.rowPath.length;
+                          const rowPathName = e.cell.rowPath[rowPathLength - 1];
+                          const popupTitle = `${rowPathName || 'Total'} Drill Down Data`;
+
+                          drillDownDataSource = pivotGridDataSource.createDrillDownDataSource(e.cell);
+                          salesPopup.option('title', popupTitle);
+                          salesPopup.show();
+                      }
+                  },
+                  dataSource: {
+                      //remoteOperations: true,
+                      //store: iData,
+                      store: new DevExpress.data.CustomStore({
+                          key: "IDNO",
+                          loadMode: "raw", //raw omit  "xmla"
+                          load: function () {
+                              //return $.post(aaPFDMZz + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aqrFull }) //, { "@": aqrFull }
+                              return $.post(aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all', { "@": aqrFull }) //, { "@": aqrFull  }
+                                  .fail(function () { throw "Data loading error" });
+                          }
+                      }),
+                      //"HeadRefNo,ReqDate,PayToCode,PayToName,Department,Division,ExpGroupCode,ExpGroupDescEng,Confirmed,ConfirmedDate,HODApproved,HODApprovedDate,HRApproved,HRApprovedDate,Approved,FAApprovedDate,PBatchNo,PBatchDate,PSPvNO,PSPvDate,Currency,Xrate,TotalAmount,TotalLocalAmount,TotalReimburse,ERStatus,ReqEmail,APPEmail,APPName,LimitAmount,LimitPerTime,MaternityLimit,nRecord
+                      fields: [
+                          {
+                              caption: 'Name',
+                              dataField: 'PayToName',
+                              width: 400,
+                              expanded: true,
+                              sortBySummaryField: 'NO OF ITEM',
+                              //sortBySummaryPath: [],
+                              //sortOrder: 'desc',
+                              area: 'row',
+                          },
+                          {
+                              caption: 'Req. Date',
+                              dataField: 'ReqDate',
+                              dataType: 'date',
+                              width: 120,
+                              expanded: true,
+                              //summaryType: 'count',
+                              //format: "MM/yyyy",
+                              //sortBySummaryField: 'NO OF ITEM',
+                              //sortBySummaryPath: [],
+                              //sortOrder: 'desc',
+                              //area: 'column',
+                          },
+                          {
+                              groupName: 'ReqDate',
+                              groupInterval: 'year',
+                          }, {
+                              groupName: 'ReqDate',
+                              groupInterval: 'quarter',
+                          },
+                          {
+                              dataField: "ExpGroupDescEng",//"ExpensesDescription",
+                              caption: "Expenses",
+                              width: 200,
+                              //area: 'column'
+                          },
+                          /*{
+                              dataField: "ERORefNo3",//"ExpensesDescription",
+                              caption: "Sub Expenses",
+                              width: 150,
+                              area: 'row'
+                          },*/
+                          {
+                              dataField: "ERStatus",
+                              caption: "Status",
+                              area: 'column'
+                          },
+                          {
+                              caption: 'NO OF ITEM',
+                              //dataField: "[Measures].[Tax Amount]", RenewalPremium
+                              dataField: 'TotalAmount',
+                              dataType: 'number',
+                              summaryType: 'count',
+                              format: "#,##0",
+                              //area: 'data',
+                              width: 80,
+                          },
+                          {
+                              caption: 'Amount',
+                              //dataField: "[Measures].[Tax Amount]",
+                              dataField: 'TotalAmount',
+                              dataType: 'number',
+                              summaryType: 'sum',
+                              format: "#,##0.00",
+                              area: 'data',
+                              width: 120,
+                          },
+                          {
+                              caption: 'Refunded Amount',
+                              //dataField: "[Measures].[Tax Amount]", RenewalPremium
+                              dataField: 'TotalReimburse',
+                              dataType: 'number',
+                              summaryType: 'sum',
+                              format: "#,##0.00",
+                              area: 'data',
+                              width: 120,
+                          },
+
+                          /*
+                          {
+                              caption: 'NETINCOME',
+                              //dataField: "[Measures].[Tax Amount]",
+                              dataField: 'NETINCOME',
+                              dataType: 'number',
+                              summaryType: 'sum',
+                              format: "#,##0.00",
+                              area: 'data',
+                              width: 120,
+                          },
+                          {
+                              dataField: 'IDNO',
+                              visible: false,
+                          }*/
+                      ],
+                  },
+                  onExporting(e) {
+                      const workbook = new ExcelJS.Workbook();
+                      const worksheet = workbook.addWorksheet('RenewalList');
+
+                      worksheet.columns = [
+                          { width: 70 }, { width: 20 }, { width: 30 }, { width: 30 }//, { width: 30 }, { width: 30 },
+                      ];
+
+                      DevExpress.excelExporter.exportPivotGrid({
+                          component: e.component,
+                          worksheet,
+                          topLeftCell: { row: 4, column: 1 },
+                          keepColumnWidths: false,
+                      }).then((cellRange) => {
+                          // Header
+                          const headerRow = worksheet.getRow(2);
+                          headerRow.height = 30;
+
+                          const columnFromIndex = worksheet.views[0].xSplit + 1;
+                          const columnToIndex = columnFromIndex + 3;
+                          worksheet.mergeCells(2, columnFromIndex, 2, columnToIndex);
+
+                          const headerCell = headerRow.getCell(columnFromIndex);
+                          headerCell.value = 'Expenses Reimbursement';
+                          headerCell.font = { name: 'Segoe UI Light', size: 22, bold: true };
+                          headerCell.alignment = { horizontal: 'left', vertical: 'middle', wrapText: true };
+
+                          // Footer
+                          const footerRowIndex = cellRange.to.row + 2;
+                          const footerCell = worksheet.getRow(footerRowIndex).getCell(cellRange.to.column);
+                          footerCell.value = 'https://cbsdev2.locktonwattana.com/SBL/index.html';
+                          footerCell.font = { color: { argb: 'BFBFBF' }, italic: true };
+                          footerCell.alignment = { horizontal: 'right' };
+                      }).then(() => {
+                          workbook.xlsx.writeBuffer().then((buffer) => {
+                              saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'RenewalListPivot.xlsx');
+                          });
+                      });
+                      e.cancel = true;
+                  },
+              });
+
+              const salesPopup = $('#sales-popup').dxPopup({
+                  width: 850,
+                  height: 600,
+                  contentTemplate(contentElement) {
+                      $('<div />')
+                          .addClass('drill-down')
+                          .dxDataGrid({
+                              width: 800,
+                              height: 500,
+                              columns: [
+                                  {
+                                      dataField: "IDNO",
+                                      caption: "IDNO",
+                                      //sortOrder: "asc",
+                                      editorOptions: { readOnly: true, width: 120 },
+                                      width: 120,
+                                  },
+                                  {
+                                      dataField: "EXPDATE",
+                                      caption: "Expiry Date",
+                                      dataType: "date",
+                                      format: "dd/MM/yyyy",
+                                      editorType: "dxDateBox",
+                                      editorOptions: { displayFormat: "dd/MM/yyyy", readOnly: true, width: 100 },
+                                      width: 100
+                                  },
+                                  {
+                                      dataField: "OFFICER",
+                                      caption: "A/Exec",
+                                      editorOptions: { readOnly: true, width: 80 },
+                                      width: 80,
+                                  },
+                                  {
+                                      dataField: "Premium",
+                                      caption: "Premium",
+                                      dataType: "number",
+                                      format: { type: "fixedPoint", precision: 2 },
+                                      editorOptions: { format: "#,##0.00", readOnly: true, rtlEnabled: true, width: 150 },
+                                      width: 150,
+                                  },
+                                  {
+                                      dataField: "NETINCOME",
+                                      caption: "Net Income",
+                                      dataType: "number",
+                                      format: { type: "fixedPoint", precision: 2 },
+                                      editorOptions: { format: "#,##0.00", readOnly: true, rtlEnabled: true, width: 150 },
+                                      width: 150,
+                                  },
+
+                              ],
+                          })
+                          .appendTo(contentElement);
+                  },
+                  onShowing() {
+                      $('.drill-down')
+                          .dxDataGrid('instance')
+                          .option('dataSource', drillDownDataSource);
+                  },
+                  onShown() {
+                      $('.drill-down')
+                          .dxDataGrid('instance')
+                          .updateDimensions();
+                  },
+              }).dxPopup('instance');
+
+
+
+
+
+
+
+
+
+
+          });
+      }
+
+
+
+  });
+

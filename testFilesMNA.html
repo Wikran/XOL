@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>File Manager</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+
+    <!-- Export to PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+    <!-- DevExtreme JS -->
+    <script src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- MSAL -->
+    <script src="https://alcdn.msauth.net/browser/2.14.2/js/msal-browser.min.js"></script>
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="MHODEE123.css">
+    <script src="./src/bundle.min.js"></script>
+
+    <style>
+        #viewerFrame {
+            width: 100%;
+            height: 1500px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" style="max-width: 800px; margin: auto; padding: 20px;">
+        <h2>📁 File Center</h2>
+
+        <!-- Upload Button -->
+        <div id="showUploadPopupButton" style="margin-bottom: 20px;"></div>
+
+        <!-- Download + View Section -->
+        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+            <div id="filename-input" style="flex: 1;"></div>
+            <div id="browse-button" style="width: 120px;"></div>
+            <div id="download-button" style="width: 140px;"></div>
+            <div id="view-button" style="width: 120px;"></div>
+        </div>
+
+        <!-- Popup for Browse -->
+        <div id="file-popup"></div>
+
+        <!-- Viewer -->
+        <iframe id="viewerFrame" src="" frameborder="0" scrolling="yes"></iframe>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var aDXTheme = localStorage["aDXTheme"];
+            DevExpress.ui.themes.current(aDXTheme);
+        });
+
+        const aserverName = isLocalHost();
+        const aapilistfile = "list-files.aspx";
+        const baseUrl = `${aserverName}/temp/uploads/`;
+        const listApi = `${aserverName}/temp/${aapilistfile}`;
+
+        const filenameInput = $("#filename-input").dxTextBox({
+            placeholder: "Enter filename (e.g., DeclarationTEMP.xlsx)",
+            value: "",
+            width: "100%"
+        }).dxTextBox("instance");
+
+        // ✅ Download button
+        $("#download-button").dxButton({
+            text: "Download",
+            type: "success",
+            icon: "fas fa-download",
+            onClick: function () {
+                const filename = filenameInput.option("value").trim();
+                if (!filename) {
+                    DevExpress.ui.notify("Please enter a filename.", "error", 2000);
+                    return;
+                }
+                const fileUrl = baseUrl + encodeURIComponent(filename);
+                const anchor = document.createElement("a");
+                anchor.href = fileUrl;
+                anchor.download = filename;
+                document.body.appendChild(anchor);
+                anchor.click();
+                document.body.removeChild(anchor);
+            }
+        });
+
+        // ✅ View button
+        $("#view-button").dxButton({
+            text: "View File",
+            type: "default",
+            icon: "fas fa-eye",
+            onClick: function () {
+                const filename = filenameInput.option("value").trim();
+                if (!filename) {
+                    DevExpress.ui.notify("Please enter a filename.", "error", 2000);
+                    return;
+                }
+
+                const ext = filename.split('.').pop().toLowerCase();
+                const fileUrl = baseUrl + encodeURIComponent(filename);
+                let viewerUrl = "";
+
+                if (["xlsx", "xls", "pptx", "ppt", "doc", "docx"].includes(ext)) {
+                    viewerUrl = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodeURIComponent(fileUrl);
+                } else if (ext === "pdf") {
+                    viewerUrl = "https://docs.google.com/gview?embedded=true&url=" + encodeURIComponent(fileUrl);
+                } else if (["jpg", "jpeg", "png", "gif"].includes(ext)) {
+                    viewerUrl = fileUrl;
+                } else {
+                    viewerUrl = fileUrl;
+                }
+
+                $("#viewerFrame").attr("src", viewerUrl).show();
+            }
+        });
+
+        // ✅ Browse button (already in your code, kept as-is)
+        $("#browse-button").dxButton({
+            text: "List Files",
+            type: "default",
+            icon: "fas fa-folder",
+            onClick: function () {
+                popup.show();
+                fetch(listApi, {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    mode: "cors"
+                })
+                    .then(response => response.json())
+                    .then(files => {
+                        const fileData = files.map(file => ({
+                            filename: file.filename,
+                            extension: file.filename.split('.').pop().toLowerCase(),
+                            icon: getFileIcon(file.filename),
+                            modified: file.modified
+                        }));
+                        $("#file-grid").dxDataGrid({
+                            dataSource: fileData,
+                            columns: [
+                                { dataField: "filename", caption: "File Name", minWidth: 200 },
+                                { dataField: "extension", caption: "Type", width: 80 },
+                                { dataField: "modified", caption: "Modified", width: 160 }
+                            ],
+                            selection: { mode: "single" },
+                            onRowClick: function (e) {
+                                filenameInput.option("value", e.data.filename);
+                                popup.hide();
+                            }
+                        });
+                    });
+            }
+        });
+
+        // Helper icon function
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            switch (ext) {
+                case "pdf": return "fa-file-pdf";
+                case "xlsx":
+                case "xls": return "fa-file-excel";
+                case "doc":
+                case "docx": return "fa-file-word";
+                case "ppt":
+                case "pptx": return "fa-file-powerpoint";
+                default: return "fa-file";
+            }
+        }
+
+        // ✅ Popup
+        const popup = $("#file-popup").dxPopup({
+            title: "Select a file",
+            visible: false,
+            width: 500,
+            height: "auto",
+            contentTemplate: function (contentElement) {
+                $("<div>").attr("id", "file-grid").appendTo(contentElement);
+            }
+        }).dxPopup("instance");
+
+        // Upload Button
+        $("#showUploadPopupButton").dxButton({
+            text: "Upload File",
+            type: "success",
+            icon: "fas fa-file-upload",
+            onClick: function () {
+                aPopUpUpLoad("X");
+            }
+        });
+    </script>
+</body>
+
+</html>

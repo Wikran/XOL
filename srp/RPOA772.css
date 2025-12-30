@@ -1,0 +1,81 @@
+#scversion {
+    color: darkgreen;
+    font-size: 12px;
+}
+
+#aIndicator {
+    margin: 0px 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+}
+
+.dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: #e8f1fae5 !important;
+}
+
+.dx-datagrid-borders>.dx-datagrid-total-footer {
+    border-top: 2px solid #b9defc;
+    border-bottom: 4px solid #b9defc;
+}
+
+.dx-datagrid-borders>.dx-datagrid-headers {
+    border-top: 4px solid #b9defc;
+    border-bottom: 2px solid #b9defc;
+}
+
+.dx-datagrid-table {
+    border-left: 1px solid #b9defc;
+    border-right: 1px solid #b9defc;
+}
+
+.dx-datagrid-total-footer {
+    background-color: #e8f1fae5 !important;
+}
+
+.dx-popup-title {
+    color: rgb(1, 6, 32);
+    background-color: rgb(189, 223, 255)
+}
+
+.dx-switch-on .dx-switch-container {
+    background-color: #4CAF50;
+    /* Color for 'on' state */
+}
+
+.dx-switch-off .dx-switch-container {
+    background-color: #F44336;
+    /* Color for 'off' state */
+}
+
+.custom-editor {
+    color: blueviolet;
+}
+
+/*#gridContainer*/
+
+.custom-group {
+    color: blue;
+    font-weight: bold;
+    /* background-color: #dceef990; Change this to your desired background color */
+
+}
+
+.custom-group-header {
+    color: blue;
+    font-weight: bold;
+    /*background-color: #f0f0f061;  Change this to your desired background color */
+    background: linear-gradient(to bottom, white, #f5f5f5b4);
+    /*border-top: 1px solid blue; 
+    border-bottom: 1px solid blue;  Change this to your desired line color */
+    border: 1.5px solid blue;
+    border-radius: 10px;
+    padding: 10px;
+    /* Optional: Add some padding */
+}

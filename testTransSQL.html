@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ACCOUNT Natural Language Query</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+
+    <!-- DevExtreme JS -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- Export support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- transformers.js -->
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@xenova/transformers@latest/dist/transformers.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .panel {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .panel h3 {
+            margin-top: 0;
+        }
+
+        .output {
+            white-space: pre-wrap;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 12px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Natural Language → Safe SQL → ACCOUNT → Multilingual Summary</h2>
+
+        <div class="row">
+            <div class="col">
+                <div class="panel">
+                    <h3>Ask a Question</h3>
+                    <div id="queryInput"></div>
+                    <div id="runBtn"></div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="panel">
+                    <h3>Summary</h3>
+                    <div id="summaryOutput" class="output">Waiting for query...</div>
+                    <h3>SQL (Safe Template)</h3>
+                    <div id="sqlOutput" class="output"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 1 1 100%;">
+                <div class="panel">
+                    <h3>Raw Results</h3>
+                    <div id="grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@latest/dist/transformers.min.js";
+
+        // Constants
+        const aaXToX = btoa('A75FCC75-8FB6-4460-B3F6-7070B4437930');
+        const aaPFDMI = "https://cbsdev2.locktonwattana.com";
+
+        // LoadDatabase function
+        const LoadDatabase = async (aaPFDMI, aaXToX, fullQuery) => {
+            let decodedXToX;
+            try {
+                decodedXToX = atob(aaXToX);
+            } catch (e) {
+                console.error('Invalid base64 string:', aaXToX);
+                return;
+            }
+            try {
+                const response = await fetch(`${aaPFDMI}/DMQ/XOL/${decodedXToX}/3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "@": btoa(fullQuery) }),
+                    redirect: "follow"
+                });
+                const acData = await response.json();
+                console.log(acData);
+                return acData;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // SQL templates (same as before, includes contain/starts/ends)
+        const sqlTemplates = {
+            field_contains: (field, keyword) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ${field} LIKE '%${keyword}%';`,
+            field_starts_with: (field, keyword) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ${field} LIKE '${keyword}%';`,
+            field_ends_with: (field, keyword) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ${field} LIKE '%${keyword}';`,
+            account_code_prefix: (prefix) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE LIKE '${prefix}%';`,
+            active_accounts: `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE Active = 1;`
+            // … add other templates as needed …
+        };
+
+        // Intent parser (simplified for demo)
+        function classifyIntent(text) {
+            const lower = text.toLowerCase();
+            if (lower.includes("contain")) {
+                const kw = lower.split("contain")[1].trim();
+                if (lower.includes("thai description")) return { type: "field_contains", field: "TDESC", keyword: kw };
+                if (lower.includes("english description")) return { type: "field_contains", field: "EDESC", keyword: kw };
+            }
+            if (lower.includes("starts with")) {
+                const kw = lower.split("starts with")[1].trim();
+                if (lower.includes("account code")) return { type: "field_starts_with", field: "ACCCODE", keyword: kw };
+            }
+            if (lower.includes("ends with")) {
+                const kw = lower.split("ends with")[1].trim();
+                if (lower.includes("account code")) return { type: "field_ends_with", field: "ACCCODE", keyword: kw };
+            }
+            if (lower.includes("active accounts")) return { type: "active_accounts" };
+            return { type: null };
+        }
+
+        function buildSafeQuery(userText) {
+            const intent = classifyIntent(userText);
+            switch (intent.type) {
+                case "field_contains": return sqlTemplates.field_contains(intent.field, intent.keyword).trim();
+                case "field_starts_with": return sqlTemplates.field_starts_with(intent.field, intent.keyword).trim();
+                case "field_ends_with": return sqlTemplates.field_ends_with(intent.field, intent.keyword).trim();
+                case "account_code_prefix": return sqlTemplates.account_code_prefix(intent.prefix).trim();
+                case "active_accounts": return sqlTemplates.active_accounts.trim();
+                default: return null;
+            }
+        }
+
+        // DevExtreme UI setup
+        const queryInput = $("#queryInput").dxTextBox({
+            label: "Ask in natural language",
+            labelMode: "floating",
+            value: "thai description that contain เงินฝาก"
+        }).dxTextBox("instance");
+
+        const runBtn = $("#runBtn").dxButton({
+            text: "Run",
+            type: "default",
+            icon: "search",
+            onClick: handleRun
+        }).dxButton("instance");
+
+        const grid = $("#grid").dxDataGrid({
+            dataSource: [],
+            showBorders: true,
+            columnAutoWidth: true,
+            filterRow: { visible: true },
+            searchPanel: { visible: true },
+            paging: { pageSize: 10 },
+            pager: { showPageSizeSelector: true, allowedPageSizes: [10, 20, 50], showInfo: true },
+            export: { enabled: true, formats: ['xlsx', 'pdf'] }
+        }).dxDataGrid("instance");
+
+        // Multilingual summarizer (using sentence embeddings instead of GPT-2)
+        let embedder;
+        async function getEmbedder() {
+            if (!embedder) {
+                embedder = await pipeline("feature-extraction", "Xenova/distiluse-base-multilingual-cased-v2");
+            }
+            return embedder;
+        }
+
+        async function summarizeResult(userQuery, sqlUsed, dbResult) {
+            const model = await getEmbedder();
+            try {
+                // Generate embeddings for query and result
+                const queryVec = await model(userQuery);
+                const resultText = JSON.stringify(dbResult).slice(0, 500); // limit size
+                const resultVec = await model(resultText);
+
+                // Simple similarity check (cosine similarity approximation)
+                const q = queryVec[0];
+                const r = resultVec[0];
+                let dot = 0, qnorm = 0, rnorm = 0;
+                for (let i = 0; i < q.length; i++) {
+                    dot += q[i] * r[i];
+                    qnorm += q[i] * q[i];
+                    rnorm += r[i] * r[i];
+                }
+                const sim = dot / (Math.sqrt(qnorm) * Math.sqrt(rnorm));
+
+                // Produce a lightweight summary
+                return `Query: "${userQuery}"\nSQL: ${sqlUsed}\nSimilarity score: ${sim.toFixed(3)}\nResult count: ${Array.isArray(dbResult) ? dbResult.length : 0}`;
+            } catch (e) {
+                console.error("Summarizer error:", e);
+                return "Could not generate summary.";
+            }
+        }
+
+        // Main handler
+        async function handleRun() {
+            const userText = queryInput.option("value");
+
+            // Build safe SQL
+            const sql = buildSafeQuery(userText);
+            $("#sqlOutput").text(sql || "No allowed intent detected.");
+
+            if (!sql) {
+                $("#summaryOutput").text(
+                    "Unsupported query. Try: 'thai description that contain เงินฝาก', 'account code starts with 1', 'note ends with tax'."
+                );
+                grid.option("dataSource", []);
+                return;
+            }
+
+            // Execute via loader
+            const dbData = await LoadDatabase(aaPFDMI, aaXToX, sql);
+
+            // Update grid
+            grid.option("dataSource", Array.isArray(dbData) ? dbData : (dbData?.data || dbData || []));
+
+            // Summarize
+            const summary = await summarizeResult(userText, sql, dbData);
+            $("#summaryOutput").text(summary);
+        }
+    </script>
+</body>
+
+</html>

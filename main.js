@@ -1,1 +1,307 @@
-window.onload=function(){setTimeout(function(){location.reload()},24e6)},history.pushState(null,null,location.href),window.onpopstate=function(){history.go(1)};var storedJsonString=localStorage.getItem("usrProperty"),decryptedData=CryptoJS.AES.decrypt(storedJsonString,"sBxA017").toString(CryptoJS.enc.Utf8),ausrProperty=JSON.parse(decryptedData);console.log(ausrProperty),window.addEventListener("load",function(e){localStorage.removeItem("aDXTheme"),aDXTheme=ausrProperty[0].aaDXtm,localStorage.aDXTheme=aDXTheme}),$(document).ready(function(){var e=localStorage.aDXTheme,a=ausrProperty[0].aaDXtm,a=(void 0!==(e=a=void 0!==a&&""!==a?a:"generic.light")&&""!==e||(window.location.reload(),e=a),localStorage.aDXTheme=e,DevExpress.ui.themes.current(e),$(".dx-icon").addClass("dx-theme-accent-as-text-color"),ausrProperty[0].aaXXuX);document.getElementById("aUsrName").innerHTML=a;let t=ausrProperty[0].aaXpXt;"undefined"!==jQuery.type(t)&&""!==t||(t="/images/userss.png"),document.getElementById("avatar").src=t});const aGoTo=e=>{window.location.assign(e)};function aaGOTO(e){window.location.assign(e)}const aaLOGOUT=()=>{window.location.assign("index.html")};var aaXToX=ausrProperty[0].aaXXoX,aaXTBM="d1a42aa7-349e-477c-8f26-75781206caeb",aaPFDMI=isLocalHost(),aOptionMenu=[{id:"01",icon:"fas fa-bullseye",text:"",items:[{ID:"101",text:"GEN OTP (TEXT & NUM)  ",type:"normal",icon:"fi fi-sr-rocket",visible:!1,onClick:function(){var e=generateLOTP();aMessageAlert("OTP ="+e,"Teal")}},{ID:"102",text:"GEN OTP (NUM ONLY)    ",type:"normal",icon:"fi fi-br-rocket",visible:!1,onClick:function(){var e=generateOTP();aMessageAlert("OTP ="+e,"Teal")}},{ID:"103",text:"LOGIN (OTP)           ",type:"normal",icon:"fas fa-lock",visible:!1,onClick:function(){aRunLogin(1)}},{ID:"104",text:"New Login             ",type:"normal",icon:"fas fa-key",visible:!1,onClick:function(){aRunLogin()}},{ID:"105",text:"Help                  ",type:"danger",icon:"help",visible:!0,onClick:()=>{aRuniFrame("./Help.html","Help")}},{ID:"105",text:"Logout                ",type:"danger",icon:"fas fa-sign-out-alt",visible:!0,onClick:()=>{aaGOTO("index.html")}},{ID:"106",text:"Themes                ",type:"normal",badge:"12",icon:"fas fa-palette",visible:!0,onClick:()=>{aThemeSelect()}}]}];const aRuniFrame=(e,a)=>{$("#tframe").attr("src",e),$("#workinglabel").text(a)},achkdate=new Date;var adayx=achkdate.getDate(),amonthx=achkdate.getMonth(),aimages,aimages,aimages,aThemeList=(aimages=adayx<=10&&0===amonthx?["xmas01.jpg","xmas02.jpg","xmas03.jpg","xmas04.jpg","xmas05.jpg","chny01.jpg","chny02.jpg","chny03.jpg","chny04.jpg"]:10<adayx&&0===amonthx||1<=amonthx?["chny01.jpg","chny02.jpg","chny03.jpg","chny04.jpg"]:[],[{thid:"generic.light",text:"light",icon:"fas fa-paint-roller",Category:"Generic",visible:!1},{thid:"generic.dark",text:"dark",icon:"fas fa-paint-roller",Category:"Generic",visible:!1},{thid:"generic.softblue",text:"Soft blue",icon:"fas fa-paint-roller",Category:"Generic",visible:!1},{thid:"generic.darkmoon",text:"Darkmoon",icon:"fas fa-paint-roller",Category:"Generic",visible:!1},{thid:"generic.darkviolet",text:"Darkviolet",icon:"fas fa-paint-roller",Category:"Generic",visible:!1},{thid:"generic.carmine",text:"Carmine",icon:"fas fa-paint-roller",Category:"Generic",visible:!1},{thid:"generic.carmine.compact",text:"Carmine Compact",icon:"fas fa-paint-roller",Category:"Generic Compact",visible:!1},{thid:"generic.darkmoon.compact",text:"Darkmoon Compact",icon:"fas fa-paint-roller",Category:"Generic Compact",visible:!1},{thid:"generic.darkviolet.compact",text:"Darkviolet Compact",icon:"fas fa-paint-roller",Category:"Generic Compact",visible:!1},{thid:"material.blue.dark.compact",text:"Blue dark",icon:"fas fa-palette",Category:"Material Compact",visible:!1},{thid:"material.blue.light.compact",text:"Blue light compact",icon:"fas fa-palette",Category:"Material Compact",visible:!0},{thid:"material.teal.dark.compact",text:"Teal dark compact",icon:"fas fa-palette",Category:"Material Compact",visible:!1},{thid:"material.orange.light.compact",text:"Orange Light compact",icon:"fas fa-palette",Category:"Material Compact",visible:!0},{thid:"material.purple.light.compact",text:"Purple Light compact",icon:"fas fa-palette",Category:"Material Compact",visible:!0},{thid:"material.teal.light.compact",text:"Teal Light compact",icon:"fas fa-palette",Category:"Material Compact",visible:!0},{thid:"material.lime.light.compact",text:"Lime Light compact",icon:"fas fa-palette",Category:"Material Compact",visible:!0}]),aThemeListGroup=new DevExpress.data.DataSource({store:aThemeList,key:"thid",group:"Category"}),aaXrgX=ausrProperty[0].aaXrXg,aaXXrgX=(jQuery.type(aaXrgX),atob(aaXrgX)),aRGarray=aaXXrgX.split(",");const aaProgramName="Expenses Reimbursement";function aArrayCompare(o,e){let r=!1;return $.each(e,function(e,a){let t=a.split("0")[0];if("undefined"===jQuery.type(t)&&(t=a),-1!=$.inArray(t,o))return!(r=!0);r=!1}),r}function aArrayMatch(o,e){let r="";return $.each(e,function(e,a){let t=a.split("0")[0];if("undefined"===jQuery.type(t)&&(t=a),-1!=$.inArray(t,o))return r=a,!1;r=""}),r}$(()=>{var aPwdNoChange=ausrProperty[0].asAct,aUserNamex=("false"===aPwdNoChange&&(aaCnfBody="<div style = 'color: red; font-size: 14px;'>Please change your default password to new password <br>first<br> To change password select MENU [ <i class='fas fa-user-edit'></i> User Information ] <br><div style = 'background: #fff0ff;'><hr>second<br>If you have not changed your password yet The program will not work. <hr></div><br><center><p style = 'font-size: 13px;'>VDO - How To Change Password</p><video style='margin-top:-20px;' width='320' height='240' controls><source src='./images/ChangePassword.mp4' type='video/mp4'></video></center>",DevExpress.ui.dialog.alert({position:{offset:"0 -90"},title:"PLEASE CHANGE DEFAULT PASSWORD",messageHtml:aaCnfBody}),localStorage.aDXMenuTitle="User Information",localStorage.aPXIXD="SSSU9019",aRuniFrame("./SSSU9019.html","User Information")),ausrProperty[0].aaXXuX),aaIMGax="/images/"+aUserNamex+".png",myHeaders=new Headers,raw=(myHeaders.append("Content-Type","application/json"),JSON.stringify({})),requestOptions={method:"POST",headers:myHeaders,redirect:"follow"};let aURL=aaPFDMI+"/DMQ/"+acPRJ+"/"+atob(aaXToX)+"/"+aaXTBM+"/all";fetch(aURL,requestOptions).then(e=>e.json()).then(e=>{aObjMenuV=e,$.each(aObjMenuV,function(a){e[a].categoryid||delete aObjMenuV[a].categoryid}),$.each(aObjMenuV,function(a){var t=e[a].rightsgroup;aArrayCompare(t.split(","),aRGarray)||""==t||$.extend(aObjMenuV[a],{visible:!1})}),aObjMenuV.sort(function(e,a){e=e.ID,a=a.ID;return e==a?0:a<e?1:-1}),"false"===aPwdNoChange&&(aObjMenuV=[{ID:"[990]",name:"User Information",icon:"fas fa-user-edit",alabel:"User Information",url:"./SSSU9019.html",rightsgroup:"",PageID:"SSSU9019"},{ID:"[99900]",name:"Help",icon:"help",alabel:"Help",url:"./BlankPage.html",rightsgroup:"",PageID:""},{ID:"[999999]",name:"Logout",icon:"fas fa-sign-out-alt",alabel:"Logout",url:"aaLOGOUT()",rightsgroup:"",PageID:""}]);var drawer=$("#drawer").dxDrawer({opened:!0,height:1e3,closeOnOutsideClick:!0,template:function(){var $list=$("<div class = 'left-content'>");return $list.dxTreeView({items:aObjMenuV,keyExpr:"ID",parentIdExpr:"categoryid",dataStructure:"plain",searchEnabled:!1,expandEvent:"click",displayExpr:"name",focusStateEnabled:!1,height:1e3,onItemClick:function(e){$(".dx-icon").addClass("dx-theme-accent-as-text-color");var item=e.itemData,aaMnuSa=(localStorage.aDXMenuTitle=item.name,localStorage.aPXIXD=item.PageID,item.rightsgroup),aaMArr=aaMnuSa.split(","),aaMTg=aArrayMatch(aaMArr,aRGarray),aiU,aFchk;localStorage.MMaMx=aaMTg,item.url?(aiU=item.url,aFchk=aiU.substring(0,2),"./"===aFchk?($("#tframe").attr("src",item.url),$("#workinglabel").text(item.alabel)):eval(item.url)):($("#tframe").attr("src",""),$("#workinglabel").text(item.alabel))}})}}).dxDrawer("instance");$("#toolbar").dxToolbar({items:[{widget:"dxButton",location:"before",options:{icon:"menu",stylingMode:"text",elementAttr:{class:"xmenu"},onClick:function(){drawer.toggle()}}},{widget:"dxMenu",location:"after",options:{dataSource:aOptionMenu,hideSubmenuOnMouseLeave:!0,cssClass:"toolsmenu",showFirstSubmenuMode:{delay:{hide:300,show:50},name:"onHover"},displayExpr:"text",valueExpr:"ID",showTitle:!0,stylingMode:"text",width:10,onItemClick:function(e){e.itemData.onClick}}},{location:"before",locateInMenu:"never",template:function(){return $("<div id='workinglabel' class='toolbar-label'></div>").text(aaProgramName)}}]})}).catch(e=>{console.error("Error:",e)})});const aThemeSelect=()=>{var e=localStorage.aDXTheme;jQuery(function(a){a("#popupSelect").dxPopup({title:"THEMES",height:"140px",width:"250px",position:{offset:"0 -250"},visible:!0,contentTemplate:function(){return a("<div />").append(a("<p><center><div id='tselect'></div></center></p>"))}}).dxPopup("instance"),a("#tselect").dxSelectBox({width:200,dataSource:aThemeListGroup,valueExpr:"thid",displayExpr:"text",grouped:!0,value:e,onValueChanged:function(e){DevExpress.ui.themes.current(e.value),localStorage.aDXTheme=e.value,e.value.includes("dark")?(a("#mainlogo").attr("src","./images/locktonlogo70mmwhite.png"),a("#logobarid").removeClass("logobarwhite").addClass("logobarblack"),a("#leftbar").removeClass("left-content").addClass("dx-theme-accent-as-background-color")):(a("#mainlogo").attr("src","./images/locktonlogo70mmwhite.png"),a("#logobarid").removeClass("logobarwhite").addClass("logobarblack"),a(".dx-icon").addClass("dx-theme-accent-as-text-color")),a("#tframe").attr("src",a("#tframe").attr("src")),a("#popupSelect").dxPopup("hide")}}).dxSelectBox("instance")})};
+
+// mains.optimized.v2.js - Fixes for theme application and TreeView slowness
+
+// ===== Constants & Config =====
+const REFRESH_INTERVAL = 24000000; // 40 minutes
+const CRYPTO_KEY = "sBxA017";
+const DEFAULT_THEME = "generic.light";
+const DEFAULT_AVATAR = "/images/userss.png";
+const PROGRAM_NAME = "Expenses Reimbursement";
+const THEME_STORAGE_KEY = "aDXTheme";
+
+// ===== Theme list (kept from original) =====
+const aThemeList = [
+    { thid: "generic.light", text: "light", icon: "fas fa-paint-roller", Category: "Generic", visible: true },
+    { thid: "generic.dark", text: "dark", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+    { thid: "generic.softblue", text: "Soft blue", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+    { thid: "generic.darkmoon", text: "Darkmoon", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+    { thid: "generic.darkviolet", text: "Darkviolet", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+    { thid: "generic.carmine", text: "Carmine", icon: "fas fa-paint-roller", Category: "Generic", visible: false },
+    { thid: "generic.carmine.compact", text: "Carmine Compact", icon: "fas fa-paint-roller", Category: "Generic Compact", visible: false },
+    { thid: "generic.darkmoon.compact", text: "Darkmoon Compact", icon: "fas fa-paint-roller", Category: "Generic Compact", visible: false },
+    { thid: "generic.darkviolet.compact", text: "Darkviolet Compact", icon: "fas fa-paint-roller", Category: "Generic Compact", visible: false },
+    { thid: "material.blue.dark.compact", text: "Blue dark", icon: "fas fa-palette", Category: "Material Compact", visible: false },
+    { thid: "material.blue.light.compact", text: "Blue light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+    { thid: "material.teal.dark.compact", text: "Teal dark compact", icon: "fas fa-palette", Category: "Material Compact", visible: false },
+    { thid: "material.orange.light.compact", text: "Orange Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+    { thid: "material.purple.light.compact", text: "Purple Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+    { thid: "material.teal.light.compact", text: "Teal Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true },
+    { thid: "material.lime.light.compact", text: "Lime Light compact", icon: "fas fa-palette", Category: "Material Compact", visible: true }
+];
+const aThemeListGroup = new DevExpress.data.DataSource({ store: aThemeList, key: "thid", group: "Category" });
+
+// ===== On Load Refresh Prevention & Back Navigation Control =====
+window.onload = () => setTimeout(() => location.reload(), REFRESH_INTERVAL);
+history.pushState(null, null, location.href);
+window.onpopstate = () => history.go(1);
+
+// ===== Decrypt User Properties =====
+const storedJsonString = localStorage.getItem("usrProperty");
+let ausrProperty = [];
+try {
+    const decryptedData = CryptoJS.AES.decrypt(storedJsonString || "", CRYPTO_KEY).toString(CryptoJS.enc.Utf8) || "";
+    ausrProperty = decryptedData ? JSON.parse(decryptedData) : [];
+} catch (e) {
+    console.error("Failed to parse usrProperty:", e);
+}
+
+// ===== Immediately set theme before building widgets (fixes 'first run' theme issue) =====
+const initialTheme = ausrProperty?.[0]?.aaDXtm || DEFAULT_THEME;
+localStorage.setItem(THEME_STORAGE_KEY, initialTheme);
+// Set theme synchronously before initializing DevExtreme widgets
+try {
+    DevExpress.ui.themes.current(initialTheme);
+} catch (e) {
+    console.warn("DevExpress theme set failed at top-level (will retry later):", e);
+}
+// Ensure icon classes and logo reflect the theme ASAP
+const applyThemeClasses = (themeName) => {
+    if (!themeName) return;
+    if (themeName.includes("dark")) {
+        $("#mainlogo").attr("src", "./images/locktonlogo70mmwhite.png");
+        $("#logobarid").removeClass("logobarwhite").addClass("logobarblack");
+    } else {
+        $("#mainlogo").attr("src", "./images/locktonlogo70mmwhite.png");
+        $("#logobarid").removeClass("logobarwhite").addClass("logobarblack");
+        $(".dx-icon").addClass("dx-theme-accent-as-text-color");
+    }
+};
+// Apply theme classes once shortly after load (gives DevExtreme a moment to apply CSS)
+setTimeout(() => applyThemeClasses(initialTheme), 60);
+
+// ===== Cache Common Elements =====
+const elUserName = document.getElementById("aUsrName");
+const elAvatar = document.getElementById("avatar");
+const elTFrame = $("#tframe");
+const elWorkingLabel = $("#workinglabel");
+
+// ===== Document Ready (main init) =====
+$(function () {
+    // Ensure theme is set again right before widgets init (safe)
+    const themeNow = localStorage.getItem(THEME_STORAGE_KEY) || initialTheme;
+    try { DevExpress.ui.themes.current(themeNow); } catch (e) { /* ignore */ }
+    applyThemeClasses(themeNow);
+
+    // Set User Info
+    if (elUserName) elUserName.textContent = ausrProperty?.[0]?.aaXXuX || "";
+    if (elAvatar) elAvatar.src = ausrProperty?.[0]?.aaXpXt || DEFAULT_AVATAR;
+
+    // ===== Menu & Rights Setup =====
+    const aaXToX = ausrProperty?.[0]?.aaXXoX || "";
+    const aaXTBM = "d1a42aa7-349e-477c-8f26-75781206caeb";
+    const aaPFDMI = isLocalHost();
+
+    const aaXrgX = ausrProperty?.[0]?.aaXrXg || "";
+    const aRGarray = aaXrgX ? atob(aaXrgX).split(",") : [];
+
+    const aPwdNoChange = ausrProperty?.[0]?.asAct;
+
+    let aimages = [];
+    const now = new Date();
+    const day = now.getDate();
+    const month = now.getMonth();
+    if (day <= 10 && month === 0) {
+        aimages = ['xmas01.jpg', 'xmas02.jpg', 'xmas03.jpg', 'xmas04.jpg', 'xmas05.jpg', 'chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg'];
+    } else if ((day > 10 && month === 0) || month >= 1) {
+        aimages = ['chny01.jpg', 'chny02.jpg', 'chny03.jpg', 'chny04.jpg'];
+    }
+
+    // ===== Fetch Menu =====
+    const requestOptions = {
+        method: 'POST',
+        headers: new Headers({ "Content-Type": "application/json" }),
+        redirect: 'follow'
+    };
+
+    const menuUrl = `${aaPFDMI}/DMQ/${acPRJ}/${atob(aaXToX)}/${aaXTBM}/all`;
+    fetch(menuUrl, requestOptions)
+        .then(res => res.json())
+        .then(menuData => {
+            // light-weight sanitization and rights filtering
+            let aObjMenuV = menuData.map(i => {
+                if (!i.categoryid) delete i.categoryid;
+                return i;
+            });
+
+            // Rights Filtering - use for loop (faster than $.each)
+            for (let i = 0, len = aObjMenuV.length; i < len; i++) {
+                const item = aObjMenuV[i];
+                const aaMenuS = item.rightsgroup || "";
+                if (aaMenuS) {
+                    const aaMenuAr = aaMenuS.split(',');
+                    if (!aArrayCompare(aaMenuAr, aRGarray)) {
+                        item.visible = false; // prefer mutation over delete for stable indexes
+                    }
+                }
+            }
+
+            // Sort by ID (string compare)
+            aObjMenuV.sort((a, b) => (a.ID > b.ID ? 1 : -1));
+
+            // Force menu if password not changed
+            if (aPwdNoChange === false) {
+                aObjMenuV = [
+                    { ID: '[990]', name: 'User Information', icon: 'fas fa-user-edit', alabel: 'User Information', url: './SSSU9019.html', rightsgroup: '', PageID: 'SSSU9019' },
+                    { ID: '[99900]', name: 'Help', icon: 'help', alabel: 'Help', url: './Help.html', rightsgroup: '', PageID: '' },
+                    { ID: '[999999]', name: 'Logout', icon: 'fas fa-sign-out-alt', alabel: 'Logout', url: 'aaLOGOUT()', rightsgroup: '', PageID: '' },
+                ];
+            }
+
+            // DRAWER TEMPLATE - create TreeView once and avoid heavy DOM work in onItemClick
+            const drawer = $("#drawer").dxDrawer({
+                opened: true,
+                height: 1000,
+                closeOnOutsideClick: true,
+                template: function () {
+                    // Create container with id leftbar (keeps CSS intact)
+                    const $list = $("<div id='leftbar' class='left-content'></div>");
+                    // Create TreeView with minimal expensive operations inside events
+                    $list.dxTreeView({
+                        items: aObjMenuV,
+                        keyExpr: "ID",
+                        parentIdExpr: "categoryid",
+                        dataStructure: "plain",
+                        displayExpr: "name",
+                        focusStateEnabled: false,
+                        expandEvent: "click", // keep click expand behavior
+                        searchEnabled: false,
+                        height: 1000,
+                        // Optimize: avoid calling heavy jQuery selectors on every click (no global .dx-icon changes here)
+                        onItemClick: function (e) {
+                            const item = e.itemData;
+                            // Store minimal values; avoid expensive DOM writes
+                            localStorage.setItem("aDXMenuTitle", item.name || "");
+                            localStorage.setItem("aPXIXD", item.PageID || "");
+                            localStorage.setItem("MMaMx", aArrayMatch((item.rightsgroup || "").split(","), aRGarray));
+
+                            if (item.url) {
+                                if (item.url.startsWith("./")) {
+                                    elTFrame.attr("src", item.url);
+                                    elWorkingLabel.text(item.alabel || "");
+                                } else {
+                                    // Evaluate existing behaviour for programatic calls
+                                    try { eval(item.url); } catch (err) { console.error("Error evaluating menu URL:", err); }
+                                }
+                            } else {
+                                elTFrame.attr("src", "");
+                                elWorkingLabel.text(item.alabel || "");
+                            }
+                        }
+                    });
+                    return $list;
+                }
+            }).dxDrawer("instance");
+
+            // Toolbar Init - lightweight menu items only
+            $("#toolbar").dxToolbar({
+                items: [
+                    {
+                        widget: "dxButton",
+                        location: "before",
+                        options: {
+                            icon: "menu",
+                            stylingMode: "text",
+                            onClick: function () { drawer.toggle(); }
+                        }
+                    },
+                    {
+                        widget: "dxMenu",
+                        location: "after",
+                        options: {
+                            dataSource: [
+                                {
+                                    id: "01",
+                                    icon: "fas fa-bullseye",
+                                    text: "",
+                                    items: [
+                                        { ID: "105", text: "Help", type: "danger", icon: "help", visible: true, onClick: function () { aRuniFrame("./Help.html", "Help"); } },
+                                        { ID: "105", text: "Logout", type: "danger", icon: "fas fa-sign-out-alt", visible: true, onClick: function () { aaGOTO('index.html'); } },
+                                        { ID: "106", text: "Themes", type: "normal", icon: "fas fa-palette", visible: true, onClick: function () { aThemeSelect(); } },
+                                    ]
+                                }
+                            ],
+                            hideSubmenuOnMouseLeave: true,
+                            cssClass: "toolsmenu",
+                            displayExpr: "text",
+                            valueExpr: "ID",
+                            showTitle: true,
+                            stylingMode: "text"
+                        }
+                    },
+                    {
+                        location: "before",
+                        locateInMenu: "never",
+                        template: function () { return $("<div id='workinglabel' class='toolbar-label'></div>").text(PROGRAM_NAME); }
+                    }
+                ]
+            });
+
+        })
+        .catch(err => {
+            console.error("Menu Load Error:", err);
+        });
+
+}); // end ready
+
+// ===== Utility Functions =====
+const aGoTo = url => window.location.assign(url);
+const aaGOTO = url => window.location.assign(url);
+const aaLOGOUT = () => window.location.assign("index.html");
+
+const aRuniFrame = (pageUrl, title) => {
+    $("#tframe").attr("src", pageUrl);
+    $("#workinglabel").text(title);
+};
+
+const aArrayCompare = (a, b) => {
+    if (!a || !b) return false;
+    for (let i = 0; i < b.length; i++) {
+        const val = b[i];
+        const key = String(val).split("0")[0] || val;
+        if (a.indexOf(key) !== -1) return true;
+    }
+    return false;
+};
+const aArrayMatch = (a, b) => {
+    if (!a || !b) return "";
+    for (let i = 0; i < b.length; i++) {
+        const val = b[i];
+        const key = String(val).split("0")[0] || val;
+        if (a.indexOf(key) !== -1) return val;
+    }
+    return "";
+};
+
+const aThemeSelect = () => {
+    const aRgsValue = localStorage.getItem(THEME_STORAGE_KEY) || initialTheme;
+    $("#popupSelect").dxPopup({
+        title: "THEMES",
+        height: '140px',
+        width: '250px',
+        position: { offset: "0 -250" },
+        visible: true,
+        contentTemplate: function () {
+            return $("<div />").append($("<p><center><div id='tselect'></div></center></p>"));
+        }
+    }).dxPopup("instance");
+
+    $("#tselect").dxSelectBox({
+        width: 200,
+        dataSource: aThemeListGroup,
+        valueExpr: "thid",
+        displayExpr: "text",
+        grouped: true,
+        value: aRgsValue,
+        onValueChanged: function (args) {
+            // Apply theme and update UI quickly but lightly
+            try { DevExpress.ui.themes.current(args.value); } catch (e) { console.warn("Theme change failed:", e); }
+            localStorage.setItem(THEME_STORAGE_KEY, args.value);
+            // Update logos / icons to match theme
+            applyThemeClasses(args.value);
+            // Force refresh of the iframe only, not the whole page
+            const cur = $("#tframe").attr("src");
+            $("#tframe").attr("src", cur);
+            $("#popupSelect").dxPopup("hide");
+        }
+    }).dxSelectBox("instance");
+};

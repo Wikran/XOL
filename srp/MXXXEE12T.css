@@ -1,4 +1,3 @@
-
 :root {
     --dgBG: #d2f2fce5;
     --dgColor: black;
@@ -7,23 +6,19 @@
     --stBgcolor: #F5F5F5;
 }
 
-/*-----------------------------*/
-#scversion {
-    color: darkgreen;
-    font-size: 12px;
-}
 
+/*----gridContainer----------------------*/
 #gridContainer .dx-datagrid-headers {
     color: var(--dgColor) !important;
     background-color: var(--dgBG) !important;
 }
 
-#gridContainer .dx-datagrid-borders>.dx-datagrid-total-footer {
+#gridContainer .dx-datagrid-borders>.dx-datagrid-headers {
     border-top: 4px solid var(--dgBG);
     border-bottom: 4px solid var(--dgBG);
 }
 
-#gridContainer .dx-datagrid-borders>.dx-datagrid-headers {
+#gridContainer .dx-datagrid-borders>.dx-datagrid-total-footer {
     border-top: 4px solid var(--dgBG);
     border-bottom: 4px solid var(--dgBG);
 }
@@ -37,38 +32,56 @@
     vertical-align: top;
 }
 
-.dx-datagrid .dx-data-row .dx-datagrid-cell {
-    vertical-align: top;
-}
-
-/*.dx-datagrid-total-footer {
-    background-color: var(--dgBG) !important;
-} */
 #gridContainer .dx-datagrid-filter-panel {
     background-color: var(--dgBG) !important;
 }
 
-.dx-form .dx-field-item-label-text {
-    color: black;
-    font-style: bold;
+#gridContainer .dx-scrollable-scroll {
+    height: 380px !important;
 }
 
-/*-----------------------------*/
-.dx-popup-content {
-    background-color: var(--stBgcolor);
+#gridContainer .vertical-grid {
+    display: flex;
+    flex-direction: column;
+    /* This makes the items stack vertically */
+    align-items: flex-start;
+    /* Align items to the start of the container */
 }
 
-#popupContainerAdd .dx-popup-content {
-    background-color: var(--stBgcolor);
+/*----gridContainer----------------------*/
+
+/* ===================== fixed column  =========================================== */
+/* Fixed header cells */
+#Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-content-fixed .dx-row > td {
+    color: var(--dgColor) !important;
+    background-color: var(--dgBG) !important;
 }
 
-#Add-form .dx-popup-content {
-    background-color: var(--stBgcolor);
+/* Normal rows */
+#Add-dxDataGrid .dx-datagrid-rowsview .dx-row > td {
+    color: var(--dgColor) !important;
+    background-color: var(--stBgcolor) !important; /* same as footer */
 }
 
-#Add-form01 .dx-popup-content {
-    background-color: var(--stBgcolor);
+/* Fixed rows */
+#Add-dxDataGrid .dx-datagrid-rowsview .dx-datagrid-content-fixed .dx-row > td {
+    color: var(--dgColor) !important;
+    background-color: var(--stBgcolor) !important; /* same as footer */
 }
+
+/* Normal footer (summary row) */
+#Add-dxDataGrid .dx-datagrid-total-footer .dx-row > td {
+    color: var(--dgColor) !important;
+    background-color: var(--stBgcolor) !important; /* same as footer */
+}
+
+/* Fixed footer (summary row for frozen columns) */
+#Add-dxDataGrid .dx-datagrid-total-footer .dx-datagrid-content-fixed .dx-row > td {
+    color: var(--dgColor) !important;
+    background-color: var(--stBgcolor) !important; /* same as footer */
+}
+
+/* ===================== fixed column  =========================================== */
 
 #Add-dxDataGrid .dx-popup-content {
     background-color: var(--stBgcolor);
@@ -90,7 +103,71 @@
     background-color: var(--stBgcolor);
 }
 
+#Add-dxDataGrid .dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: var(--dgBG) !important;
+    /*height: 80px;*/
+}
+
+#Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-text-content {
+    text-align: top;
+}
+#Add-dxDataGrid .dx-datagrid-borders>.dx-datagrid-headers {
+    border-top: 4px solid var(--dgBG);
+    border-bottom: 4px solid var(--dgBG);
+}
+
+#Add-dxDataGrid .dx-datagrid-borders>.dx-datagrid-total-footer {
+    border-top: 4px solid var(--dgBG);
+    border-bottom: 4px solid var(--dgBG);
+}
+#Add-dxDataGrid .dx-datagrid-table {
+    border-left: 4px solid var(--dgBG);
+    border-right: 4px solid var(--dgBG);
+}
+/* Custom CSS for the editing area IT is working */
+#Add-dxDataGrid .dx-datagrid .dx-editor-cell .dx-texteditor-input {
+    height: 100%;
+    /* Set the height to 400px */
+    line-height: normal;
+    /* Ensure normal line height */
+    padding: 0;
+    /* Remove any padding */
+    margin: 0;
+    /* Remove any margin */
+}
+
+#Add-dxDataGrid .dx-datagrid-total-footer {
+    background-color: var(--dgBG) !important;
+  }
+  
+/* Style only the summary text cells */
+/* #Add-dxDataGrid .dx-datagrid-total-footer .dx-datagrid-summary-item {
+    background-color: var(--dgBG) !important;   
+    color: #000;
+    font-weight: bold;
+  }   */
+/* Color the entire total summary row */
+/* #Add-dxDataGrid .dx-datagrid-total-footer {
+    background-color: var(--dgBG) !important;   
+    font-weight: bold;
+  }   */
+/* Style only the summary text cells */
+/* #Add-dxDataGrid .dx-datagrid-total-footer .dx-datagrid-summary-item {
+    background-color: var(--dgBG) !important;  
+    color: #000;
+    font-weight: bold;
+  }   */
+
+  /* Only the summary cells inside group footer */
+/* #Add-dxDataGrid .dx-datagrid-group-footer .dx-datagrid-summary-item {
+    background-color: var(--dgBG) !important;
+    color: #000;
+    padding: 4px;
+    border-radius: 4px;
+  } */
 /*-----------------------------*/
+
 .title-bg {
     background-color: rgba(191, 191, 191, 0.15);
 }
@@ -124,15 +201,30 @@
     /*border-radius: 5px;*/
 }
 
-#gridContainer .dx-datagrid-headers {
-    color: #000000 !important;
-    background-color: var(--dgBG) !important;
+.dx-datagrid .dx-data-row .dx-datagrid-cell {
+    vertical-align: top;
 }
 
-#Add-dxDataGrid .dx-datagrid-headers {
-    color: #000000 !important;
-    background-color: var(--dgBG) !important;
-    /*height: 80px;*/
+.dx-form .dx-field-item-label-text {
+    color: black;
+    font-style: bold;
+}
+
+/*-----------------------------*/
+.dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#popupContainerAdd .dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-form .dx-popup-content {
+    background-color: var(--stBgcolor);
+}
+
+#Add-form01 .dx-popup-content {
+    background-color: var(--stBgcolor);
 }
 
 .dx-datagrid .dx-editor-cell .dx-checkbox {
@@ -144,13 +236,7 @@
     vertical-align: top;
 }
 
-#Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-text-content {
-    text-align: top;
-}
 
-#gridContainer .dx-scrollable-scroll {
-    height: 380px !important;
-}
 
 .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
     height: 380px;
@@ -199,13 +285,7 @@
     background-color: black;
 }
 
-#gridContainer .vertical-grid {
-    display: flex;
-    flex-direction: column;
-    /* This makes the items stack vertically */
-    align-items: flex-start;
-    /* Align items to the start of the container */
-}
+
 
 .custom-group {
     color: blue;
@@ -220,7 +300,7 @@
     /*background-color: #f0f0f061;  Change this to your desired background color */
     background: linear-gradient(to bottom, white, #f5f5f5b4);
     /*border-top: 1px solid blue; 
-    border-bottom: 1px solid blue;  Change this to your desired line color */
+            border-bottom: 1px solid blue;  Change this to your desired line color */
     border: 1.5px solid blue;
     border-radius: 10px;
     padding: 10px;
@@ -242,17 +322,7 @@
     font-family: Tahoma, Segoe UI, Geneva, Verdana, sans-serif;
 }
 
-/* Custom CSS for the editing area IT is working */
-#Add-dxDataGrid .dx-datagrid .dx-editor-cell .dx-texteditor-input {
-    height: 100%;
-    /* Set the height to 400px */
-    line-height: normal;
-    /* Ensure normal line height */
-    padding: 0;
-    /* Remove any padding */
-    margin: 0;
-    /* Remove any margin */
-}
+
 
 .dx-icon {
     font-size: 10px;
@@ -334,32 +404,89 @@
     color: unset;
 }
 
-/*.dx-popup-fullscreen .dx-popup-bottom {
-    /*float: left;         
-    margin-top: -240px; Adjust this value as needed 
-    position: absolute;
-    left: -1400px;
-    top: 650px;
-}*/
-/* Custom CSS to change the color and background color of the buttons 
-.dx-popup-fullscreen .dx-popup-bottom .dx-button {
-    background-color: #c7fec9d4; Change this to your desired background color 
-    color: rgb(4, 4, 4); /* Change this to your desired text color */
-/* border: 1px; Optional: Remove border 
-    /*padding: 10px 20px;  Optional: Adjust padding 
-    font-size: 12px;  Optional: Adjust font size 
-    font-weight: bold;
+.greyed-out {
+    background-color: #f0f0f0 !important;
+    /* Light grey background */
+    color: #e4e4e4 !important;
+    /* Light grey text */
+    pointer-events: none;
+    /* Disable interaction */
+}
+
+.dx-tooltip {
+    font-size: 14px;
+    color: #333;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+/* Make horizontal scrollbar track taller */
+.dx-scrollable-scroll-horizontal {
+    height: 40px !important;
+  }
+  
+  /* Make scrollbar thumb (the draggable part) taller and more visible */
+  .dx-scrollable-scroll-horizontal .dx-scrollable-scroll-content {
+    height: 40px !important;
+    background-color: #999; /* optional: change color for visibility */
+    border-radius: 8px;      /* optional: rounded corners */
+  }
+  
+  /* Optional: style native scrollbars for WebKit browsers */
+  .dx-scrollable::-webkit-scrollbar:horizontal {
+    height: 40px;
+  }
+  
+  .dx-scrollable::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 8px;
+  }
+  
+/* ------------------------------ */
+
+/*.dx-datagrid-total-footer {
+            background-color: var(--dgBG) !important;
+        } */
+
+/* Fixed header background 
+#Add-dxDataGrid .dx-datagrid-content-fixed  {
+    color: #000000 !important;
+    background-color: var(--dgBG) !important;
 }*/
 
+/* Fixed row background 
+.dx-datagrid-rowsview .dx-datagrid-content-fixed .dx-row > td {
+    background-color: #fee6cc; 
+}*/  
+
+/*.dx-popup-fullscreen .dx-popup-bottom {
+            /*float: left;         
+            margin-top: -240px; Adjust this value as needed 
+            position: absolute;
+            left: -1400px;
+            top: 650px;
+        }*/
+/* Custom CSS to change the color and background color of the buttons 
+        .dx-popup-fullscreen .dx-popup-bottom .dx-button {
+            background-color: #c7fec9d4; Change this to your desired background color 
+            color: rgb(4, 4, 4); /* Change this to your desired text color */
+/* border: 1px; Optional: Remove border 
+            /*padding: 10px 20px;  Optional: Adjust padding 
+            font-size: 12px;  Optional: Adjust font size 
+            font-weight: bold;
+        }*/
+
 /* Optional: Add hover effect 
-.dx-popup-fullscreen .dx-popup-bottom .dx-button:hover {
-    background-color: #dbfcdce8; Change this to your desired hover background color 
-}
-*/
+        .dx-popup-fullscreen .dx-popup-bottom .dx-button:hover {
+            background-color: #dbfcdce8; Change this to your desired hover background color 
+        }
+        */
 /*
-.dx-datagrid .dx-row.dx-selection .dx-icon {
-    color:rgba(239, 0, 0, 0.994); 
-}        
-.dx-datagrid .dx-row.dx-selection:hover .dx-icon {
-    color: rgba(252, 137, 6, 0.82); 
-}*/
+        .dx-datagrid .dx-row.dx-selection .dx-icon {
+            color:rgba(239, 0, 0, 0.994); 
+        }        
+        .dx-datagrid .dx-row.dx-selection:hover .dx-icon {
+            color: rgba(252, 137, 6, 0.82); 
+        }*/

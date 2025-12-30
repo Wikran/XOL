@@ -1,17 +1,59 @@
+:root {
+    --dgBG: #acd4fce5;
+    --dgColor: black;
+    --dgSelBar: #d2f2fc4c;
+    --dgSelText: blue; 
+    --stBgcolor: #F5F5F5;           
+}
+#gridContainer .dx-datagrid-borders>.dx-datagrid-total-footer {
+    border-top: 4px solid var(--dgBG);
+    border-bottom: 4px solid var(--dgBG);
+}
+
+#gridContainer .dx-datagrid-borders>.dx-datagrid-headers {
+    border-top: 4px solid var(--dgBG);
+    border-bottom: 4px solid var(--dgBG);
+}
+
+#gridContainer .dx-datagrid-table {
+    border-left: 4px solid var(--dgBG);
+    border-right: 4px solid var(--dgBG);
+}
+
+#gridContainer .dx-datagrid-filter-panel {
+    background-color: var(--dgBG) !important;
+}
+#gridContainer .dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: var(--dgBG) !important;
+}
+
+#Add-dxDataGrid .dx-datagrid-headers {
+    color: #000000 !important;
+    background-color: var(--dgBG) !important;
+    /*height: 80px;*/
+}
+
+.dx-datagrid-content .dx-datagrid-table .dx-row .dx-editor-cell {
+    vertical-align: top;
+}
+
+
 .title-bg {
+    background-color: rgba(191, 191, 191, 0.15);
+}
+
+.second-group {
     background-color: rgba(191, 191, 191, 0.15);
 }
 
 .dx-datagrid-headers {
     color: #000000 !important;
-    background-color: #acd4fce5 !important;
+    background-color: #e9fddfe5 !important;
+    /* #edfdfce5*/
 }
 
-#gridContainer .dx-scrollable-scroll {
-    height: 180px !important;
-}
-
-#popupContainerAdd .dx-popup-title {
+.dx-popup-title {
     color: rgb(1, 6, 32);
-    background-color: rgb(173, 250, 224)
+    background-color: rgb(249, 224, 252)
 }

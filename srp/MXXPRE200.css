@@ -1,0 +1,143 @@
+        :root {
+            --dgBG: #f4d2fce5;
+            --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;
+            --stBgcolor: #F5F5F5;
+        }
+        /* #dbebfae5; */
+        /*-----------------------------*/
+        /* custom-theme.css */
+
+        #scversion {
+            color: darkgreen;
+            font-size: 12px;
+        }
+
+        .dx-datagrid-headers {
+            color: var(--dgColor) !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-total-footer {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-headers {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        .dx-datagrid-table {
+            border-left: 4px solid var(--dgBG);
+            border-right: 4px solid var(--dgBG);
+        }
+
+        /*.dx-datagrid-total-footer {
+            background-color: var(--dgBG) !important;
+        } */
+        .dx-datagrid-filter-panel {
+            background-color: var(--dgBG) !important;
+        }
+
+        .dx-form .dx-field-item-label-text {
+            color: black;
+            font-style: bold;
+        }
+
+        /*-----------------------------*/
+        #popupContainerAdd .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-datagrid-rowsview .dx-scrollable-content {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-datagrid-header-panel {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-toolbar-items-container {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-datagrid {
+            background-color: var(--stBgcolor);
+        }
+
+        /*-----------------------------*/
+        .dx-popup-wrapper>.dx-overlay-content {
+            border-radius: 9px
+        }
+
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        /*#popupContainerAdd*/
+        .dx-popup-normal {
+            border-radius: 9px
+        }
+        
+        .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(190, 237, 243)
+        }
+
+        #gridContainer .dx-scrollable-scroll {
+            height: 180px !important;
+        }
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(173, 250, 224)
+        }
+
+        .dx-popup-fullscreen {
+            overflow-y: scroll;
+            height: 120%;
+        }
+
+        .dx-tab .dx-icon {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+            /* Adjust as needed */
+        }
+
+        .dx-tab-selected {
+            background-color: rgb(230, 237, 254) !important;
+        }
+
+        .verylight-blue .dx-texteditor-input {
+            /*background-color: #deedf8; /* Replace with your desired shade of light blue */
+            background: linear-gradient(to bottom, #fcfcfc, #d6dff7);
+        }
+
+        .verylight-green .dx-texteditor-input {
+            /*background-color: #deedf8; /* Replace with your desired shade of light blue */
+            background: linear-gradient(to bottom, #fcfcfc, #d6f7d9);
+        }
+
+        .right-align-number .dx-texteditor-input {
+            text-align: right;
+        }
+        
+        .dx-tab {
+            border-radius: 15px 15px 0 0;
+            /* Top-left and top-right corners rounded */
+            overflow: hidden;
+        }
+
+        .dx-tab-selected {
+            border-radius: 15px 15px 0 0;
+            /* Ensure selected tab also has rounded corners */
+        }
+
+        .custom-icon-size {
+            font-size: 30px;
+            color: green;
+        }
+ 

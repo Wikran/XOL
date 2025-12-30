@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fixed Banner with Logo, Toolbar & Sidebar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Top banner */
+    .top-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1in;
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .top-banner img {
+      height: 80%; /* Adjust logo size */
+      object-fit: contain;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      position: fixed;
+      top: 1in;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background-color: #333;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 999;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .hamburger-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #555;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .hamburger-btn.active {
+      background-color: #888;
+    }
+
+    .hamburger {
+      width: 18px;
+      height: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hamburger span {
+      height: 3px;
+      background: white;
+      border-radius: 2px;
+    }
+
+    .toolbar-title {
+      margin-left: 15px;
+      font-size: 1rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: calc(1in + 50px);
+      left: -250px;
+      width: 250px;
+      height: calc(100% - 1in - 50px);
+      background-color: #222;
+      color: white;
+      padding: 20px;
+      transition: left 0.3s ease;
+      z-index: 998;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    /* Main content */
+    .content {
+      margin-top: calc(1in + 50px);
+      padding: 20px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Banner with Logo -->
+  <div class="top-banner">
+    <img src="../images/locktonlogo70mmwhite.png" alt="Logo" id="logo">
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="hamburger-btn" onclick="toggleSidebar(this)">
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div class="toolbar-title">Toolbar</div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>Menu</h2>
+    <ul>
+      <li><a href="#" style="color:white;">Home</a></li>
+      <li><a href="#" style="color:white;">About</a></li>
+      <li><a href="#" style="color:white;">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content with iframe -->
+  <div class="content">
+    <p>Scroll down to see both banners stay fixed. Below is your iframe:</p>
+    <iframe src="./TESTsendMsMail.html"></iframe>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Load logo from uploaded image
+    document.getElementById('logo').src = ''; // Add your image path here if hosted
+
+    function toggleSidebar(btn) {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('active');
+      btn.classList.toggle('active');
+    }
+  </script>
+
+</body>
+</html>

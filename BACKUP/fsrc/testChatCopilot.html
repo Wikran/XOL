@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copilot Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #chatbox { width: 50%; margin: auto; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; }
+        #userInput { width: 80%; padding: 10px; }
+        button { padding: 10px; }
+        .user-message { text-align: right; color: blue; }
+        .copilot-message { text-align: left; color: green; }
+    </style>
+</head>
+<body>
+    <h1>Copilot Chat</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+            // application client : 7ad32bf4-0bcf-468b-8a97-dde9dca12749
+            // director tenant id : 2946b013-c232-420e-9d11-f17dcc4f7fc2
+            // secret value hmx8Q~kyW6NymAYTLpSxc6Y8wxQ.6yYzzuDVVaOw
+            // secret client id: 5e1beabe-21a9-4651-ab35-e4e6d90d75b0
+
+        const tenantId = "2946b013-c232-420e-9d11-f17dcc4f7fc2";
+        const clientId = "7ad32bf4-0bcf-468b-8a97-dde9dca12749";
+        const clientSecret = "5e1beabe-21a9-4651-ab35-e4e6d90d75b0";
+        const chatbox = document.getElementById("chatbox");
+
+        async function getAccessToken() {
+            const tokenUrl = `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`;
+            const params = new URLSearchParams();
+            params.append("client_id", clientId);
+            params.append("client_secret", clientSecret);
+            params.append("scope", "https://graph.microsoft.com/.default");
+            params.append("grant_type", "client_credentials");
+
+            const response = await fetch(tokenUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: params
+            });
+
+            const data = await response.json();
+            return data.access_token;
+        }
+
+        async function askCopilot(prompt) {
+            const accessToken = await getAccessToken();
+            const response = await fetch("https://graph.microsoft.com/v1.0/me/chats/messages", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ "text": prompt })
+            });
+
+            const result = await response.json();
+            return result.text || "No response from Copilot.";
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value;
+            if (!userInput.trim()) return;
+
+            chatbox.innerHTML += `<p class="user-message">You: ${userInput}</p>`;
+            document.getElementById("userInput").value = "";
+
+            const copilotResponse = await askCopilot(userInput);
+            chatbox.innerHTML += `<p class="copilot-message">Copilot: ${copilotResponse}</p>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

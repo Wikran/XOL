@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ACCOUNT Natural Language Query</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+
+    <!-- DevExtreme JS -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- Export support (Excel/PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- transformers.js (LLM summarizer) -->
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@xenova/transformers@latest/dist/transformers.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .panel {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            background: #fff;
+        }
+
+        .panel h3 {
+            margin-top: 0;
+        }
+
+        .output {
+            white-space: pre-wrap;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 12px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Natural Language → Safe SQL → ACCOUNT → LLM Summary</h2>
+
+        <div class="row">
+            <div class="col">
+                <div class="panel">
+                    <h3>Ask a question</h3>
+                    <div id="queryInput"></div>
+                    <div id="runBtn"></div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="panel">
+                    <h3>Summary</h3>
+                    <div id="summaryOutput" class="output">Waiting for query...</div>
+                    <h3>SQL (safe template)</h3>
+                    <div id="sqlOutput" class="output"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col" style="flex: 1 1 100%;">
+                <div class="panel">
+                    <h3>Raw results</h3>
+                    <div id="grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@latest/dist/transformers.min.js";
+
+        // Constants as requested
+        const aaXToX = btoa('A75FCC75-8FB6-4460-B3F6-7070B4437930');
+        const aaPFDMI = "https://cbsdev2.locktonwattana.com";
+
+        // LoadDatabase per your spec
+        // Sample usage:
+        // const fullQuery = "SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART";
+        // LoadDatabase(aaPFDMI, aaXToX, fullQuery);
+        const LoadDatabase = async (aaPFDMI, aaXToX, fullQuery) => {
+            let decodedXToX;
+            try {
+                decodedXToX = atob(aaXToX);
+            } catch (e) {
+                console.error('Invalid base64 string:', aaXToX);
+                return;
+            }
+            try {
+                const response = await fetch(`${aaPFDMI}/DMQ/XOL/${decodedXToX}/3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "@": btoa(fullQuery) }),
+                    redirect: "follow"
+                });
+                const acData = await response.json();
+                console.log(acData);
+                return acData;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        // Safe SQL templates: ACCOUNT fields + count + full info + group + contains/starts/ends/prefix
+        const sqlTemplates = {
+            // Core ACCOUNT field queries
+            account_by_code: (code) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            thai_description: (code) => `SELECT TDESC FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            english_description: (code) => `SELECT EDESC FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            alternative_account: (code) => `SELECT ALTERACC FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            mapping_code: (code) => `SELECT MAPPING FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            note_by_code: (code) => `SELECT NOTE FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            accounts_by_expense_group: `SELECT ACCCODE, EXPGroup FROM ExtraOnLine.dbo.ACCOUNTCHART ORDER BY EXPGroup;`,
+            subgroup_by_code: (code) => `SELECT EXPDesc FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE = '${code}';`,
+            active_accounts: `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE Active = 1;`,
+            account_by_reference: (idno) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE IDNO = '${idno}';`,
+
+            // Aggregates / summaries
+            count_account_codes: `SELECT COUNT(ACCCODE) AS TotalAccountCodes FROM ExtraOnLine.dbo.ACCOUNTCHART;`,
+            group_of_accounting: `
+        SELECT AccountGroup, COUNT(*) AS NumAccounts
+        FROM ExtraOnLine.dbo.ACCOUNTCHART
+        GROUP BY AccountGroup;
+      `,
+
+            // Human-like phrasing support
+            account_code_prefix: (prefix) => `SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART WHERE ACCCODE LIKE '${prefix}%';`,
+
+            // Generic text filters
+            field_contains: (field, keyword) => `
+        SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART
+        WHERE ${field} LIKE '%${keyword}%';
+      `,
+            field_starts_with: (field, keyword) => `
+        SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART
+        WHERE ${field} LIKE '${keyword}%';
+      `,
+            field_ends_with: (field, keyword) => `
+        SELECT * FROM ExtraOnLine.dbo.ACCOUNTCHART
+        WHERE ${field} LIKE '%${keyword}';
+      `
+        };
+
+        // Intent parser (supports human-like phrases)
+        function classifyIntent(text) {
+            const lower = text.toLowerCase();
+
+            // Common captures
+            const codeMatch = lower.match(/account\s*code\s*(\w+)/);        // e.g., "account code 1001"
+            const refMatch = lower.match(/reference\s*(\w+)/);              // e.g., "reference 12345"
+            const beginWithMatch = lower.match(/begin with\s*["']?(\w+)/);  // e.g., "begin with 1"
+            const startsWithMatch = lower.match(/starts with\s*["']?(\w+)/);
+            const endsWithMatch = lower.match(/ends with\s*["']?(\w+)/);
+            const containSplit = lower.includes("contain") ? lower.split("contain") : null;
+            const containKeyword = containSplit ? containSplit[1].trim() : null;
+
+            // Count account codes
+            if (lower.includes("count account codes") || lower.includes("count the account code")) {
+                return { type: "count_account_codes" };
+            }
+
+            // Full info for a code
+            if ((lower.includes("full info") || lower.includes("find full information")) && codeMatch) {
+                return { type: "account_by_code", code: codeMatch[1] };
+            }
+
+            // Group of accounting
+            if (lower.includes("group of accounting")) {
+                return { type: "group_of_accounting" };
+            }
+
+            // Field contains (TDESC, EDESC, NOTE, MAPPING, ALTERACC, EXPGroup, EXPDesc)
+            if (containKeyword) {
+                if (lower.includes("thai description")) return { type: "field_contains", field: "TDESC", keyword: containKeyword };
+                if (lower.includes("english description")) return { type: "field_contains", field: "EDESC", keyword: containKeyword };
+                if (lower.includes("note")) return { type: "field_contains", field: "NOTE", keyword: containKeyword };
+                if (lower.includes("mapping")) return { type: "field_contains", field: "MAPPING", keyword: containKeyword };
+                if (lower.includes("alternative")) return { type: "field_contains", field: "ALTERACC", keyword: containKeyword };
+                if (lower.includes("expense group")) return { type: "field_contains", field: "EXPGroup", keyword: containKeyword };
+                if (lower.includes("sub group") || lower.includes("subgroup")) return { type: "field_contains", field: "EXPDesc", keyword: containKeyword };
+            }
+
+            // Starts with
+            if (startsWithMatch) {
+                const kw = startsWithMatch[1];
+                if (lower.includes("account code")) return { type: "field_starts_with", field: "ACCCODE", keyword: kw };
+                if (lower.includes("thai description")) return { type: "field_starts_with", field: "TDESC", keyword: kw };
+                if (lower.includes("english description")) return { type: "field_starts_with", field: "EDESC", keyword: kw };
+                if (lower.includes("note")) return { type: "field_starts_with", field: "NOTE", keyword: kw };
+                if (lower.includes("mapping")) return { type: "field_starts_with", field: "MAPPING", keyword: kw };
+            }
+
+            // Ends with
+            if (endsWithMatch) {
+                const kw = endsWithMatch[1];
+                if (lower.includes("account code")) return { type: "field_ends_with", field: "ACCCODE", keyword: kw };
+                if (lower.includes("thai description")) return { type: "field_ends_with", field: "TDESC", keyword: kw };
+                if (lower.includes("english description")) return { type: "field_ends_with", field: "EDESC", keyword: kw };
+                if (lower.includes("note")) return { type: "field_ends_with", field: "NOTE", keyword: kw };
+                if (lower.includes("mapping")) return { type: "field_ends_with", field: "MAPPING", keyword: kw };
+            }
+
+            // Begin with (alias of starts with for account code)
+            if (beginWithMatch && lower.includes("account code")) {
+                return { type: "account_code_prefix", prefix: beginWithMatch[1] };
+            }
+
+            // Specific field lookups
+            if (lower.includes("thai description") && codeMatch) return { type: "thai_description", code: codeMatch[1] };
+            if (lower.includes("english description") && codeMatch) return { type: "english_description", code: codeMatch[1] };
+            if (lower.includes("alternative") && codeMatch) return { type: "alternative_account", code: codeMatch[1] };
+            if (lower.includes("mapping code") && codeMatch) return { type: "mapping_code", code: codeMatch[1] };
+            if (lower.includes("note") && codeMatch) return { type: "note_by_code", code: codeMatch[1] };
+            if (lower.includes("expense group")) return { type: "accounts_by_expense_group" };
+            if (lower.includes("sub group") && codeMatch) return { type: "subgroup_by_code", code: codeMatch[1] };
+            if (lower.includes("active accounts")) return { type: "active_accounts" };
+            if (lower.includes("find account by reference") && refMatch) return { type: "account_by_reference", idno: refMatch[1] };
+
+            // Base fallback: "find account code 1001"
+            if (codeMatch) return { type: "account_by_code", code: codeMatch[1] };
+
+            return { type: null };
+        }
+
+        function buildSafeQuery(userText) {
+            const intent = classifyIntent(userText);
+            switch (intent.type) {
+                case "count_account_codes": return sqlTemplates.count_account_codes.trim();
+                case "account_by_code": return sqlTemplates.account_by_code(intent.code).trim();
+                case "group_of_accounting": return sqlTemplates.group_of_accounting.trim();
+
+                case "thai_description": return sqlTemplates.thai_description(intent.code).trim();
+                case "english_description": return sqlTemplates.english_description(intent.code).trim();
+                case "alternative_account": return sqlTemplates.alternative_account(intent.code).trim();
+                case "mapping_code": return sqlTemplates.mapping_code(intent.code).trim();
+                case "note_by_code": return sqlTemplates.note_by_code(intent.code).trim();
+                case "accounts_by_expense_group": return sqlTemplates.accounts_by_expense_group.trim();
+                case "subgroup_by_code": return sqlTemplates.subgroup_by_code(intent.code).trim();
+                case "active_accounts": return sqlTemplates.active_accounts.trim();
+                case "account_by_reference": return sqlTemplates.account_by_reference(intent.idno).trim();
+
+                case "account_code_prefix": return sqlTemplates.account_code_prefix(intent.prefix).trim();
+                case "field_contains": return sqlTemplates.field_contains(intent.field, intent.keyword).trim();
+                case "field_starts_with": return sqlTemplates.field_starts_with(intent.field, intent.keyword).trim();
+                case "field_ends_with": return sqlTemplates.field_ends_with(intent.field, intent.keyword).trim();
+
+                default: return null;
+            }
+        }
+
+        // DevExtreme UI setup
+        const queryInput = $("#queryInput").dxTextBox({
+            label: "Ask in natural language",
+            labelMode: "floating",
+            value: "show me the account code begin with 1"
+        }).dxTextBox("instance");
+
+        const runBtn = $("#runBtn").dxButton({
+            text: "Run",
+            type: "default",
+            icon: "search",
+            onClick: handleRun
+        }).dxButton("instance");
+
+        const grid = $("#grid").dxDataGrid({
+            dataSource: [],
+            showBorders: true,
+            columnAutoWidth: true,
+            filterRow: { visible: true },
+            searchPanel: { visible: true },
+            paging: { pageSize: 10 },
+            pager: { showPageSizeSelector: true, allowedPageSizes: [10, 20, 50], showInfo: true },
+            export: { enabled: true, formats: ['xlsx', 'pdf'] }
+        }).dxDataGrid("instance");
+
+        // LLM summarizer
+        let summarizer;
+        async function getSummarizer() {
+            if (!summarizer) {
+                summarizer = await pipeline("text-generation", "Xenova/gpt2");
+            }
+            return summarizer;
+        }
+
+        async function summarizeResult(userQuery, sqlUsed, dbResult) {
+            const generator = await getSummarizer();
+            const prompt = `
+User request: "${userQuery}"
+SQL executed (safe template): ${sqlUsed}
+Raw result JSON: ${JSON.stringify(dbResult)}
+
+Compose a concise, human-friendly summary of the result.
+      `.trim();
+
+            try {
+                const out = await generator(prompt, { max_new_tokens: 80 });
+                return out[0].generated_text;
+            } catch (e) {
+                console.error("Summarizer error:", e);
+                return "Could not generate summary.";
+            }
+        }
+
+        // Main handler
+        async function handleRun() {
+            const userText = queryInput.option("value");
+
+            // Build safe SQL
+            const sql = buildSafeQuery(userText);
+            $("#sqlOutput").text(sql || "No allowed intent detected.");
+
+            if (!sql) {
+                $("#summaryOutput").text(
+                    "Unsupported query. Try: 'thai description that contain เงินฝาก', 'account code starts with 1', 'note ends with tax', 'count account codes', 'group of accounting'."
+                );
+                grid.option("dataSource", []);
+                return;
+            }
+
+            // Execute via loader
+            const dbData = await LoadDatabase(aaPFDMI, aaXToX, sql);
+
+            // Update grid
+            grid.option("dataSource", Array.isArray(dbData) ? dbData : (dbData?.data || dbData || []));
+
+            // Summarize
+            const summary = await summarizeResult(userText, sql, dbData);
+            $("#summaryOutput").text(summary);
+        }
+    </script>
+</body>
+
+</html>

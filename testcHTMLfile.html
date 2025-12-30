@@ -48,8 +48,9 @@
     <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
     <link rel="stylesheet" href="NITL901232.css"> 
     <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
-    <script src="bundle.min.js"></script>
-    <script>     
+    <script src="./src/parascript.js"></script>
+    <!-- <script src="./src/bundle.min.js"></script> -->
+    <!-- <script>     
         // const timestamps = Date.now(); // Adding timestamp to make it unique
         // const link = document.createElement('link');
         // link.rel  = 'stylesheet';
@@ -66,11 +67,11 @@
         const urlParams = new URLSearchParams(queryString);
         const param1 = urlParams.get('param1');
         
-        const jsfiletoload = "./dist/" + param1 + `.js?t=${timestamp}`;
+        const jsfiletoload = `./src/${param1}.js?t=${timestamp}`;
         const scriptElement2 = document.createElement("script");
         scriptElement2.src = jsfiletoload;
         document.head.appendChild(scriptElement2);
-    </script>
+    </script> -->
        <!--  <script>
             document.getElementById('loadScript').addEventListener('click', function() {
                 fetch('example.js')

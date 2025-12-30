@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <META HTTP-EQUIV="Expires" CONTENT="-1">
+  <meta http-equiv="Content-Language" content="th">
+  <meta http-equiv="content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="content-Type" content="text/html; charset=window-874">
+  <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Report export — header to values, header style on totals, text tokens</title>
+  <!-- Icon -->
+  <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+  <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+  <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+  <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+  <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+  <!-- Libraries -->
+  <!-- <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/24.1.3/css/dx.light.css"> -->
+  <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+  <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css" data-active="false">
+  <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+  <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+    data-active="true">
+  <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+    data-active="false">
+  <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+    data-active="false">
+  <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+    data-active="false">
+  <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+    data-active="false">
+  <link rel="dx-theme" data-theme="generic.darkmoon.compact" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css"
+    data-active="false">
+  <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.blue.dark.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.blue.light.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.teal.dark.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.orange.light.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.purple.light.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.teal.light.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+  <link rel="dx-theme" data-theme="material.lime.light.compact"
+    href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <link rel="stylesheet" href="./srp/MXHRINCOME.css">
+  <script src="./src/bundle.min.js"></script>
+
+  <style>
+    body {
+      font-family: system-ui, Arial;
+      margin: 18px;
+    }
+
+    #gridContainer {
+      height: 420px;
+      margin-top: 10px;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .label {
+      font-weight: 600
+    }
+
+    button {
+      margin-right: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
+    #status {
+      margin-top: 8px;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>📊 Report export </h2>
+
+  <div class="row">
+    <div class="field">
+      <span class="label">From</span>
+      <div id="dateFrom"></div>
+    </div>
+    <div class="field">
+      <span class="label">To</span>
+      <div id="dateTo"></div>
+    </div>
+  </div>
+
+  <br>
+  <button id="loadDbBtn">Load data</button>
+  <button id="exportBtn">Export to Excel</button>
+  <div id="status"></div>
+  <div id="gridContainer"></div>
+
+  <script>
+    $(document).ready(function () {
+      var aDXTheme = "material.blue.light" //localStorage["aDXTheme"]
+      DevExpress.ui.themes.current(aDXTheme);
+      DevExpress.localization.locale("en-GB");
+    });
+    /* =============================== State =============================== */
+    let gridInstance = null, currentData = [], columnMap = [], placeholderRowIdx = null, directiveRowIdx = null;
+    let templateColWidths = {}, templateColHeaders = {}, deptMap = {};
+
+    /* =============================== Utils =============================== */
+    const setStatus = (m) => $("#status").text(m);
+    const guessDataType = (n) => {
+      if (!n) return "string";
+      const s = n.toLowerCase();
+      if (/(amount|total|sum|price|qty|quantity|number|count)/.test(s)) return "number";
+      if (/(date|day|time)/.test(s)) return "date";
+      return "string";
+    };
+    const colLetter = (n) => { let s = "", q = n; while (q > 0) { const r = (q - 1) % 26; s = String.fromCharCode(65 + r) + s; q = Math.floor((q - 1) / 26); } return s; };
+    const toIsoDate = (d) => { const x = new Date(d); if (Number.isNaN(x.getTime())) return ""; return x.toISOString().slice(0, 10); };
+    const toEnGbDate = (d) => { const x = new Date(d); if (Number.isNaN(x.getTime())) return ""; return x.toLocaleDateString("en-GB", { day: '2-digit', month: '2-digit', year: 'numeric' }); };
+
+    /* =============================== Date dropdowns (British dd/MM yyyy) =============================== */
+    let dxFrom = null, dxTo = null;
+    $(function () {
+      dxFrom = $("#dateFrom").dxDateBox({
+        type: "date", displayFormat: "dd/MM yyyy", useMaskBehavior: true,
+        value: new Date(), calendarOptions: { firstDayOfWeek: 1 }
+      }).dxDateBox("instance");
+
+      dxTo = $("#dateTo").dxDateBox({
+        type: "date", displayFormat: "dd/MM yyyy", useMaskBehavior: true,
+        value: new Date(), calendarOptions: { firstDayOfWeek: 1 }
+      }).dxDateBox("instance");
+    });
+
+    /* =============================== Template parsing =============================== */
+    function parseTemplateWorkbook(wb) {
+      const ws = wb.getWorksheet("Report");
+      if (!ws) throw new Error("Worksheet 'Report' not found in template.xlsx");
+
+      // Build department map from MSTABLE (code -> name)
+      deptMap = {};
+      const ms = wb.getWorksheet("MSTABLE");
+      if (ms) {
+        ms.eachRow((r, i) => {
+          if (i === 1) return;
+          const code = r.getCell(1).value, name = r.getCell(2).value;
+          if (code != null && name != null) deptMap[String(code).trim()] = String(name).trim();
+        });
+      }
+
+      // Detect {{placeholder}} row and directive row
+      columnMap = []; templateColWidths = {}; templateColHeaders = {};
+      placeholderRowIdx = null; directiveRowIdx = null;
+
+      for (let r = 1; r <= 1000; r++) {
+        const vals = (ws.getRow(r).values || []).slice(1);
+        if (vals.some(v => typeof v === "string" && /\{\{\s*[^}]+\s*\}\}/.test(v))) {
+          placeholderRowIdx = r; directiveRowIdx = r + 1; break;
+        }
+      }
+      if (!placeholderRowIdx) throw new Error("No {{placeholder}} row found");
+
+      const headerArr = (ws.getRow(placeholderRowIdx - 1).values || []).slice(1);
+      const phArr = (ws.getRow(placeholderRowIdx).values || []).slice(1);
+      const dirArr = (ws.getRow(directiveRowIdx).values || []).slice(1);
+      const maxCols = Math.max(headerArr.length, phArr.length, dirArr.length);
+
+      for (let c = 1; c <= maxCols; c++) {
+        const phRaw = phArr[c - 1], dirRaw = dirArr[c - 1];
+        let placeholder = null, directive = null;
+        if (typeof phRaw === "string") {
+          const m = phRaw.match(/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/);
+          if (m) placeholder = m[1].trim().toLowerCase();
+        }
+        if (typeof dirRaw === "string") {
+          const dm = dirRaw.match(/\{\s*(sum|average|count)\s*\}/i);
+          if (dm) directive = dm[1].toLowerCase();
+        }
+
+        const col = ws.getColumn(c);
+        templateColWidths[c] = col.width || 15;
+        templateColHeaders[c] = headerArr[c - 1] || placeholder || "";
+
+        columnMap.push({
+          colIndex: c,
+          placeholder,
+          directive,
+          dataType: placeholder ? guessDataType(placeholder) : null
+        });
+      }
+    }
+
+    /* =============================== Load data =============================== */
+    async function loadDatabaseData() {
+      const df = dxFrom.option("value"), dt = dxTo.option("value");
+      if (!df || !dt) { alert("Please select date range"); return; }
+
+      setStatus("Loading template & data...");
+      const tplRes = await fetch("template.xlsx", { cache: "no-store" });
+      const buf = await tplRes.arrayBuffer();
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buf);
+      parseTemplateWorkbook(wb);
+
+      // API
+      const aaTBKey = "5ad2685d-4114-4aa5-aa87-67368f4a3559";
+      const aaXToX = "QTc1RkNDNzUtOEZCNi00NDYwLUIzRjYtNzA3MEI0NDM3OTMw";
+      const baseURL = isLocalHost();
+
+      const dateField = columnMap.find(c => c.dataType === "date" && c.placeholder)?.placeholder || "ReqDate";
+      const aqrFull = `ExpGroupCode='700' AND ${dateField} BETWEEN '${toIsoDate(df)}' AND '${toIsoDate(dt)}'`;
+
+      const aurl = `${baseURL}/DMQ/XOL/${atob(aaXToX)}/${aaTBKey}/all`;
+      const aSettings = {
+        url: aurl, method: "POST", timeout: 0,
+        headers: { "Content-Type": "application/json" },
+        data: JSON.stringify({ "@": btoa(aqrFull) })
+      };
+      const dbRaw = await $.ajax(aSettings);
+
+      // Map API fields -> placeholders
+      const dataPh = columnMap.filter(c => c.placeholder && c.placeholder !== "no").map(c => c.placeholder);
+      const sample = dbRaw[0] || {};
+      const finalMap = {};
+      dataPh.forEach(ph => {
+        const f = Object.keys(sample).find(k => k.toLowerCase() === ph.toLowerCase());
+        finalMap[ph] = f || ph;
+      });
+
+      // Display values only (e.g., department code -> name)
+      const mapped = dbRaw.map((r, i) => {
+        const o = {}; o.no = i + 1;
+        dataPh.forEach(ph => {
+          let v = r[finalMap[ph]];
+          if (ph === "department" && deptMap[v]) v = deptMap[v];
+          o[ph] = v;
+        });
+        return o;
+      });
+
+      // Grid columns based on template
+      const cols = [];
+      for (const cm of columnMap) {
+        if (!cm.placeholder) continue;
+        if (cm.placeholder === "no") {
+          cols.push({ dataField: "no", caption: "NO", dataType: "number" });
+        } else {
+          cols.push({ dataField: cm.placeholder, caption: templateColHeaders[cm.colIndex], dataType: cm.dataType || guessDataType(cm.placeholder) });
+        }
+      }
+
+      if (!gridInstance) {
+        gridInstance = $("#gridContainer").dxDataGrid({
+          dataSource: mapped,
+          columns: cols,
+          height: 700, // pixels
+          width: 1500,  // pixels
+          showBorders: true,
+          columnAutoWidth: true,
+          allowColumnReordering: true,
+          allowColumnResizing: true,
+          columnMinWidth: 10,
+          columnChooser: {
+            enabled: true,  //false // true
+          },
+          showBorders: true,
+          sorting: {
+            mode: "multiple"
+          },
+          selection: {
+            mode: "single" //'multiple'
+          },
+          groupPanel: {
+            visible: true, //false //false // can't select other group
+          },
+          filterRow: {
+            visible: true,
+            applyFilter: "auto"
+          },
+          headerFilter: {
+            visible: true
+          },
+          filterPanel: {
+            visible: true
+          },
+          filterBuilderPopup: {
+            position: {
+              of: window, at: 'top', my: 'top', offset: { y: 5 },
+            },
+            height: 500,
+            width: 1000,
+          },
+          //filterValue: [['ReqDate', '>=', aFilterT], "and", ['ReqDate', '<=', aFilterT2], "and", ['ERStatus', 'contains', 'finished']],  //     [Req.Date] Is any of('2022')                                   
+          grouping: {
+            autoExpandAll: true,
+          },
+          searchPanel: {
+            visible: true
+          },
+          paging: {
+            pageSize: 10
+          },
+          pager: {
+            showPageSizeSelector: true,
+            allowedPageSizes: [10, 20, 50],
+            showNavigationButtons: true,
+            showInfo: true
+          },
+          showBorders: true,
+          groupPaging: true,
+          showColumnLines: true,
+          showRowLines: true,
+          rowAlternationEnabled: true, //true,
+          wordWrapEnabled: true,
+          // Export to Excel 		
+          export: {
+            enabled: true,
+            allowExportSelectedData: true
+          },
+          onExporting: function (e) {
+            const data = e.component.getDataSource().items();
+            exportReport(data);
+            e.cancel = true; // prevent default export
+          },
+          // onExporting: function (e) {
+          //   const workbook = new ExcelJS.Workbook();
+
+          //   fetch('template.xlsx')
+          //     .then(response => response.arrayBuffer())
+          //     .then(arrayBuffer => workbook.xlsx.load(arrayBuffer))
+          //     .then(() => {
+          //       // Get the worksheet named 'DATA' or fallback to the first sheet
+          //       const worksheet = workbook.getWorksheet('Report') || workbook.worksheets[0];
+
+          //       // 🔍 Find the header row: look for the row that contains "NO", "REF NO", etc.
+          //       let headerRowIndex = 1;
+          //       worksheet.eachRow((row, rowNumber) => {
+          //         const cellValues = row.values.map(v => typeof v === 'string' ? v.trim().toUpperCase() : '');
+          //         if (cellValues.includes('NO') && cellValues.includes('REF NO')) {
+          //           headerRowIndex = rowNumber - 1;
+          //         }
+          //       });
+
+          //       // 🧩 Export data starting from the next row after header
+          //       return DevExpress.excelExporter.exportDataGrid({
+          //         worksheet: worksheet,
+          //         component: e.component,
+          //         topLeftCell: { row: headerRowIndex + 1, column: 1 },
+          //         keepColumnWidths: true
+          //       });
+          //     })
+          //     .then(() => workbook.xlsx.writeBuffer())
+          //     .then(buffer => {
+          //       saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DECLARATION.xlsx');
+          //     });
+
+          //   e.cancel = true;
+          // }
+
+          // onExporting: function (e) {
+          //   const workbook = new ExcelJS.Workbook();
+          //   const worksheet = workbook.addWorksheet('DATA');
+          //   DevExpress.excelExporter.exportDataGrid({
+          //     worksheet: worksheet,
+          //     component: e.component
+          //   }).then(function () {
+          //     workbook.xlsx.writeBuffer().then(function (buffer) {
+          //       saveAs(new Blob([buffer], { type: 'application/octet-stream' }), 'DECLARATION' + '.xlsx');
+          //     });
+          //   });
+          //   e.cancel = true;
+          // },
+        }).dxDataGrid("instance");
+      } else {
+        gridInstance.option("columns", cols);
+        gridInstance.option("dataSource", mapped);
+      }
+
+      currentData = mapped;
+      setStatus(`Loaded ${mapped.length} rows`);
+    }
+
+    /* =============================== border =============================== */
+    // function applyDataAreaBorders(ws, firstDataRow, lastDataRow, columnMap) {
+    //   const usedCols = columnMap
+    //     .filter(cm => cm && cm.placeholder && Number.isInteger(cm.colIndex))
+    //     .map(cm => cm.colIndex)
+    //     .sort((a, b) => a - b);
+
+    //   if (usedCols.length === 0) return;
+
+    //   const leftCol = usedCols[0];
+    //   const rightCol = usedCols[usedCols.length - 1];
+    //   console.log("leftCol ", leftCol, "rightCol ", rightCol)
+    //   const borderStyle = {
+    //     top: { style: "dashed" },
+    //     bottom: { style: "dashed" },
+    //     left: { style: "dashed" },
+    //     right: { style: "dashed" }
+    //   };
+
+    //   for (let r = firstDataRow; r <= lastDataRow; r++) {
+    //     const row = ws.getRow(r);
+    //     for (let c = leftCol; c <= rightCol; c++) {
+    //       row.getCell(c).border = borderStyle;
+    //     }
+    //     row.commit();
+    //   }
+    // }
+
+    // // เส้นขอบ total row ตลอดช่วงคอลัมน์ที่ใช้จริง
+    // // const lastColLetter = colLetter(columnMap.length - 1);
+    // // for (let i = 0; i < columnMap.length; i++) {
+    // //   const letter = colLetter(i);
+    // //   const cell = ws.getCell(`${letter}${totalRowIndex}`);
+    // //   cell.border = {
+    // //     top: { style: "double" }, left: { style: "thin" },
+    // //     bottom: { style: "thin" }, right: { style: "thin" }
+    // //   };
+    // // }
+
+    // function applyTotalRowBorders(ws, totalRowIndex, columnMap) {
+    //   const usedCols = columnMap
+    //     .filter(cm => cm && cm.placeholder && Number.isInteger(cm.colIndex))
+    //     .map(cm => cm.colIndex)
+    //     .sort((a, b) => a - b);
+
+    //   if (usedCols.length === 0) return;
+
+    //   const row = ws.getRow(totalRowIndex);
+    //   for (const colIdx of usedCols) {
+    //     const cell = row.getCell(colIdx);
+    //     cell.border = {
+    //       top: { style: "double" },
+    //       left: { style: "thin" },
+    //       bottom: { style: "thin" },
+    //       right: { style: "thin" }
+    //     };
+    //   }
+    //   row.commit();
+    // }
+
+    // function applyRowStyleToData(ws, sourceRowIndex, targetStartRow, targetEndRow, columnMap) {
+    //   const sourceRow = ws.getRow(sourceRowIndex);
+
+    //   for (let r = targetStartRow; r <= targetEndRow; r++) {
+    //     const row = ws.getRow(r);
+    //     columnMap.forEach(cm => {
+    //       if (!cm.placeholder) return;
+
+    //       const srcCell = sourceRow.getCell(cm.colIndex);
+    //       const dstCell = row.getCell(cm.colIndex);
+    //       console.log(srcCell,dstCell)
+
+    //       //if (srcCell.font) dstCell.font = srcCell.font;
+    //       //if (srcCell.alignment) dstCell.alignment = srcCell.alignment;
+    //       if (srcCell.border) dstCell.border = srcCell.border;
+    //       //if (srcCell.fill) dstCell.fill = srcCell.fill;
+    //       //if (srcCell.numFmt) dstCell.numFmt = srcCell.numFmt;
+    //     });
+    //     row.commit();
+    //   }
+    // }
+    // function applyDashedBorderRange(ws, startRow, endRow, startCol, endCol) {
+    //   for (let r = startRow; r <= endRow; r++) {
+    //     const row = ws.getRow(r);
+    //     for (let c = startCol; c <= endCol; c++) {
+    //       const cell = row.getCell(c);
+    //       cell.border = {
+    //         top: { style: "dashed" },
+    //         left: { style: "dashed" },
+    //         bottom: { style: "dashed" },
+    //         right: { style: "dashed" }
+    //       };
+
+    //       // Optional: log Excel-style reference
+    //       // console.log(`Applied border to ${colLetter(c)}${r}`);
+    //     }
+    //     row.commit();
+    //   }
+    // }
+    /* =============================== Export =============================== */
+    async function exportReport(data) {
+      if (!data || !data.length) {
+        alert("No data to export");
+        return;
+      }
+
+      setStatus("Exporting...");
+      const tplRes = await fetch("template.xlsx", { cache: "no-store" });
+      const buf = await tplRes.arrayBuffer();
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buf);
+      parseTemplateWorkbook(wb); // assumes columnMap, placeholderRowIdx, etc. are set
+
+      const ws = wb.getWorksheet("Report");
+
+      const headerRow = placeholderRowIdx - 1;
+      const firstDataRow = placeholderRowIdx;
+      const lastDataRow = firstDataRow + data.length - 1;
+      const totalsRowIndex = lastDataRow + 1;
+      const periodRow = headerRow - 1;
+
+      // Helpers
+      const cellToString = value => {
+        if (value == null) return "";
+        if (typeof value === "string") return value;
+        if (typeof value === "number" || typeof value === "boolean" || value instanceof Date) return String(value);
+        if (typeof value === "object") {
+          if ("formula" in value) return cellToString(value.result);
+          if (Array.isArray(value.richText)) return value.richText.map(rt => rt.text ?? "").join("");
+          if ("text" in value) return value.text;
+          try { return JSON.stringify(value); } catch { return String(value); }
+        }
+        return String(value);
+      };
+
+      const extractBracketedText = str => {
+        const m = String(str).match(/^\s*<\s*([^>]+?)\s*>\s*$/);
+        return m ? m[1] : null;
+      };
+
+      const copyCellStyle = (src, dst) => {
+        const s = src.style || {};
+        dst.style = {
+          font: s.font ? { ...s.font } : undefined,
+          alignment: s.alignment ? { ...s.alignment } : undefined,
+          border: s.border ? { ...s.border } : undefined,
+          fill: s.fill ? { ...s.fill } : undefined,
+          numFmt: s.numFmt ?? undefined,
+          protection: s.protection ? { ...s.protection } : undefined,
+        };
+      };
+
+      const isEmpty = v => v === undefined || v === null || v === "";
+
+      const colLetter = n => {
+        let s = "";
+        while (n > 0) {
+          const m = (n - 1) % 26;
+          s = String.fromCharCode(65 + m) + s;
+          n = Math.floor((n - 1) / 26);
+        }
+        return s;
+      };
+
+      // 1) Period line
+      const df = dxFrom.option("value"), dt = dxTo.option("value");
+      ws.getRow(periodRow).getCell(1).value = `For Period ${toEnGbDate(df)} - ${toEnGbDate(dt)}`;
+      ws.getRow(periodRow).commit();
+
+      // 2) Header row: force plain text
+      const hdrRow = ws.getRow(headerRow);
+      columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+        const cell = hdrRow.getCell(cm.colIndex);
+        const finalText = (cell?.text?.trim()) || templateColHeaders[cm.colIndex] || "";
+        cell.value = finalText;
+      });
+      hdrRow.commit();
+
+      // 3) Placeholder → column index map
+      const colMap = {};
+      columnMap.forEach(c => {
+        if (c.placeholder) colMap[c.placeholder] = c.colIndex;
+      });
+
+      // 4) Write data rows
+      data.forEach((rowData, i) => {
+        const rNo = firstDataRow + i;
+        const row = ws.getRow(rNo);
+
+        columnMap.forEach(cm => {
+          if (cm.placeholder) row.getCell(cm.colIndex).value = "";
+        });
+
+        if (colMap["no"]) row.getCell(colMap["no"]).value = i + 1;
+
+        for (const [key, val] of Object.entries(rowData)) {
+          if (key === "no") continue;
+          const colIdx = colMap[key];
+          if (!colIdx) continue;
+
+          const dtType = columnMap.find(c => c.placeholder === key)?.dataType || guessDataType(key);
+          const cell = row.getCell(colIdx);
+
+          if (val == null || val === "") continue;
+
+          if (dtType === "date") {
+            const d = val instanceof Date ? val : new Date(val);
+            cell.value = Number.isNaN(d.getTime()) ? "" : d;
+          } else if (dtType === "number") {
+            const n = Number(val);
+            cell.value = Number.isNaN(n) ? "" : n;
+          } else {
+            cell.value = val;
+          }
+        }
+
+        row.commit();
+      });
+
+      // 5) Totals row
+      const totalsRow = ws.getRow(totalsRowIndex);
+      const headerTemplateRow = ws.getRow(headerRow);
+
+      columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+
+        const tCell = totalsRow.getCell(cm.colIndex);
+
+        // 5.1 Replace <TEXT> → TEXT, preserving casing
+        // const raw = cellToString(tCell.value);
+        // const label = extractBracketedText(raw);
+        // console.log(raw, label)
+        // if (label) {
+        //   tCell.value = label;
+        // }
+
+        // 5.2 Apply formula if directive exists and cell is still empty
+        if (cm.directive && isEmpty(tCell.value)) {
+          const L = colLetter(cm.colIndex);
+          const rng = `${L}${firstDataRow}:${L}${lastDataRow}`;
+          let formula = "";
+
+          if (cm.directive === "sum") formula = `SUM(${rng})`;
+          else if (cm.directive === "average") formula = `AVERAGE(${rng})`;
+          else if (cm.directive === "count") formula = `COUNTA(${rng})`;
+
+          if (formula) tCell.value = { formula };
+        }
+
+        // 5.3 Copy header formatting
+        const hCell = headerTemplateRow.getCell(cm.colIndex);
+        copyCellStyle(hCell, tCell);
+      });
+
+      totalsRow.commit();
+
+      // 6) Column widths
+      for (const [ci, w] of Object.entries(templateColWidths)) {
+        ws.getColumn(Number(ci)).width = w || 15;
+      }
+      console.log("first datarow = ", firstDataRow, "lastData row ", lastDataRow)
+      //applyDataAreaBorders(ws, firstDataRow, lastDataRow, columnMap);
+      //applyTotalRowBorders(ws, totalsRowIndex, columnMap);
+      //applyRowStyleToData(ws, firstDataRow, firstDataRow, lastDataRow, columnMap);
+      //applyRowStyleToData(ws, 6, 7, 11, columnMap);
+      //applyDashedBorderRange(ws, 6, 11, 1, 7); // A6 to G11
+
+      // 7) Hide MSTABLE
+      const ms = wb.getWorksheet("MSTABLE");
+      if (ms) ms.state = 'hidden';
+
+      wb.calcProperties.fullCalcOnLoad = true;
+
+      const out = await wb.xlsx.writeBuffer();
+      saveAs(new Blob([out]), "report.xlsx");
+      setStatus("Export complete");
+    }
+
+    /* =============================== Export =============================== */
+    async function exportReportxx(data) {
+      if (!data || !data.length) { alert("No data to export"); return; }
+
+      setStatus("Exporting...");
+      const tplRes = await fetch("template.xlsx", { cache: "no-store" });
+      const buf = await tplRes.arrayBuffer();
+      const wb = new ExcelJS.Workbook();
+      await wb.xlsx.load(buf);
+      parseTemplateWorkbook(wb);
+
+      const ws = wb.getWorksheet("Report");
+      const headerRow = placeholderRowIdx - 1;
+      const firstDataRow = placeholderRowIdx;
+      const lastDataRow = firstDataRow + data.length - 1;
+      const totalsRowIndex = lastDataRow + 1;
+      const periodRow = headerRow - 1;
+
+      // For Period (British dd/MM yyyy)
+      const df = dxFrom.option("value"), dt = dxTo.option("value");
+      ws.getRow(periodRow).getCell(1).value = `For Period ${toEnGbDate(df)} - ${toEnGbDate(dt)}`;
+      ws.getRow(periodRow).commit();
+
+      // 1) Force header cells to plain values (remove formulas)
+      const hdrRow = ws.getRow(headerRow);
+      columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+        const cell = hdrRow.getCell(cm.colIndex);
+        const finalText = (cell && typeof cell.text === "string" && cell.text.trim() !== "")
+          ? cell.text
+          : (templateColHeaders[cm.colIndex] ?? "");
+        cell.value = finalText;
+        // console.log(finalText) header
+      });
+      hdrRow.commit();
+
+      // Placeholder -> column index map
+      const colMap = {}; columnMap.forEach(c => { if (c.placeholder) colMap[c.placeholder] = c.colIndex; });
+
+      // 2) Write data values only
+      data.forEach((rowData, i) => {
+        const rNo = firstDataRow + i;
+        const row = ws.getRow(rNo);
+
+        // Clear placeholders to blank for all used columns in this row
+        columnMap.forEach(cm => {
+          if (cm.placeholder) row.getCell(cm.colIndex).value = "";
+        });
+
+        // Write values only
+        if (colMap["no"]) row.getCell(colMap["no"]).value = i + 1;
+
+        for (const [key, val] of Object.entries(rowData)) {
+          if (key === "no") continue;
+          const colIdx = colMap[key]; if (!colIdx) continue;
+
+          if (val === null || val === undefined || val === "") {
+            // keep blank (already cleared)
+            continue;
+          }
+
+          const dtType = columnMap.find(c => c.placeholder === key)?.dataType || guessDataType(key);
+          const cell = row.getCell(colIdx);
+
+          if (dtType === "date") {
+            const d = val instanceof Date ? val : new Date(val);
+            cell.value = Number.isNaN(d.getTime()) ? "" : d;
+          } else if (dtType === "number") {
+            const n = Number(val);
+            cell.value = Number.isNaN(n) ? "" : n;
+          } else {
+            cell.value = val;
+          }
+        }
+        row.commit();
+      });
+
+      // 3) Totals row: convert <text> to literal at same address, set formulas for directives, and copy header FORMAT to totals row
+      const dirRow = ws.getRow(directiveRowIdx);
+      const totalsRow = ws.getRow(totalsRowIndex);
+      const headerTemplateRow = ws.getRow(headerRow);
+      console.log("Totals Row = ", totalsRow)
+      console.log("headerTemplateRow = ", headerTemplateRow)
+      columnMap.forEach(cm => {
+        if (!cm.placeholder) return;
+
+        const tCell = totalsRow.getCell(cm.colIndex);
+        console.log("tCell = ", tCell)
+
+        // 3.1 Apply <text> → literal text at the same address
+        const rawDir = dirRow.getCell(cm.colIndex).value;
+        console.log("rawDir = ", rawDir)
+        if (typeof rawDir === "string") {
+          const m = rawDir.match(/<\s*([^>]+?)\s*>/); // e.g., "<summary>" -> "summary"
+          console.log(m)
+          if (m) {
+            tCell.value = m[1].trim();
+          }
+        }
+
+        // 3.2 Put formula if directive exists (only if the cell remains empty after text placement)
+        if (cm.directive) {
+          const L = colLetter(cm.colIndex);
+          const rng = `${L}${firstDataRow}:${L}${lastDataRow}`;
+          let formula = "";
+          //console.log(rng)
+          //console.log(cm.directive)
+          // Standard directive
+          if (cm.directive === "sum") formula = `SUM(${rng})`;
+          else if (cm.directive === "average") formula = `AVERAGE(${rng})`;
+          else if (cm.directive === "count") formula = `COUNTA(${rng})`;
+          //else if (cm.directive === "text") formula = `=${cm.directive}`;
+          // console.log(cm.directive)
+          // if (cm.directive === "text") {
+          //   console.log("cm.directive starts with a single quote");
+          //   console.log(dirRow.getCell(cm.colIndex).value)  
+          // }
+
+          // Apply formula only if cell is still empty
+          if (formula && (tCell.value === undefined || tCell.value === null || tCell.value === "")) {
+            tCell.value = { formula };
+          }
+        }
+
+
+        // 3.3 Copy HEADER FORMAT to totals row cell (color/fill/font/border/alignment/numFmt)
+        const hCell = headerTemplateRow.getCell(cm.colIndex);
+        if (hCell.font) tCell.font = hCell.font;
+        if (hCell.alignment) tCell.alignment = hCell.alignment;
+        if (hCell.border) tCell.border = hCell.border;
+        if (hCell.fill) tCell.fill = hCell.fill;
+        if (hCell.numFmt) tCell.numFmt = hCell.numFmt;
+      });
+      totalsRow.commit();
+
+      // Column widths from template
+      for (const [ci, w] of Object.entries(templateColWidths)) {
+        ws.getColumn(Number(ci)).width = w || 15;
+      }
+
+      // Hide MSTABLE
+      const ms = wb.getWorksheet("MSTABLE");
+      if (ms) ms.state = 'hidden';
+
+      wb.calcProperties.fullCalcOnLoad = true;
+
+      const out = await wb.xlsx.writeBuffer();
+      saveAs(new Blob([out]), "report.xlsx");
+      setStatus("Export complete");
+    }
+
+    /* =============================== Actions =============================== */
+    $("#loadDbBtn").on("click", loadDatabaseData);
+    $("#exportBtn").on("click", () => exportReport(currentData));
+  </script>
+</body>
+
+</html>

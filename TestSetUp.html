@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DevExtreme DataGrid — Action Placement Switcher</title>
+
+  <!-- DevExtreme CSS theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/devextreme@23.2/dist/css/dx.light.css">
+
+  <!-- Font Awesome for demo 'fas fa-print' icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .header { margin-bottom: 16px; }
+    .popup-buttons { margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; }
+    .action-group .dx-buttongroup { background: #f7f9fc; padding: 4px 8px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>DataGrid with Action Placement Switcher</h2>
+    <p>Use the popup to choose “col”, “tol”, “both”, or “none” for each action.</p>
+  </div>
+
+  <div id="gridContainer"></div>
+  <div id="actionConfigPopup"></div>
+
+  <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script> -->
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Niramit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet"> -->
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <!-- 16 Themes -->
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+    <!-- 16 Themes -->
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export Excel -->
+    <!-- Export to PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+  <script>
+    // ------------------------------
+    // Sample data
+    // ------------------------------
+    const sampleData = [
+      { ID: 1, HeadRefNo: "T2302163889", Confirmed: true,  Name: "Alpha", Amount: 1234.56 },
+      { ID: 2, HeadRefNo: "T2302163890", Confirmed: false, Name: "Beta",  Amount: 987.00 },
+      { ID: 1, HeadRefNo: "T2302163891", Confirmed: true,  Name: "Gamma", Amount: 250.00 },
+      { ID: 3, HeadRefNo: "T2302163892", Confirmed: true,  Name: "Delta", Amount: 75.99 }
+    ];
+
+    // ------------------------------
+    // Simple JSON map: actionName -> placement
+    // "col" | "tol" | "both" | "none"
+    // ------------------------------
+    var actionPlacement = {
+      printPDF: "col",
+      refresh: "tol",
+      collapseExpand: "tol",
+      exportExcel: "tol",
+      exportPDF: "tol",
+      editRow: "col",
+      deleteRow: "col"
+    };
+
+    // ------------------------------
+    // Action metadata (icon, hint, optional text)
+    // ------------------------------
+    const ACTION_META = {
+      printPDF:       { icon: "fas fa-print", hint: "Print PDF",              text: null },
+      refresh:        { icon: "refresh",      hint: "Refresh",                text: null },
+      collapseExpand: { icon: "collapse",     hint: "Collapse/Expand",        text: "Collapse/Expand" },
+      exportExcel:    { icon: "exportxlsx",   hint: "Export to Excel",        text: null },
+      exportPDF:      { icon: "exportpdf",    hint: "Export to PDF",          text: null },
+      editRow:        { icon: "edit",         hint: "Edit Row",               text: null },
+      deleteRow:      { icon: "trash",        hint: "Delete Row",             text: null }
+    };
+
+    // ------------------------------
+    // Helpers: sets from placement map
+    // ------------------------------
+    function getColumnActions(map) {
+      return Object.keys(map).filter(k => map[k] === "col" || map[k] === "both");
+    }
+    function getToolbarActions(map) {
+      return Object.keys(map).filter(k => map[k] === "tol" || map[k] === "both");
+    }
+
+    // ------------------------------
+    // Export helpers
+    // ------------------------------
+    async function exportGridToExcel(dataGrid) {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Data");
+      await DevExpress.excelExporter.exportDataGrid({
+        component: dataGrid,
+        worksheet: worksheet,
+        autoFilterEnabled: true
+      });
+      const buffer = await workbook.xlsx.writeBuffer();
+      saveAs(new Blob([buffer], { type: "application/octet-stream" }), "Export.xlsx");
+    }
+
+    async function exportGridToPdf(dataGrid) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      await DevExpress.pdfExporter.exportDataGrid({
+        jsPDFDocument: doc,
+        component: dataGrid
+      });
+      doc.save("Export.pdf");
+    }
+
+    // ------------------------------
+    // Action executors (replace stubs with your real functions)
+    // ------------------------------
+    function executeActionByName(name, dataGrid, rowData) {
+      switch (name) {
+        case "printPDF":
+          if (!rowData) { DevExpress.ui.notify("Please select a row first", "warning", 2000); return; }
+          // Example: aRPTPrint2Pdf(rowData.HeadRefNo, aaPFDMI, "TMasterReport", "Travel & Entertainment");
+          console.log("Printing PDF for", rowData.HeadRefNo);
+          dataGrid.refresh();
+          break;
+
+        case "refresh":
+          dataGrid.refresh();
+          break;
+
+        case "collapseExpand":
+          const expanding = dataGrid.option("grouping.autoExpandAll") === false;
+          dataGrid.option("grouping.autoExpandAll", expanding);
+          break;
+
+        case "exportExcel":
+          exportGridToExcel(dataGrid);
+          break;
+
+        case "exportPDF":
+          exportGridToPdf(dataGrid);
+          break;
+
+        case "editRow":
+          if (!rowData) { DevExpress.ui.notify("Please select a row first", "warning", 2000); return; }
+          DevExpress.ui.notify("Edit row " + rowData.HeadRefNo, "info", 1500);
+          break;
+
+        case "deleteRow":
+          if (!rowData) { DevExpress.ui.notify("Please select a row first", "warning", 2000); return; }
+          DevExpress.ui.notify("Delete row " + rowData.HeadRefNo, "warning", 1500);
+          break;
+      }
+    }
+
+    // ------------------------------
+    // Apply placement to the DataGrid
+    // ------------------------------
+    function applyActionPlacementToGrid(map, dataGrid) {
+      const columnActions = getColumnActions(map);
+      const toolbarActions = getToolbarActions(map);
+
+      // 1) Column buttons
+      const columns = dataGrid.option("columns");
+      let buttonsColumn = columns.find(c => c.type === "buttons");
+      if (!buttonsColumn) {
+        buttonsColumn = { type: "buttons", buttons: [] };
+        columns.push(buttonsColumn);
+      }
+      buttonsColumn.buttons = columnActions.map(name => {
+        const meta = ACTION_META[name] || {};
+        return {
+          hint: meta.hint || name,
+          icon: meta.icon || "preferences",
+          visible: function(e) {
+            // Example: show printPDF only when ID === 1 && Confirmed === true
+            if (name === "printPDF") {
+              const rd = e.row?.data;
+              return rd && rd.ID === 1 && rd.Confirmed === true;
+            }
+            return true;
+          },
+          onClick: function(e) {
+            executeActionByName(name, e.component, e.row?.data);
+          }
+        };
+      });
+      dataGrid.option("columns", columns);
+
+      // 2) Toolbar items
+      const currentToolbarItems = dataGrid.option("toolbar.items") || [];
+      const preserved = currentToolbarItems.filter(i => i.__isDynamicAction !== true);
+
+      const actionButtons = toolbarActions.map(name => {
+        const meta = ACTION_META[name] || {};
+        return {
+          location: "after",
+          widget: "dxButton",
+          options: {
+            hint: meta.hint || name,
+            icon: meta.icon || "preferences",
+            text: meta.text || null,
+            onClick: function() {
+              const selected = dataGrid.getSelectedRowsData();
+              const row = selected && selected.length ? selected[0] : null;
+              executeActionByName(name, dataGrid, row);
+            }
+          },
+          __isDynamicAction: true
+        };
+      });
+
+      dataGrid.option("toolbar.items", [...preserved, ...actionButtons]);
+      dataGrid.refresh();
+    }
+
+    // ------------------------------
+    // Build popup content (dxForm with radio groups)
+    // ------------------------------
+    function buildFormItemsFromPlacementMap(map) {
+      const placements = [
+        { text: "Column",  value: "col"  },
+        { text: "Toolbar", value: "tol"  },
+        { text: "Both",    value: "both" },
+        { text: "None",    value: "none" }
+      ];
+      return Object.keys(map).map(name => ({
+        dataField: name,
+        label: { text: name },
+        editorType: "dxRadioGroup",
+        editorOptions: {
+          items: placements,
+          value: map[name],
+          layout: "horizontal"
+        }
+      }));
+    }
+
+    // ------------------------------
+    // Initialize everything (after DOM ready)
+    // ------------------------------
+    $(function() {
+      // Ensure DevExtreme attached: sanity check
+      if (typeof $.fn.dxDataGrid !== "function") {
+        console.error("dxDataGrid is not registered. Check script order/duplicates.");
+      }
+
+      // DataGrid
+      const grid = $("#gridContainer").dxDataGrid({
+        dataSource: sampleData,
+        keyExpr: "HeadRefNo",
+        showBorders: true,
+        selection: { mode: "single" },
+        grouping: { autoExpandAll: false },
+        columnChooser: { enabled: true },
+        columns: [
+          { dataField: "ID", width: 80 },
+          { dataField: "HeadRefNo", width: 160 },
+          { dataField: "Name", width: 160 },
+          { dataField: "Confirmed", dataType: "boolean", width: 120 },
+          { dataField: "Amount", dataType: "number", format: "#,##0.00", width: 120 },
+          { type: "buttons", buttons: [] } // will be set by applyActionPlacementToGrid
+        ],
+        onToolbarPreparing: function(e) {
+          // Configure Actions button
+          e.toolbarOptions.items.unshift({
+            location: "after",
+            widget: "dxButton",
+            options: {
+              icon: "preferences",
+              text: "Configure Actions",
+              hint: "Switch action placement",
+              onClick: function() {
+                $("#actionConfigPopup").dxPopup("instance").show();
+              }
+            }
+          });
+
+          // Optional quick button group
+          e.toolbarOptions.items.unshift({
+            location: "before",
+            widget: "dxButtonGroup",
+            cssClass: "action-group",
+            options: {
+              items: [
+                { icon: "refresh", hint: "Refresh" },
+                { icon: "collapse", hint: "Collapse/Expand" }
+              ],
+              onItemClick: function(ev) {
+                const icon = ev.itemData.icon;
+                const dg = e.component;
+                if (icon === "refresh") dg.refresh();
+                if (icon === "collapse") {
+                  const expanding = dg.option("grouping.autoExpandAll") === false;
+                  dg.option("grouping.autoExpandAll", expanding);
+                }
+              }
+            }
+          });
+        }
+      }).dxDataGrid("instance");
+
+      // Apply initial placements
+      applyActionPlacementToGrid(actionPlacement, grid);
+
+      // Popup
+      $("#actionConfigPopup").dxPopup({
+        title: "Configure Action Placement",
+        width: 640,
+        height: "auto",
+        showCloseButton: true,
+        hideOnOutsideClick: true,
+        contentTemplate: function(contentElement) {
+          $("<div id='actionConfigForm'></div>").appendTo(contentElement);
+
+          $("#actionConfigForm").dxForm({
+            formData: actionPlacement,
+            items: buildFormItemsFromPlacementMap(actionPlacement)
+          });
+
+          // Footer buttons
+          $("<div class='popup-buttons'></div>").appendTo(contentElement);
+
+          $("<div id='btnSaveActions'></div>").appendTo(".popup-buttons").dxButton({
+            text: "Save",
+            type: "success",
+            onClick: function() {
+              const form = $("#actionConfigForm").dxForm("instance");
+              const newMap = form.option("formData");
+              actionPlacement = { ...newMap };
+              applyActionPlacementToGrid(actionPlacement, grid);
+              DevExpress.ui.notify("Action placement updated", "success", 1500);
+              $("#actionConfigPopup").dxPopup("instance").hide();
+            }
+          });
+
+          $("<div id='btnCancelActions'></div>").appendTo(".popup-buttons").dxButton({
+            text: "Cancel",
+            onClick: function() {
+              $("#actionConfigPopup").dxPopup("instance").hide();
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

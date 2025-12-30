@@ -1,10 +1,4 @@
 //LImit Program
-window.onload = function () {
-    setTimeout(function () {
-        location.reload();
-    }, 2400000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-}
-
 $(document).ready(function () {
     var aDXTheme = localStorage["aDXTheme"]
     DevExpress.ui.themes.current(aDXTheme);
@@ -107,11 +101,7 @@ async function aaLoadData(aaPFDMI, aDataBasea, aKeya, aKeyfield, axFieldSelected
 
     let acData = await response.json();
     //const filteredArray = acData.filter(item => item.Amount === 0 || item.ERODesc02 === "" || item.ERODesc03 === "" || item.ERODesc04 === "" || item.ERORefNo3 === "" || item.RefundedAmount === 0 || item.Xrate === 0);
-    // console.log("record ", acData.length);
-    // console.log(acData);
     const filteredArray = acData.filter(condition);
-    //console.log(filteredArray);
-    //console.log(filteredArray.length);
 
     let abc;
     if (filteredArray.length === 0) { //pass                
@@ -131,7 +121,7 @@ var afsettings = {
     "method": "POST",
     "timeout": 0,
     "headers": { "Content-Type": "application/json" },
-    "data": JSON.stringify({ "@": afqrFull }), //" pageID='Resigned' "
+    "data": JSON.stringify({ "@": afqrFull }), 
 };
 var jqxhr = $.post(afsettings, function (e) { })
     .done(function (e) {
@@ -139,13 +129,9 @@ var jqxhr = $.post(afsettings, function (e) { })
         aObjMPage = e;
         var aaKeyField = aObjMPage[0].PrimaryKey;
         var aaTBKey = aObjMPage[0].TBKey;
-        //console.log(aaTBKey) 63971412-c4e4-4d35-8e79-3293fe59dac8
-
-
-
-        //$(function () { TOP PRG 
+        //TOP PRG 
         $(() => {
-
+            
             let aqr2S = "Where Status != 'Resigned'"
             let aFieldSelected = "EMPCode,FullNameThai,FullNameEng,Dept,DivCode,EmailAddress,Position,AccDeptCode,AccDivCode"
             let aFullBody = "Select " + aFieldSelected + " From " + aDBEMPServerName + ".ExtraOnLine.dbo.XOLStaffs " + aqr2S;
@@ -155,24 +141,18 @@ var jqxhr = $.post(afsettings, function (e) { })
                 //
                 .then(aData => {
                     var aaEmployee = aData;
-                    // console.log("aaEmployee ", aaEmployee)
                     let aqr2S1 = "Where IDNO <> ''" //"Where ExpGroupCode = '" + aaERTYPE + "' and " + "EmpID = '" + aaEmpID + "'"
                     let aFieldSelected1 = "IDNO,BenefitLevel,FamilyReimbursement,AllowSSO,OPDLimitperrequest,OPDLimitperyear,MaternityLimitperyear,IPDLimitpercase,FleetLimit,PositionGroup,NOTE,EntryBy,EntryDate"
                     let aFullBody1 = "Select " + aFieldSelected1 + " From " + aDBServerName + ".ExtraOnLine.dbo.PositionBenefitLevel " + aqr2S1;
                     // console.log(aFullBody1)
                     let achecktt = "170005         ".trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); //"170005         "
-                    // console.log("xResultxx ", xResultxx, xResultxx[0].Position)
-                    //let rst = xResultxx[0].Position; 
-                    //console.log("Search ",rst)
+                    
                     fetch(aaPFDMI + "/DMQ/XOL/" + atob(aaXToX) + "/" + "3DF65D9D-FEE8-4A8E-A01E-38C28F7B1232", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ "@": aFullBody1 }), redirect: "follow" })
                         .then(response => response.json())
                         //
                         .then(aData => {
                             var aaBenefitLevel = aData;
-                            // console.log("aaBenefitLevel ", aaBenefitLevel)
                             const aaExpGroup = [{ "ExpGroupCode": "100", "ExpGroupDescEng": "General", "ExpGroupDescOth": "????????????????", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "200", "ExpGroupDescEng": "Fleet Card", "ExpGroupDescOth": "Fleet Card", "ExpAccCode": "5102300001", "ExpAccDesc": "???????? - ?????????" }, { "ExpGroupCode": "300", "ExpGroupDescEng": "Medical", "ExpGroupDescOth": "??????????????", "ExpAccCode": "5204100003", "ExpAccDesc": "??????????????" }, { "ExpGroupCode": "400", "ExpGroupDescEng": "Entertainment", "ExpGroupDescOth": "Entertainment", "ExpAccCode": "", "ExpAccDesc": "" }, { "ExpGroupCode": "500", "ExpGroupDescEng": "Overseas", "ExpGroupDescOth": "??????????", "ExpAccCode": "", "ExpAccDesc": "" }]
-
-                            // console.log(aaExpGroup)
                             var aMMaMx = localStorage["MMaMx"];
                             var aRRgRs = aMMaMx.split('0');
                             var aDDeDx = aRRgRs[0];
@@ -205,7 +185,7 @@ var jqxhr = $.post(afsettings, function (e) { })
 
                             var aqrFull = "IDNO != '' " //"Status LIKE 'Active%'" //"Dept = '1196'" // "Password !LIKE '%\%"
                             var aurl = aaPFDMI + '/DMQ/XOL/' + atob(aaXToX) + '/' + aaTBKey + '/all' //aaPFDMZz  aaPFDMI
-                            var settings = { "url": aurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": aqrFull }), };//" Status!='Resigned' "
+                            var settings = { "url": aurl, "method": "POST", "timeout": 0, "headers": { "Content-Type": "application/json" }, "data": JSON.stringify({ "@": aqrFull }), };//"ï¿½Status!='Resigned'ï¿½"
 
                             $("#gridContainer").dxDataGrid({
 
@@ -216,7 +196,6 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         return $.post(settings).done(function (response) { var xDatax = response;  });//console.log("xDatax ", xDatax);
                                     },
                                     insert: function (values) {
-
                                         if (aaEnt) {
                                             var ObjKeyData = { EntryBy: aaUsrN, EntryDate: new Date() };
                                             var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
@@ -227,7 +206,6 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         sendRequestNew("Insert", ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
                                     },
                                     update: function (key, values) {
-                                        //console.log( aaKeyField );
                                         var ObjKeyData = { "IDNO": $.trim(key) };   //[aaKeyField] key.trim
                                         var ObjRowData = JSON.stringify($.extend({}, ObjKeyData, values));
                                         sendRequestNew(aUpdateText, ObjRowData, aaTBKey, aaPFDMI, atob(aaXToX));
@@ -465,7 +443,6 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         sortOrder: "asc",
                                         groupIndex: 0,
                                         width: 100,
-                                        //visible: false,
                                     },
                                     {
                                         dataField: "EmpPosition",
@@ -473,23 +450,6 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         width: 150,
                                         visible: false,
                                     },
-                                    // /*{
-                                    //     dataField: "ExpGroupDesc",
-                                    //     caption: "Expenses Group Desc",
-                                    //     lookup: {
-                                    //         dataSource: aaExpGroup,
-                                    //         valueExpr: "ExpGroupDescEng",
-                                    //         displayExpr: "ExpGroupDescEng" //ExpGroupDescEng
-                                    //     },
-                                    //     setCellValue: function (newData, value, currentRowData) {
-                                    //         newData.ExpGroupDesc = value;
-                                    //         let aResult = getExpGroup(value) //aSearchjson2(aaExpGroup, value); //words.filter(word => word.length > 6); aaExpGroup.fliter(data => data.ExpGroupDescEng === value) 
-                                    //         newData.ExpGroupCode = aResult[0].ExpGroupCode;
-                                    //         newData.ExpCode = aResult[0].ExpAccCode;
-                                    //         newData.ExpDesc = aResult[0].ExpAccDesc; //ExpAccCode,ExpAccDesc
-                                    //     },
-                                    //     visible: false,
-                                    // },*/
                                     {
                                         dataField: "RefNo03", //aaBenefitLevel ,AllowFamily,AllowSSO,FleetLimit,MedicalLimit,MaternityLimit,LimitPerCase
                                         caption: "Benefit Level",
@@ -509,7 +469,7 @@ var jqxhr = $.post(afsettings, function (e) { })
                                             newData.MaternityLimit = aResult[0].MaternityLimitperyear;
                                             newData.LimitPerCase = aResult[0].OPDLimitperrequest;
                                         },
-                                        width: 280,
+                                        width: 350,
                                         //visible: false,
                                     },
                                     {
@@ -564,37 +524,7 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         editorOptions: { format: "#,##0.00", width: 150 },
                                         width: 150,
                                     },
-                                    {
-                                        dataField: "TEXTTEST2", //aaEmployee
-                                        caption: "NEW POSITION",
-                                        calculateCellValue: function (data) { let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); return xResultxx.length === 0 ? "RESIGNED" : xResultxx[0].Position.trim() },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
-                                        editorType: "dxTextBox",
-                                        width: 100,
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "TEXTTEST", //aaEmployee
-                                        caption: "STATUS",
-                                        calculateCellValue: function (data) { let achecktt = data.EmpID.trim(); let paddedStr = achecktt.padEnd(15, ' '); let xResultxx = aSearch2json(aaEmployee, "EMPCode", paddedStr); /* console.log(xResultxx, xResultxx.length); */ return xResultxx.length === 0 ? "RESIGNED" : (xResultxx[0].Position.trim() === data.EmpPosition.trim() ? "SAME" : "CHANGE") },//{let xResultxx = aSearch2json(aaEmployee, "EMPCode", data.EmpID); let rst = xResultxx[0].Position; return rst; }, //$.trim(aResult[0].Position) data.EmpPosition aSearch2json(aaEmployee, "EMPCode", data.EmpID)
-                                        editorType: "dxTextBox",
-                                        width: 100,
-                                    },
-
-                                    /*{
-                                        dataField: "ExpGroupCode",
-                                        caption: "Expenses Group Code",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "ExpCode",
-                                        caption: "Expenses Code",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "ExpDesc",
-                                        caption: "Expenses Description",
-                                        visible: false,
-                                    },*/
+                                    
                                     {
                                         dataField: "RefNo01",
                                         caption: "(Fleet) Plate No",
@@ -612,83 +542,7 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         editorOptions: { width: 400, height: 80 },
                                         visible: false,
                                     },
-                                    /*{
-                                        dataField: "RefNo04",
-                                        caption: "Email Address",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "RefDesc",
-                                        caption: "Description",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "TotalLimited",
-                                        caption: "Limit Amount",
-                                        editorOptions: { format: "#,##0.00" },
-                                        format: { type: "fixedPoint", precision: 2 },
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "LimitedPerTime",
-                                        caption: "Limit Per Time",
-                                        editorOptions: { format: "#,##0.00" },
-                                        format: { type: "fixedPoint", precision: 2 },
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "MonthlyLimited",
-                                        caption: "Maternity Limit",
-                                        editorOptions: { format: "#,##0.00" },
-                                        format: { type: "fixedPoint", precision: 2 },
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "ApproverID",
-                                        caption: "Approver ID",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "ApproverName",
-                                        caption: "Approver Name",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "ApproverEmail",
-                                        caption: "Approver Email",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "HRApproverID",
-                                        caption: "HR Approver ID",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "HRApproverName",
-                                        caption: "HR Approver Name",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "HRApproverEmail",
-                                        caption: "HR Approver Email",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "FAApproverID",
-                                        caption: "FA Approver ID",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "FAApproverName",
-                                        caption: "FA Approver Name",
-                                        visible: false,
-                                    },
-                                    {
-                                        dataField: "FAApproverEmail",
-                                        caption: "FA Approver Email",
-                                        visible: false,
-                                    },
-                                    */
+                                   
 
 
 
@@ -887,7 +741,12 @@ var jqxhr = $.post(afsettings, function (e) { })
                              */
                             function dropDownBoxBNF(cellElement, cellInfo) {
                                 return $("<div>").dxDropDownBox({
-                                    dropDownOptions: { width: 800 },
+                                    dropDownOptions: { width: 1020, 
+                                        //dragEnabled: true,
+                                        //resizeEnabled: true,
+                                        //showTitle: true,
+                                        //title: "Select Benefit Level" 
+                                    },
                                     dataSource: aaBenefitLevel,
                                     value: [cellInfo.value],
                                     valueExpr: "BenefitLevel",
@@ -896,16 +755,19 @@ var jqxhr = $.post(afsettings, function (e) { })
                                         return $("<div>").dxDataGrid({
                                             dataSource: aaBenefitLevel,
                                             //remoteOperations: true, // IDNO,BenefitLevel,FamilyReimbursement,AllowSSO,OPDLimitperrequest,OPDLimitperyear,MaternityLimitperyear,IPDLimitpercase,FleetLimit,PositionGroup,NOTE,EntryBy,EntryDate
-                                            columns: [{ dataField: "IDNO", caption: "ID NO", width: 80, sortOrder: "asc" }, { dataField: "BenefitLevel", caption: "Benefit", width: 280 }, { dataField: "OPDLimitperyear", caption: "OPD/Year", width: 100 }, { dataField: "FleetLimit", caption: "Fleet Limit", width: 100 }, { dataField: "MaternityLimitperyear", caption: "Maternity", width: 100 }, { dataField: "FamilyReimbursement", caption: "Allow Family", width: 50 }, { dataField: "AllowSSO", caption: "Allow SSO", width: 50 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
+                                            columns: [{ dataField: "IDNO", caption: "ID NO", width: 80, sortOrder: "asc" }, { dataField: "BenefitLevel", caption: "Benefit", width: 400 }, { dataField: "OPDLimitperyear", caption: "OPD/Year", format: { type: "fixedPoint", precision: 2 }, width: 100 }, { dataField: "FleetLimit", caption: "Fleet Limit", format: { type: "fixedPoint", precision: 2 }, width: 100 }, { dataField: "MaternityLimitperyear", caption: "Maternity", format: { type: "fixedPoint", precision: 2 },width: 100 }, { dataField: "FamilyReimbursement", caption: "Family", format: { type: "fixedPoint", precision: 0 },width: 100 }, { dataField: "AllowSSO", caption: "SSO", width: 100 }], //"EMPCode,FullNameThai,FullNameEng,EffectiveDate,ResignDate,Dept,DivCode,EmailAddress" 
                                             hoverStateEnabled: true,
                                             searchPanel: { visible: true },
                                             headerFilter: { visible: true },
+                                            allowColumnResizing: true,
                                             paging: { enabled: true, pageSize: 15 },
                                             filterRow: { visible: true },
                                             showBorders: true,
+                                            showColumnLines: true,
+                                            showRowLines: true,
                                             scrolling: { mode: "virtual" },
                                             selection: { mode: "single" },
-                                            height: 250,
+                                            height: 560,
                                             selectedRowKeys: [cellInfo.value],
                                             //selectedRowKeys: [value],
                                             //focusedRowEnabled: true,

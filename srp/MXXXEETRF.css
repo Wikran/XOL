@@ -1,0 +1,370 @@
+    /* <style> */
+        :root {
+            --dgBG: #f4d2fce5;
+            --dgColor: black;
+            --dgSelBar: #d2f2fc4c;
+            --dgSelText: blue;
+            --stBgcolor: #F5F5F5;
+            --ttBgcolor: #efb4fce5;
+        }
+        /* Set Niramit as the default font for all elements */
+        /* body { */
+            /* font-family: 'Niramit', sans-serif !important; */
+            /* font-family: 'Noto Sans Thai', sans-serif !important; */
+        /* } */
+
+        /* Apply to all DevExtreme components */
+        /* .dx-widget, 
+        .dx-datagrid, 
+        .dx-button, 
+        .dx-texteditor-input, 
+        .dx-dropdowneditor-input, 
+        .dx-toolbar, 
+        .dx-popup, 
+        .dx-list { */
+            /* font-family: 'Niramit', sans-serif !important; */
+            /* font-family: 'Noto Sans Thai', sans-serif !important; */
+        /* } */
+        
+        /*-----------------------------*/
+        #scversion {
+            color: darkviolet;
+            /*var(--dgSelText);*/
+            font-size: 12px;
+            /*font-style: italic;*/
+        }
+
+        #gridContainer .dx-datagrid-headers {
+            color: var(--dgColor) !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        .centered-header {
+            text-align: center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #gridContainer .dx-datagrid-borders>.dx-datagrid-total-footer {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        #gridContainer .dx-datagrid-borders>.dx-datagrid-headers {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        #gridContainer .dx-datagrid-table {
+            border-left: 4px solid var(--dgBG);
+            border-right: 4px solid var(--dgBG);
+        }
+
+        #gridContainer .dx-datagrid-filter-panel {
+            background-color: var(--dgBG) !important;
+        }
+
+        .dx-form .dx-field-item-label-text {
+            color: black;
+            font-style: bold;
+        }
+        /* Change background color of title */
+        .dx-popup-title {
+            background-color: #003366; /* dark blue for example */
+            color: white; /* change text color */
+        }
+
+        /* Change background color of message */
+        .dx-popup-content {
+            background-color: #f5f5f5; /* light gray */
+        }
+        /*-----------------------------*/
+        #popupContainerAdd .dx-popup-content {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-datagrid-rowsview .dx-scrollable-content {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-datagrid-header-panel {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-toolbar-items-container {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGrid .dx-datagrid {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGridPRE .dx-datagrid-rowsview .dx-scrollable-content {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGridPRE .dx-datagrid-header-panel {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGridPRE .dx-toolbar-items-container {
+            background-color: var(--stBgcolor);
+        }
+
+        #Add-dxDataGridPRE .dx-datagrid {
+            background-color: var(--stBgcolor);
+        }
+
+
+
+        /*-----------------------------*/
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .second-group {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .colorRED {
+            color: #9e030b !important;
+        }
+
+        .colorBGlightgrey {
+            height: 80px;
+            width: 300px;
+            /*padding-top: 30px;*/
+            padding: 15px;
+            background-color: #f5f4f4 !important;
+            border-radius: 15px;
+        }
+
+        .colorRBGlightgrey {
+            /*border: 1px solid rgb(163, 162, 162);*/
+            height: 120px;
+            width: 300px;
+            padding-top: 2px;
+            padding: 2px;
+            color: rgb(0, 0, 0);
+            background-color: #f5f4f4fa !important;
+            display: inline-block;
+            /*border-radius: 5px;*/
+        }
+
+        /*.custom-datagrid .dx-datagrid {
+            font-size: 11.5px;
+            font-family: Tahoma,Segoe UI, Geneva, Verdana, sans-serif;
+        }*/
+        #gridContainer .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        #Add-dxDataGrid .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+            /*height: 80px;*/
+        }
+
+        #Add-dxDataGrid .dx-datagrid-headers .dx-datagrid-text-content {
+            text-align: top;
+        }
+
+        #Add-dxDataGridPRE .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: var(--dgBG) !important;
+            /*height: 80px;*/
+        }
+
+        #Add-dxDataGridPRE .dx-datagrid-headers .dx-datagrid-text-content {
+            text-align: top;
+        }
+
+        .dx-datagrid-content .dx-datagrid-table .dx-row .dx-editor-cell {
+            vertical-align: top;
+        }
+
+        #gridContainer .dx-scrollable-scroll {
+            height: 180px !important;
+        }
+
+        .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
+            height: 180px;
+        }
+
+        .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:vertical {
+            width: 180px;
+        }
+
+        #popupHelp .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(136, 255, 205)
+        }
+
+        #ACCChart-dxDataGrid .dx-datagrid-headers {
+            color: white !important;
+            background-color: rgb(48, 47, 47) !important;
+        }
+
+        #ACCChart-dxDataGrid .dx-row {
+            height: 10px;
+        }
+
+        #detail-dxDataGrid .dx-datagrid-headers {
+            color: white !important;
+            background-color: rgb(48, 47, 47) !important;
+        }
+
+        #detail-dxDataGrid .dx-row {
+            height: 10px;
+        }
+
+        /* .dx-popup-normal {
+            border-radius: 9px
+        } */
+
+        .dx-popup-title {
+            color: rgb(24, 0, 81);
+            font-size: 15px;
+            /* background-color: var(--stBgcolor); #F5F5F5; rgb(190, 237, 243)*/
+            background-color: #fddddd;
+        }
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(243, 235, 255)
+                /*rgb(199, 243, 190)*/
+        }
+
+        #popupPrintPDF .dx-popup-title {
+            color: whitesmoke;
+            background-color: black;
+        }
+
+        .verylight-blue .dx-texteditor-input {
+            /*background-color: #deedf8; /* Replace with your desired shade of light blue */
+            background: linear-gradient(to bottom, #fcfcfc, #d6dff7);
+        }
+
+        .verylight-green .dx-texteditor-input {
+            /*background-color: #deedf8; /* Replace with your desired shade of light blue */
+            background: linear-gradient(to bottom, #fcfcfc, #d6f7d9);
+        }
+
+        .bold-label .dx-field-item-label {
+            font-weight: bold;
+        }
+
+        .right-align-number .dx-texteditor-input {
+            text-align: right;
+        }
+
+        .dx-tab {
+            border-radius: 15px 15px 0 0;
+            /* Top-left and top-right corners rounded */
+            overflow: hidden;
+        }
+
+        .dx-tab-selected {
+            border-radius: 15px 15px 0 0;
+            /* Ensure selected tab also has rounded corners */
+        }
+
+        .custom-icon-size {
+            font-size: 30px;
+            color: green;
+        }
+
+        @media screen,
+        print {
+
+            /*@page {size: landscape;}*/
+            #detail-dxDataGrid {
+                /*transform: scale(.8);*/
+                zoom: 95%;
+            }
+
+            #Add-dxDataGrid {
+                zoom: 100%;
+            }
+
+            #Add-dxDataGridPRE {
+                zoom: 100%;
+            }
+        }
+
+        .scrollable {
+            height: 100vh;
+            /* Full viewport height */
+            overflow-y: scroll;
+            /* Enable vertical scrolling */
+            overflow-x: hidden;
+            /* Disable horizontal scrolling */
+        }
+
+        .dx-popup-fullscreen {
+            overflow-y: scroll;
+            height: 120%;
+        }
+
+        .red-background {
+            background-color: red;
+        }
+
+        .dx-tab .dx-icon {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+            /* Adjust as needed */
+        }
+
+        .dx-tab-selected {
+            background-color: rgb(230, 237, 254) !important;
+        }
+
+        .dx-datagrid .dx-row.dx-selection {
+            /*rgb(227, 120, 7); rgba(255, 87, 34, 1);  rgba(239, 0, 0, 0.994)*/
+            color: var(--dgSelText);
+            /*font-weight: bold;*/
+        }
+
+        .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):not(.dx-row-removed)>td {
+            /*not change the color*/
+            /*background-color: rgba(248, 219, 187, 0.312);*/
+            /*background-color: rgba(253, 242, 238, 0.697);*/
+            background-color: var(--dgSelBar);
+            color: unset;
+        }
+
+        /* Remove underline for the icon button */
+        .dx-texteditor-buttons-container .dx-button {
+            border: none !important;
+            /* Remove border around the button */
+            box-shadow: none !important;
+            /* Remove any shadow */
+            background: none !important;
+            /* Remove background */
+        }
+        .rounded-popup {
+            border-radius: 12px; /* Adjust this value for more or less rounding */
+            overflow: hidden; /* Ensures content doesn't spill out of rounded corners */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional: adds a subtle shadow */
+        }
+        .airline-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .airline-item {
+            padding: 5px;
+            cursor: pointer;
+        }
+        .airline-item:hover {
+            background-color: #f0f0f0;
+        }
+    /* </style> */

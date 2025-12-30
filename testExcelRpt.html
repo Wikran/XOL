@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ExcelJS + dxFileUploader Workflow</title>
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <!-- DevExtreme CDN -->
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+    <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/jquery.min.js"></script>
+    <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export Excel -->
+    <!-- Export to PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+  
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+    <!-- ExcelJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="./fsrc/bundle.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; }
+    .row { margin-bottom: 16px; }
+    #status { color: #555; margin-top: 8px; }
+    button[disabled] { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <h2>Excel template processing and upload</h2>
+
+  <!-- 1. Select the template file first -->
+  <div class="row">
+    <div id="fileUploader"></div>
+    <div id="status">Select an .xlsx template file to begin.</div>
+  </div>
+
+  <!-- 2–3. Process placeholders and generate new Excel file -->
+  <div class="row">
+    <button id="processBtn" disabled>Process template (replace placeholders)</button>
+    <button id="downloadBtn" disabled>Download processed file (optional)</button>
+  </div>
+
+  <!-- 4–5. Upload to target server and display uploaded file -->
+  <div class="row">
+    <button id="uploadBtn" disabled>Upload processed file</button>
+  </div>
+
+  <script>
+    // ===== Sample JSON data used for replacements =====
+    const appname = {
+      approver1: "",               // "Nadporn Srilert",
+      datenow1: "",
+      approver2: "",               // "Suradee Malaiarisoon",
+      datenow2: "",
+      requester: "Natthida Trisahavirakul",
+      datenowR: "12/11/2025",
+      reqdate: "12/11/2025"
+    };
+
+    // ===== Utilities required by your upload flow =====
+    // function isLocalHost() {
+    //   // Adjust if your environment differs
+    //   return window.location.origin;
+    // }
+    function aMessageAlert(msg, color = "blue") {
+      // Replace with your app’s notification system as needed
+      console.log(`[${color}] ${msg}`);
+    }
+    // Optional global used by your renaming logic (set to "X" to keep original)
+    // const aaNewNamePF = "X";
+
+    // Build URL for viewing uploaded file (adjust to your server paths)
+    function buildUploadedFileUrl(fileName) {
+        var API_URL = "https://cbsdev3.locktonwattana.com/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE"
+      return isLocalHost() + "/FMP/uploads/" + fileName;
+    }
+
+    // ===== Initialize UI after DOM ready =====
+    $(function () {
+      // File selection widget
+      $("#fileUploader").dxFileUploader({
+        multiple: false,
+        accept: ".xlsx",
+        uploadMode: "useForm",
+        selectButtonText: "Select Excel template",
+        onValueChanged: function (e) {
+          const hasFile = e.value && e.value.length > 0;
+          $("#processBtn").prop("disabled", !hasFile);
+          $("#uploadBtn").prop("disabled", true);
+          $("#downloadBtn").prop("disabled", true);
+          $("#status").text(
+            hasFile
+              ? "Template selected. Click 'Process template' to replace placeholders."
+              : "Select an .xlsx template file to begin."
+          );
+        }
+      });
+
+      // Wire buttons
+      $("#processBtn").on("click", processTemplate);
+      $("#downloadBtn").on("click", downloadProcessedFile);
+      $("#uploadBtn").on("click", uploadProcessedFile);
+    });
+
+    // ===== Step 2 & 3: Process template and generate a new Excel file =====
+    async function processTemplate() {
+      try {
+        const fileUploader = $("#fileUploader").dxFileUploader("instance");
+        const files = fileUploader.option("value");
+        if (!files || !files.length) {
+          alert("Please select a template file first.");
+          return;
+        }
+
+        const originalFile = files[0];
+        $("#status").text("Processing template…");
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const buffer = e.target.result;
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.load(buffer);
+
+            // Important: strip table metadata to avoid Excel repair (AutoFilter removal)
+            workbook.eachSheet((ws) => {
+              // Defensive: clear tables array if present
+              if (ws.tables) ws.tables = [];
+              // Also clear worksheet autoFilter range if present (some templates set it at sheet-level)
+              if (ws.autoFilter) ws.autoFilter = null;
+            });
+
+            const sheet = workbook.getWorksheet("DATA");
+            if (!sheet) {
+              alert("Sheet named 'DATA' not found in the template.");
+              $("#status").text("Processing aborted: 'DATA' sheet not found.");
+              return;
+            }
+
+            // Replace placeholders conditionally (only when values are not empty)
+            sheet.eachRow((row) => {
+              row.eachCell((cell) => {
+                if (typeof cell.value === "string") {
+                  let newValue = cell.value;
+
+                  // approver1 + datenow1
+                  if (appname.approver1) {
+                    newValue = newValue.replaceAll("{{approver1}}", appname.approver1);
+                    if (appname.datenow1) {
+                      newValue = newValue.replaceAll("{{datenow1}}", appname.datenow1);
+                    }
+                  }
+                  // approver2 + datenow2
+                  if (appname.approver2) {
+                    newValue = newValue.replaceAll("{{approver2}}", appname.approver2);
+                    if (appname.datenow2) {
+                      newValue = newValue.replaceAll("{{datenow2}}", appname.datenow2);
+                    }
+                  }
+                  // requester + datenowR
+                  if (appname.requester) {
+                    newValue = newValue.replaceAll("{{requester}}", appname.requester);
+                    if (appname.datenowR) {
+                      newValue = newValue.replaceAll("{{datenowR}}", appname.datenowR);
+                    }
+                  }
+                  // reqdate
+                  if (appname.reqdate) {
+                      newValue = newValue.replaceAll("{{reqdate}}", appname.datenowR);
+                  }
+
+                  cell.value = newValue;
+                }
+              });
+            });
+
+            // Generate new Excel file as Blob and File
+            const newBuffer = await workbook.xlsx.writeBuffer();
+            const processedBlob = new Blob([newBuffer], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            });
+            const processedFile = new File([processedBlob], originalFile.name, {
+              type: originalFile.type
+            });
+
+            // Put the processed file back into the uploader (so upload uses processed file)
+            fileUploader.option("value", [processedFile]);
+
+            // Enable upload & optional download
+            $("#uploadBtn").prop("disabled", false);
+            $("#downloadBtn").prop("disabled", false);
+            $("#status").text("Template processed. You can now upload or download the processed file.");
+          } catch (procErr) {
+            console.error(procErr);
+            $("#status").text("Processing failed. See console for details.");
+            alert("Processing failed.");
+          }
+        };
+
+        reader.readAsArrayBuffer(originalFile);
+      } catch (err) {
+        console.error(err);
+        $("#status").text("Processing failed. See console for details.");
+      }
+    }
+
+    // ===== Optional: Download processed file (for local verification) =====
+    function downloadProcessedFile() {
+      try {
+        const fileUploader = $("#fileUploader").dxFileUploader("instance");
+        const files = fileUploader.option("value");
+        if (!files || !files.length) {
+          alert("No processed file available. Please process the template first.");
+          return;
+        }
+        const file = files[0];
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(file);
+        link.download = file.name;
+        link.click();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ===== Step 4 & 5: Upload processed file (your function) and display uploaded file =====
+    async function uploadProcessedFile() {
+      const ok = await u2ploadFile(); // calls your server upload logic
+      if (ok) {
+        try {
+          // Determine final uploaded name based on your renaming logic
+          const fileUploader = $("#fileUploader").dxFileUploader("instance");
+          const files = fileUploader.option("value");
+          if (!files || !files.length) {
+            $("#status").text("Uploaded, but no file found for preview.");
+            return;
+          }
+          const originalFileName = files[0].name;
+          const ext = originalFileName.substring(originalFileName.lastIndexOf("."));
+
+          let finalName;
+          if (typeof aaNewNamePF !== "undefined" && aaNewNamePF !== "X") {
+            finalName = `${aaNewNamePF}${ext}`;
+          } else {
+            finalName = originalFileName;
+          }
+
+          // Open the uploaded file in a popup (adjust to your server path)
+          const fileUrl = buildUploadedFileUrl(finalName);
+          window.open(fileUrl, "_blank", "width=1000,height=800");
+          $("#status").text("Uploaded and opened in a new window.");
+        } catch (err) {
+          console.error(err);
+          $("#status").text("Uploaded, but failed to open preview.");
+        }
+      } else {
+        $("#status").text("Upload failed.");
+      }
+    }
+
+    // ===== Your existing upload function (integrated) =====
+    async function u2ploadFile() {
+      try {
+        const fileUploader = $("#fileUploader").dxFileUploader("instance");
+        const files = fileUploader.option("value");
+
+        // Validate file selection
+        if (!files.length) {
+          console.log("No files selected.");
+          return false;
+        }
+
+        // Extract original file and extension
+        const originalFile = files[0];
+        const originalFileName = originalFile.name;
+        const fileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")); // e.g. ".xlsx"
+
+        // Rename if needed
+        let newFileName;
+        if (typeof aaNewNamePF !== "undefined" && aaNewNamePF !== "X") {
+          newFileName = `${aaNewNamePF}${fileExtension}`;
+        } else {
+          newFileName = originalFileName;
+        }
+
+        // Create a new file with the (possibly) updated name
+        const simulatedFile = new File([originalFile], newFileName, {
+          type: originalFile.type
+        });
+
+        // Create FormData and append the new file
+        const formData = new FormData();
+        formData.append("file", simulatedFile);
+
+        // Request headers (DO NOT set Content-Type when using FormData)
+        const myHeaders = new Headers();
+        myHeaders.append("ref", "44095B6C-CC17-47FD-895B-649E0EAA2BAE");
+
+        // Request options
+        const requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: formData
+        };
+
+        // Send the request (adjust endpoint to your environment)
+        const response = await fetch(
+          isLocalHost() + "/FMP/44095B6C-CC17-47FD-895B-649E0EAA2BAE",
+          requestOptions
+        );
+
+        // Check response status
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Handle success
+        const result = await response.text();
+        console.log(result);
+        aMessageAlert(`Upload file ${newFileName} successful!`, "blue");
+        // Note: do NOT reset the uploader here; we still need the name for preview
+        return true; // Success
+      } catch (error) {
+        console.error("Error:", error);
+        return false; // Error
+      }
+    }
+  </script>
+</body>
+</html>

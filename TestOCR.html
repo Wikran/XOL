@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF OCR Demo</title>
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <!-- Tesseract.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <h2>Upload PDF for OCR</h2>
+  <input type="file" id="pdfUpload" accept="application/pdf">
+  <button id="processBtn">Upload & Extract Text</button>
+
+  <h3>Extracted Text:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    const pdfInput = document.getElementById('pdfUpload');
+    const output = document.getElementById('output');
+
+    document.getElementById('processBtn').addEventListener('click', async () => {
+      if (!pdfInput.files.length) {
+        alert("Please select a PDF file first.");
+        return;
+      }
+
+      const file = pdfInput.files[0];
+      const fileReader = new FileReader();
+
+      fileReader.onload = async function() {
+        const typedArray = new Uint8Array(this.result);
+
+        // Load PDF
+        const pdf = await pdfjsLib.getDocument(typedArray).promise;
+        let fullText = "";
+
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+          const page = await pdf.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 2.0 });
+
+          // Render page to canvas
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+
+          await page.render({ canvasContext: context, viewport }).promise;
+
+          // Run OCR on canvas image
+          const result = await Tesseract.recognize(canvas, 'eng');
+          fullText += `\n--- Page ${pageNum} ---\n` + result.data.text;
+        }
+
+        output.textContent = fullText;
+      };
+
+      fileReader.readAsArrayBuffer(file);
+    });
+  </script>
+</body>
+</html>

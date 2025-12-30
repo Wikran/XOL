@@ -1,0 +1,122 @@
+/*    
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .second-group {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .dx-datagrid-headers {
+            color: #000000 !important;
+            background-color: #c6bfffe5 !important;
+        }
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(140, 252, 214)
+        } */
+
+        :root {
+            --dgBG:  #c6bfffe5 !important;
+            --dgColor: black;
+        }
+
+        /*-----------------------------*/
+        .dx-datagrid-headers {
+            color: var(--dgColor) !important;
+            background-color: var(--dgBG) !important;
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-total-footer {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        .dx-datagrid-borders>.dx-datagrid-headers {
+            border-top: 4px solid var(--dgBG);
+            border-bottom: 4px solid var(--dgBG);
+        }
+
+        .dx-datagrid-table {
+            border-left: 4px solid var(--dgBG);
+            border-right: 4px solid var(--dgBG);
+        }
+
+        /*.dx-datagrid-total-footer {
+            background-color: var(--dgBG) !important;
+        } */
+        .dx-datagrid-filter-panel {
+            background-color: var(--dgBG) !important;
+        }
+
+        /*-----------------------------*/
+        .dx-popup-wrapper>.dx-overlay-content {
+            border-radius: 9px
+        }
+
+        .title-bg {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .color-BBG {
+            width: 1200px;
+            background-color: white;
+            color: black;
+        }
+
+        .second-group {
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        /*#aSendMail_bt { #edf5fde5
+            background-color: rgba(191, 191, 191, 0.15);
+        }
+
+        .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: #edf5fde5 !important;
+        }
+        */
+
+
+
+        #gridContainer .dx-scrollable-scroll {
+            height: 180px !important;
+        }
+
+        .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:horizontal {
+            height: 180px;
+        }
+
+        .dx-scrollable-customizable-scrollbars ::-webkit-scrollbar:vertical {
+            width: 180px;
+        }
+
+        #popupContainerAdd .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(140, 252, 214)
+        }
+
+        #popupBenefitsView .dx-popup-title {
+            color: rgb(1, 6, 32);
+            background-color: rgb(229, 170, 252)
+        }
+
+        .H1Header {
+            color: rgb(197, 179, 88);
+
+        }
+
+        .flower-image {
+            background-image: url("./images/locktonlogo70mmblack.png");
+            background-repeat: no-repeat;
+            background-position: right;
+
+            /*background-color: #cccccc;
+            size: 5%;
+            background-size: cover;
+            position: relative;            
+            */
+        }
+ 

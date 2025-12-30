@@ -1,22 +1,5 @@
-window.onload = function() {
-    setTimeout(function() {
-        location.reload();
-    }, 24000000); // refresh after 5 seconds 5*60*1000 refresh first time and every 40 minutes
-} 
-      
-function unloadAllJS() {
-    var jsArray = new Array();
-    jsArray = document.getElementsByTagName('script');
-    for (i = 0; i < jsArray.length; i++) {
-        if (jsArray[i].id) {
-            unloadJS(jsArray[i].id)
-        } else {
-            jsArray[i].parentNode.removeChild(jsArray[i]);
-        }
-    }
-}
+// Index.html (first program)
 
-//$(document).ready(function () { // change to arrow function
 $(document).ready(() => {    
     localStorage.clear();
     localStorage.clear();
@@ -37,6 +20,8 @@ $(() => {
     var aOTP = "";
     var aaPFDMI = isLocalHost();
     var aOTPm = generateOTP();
+    var aOTPy = encodeHtmlEntities("FORGOTTEN PASSWORD - OTP = " + aOTPm);
+    var aSbody = encodeHtmlEntities("Dear Khun");
     var aii = 0;
     var aForgotPWDs = 0;
     var aNextField = "#password";
@@ -80,16 +65,16 @@ $(() => {
             // Focus on the first input element inside the popup when it is shown
             e.component.content().find("input").eq(0).focus();
         },   
-        //onKeyDown: function(e) {
-        //    if (e.event.key === "Enter") {
-        //        e.event.preventDefault(); // prevent default behavior of enter key
-        //        $(e.element).trigger($.Event("keydown", { key: "Tab" })); // trigger tab key event
-        //    }
-        //},             
-        //onEnterKey: function() {
-            // Trigger button click event when Enter key is pressed
-        //    $("#icon-done").trigger("dxclick");
-        //}
+        onKeyDown: function(e) {
+           if (e.event.key === "Enter") {
+               e.event.preventDefault(); // prevent default behavior of enter key
+               $(e.element).trigger($.Event("keydown", { key: "Tab" })); // trigger tab key event
+           }
+        },             
+        onEnterKey: function() {
+            //Trigger button click event when Enter key is pressed
+           $("#icon-done").trigger("dxclick");
+        }
 
     }).dxPopup("instance");
 
@@ -188,7 +173,7 @@ $(() => {
         }
     });   
 
-    $("#OTP").dxTextBox({
+    $("#OTP").dxTextBox({ //OTP field
         mode: "text",
         placeholder: aOTPph,
         showClearButton: true,
@@ -206,7 +191,7 @@ $(() => {
         value: ""
     }).dxTextBox("instance");
 
-    $("#popover1").dxPopover({ // alert
+    $("#popover1").dxPopover({ // alert Warning about OTP
         target: "#OTP",
         showEvent: "mouseenter",
         hideEvent: "mouseleave",
@@ -271,143 +256,150 @@ $(() => {
         var aaXTGO = "c80bab4d-1578-4b72-82d9-3e4ebe940384" // UX03
         var aaTBXX = "01f518c9-c818-4e9f-85cb-6245ee1a2637";
         if(aForgotPWD === 0){
+            aaTBXX = "01f518c9-c818-4e9f-85cb-6245ee1a2637";
             aLtext = "IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
         } else {
+            aaTBXX = "01f518c9-c818-4e9f-85cb-6245ee1a2999";
             aLtext = "IDUsr='" + aUname + "'"
         }
         //alert(aLtext)
+        
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        var raw = JSON.stringify({"@": btoa(aLtext)}); //"IDUsr='" + aUname + "' and Pword='" + aPswd + "'"
+        var raw = JSON.stringify({"@": btoa(aLtext)}); //"IDUsr='" + aUname + "' and Pword='" + aPswd + "'" body: JSON.stringify({ "@": btoa(aFullBody) })
         var requestOptions = {method: 'POST',headers: myHeaders,body: raw,redirect: 'follow'};
         let aURL = aaPFDMI + "/DMQ/" + acPRJ + "/" + aaXTGO + "/" + aaTBXX + "/all"; // + aUname;
+
         fetch(aURL, requestOptions, { mode: 'no-cors'})
-            .then(response => response.json())
+            .then(result => result.json())
             .then(aData => {
-                console.log(aData)
-                if ((aUname === aData[0].IDUsr && aForgotPWD === 1) || (aPswd === aData[0].Pword && aForgotPWD === 0)) { //aPswd === aData[0].Pword
-                    var aotpx = aData[0].otp; //need otp or not
-                    var aLGName = aData[0].LGName; // English name
-                    var aemail = aData[0].email; // email address
-                    var aAct = aData[0].Active;
-                    if (aAct === false) {
-                        aotpx = "YES"
-                    }
-                    if (aotpx === "YES" || aotpx === "" || jQuery.type(aotpx) === "undefined" || aForgotPWD === 1) {
-                        var aWOTP = 1;
-                    } else {
-                        var aWOTP = 0;
-                    }
-                    if (aOTP === aOTPm || aWOTP === 0) {
-                        var aal = btoa(aData[0].Gright); //rights
-                        var aat = btoa(aData[0].Tkey); // user token
-                        var aftname = aData[0].Nickname; // Thai full name
-                        var aDeptn = aData[0].Department; // Department
-                        var aDivn = aData[0].Division;
-                        var aStaffID = aData[0].Scopebase; //Staff ID                                        
-                        var aThemeSL = aData[0].Kright; // devextreme theme color
-                        var apict = aData[0].PictureLoc; // user avatar picture ./images/username.png
-
-                        localStorage.setItem("aaXrXg", aal);
-                        localStorage.setItem("aaXXoX", aat);
-                        localStorage.setItem("aaXpXt", apict);
-                        localStorage.setItem("aaDXtm", aThemeSL);
-                        localStorage.setItem("asFTNAME", aftname);
-                        localStorage.setItem("asSTFID", aStaffID);
-                        localStorage.setItem("asDEPT", aDeptn);
-                        localStorage.setItem("asDIV", aDivn);
-                        localStorage.setItem("asEMAIL", aemail);
-                        localStorage.setItem("asAct", aAct);
-                    
-                        usrProperty = [
-                            {
-                              aaXXuX: aUname,
-                              aaXrXg: aal,
-                              aaXXoX: aat,
-                              asFTNAME: aftname,
-                              asDEPT: aDeptn,
-                              asDIV: aDivn,
-                              asSTFID: aStaffID,
-                              aaDXtm: aThemeSL,
-                              aaXpXt: apict,
-                              asEMAIL: aemail,
-                              asAct: aAct,
-                            },
-                          ];
-                            // Convert the array to a JSON string
-                            //var jsonString = JSON.stringify(usrProperty);
-                            // Store the JSON string in LocalStorage
-                            var encryptedData = CryptoJS.AES.encrypt(JSON.stringify(usrProperty), "sBxA017").toString();
-                            //localStorage.setItem("myData", encryptedData);
-                            localStorage.setItem("usrProperty", encryptedData);
-                            aGoTo(aMainPrj); 
-
-                    } else if(aForgotPWD === 1){ 
-                        aOTPph = "OTP for Forgotten Password"
-                        aii++;
-                        $("#password").hide();
-                        $("#OTP").show(20);
-                        if (aii <= 1) {
-                            aOTPm = generateLOTP(8);
-                            var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#740328"><h2><span style="color: #ffffff;"><center><strong>FORGOTTEN PASSWORD - OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
-                            aSendMailDMZ("Dear Khun " + aLGName, aemail, "XOL-admin@lockton.com", "", "", "FORGOTTEN PASSWORD - OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aLGName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
-                            
-                            aErrorLG = aIndexAlert4UnP03
-                            DevExpress.ui.dialog.alert({
-                                showTitle: false,
-                                messageHtml: aIndexAlert4UnP03//"<center style='color:ForestGreen;'> Sending OTP to your e-Mail (" + aemail + "), please check </center>"
-                            });
-                        } else {
-                            aErrorLG = aIndexAlert4UnP02
-                        }
-                    } else {
-                        aii++;
-                        $("#username").hide();
-                        $("#password").hide();
-                        $("#OTP").show(20);
-                        if (aii <= 1) {
-                            var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>OTP =&nbsp;' + aOTPm + '</center></strong></span></h2></td></tr></tbody></table>'
-                            aSendMailDMZ("Khun " + aLGName, aemail, "XOL-admin@lockton.com", "", "", "OTP = " + aOTPm, "<div style='font-family:tahoma; font-size:12px;' > Dear Khun " + aLGName + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
-
-                            aErrorLG = aIndexAlert4UnP03 //"Sending OTP to your e-Mail"
-                            DevExpress.ui.dialog.alert({
-                                showTitle: false,
-                                messageHtml: "<center style='color:ForestGreen;'> Sending OTP to your e-Mail (" + aemail + "), please check </center>"
-                            });                            
-                        } else {
-                           aErrorLG = aIndexAlert4UnP02
-                           DevExpress.ui.dialog.alert({
-                                //title: aTitleError01,
-                                showTitle: false,
-                                messageHtml: aErrorLG
-                            });                         
-                        }
-                    }
-
+            if ((aUname === aData[0].IDUsr && aForgotPWD === 1) || (aPswd === aData[0].Pword && aForgotPWD === 0)) {
+                var aotpx = aData[0].otp;
+                var aLGName = aData[0].LGName;
+                var aemail = aData[0].email;
+                var aAct = aData[0].Active;
+                if (aAct === false) {
+                aotpx = "YES";
+                }
+                if (aotpx === "YES" || aotpx === "" || jQuery.type(aotpx) === "undefined" || aForgotPWD === 1) {
+                var aWOTP = 1;
                 } else {
-               
-                    aErrorLG =  aIndexAlert4UnP01  
+                var aWOTP = 0;
+                }
+                if (aOTP === aOTPm || aWOTP === 0) {
+                var aal = btoa(aData[0].Gright);
+                var aat = btoa(aData[0].Tkey);
+                var aftname = aData[0].Nickname;
+                var aDeptn = aData[0].Department;
+                var aDivn = aData[0].Division;
+                var aStaffID = aData[0].Scopebase;
+                var aThemeSL = aData[0].Kright;
+                var apict = aData[0].PictureLoc;
+
+                localStorage.setItem("aaXrXg", aal);
+                localStorage.setItem("aaXXoX", aat);
+                localStorage.setItem("aaXpXt", apict);
+                localStorage.setItem("aaDXtm", aThemeSL);
+                localStorage.setItem("asFTNAME", aftname);
+                localStorage.setItem("asSTFID", aStaffID);
+                localStorage.setItem("asDEPT", aDeptn);
+                localStorage.setItem("asDIV", aDivn);
+                localStorage.setItem("asEMAIL", aemail);
+                localStorage.setItem("asAct", aAct);
+
+                usrProperty = [
+                    {
+                    aaXXuX: aUname,
+                    aaXrXg: aal,
+                    aaXXoX: aat,
+                    asFTNAME: aftname,
+                    asDEPT: aDeptn,
+                    asDIV: aDivn,
+                    asSTFID: aStaffID,
+                    aaDXtm: aThemeSL,
+                    aaXpXt: apict,
+                    asEMAIL: aemail,
+                    asAct: aAct,
+                    },
+                ];
+                var encryptedData = CryptoJS.AES.encrypt(JSON.stringify(usrProperty), "sBxA017").toString();
+                localStorage.setItem("usrProperty", encryptedData);
+                aGoTo(aMainPrj);
+
+                } else if (aForgotPWD === 1) {
+                aOTPph = "OTP for Forgotten Password";
+                aii++;
+                $("#password").hide();
+                $("#OTP").show(20);
+                if (aii <= 1) {
+                    aOTPm = generateLOTP(8);
+                    aOTPy = encodeHtmlEntities("FORGOTTEN PASSWORD - OTP = " + aOTPm);
+                    aSbody = encodeHtmlEntities(" Dear Khun " + aLGName);
+                    $("#OTP").show(20);
+                    if (aii <= 1) {
+                    aOTPm = generateLOTP(8);
+                    aOTPy = encodeHtmlEntities("FORGOTTEN PASSWORD - OTP = " + aOTPm);
+                    aSbody = encodeHtmlEntities(" Dear Khun " + aLGName);
+                    var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#740328"><h2><span style="color: #ffffff;"><center><strong>' + aOTPy + '</center></strong></span></h2></td></tr></tbody></table>'
+                    aSendMailDMZ("Dear Khun " + aLGName, aemail, "XOL-admin@lockton.com", "", "", "FORGOTTEN PASSWORD OTP", "<div style='font-family:tahoma; font-size:12px;' > " + aSbody + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+                    
+                    aErrorLG = aIndexAlert4UnP03
+                    DevExpress.ui.dialog.alert({
+                        showTitle: false,
+                        messageHtml: aIndexAlert4UnP03//"<center style='color:ForestGreen;'> Sending OTP to your e-Mail (" + aemail + "), please check </center>"
+                    });
+                    } else {
+                    aErrorLG = aIndexAlert4UnP02
+                    }
+                } else {
+                    aii++;
+                    $("#username").hide();
+                    $("#password").hide();
+                    $("#OTP").show(20);
+                    if (aii <= 1) {
+                    var aP1Body = '<table style="height: 40px;" border="0" width="200" cellspacing="0" cellpadding="0"><tbody><tr style="height: 40px;"><td style="width: 200px; text-align: left; height: 40px;" align="center" bgcolor="#483D8B"><h2><span style="color: #ffffff;"><center><strong>' + aOTPy + '</center></strong></span></h2></td></tr></tbody></table>'
+                    aSendMailDMZ("Khun " + aLGName, aemail, "XOL-admin@lockton.com", "", "", "FORGOTTEN PASSWORD OTP ", "<div style='font-family:tahoma; font-size:12px;' > " + aSbody + ", <br/><br/>" + aP1Body + "<br/><br/>Regards,<br/>XOL Admin.<br/><br/><i>(Plese do not reply this mail !!)<i></div>");
+
+                    aErrorLG = aIndexAlert4UnP03 //"Sending OTP to your e-Mail"
+                    DevExpress.ui.dialog.alert({
+                        showTitle: false,
+                        messageHtml: "<center style='color:ForestGreen;'> Sending OTP to your e-Mail (" + aemail + "), please check </center>"
+                    });                            
+                    } else {
+                    aErrorLG = aIndexAlert4UnP02
                     DevExpress.ui.dialog.alert({
                         //title: aTitleError01,
                         showTitle: false,
                         messageHtml: aErrorLG
-                    });
+                    });                         
+                    }
                 }
-                //alert(aErrorLG);
-            })
-            .catch(error => {
-                //anPWDc++
-                console.error('Error:', error);
-                if(anPWDc >= aTtoChk + 1){
-                    aErrorLG =  aIndexAlert4UnP01 // + aIndexAlert4UnP11 //+ "\n(" + anPWDc + ")" + aPswd 
-                }else {
-                    aErrorLG =  aIndexAlert4UnP01  //+ "\n(" + anPWDc + ")" + aPswd
-                }
+
+                } else {
+                
+                aErrorLG =  aIndexAlert4UnP01  
                 DevExpress.ui.dialog.alert({
                     //title: aTitleError01,
                     showTitle: false,
                     messageHtml: aErrorLG
-                    })
+                });
+                }
+                //alert(aErrorLG);
+            }
+            })
+            .catch(error => {
+            //anPWDc++
+            console.error('Error:', error);
+            if(anPWDc >= aTtoChk + 1){
+                aErrorLG =  aIndexAlert4UnP01 // + aIndexAlert4UnP11 //+ "\n(" + anPWDc + ")" + aPswd 
+            }else {
+                aErrorLG =  aIndexAlert4UnP01  //+ "\n(" + anPWDc + ")" + aPswd
+            }
+            DevExpress.ui.dialog.alert({
+                //title: aTitleError01,
+                showTitle: false,
+                messageHtml: aErrorLG
+            })
             });
 
     }

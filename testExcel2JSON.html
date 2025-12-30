@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Excel to JSON Export with DevExtreme</title>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- DevExtreme Themes -->
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+
+    <!-- DevExtreme JS -->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <!-- Export support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        #output {
+            background: #f7f7f7;
+            padding: 12px;
+            border: 1px solid #ddd;
+            max-height: 300px;
+            overflow: auto;
+        }
+
+        #grid {
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Excel to JSON Export</h2>
+
+    <div class="toolbar">
+        <input type="file" id="input-excel" accept=".xlsx" />
+        <button id="btn-download" class="dx-button dx-button-normal"><i class="fas fa-download"></i> Download
+            JSON</button>
+        <button id="btn-popup" class="dx-button dx-button-normal"><i class="fas fa-file-alt"></i> View JSON
+            (Popup)</button>
+    </div>
+
+    <div id="grid"></div>
+
+    <h3>JSON preview</h3>
+    <pre id="output"></pre>
+
+    <!-- Popup container -->
+    <div id="jsonPopup"></div>
+
+    <script>
+            (function () {
+                let jsonData = [];
+                let gridInstance = null;
+                let popupInstance = null;
+
+                // Initialize DevExtreme DataGrid
+                function initGrid(data) {
+                    const columns = buildColumnsFromData(data);
+                    if (!gridInstance) {
+                        gridInstance = $("#grid").dxDataGrid({
+                            dataSource: data,
+                            columnAutoWidth: true,
+                            showBorders: true,
+                            rowAlternationEnabled: true,
+                            scrolling: { mode: "virtual" },
+                            filterRow: { visible: true },
+                            searchPanel: { visible: true, width: 240, placeholder: "Search..." },
+                            headerFilter: { visible: true },
+                            grouping: { contextMenuEnabled: true },
+                            groupPanel: { visible: true },
+                            export: { enabled: false },
+                            columns: columns
+                        }).dxDataGrid("instance");
+                    } else {
+                        gridInstance.option("dataSource", data);
+                        gridInstance.option("columns", columns);
+                    }
+                }
+
+                function buildColumnsFromData(data) {
+                    if (!data || data.length === 0) return [];
+                    const keys = Object.keys(data[0]);
+                    return keys.map(k => ({
+                        dataField: k,
+                        caption: k,
+                    }));
+                }
+
+                // Initialize DevExtreme Popup
+                function initPopup() {
+                    if (!popupInstance) {
+                        popupInstance = $("#jsonPopup").dxPopup({
+                            title: "JSON content",
+                            width: 800,
+                            height: 600,
+                            showCloseButton: true,
+                            visible: false,
+                            contentTemplate: function () {
+                                const container = $("<div>").css({ height: "100%", display: "flex", flexDirection: "column" });
+                                const pre = $("<pre>").css({ flex: "1 1 auto", overflow: "auto", background: "#f7f7f7", padding: "12px", border: "1px solid #ddd" });
+                                pre.text(JSON.stringify(jsonData, null, 2));
+                                container.append(pre);
+                                return container;
+                            }
+                        }).dxPopup("instance");
+                    } else {
+                        popupInstance.option("contentTemplate", function () {
+                            const container = $("<div>").css({ height: "100%", display: "flex", flexDirection: "column" });
+                            const pre = $("<pre>").css({ flex: "1 1 auto", overflow: "auto", background: "#f7f7f7", padding: "12px", border: "1px solid #ddd" });
+                            pre.text(JSON.stringify(jsonData, null, 2));
+                            container.append(pre);
+                            return container;
+                        });
+                    }
+                }
+
+                // File input handler
+                document.getElementById('input-excel').addEventListener('change', async (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    try {
+                        const buffer = await file.arrayBuffer();
+                        const workbook = new ExcelJS.Workbook();
+                        await workbook.xlsx.load(buffer);
+
+                        const worksheet = workbook.worksheets[0]; // First sheet
+
+                        // Extract DateText from B1 (after "to")
+                        const b1 = getCellText(worksheet.getCell('B1'));
+                        const dateText = extractDateAfterTo(b1); // e.g., "30/11/2025"
+
+                        // Header row is row 2
+                        const headerRow = worksheet.getRow(2);
+                        const headersArr = headerRow.values; // 1-based array
+
+                        // Normalize headers (trim)
+                        const headers = headersArr.map(h => (typeof h === 'string' ? h.trim() : h));
+
+                        const results = [];
+
+                        worksheet.eachRow((row, rowNumber) => {
+                            if (rowNumber < 3) return; // start at row 3
+
+                            const record = {};
+                            let isEmpty = true;
+
+                            row.eachCell((cell, colNumber) => {
+                                const header = headers[colNumber];
+                                if (!header || typeof header !== 'string' || header.trim() === '') return;
+
+                                const value = normalizeCellValue(cell);
+
+                                if (header.toLowerCase() === 'company') {
+                                    const companyParts = splitCompanyField(value);
+                                    // Merge into record: Company, Address, TaxNo
+                                    Object.assign(record, companyParts);
+                                    if (companyParts.Company || companyParts.Address || companyParts.TaxNo) isEmpty = false;
+                                } else {
+                                    record[header] = value;
+                                    if (value !== null && value !== undefined && value !== '') isEmpty = false;
+                                }
+                            });
+
+                            // Add DateText
+                            record.DateText = dateText;
+
+                            // Push only if not empty
+                            if (!isEmpty) results.push(record);
+                        });
+
+                        jsonData = results;
+
+                        // Show JSON on screen
+                        document.getElementById('output').textContent = JSON.stringify(jsonData, null, 2);
+
+                        // Initialize/refresh grid and popup
+                        initGrid(jsonData);
+                        initPopup();
+
+                        DevExpress.ui.notify("Excel loaded and JSON generated.", "success", 2000);
+                    } catch (err) {
+                        console.error(err);
+                        DevExpress.ui.notify("Failed to load Excel. Check file format or console logs.", "error", 3000);
+                    }
+                });
+
+                // Download JSON button
+                document.getElementById('btn-download').addEventListener('click', () => {
+                    if (!jsonData || jsonData.length === 0) {
+                        DevExpress.ui.notify("No JSON data to download.", "warning", 2000);
+                        return;
+                    }
+                    const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json;charset=utf-8" });
+                    saveAs(blob, "export.json");
+                });
+
+                // Show popup button
+                document.getElementById('btn-popup').addEventListener('click', () => {
+                    if (!popupInstance) initPopup();
+                    popupInstance.show();
+                });
+
+                // Helpers
+                function normalizeCellValue(cell) {
+                    const v = cell && cell.value;
+                    if (v == null) return "";
+                    if (typeof v === "object") {
+                        // ExcelJS RichText / Date / Formula / etc.
+                        if (v.text) return String(v.text).trim();
+                        if (v.result != null) return String(v.result).trim();
+                        if (v.richText) {
+                            return v.richText.map(rt => rt.text).join("").trim();
+                        }
+                        if (v instanceof Date) return formatDate(v);
+                        if (v.hyperlink && v.text) return String(v.text).trim();
+                        return String(v).trim();
+                    }
+                    return String(v).trim();
+                }
+
+                function getCellText(cell) {
+                    const v = cell && cell.value;
+                    if (v == null) return "";
+                    if (typeof v === "object" && v.text) return String(v.text).trim();
+                    return String(v).trim();
+                }
+
+                function formatDate(d) {
+                    const pad = (n) => (n < 10 ? "0" + n : n);
+                    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+                }
+
+                function extractDateAfterTo(text) {
+                    // Find the segment after 'to'
+                    // Example: "DataDate:01/11/2025 to 30/11/2025 ReportDate:17/11/2025"
+                    if (!text) return "";
+                    const m = text.match(/\bto\b\s+([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/i);
+                    return m ? m[1] : "";
+                }
+
+                function splitCompanyField(raw) {
+                    const str = String(raw || "").trim();
+                    if (!str) return { Company: "", Address: "", TaxNo: "" };
+
+                    // Robust split based on labeled keys with colon
+                    // Supports multiple occurrences; capture from the start of each key up to the next key
+                    const result = { Company: "", Address: "", TaxNo: "" };
+                    const segments = str.split(/(?=Company:|Address:|TaxNo:)/g);
+                    segments.forEach(seg => {
+                        const idx = seg.indexOf(":");
+                        if (idx === -1) return;
+                        const key = seg.slice(0, idx).trim();
+                        const val = seg.slice(idx + 1).trim();
+                        if (key === "Company") result.Company = val;
+                        else if (key === "Address") result.Address = val;
+                        else if (key === "TaxNo") result.TaxNo = val;
+                    });
+                    return result;
+                }
+            })();
+    </script>
+</body>
+
+</html>

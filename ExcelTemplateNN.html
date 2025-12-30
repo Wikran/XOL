@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>DevExtreme + ExcelJS Template Export</title>
+    <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/23.1.3/css/dx.light.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            margin: 24px;
+        }
+
+        .toolbar {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #f5f5f5;
+        }
+
+        #gridContainer {
+            height: 460px;
+        }
+
+        .note {
+            color: #666;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #444;
+        }
+
+        code.inline {
+            background: #f2f3f5;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>รายงานจาก Template.xlsx (caption + placeholder จาก Template)</h2>
+
+    <div class="toolbar">
+        <button id="downloadTemplateBtn">📥 ดาวน์โหลด Template.xlsx (ตัวอย่าง)</button>
+        <button id="exportBtn">📤 Export รายงานตาม Template</button>
+        <span class="status" id="statusText">สถานะ: พร้อม</span>
+    </div>
+
+    <div id="gridContainer"></div>
+
+    <div class="note">
+        คู่มือ Template:
+        <ul>
+            <li>ชีตต้องชื่อ <code class="inline">Report</code></li>
+            <li>แถว 2: captions (หัวคอลัมน์) เช่น “ชื่อ”, “ตำแหน่ง”, “คะแนน”, “วันที่”, “แผนก”</li>
+            <li>แถว 3 (เลือกใส่): placeholders เช่น <code class="inline">{{name}}</code>, <code
+                    class="inline">{{role}}</code>, <code class="inline">{{score}}</code>, <code
+                    class="inline">{{date}}</code>, <code class="inline">{{dept}}</code> (รองรับ <code
+                    class="inline">{{dep}}</code>)</li>
+            <li>การเริ่มวางข้อมูล: <strong>มี placeholders</strong> เริ่มที่แถว 2, <strong>ไม่มี</strong> เริ่มที่แถว 1
+            </li>
+        </ul>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DevExtreme -->
+    <script src="https://cdn3.devexpress.com/jslib/23.1.3/js/dx.all.js"></script>
+    <!-- ExcelJS -->
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <!-- FileSaver -->
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+    <script>
+        // -----------------------------
+        // Sample data (ปรับให้เป็น datasource จริงของคุณได้)
+        // -----------------------------
+        const data = [
+            { name: "วิกรานต์", role: "Developer", score: 95, date: "2025-09-12", dept: "R&D" },
+            { name: "สมชาย", role: "Tester", score: 88, date: "2025-09-11", dept: "QA" },
+            { name: "อารีย์", role: "Manager", score: 92, date: "2025-09-10", dept: "Ops" },
+            { name: "กมล", role: "Analyst", score: 85, date: "2025-09-09", dept: "BI" },
+            { name: "Wikran", role: "Developer", score: 90, date: "2025-09-12", dept: "R&D" },
+            { name: "Somchai", role: "Tester", score: 87, date: "2025-09-11", dept: "QA" },
+            { name: "Aree", role: "Manager", score: 91, date: "2025-09-10", dept: "Ops" },
+            { name: "Kamon", role: "Analyst", score: 84, date: "2025-09-09", dept: "BI" }
+        ];
+
+        // -----------------------------
+        // DevExtreme DataGrid
+        // -----------------------------
+        const gridInstance = $("#gridContainer").dxDataGrid({
+            dataSource: data,
+            showBorders: true,
+            columnAutoWidth: true,
+            rowAlternationEnabled: true,
+            columns: [
+                { dataField: "name", caption: "ชื่อ" },
+                { dataField: "role", caption: "ตำแหน่ง" },
+                { dataField: "score", caption: "คะแนน", dataType: "number" },
+                { dataField: "date", caption: "วันที่", dataType: "date", format: "yyyy-MM-dd" },
+                { dataField: "dept", caption: "แผนก" }
+            ],
+            export: { enabled: false }
+        }).dxDataGrid("instance");
+
+        // -----------------------------
+        // Helpers
+        // -----------------------------
+        const STATUS = document.getElementById("statusText");
+        function setStatus(text) { STATUS.textContent = "สถานะ: " + text; }
+
+        const captionMap = new Map([
+            ["ชื่อ", "name"], ["name", "name"],
+            ["ตำแหน่ง", "role"], ["position", "role"],
+            ["คะแนน", "score"], ["score", "score"],
+            ["วันที่", "date"], ["date", "date"],
+            ["แผนก", "dept"], ["department", "dept"], ["dept", "dept"]
+        ]);
+
+        // รองรับ alias ของ placeholder เช่น {{dep}} -> dept
+        const fieldAlias = new Map([
+            ["dep", "dept"], ["department", "dept"]
+        ]);
+
+        function setRowAlignment(ws, rowNo, horizontal = "center", vertical = "center") {
+            const row = ws.getRow(rowNo);
+            row.eachCell(cell => {
+                cell.alignment = {
+                    horizontal: horizontal,
+                    vertical: vertical
+                };
+            });
+        }
+
+
+        function extractPlaceholder(val) {
+            if (typeof val !== "string") return null;
+            const m = val.match(/^\s*\{\{\s*([a-zA-Z0-9_.-]+)\s*\}\}\s*$/);
+            if (!m) return null;
+            const raw = m[1];
+            return fieldAlias.get(raw) || raw;
+        }
+
+        function normalize(s) { return (s || "").toString().trim().toLowerCase(); }
+        function colLetter(idx0) { return String.fromCharCode(65 + idx0); } // 0->A
+
+        function parseTemplateStructure(ws) {
+            const headerRowIdx = 2;
+            const placeholderRowIdx = 3;
+
+            const headers = ws.getRow(headerRowIdx).values.slice(1);      // captions
+            const placeholders = ws.getRow(placeholderRowIdx).values.slice(1); // {{field}} (optional)
+
+            const columnMap = [];
+            for (let i = 0; i < headers.length; i++) {
+                const caption = headers[i];
+                if (!caption) continue;
+
+                const ph = extractPlaceholder(placeholders[i]);
+                let dataField = ph || captionMap.get(normalize(caption)) || normalize(caption).replace(/\s+/g, "_");
+
+                columnMap.push({
+                    index0: i,
+                    letter: colLetter(i),
+                    caption: String(caption),
+                    dataField
+                });
+            }
+            return { columnMap, headerRowIdx, placeholderRowIdx };
+        }
+
+        // async function tryFetchTemplateFromServer(url = "template.xlsx") {
+        //     try {
+        //         const res = await fetch(url, { cache: "no-store" });
+        //         if (!res.ok) return null;
+        //         const ab = await res.arrayBuffer();
+        //         const wb = new ExcelJS.Workbook();
+        //         await wb.xlsx.load(ab);
+        //         const ws = wb.getWorksheet("Report");
+        //         if (!ws) return null;
+
+        //         // จัดหัวตารางให้ center เพื่อแก้เคส header ชิดขวา
+        //         const headerRow = ws.getRow(2);
+        //         headerRow.eachCell(cell => { cell.alignment = { horizontal: "center" }; });
+
+        //         const parsed = parseTemplateStructure(ws);
+        //         // ใช้เฉพาะคอลัมน์ที่มีข้อมูลจริง
+        //         const validColumnMap = parsed.columnMap.filter(col =>
+        //             data.some(row => Object.prototype.hasOwnProperty.call(row, col.dataField))
+        //         );
+        //         if (validColumnMap.length === 0) return null;
+
+        //         return { workbook: wb, worksheet: ws, columnMap: validColumnMap, headerRowIdx: parsed.headerRowIdx, placeholderRowIdx: parsed.placeholderRowIdx };
+        //     } catch {
+        //         return null;
+        //     }
+        // }
+        async function tryFetchTemplateFromServer(url = "template.xlsx") {
+            try {
+                const res = await fetch(url, { cache: "no-store" });
+                if (!res.ok) {
+                    console.warn("Fetch failed:", res.status);
+                    return null;
+                }
+
+                const ab = await res.arrayBuffer();
+                const wb = new ExcelJS.Workbook();
+                await wb.xlsx.load(ab);
+
+                const ws = wb.getWorksheet("Report");
+                if (!ws) {
+                    console.warn("Sheet 'Report' not found");
+                    return null;
+                }
+
+                const headerRow = ws.getRow(2);
+                const headerValues = headerRow.values.slice(1).filter(Boolean); // skip index 0
+                if (headerValues.length < 1) {
+                    console.warn("Header row is empty");
+                    //return null;
+                }
+
+                // Optional: จัด header ให้ center
+                headerRow.eachCell(cell => {
+                    cell.alignment = { horizontal: "center", vertical: "middle" };
+                });
+
+                // Optional: map caption → dataField
+                const columnMap = headerValues.map((caption, i) => {
+                    const field = caption.toLowerCase().trim();
+                    return {
+                        caption,
+                        dataField: field,
+                        index: i,
+                        letter: String.fromCharCode(65 + i)
+                    };
+                });
+
+                // Optional: กรองเฉพาะ field ที่มีใน data จริง
+                const validColumnMap = columnMap.filter(col =>
+                    data.some(row => Object.prototype.hasOwnProperty.call(row, col.dataField))
+                );
+
+                // ไม่ reject ถ้าไม่มี match — ยอมให้ผ่าน
+                return {
+                    workbook: wb,
+                    worksheet: ws,
+                    columnMap: validColumnMap,
+                    headerRowIdx: 2
+                };
+            } catch (err) {
+                console.error("Template load error:", err);
+                return null;
+            }
+        }
+
+        async function buildTemplateWorkbookExample() {
+            const wb = new ExcelJS.Workbook();
+            const ws = wb.addWorksheet("Report", { properties: { defaultRowHeight: 18 } });
+
+            // Title แถว 1
+            ws.mergeCells("A1:E1");
+            ws.getCell("A1").value = "รายงานสรุปคะแนน (ตัวอย่าง)";
+            ws.getCell("A1").font = { bold: true, size: 14 };
+            ws.getCell("A1").alignment = { horizontal: "center" };
+
+            // Header แถว 2 (จัด center เสมอ)
+            const headers = ["ชื่อ", "ตำแหน่ง", "คะแนน", "วันที่", "แผนก"];
+            ws.getRow(2).values = headers;
+            for (let c = 1; c <= headers.length; c++) {
+                const cell = ws.getRow(2).getCell(c);
+                cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
+                cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF455A64" } };
+                cell.alignment = { horizontal: "center" };
+                cell.border = { top: { style: "thin" }, left: { style: "thin" }, bottom: { style: "thin" }, right: { style: "thin" } };
+            }
+
+            // Placeholder แถว 3
+            ws.getRow(3).values = ["{{name}}", "{{role}}", "{{score}}", "{{date}}", "{{dept}}"];
+
+            // เบื้องต้นความกว้างคอลัมน์
+            ws.columns = [
+                { width: 22 }, { width: 18 }, { width: 12 }, { width: 14 }, { width: 14 }
+            ];
+
+            ws.views = [{ state: "frozen", ySplit: 2 }];
+            return wb;
+        }
+
+        async function downloadTemplateFile() {
+            const wb = await buildTemplateWorkbookExample();
+            const buf = await wb.xlsx.writeBuffer();
+            saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "template.xlsx");
+
+            setStatus("ดาวน์โหลด template.xlsx แล้ว");
+        }
+
+        function applyTemplateToGrid(columnMap) {
+            const columns = [];
+            for (const col of columnMap) {
+                if (!data.some(row => Object.prototype.hasOwnProperty.call(row, col.dataField))) continue;
+                const colDef = { dataField: col.dataField, caption: col.caption };
+                if (col.dataField === "score") colDef.dataType = "number";
+                if (col.dataField === "date") { colDef.dataType = "date"; colDef.format = "yyyy-MM-dd"; }
+                columns.push(colDef);
+            }
+            if (columns.length > 0) gridInstance.option("columns", columns);
+        }
+
+        function autoFitColumns(ws, columnMap, rowsData) {
+            columnMap.forEach((col, i) => {
+                const field = col.dataField;
+                const lens = rowsData.map(r => {
+                    const v = r[field];
+                    if (v == null) return 0;
+                    if (v instanceof Date) return 10;
+                    return v.toString().length;
+                });
+                const maxLen = Math.max(col.caption.length, ...lens);
+                ws.getColumn(i + 1).width = Math.min(Math.max(maxLen + 2, 10), 40);
+            });
+        }
+
+        async function exportReport() {
+            //alert("กำลังโหลด template...");
+            setStatus("กำลังโหลด template...");
+            let template = await tryFetchTemplateFromServer("template.xlsx");
+            //alert(template)
+            let wb, ws, columnMap, headerRowIdx, placeholderRowIdx;
+            if (template) {
+                ({ workbook: wb, worksheet: ws, columnMap, headerRowIdx, placeholderRowIdx } = template);
+                //alert("ดาวน์โหลด template.xlsx แล้ว")
+                setStatus("โหลด template สำเร็จ");
+            } else {
+                wb = await buildTemplateWorkbookExample();
+                ws = wb.getWorksheet("Report");
+                const parsed = parseTemplateStructure(ws);
+                columnMap = parsed.columnMap.filter(col =>
+                    data.some(row => Object.prototype.hasOwnProperty.call(row, col.dataField))
+                );
+                headerRowIdx = parsed.headerRowIdx;
+                placeholderRowIdx = parsed.placeholderRowIdx;
+
+                // จัดหัวตาราง center
+                ws.getRow(2).eachCell(cell => { cell.alignment = { horizontal: "center" }; });
+                //alert("ไม่พบ template.xlsx ใช้ template ตัวอย่างแทน")
+                setStatus("ไม่พบ template.xlsx ใช้ template ตัวอย่างแทน");
+            }
+
+            // ปรับคอลัมน์ใน Grid ให้ตรงกับ Template
+            applyTemplateToGrid(columnMap);
+
+            // เตรียมข้อมูลสำหรับ auto-fit
+            const visibleFields = columnMap.map(c => c.dataField);
+            const rowsData = data.map(row => {
+                const o = {}; visibleFields.forEach(f => o[f] = row[f]); return o;
+            });
+
+            // Auto-fit columns by data length
+            autoFitColumns(ws, columnMap, rowsData);
+
+            // ตรวจว่ามี placeholders แถว 3 หรือไม่
+            const hasAnyPlaceholder = columnMap.some((c, i) => {
+                const cell = ws.getRow(3).getCell(i + 1);
+                return extractPlaceholder(cell.value);
+            });
+
+            // ใช้ตามที่คุณกำหนด: มี placeholder -> startRow = 2, ไม่มี -> 1
+            const startRow = hasAnyPlaceholder ? 2 : 1;
+
+            // จำนวนแถวข้อมูลจริง และตำแหน่งท้ายข้อมูล/รวม
+            const rowCount = gridInstance.getDataSource().items().length;
+            const lastDataRow = startRow + rowCount; // ตามที่คุณระบุ
+            const totalRowIndex = lastDataRow + 1;
+
+            // เรียกใช้ฟังก์ชันเพื่อจัดตำแหน่งแถวที่ 2
+            //setRowAlignment(ws, 2, "center", "center");
+
+            // Export DataGrid ลง Worksheet
+            await DevExpress.excelExporter.exportDataGrid({
+                component: gridInstance,
+                worksheet: ws,
+                topLeftCell: { row: startRow, column: 1 },
+                autoFilterEnabled: true,
+                customizeCell: ({ gridCell, excelCell }) => {
+                    const field = gridCell?.column?.dataField;
+
+                    // รูปแบบเลข/วันที่
+                    if (field === "score") {
+                        excelCell.numFmt = "0";
+                        excelCell.alignment = { horizontal: "right" };
+                    }
+                    if (field === "date") {
+                        excelCell.numFmt = "yyyy-mm-dd";
+                        excelCell.alignment = { horizontal: "center" };
+                    }
+
+                    // Border เฉพาะเซลล์ข้อมูล
+                    excelCell.border = {
+                        top: { style: "thin" }, left: { style: "thin" },
+                        bottom: { style: "thin" }, right: { style: "thin" }
+                    };
+                }
+            });
+
+            // แถวสรุป (ถ้ามีข้อมูล)
+            if (rowCount > 0) {
+                // Label รวม/เฉลี่ย
+                ws.getCell(`A${totalRowIndex}`).value = "รวม:"; //"รวม/เฉลี่ย:"
+                ws.getCell(`A${totalRowIndex}`).font = { bold: true };
+
+                // หา index0 ของคอลัมน์ score
+                const scoreIdx0 = columnMap.findIndex(c => c.dataField === "score");
+                const mergeEndIdx0 = scoreIdx0 > 0 ? (scoreIdx0 - 1) : 0;
+                const mergeEndLetter = colLetter(mergeEndIdx0);
+                ws.mergeCells(`A${totalRowIndex}:${mergeEndLetter}${totalRowIndex}`);
+
+                // ใส่สูตร SUM ที่คอลัมน์ score (ถ้ามี)
+                if (scoreIdx0 >= 0) {
+                    const scoreLetter = colLetter(scoreIdx0);
+                    ws.getCell(`${scoreLetter}${totalRowIndex}`).value = { formula: `SUM(${scoreLetter}${startRow}:${scoreLetter}${lastDataRow})` };
+                    ws.getCell(`${scoreLetter}${totalRowIndex}`).numFmt = "0";
+                }
+
+                // Border เฉพาะช่วงคอลัมน์ที่ใช้จริง (ไม่ลากทั้งคอลัมน์)
+                for (let i = 0; i < columnMap.length; i++) {
+                    const letter = colLetter(i);
+                    const cell = ws.getCell(`${letter}${totalRowIndex}`);
+                    cell.border = {
+                        top: { style: "double" }, left: { style: "thin" },
+                        bottom: { style: "thin" }, right: { style: "thin" }
+                    };
+                }
+            }
+
+            // ดาวน์โหลดไฟล์รายงาน
+            const buf = await wb.xlsx.writeBuffer();
+            saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "รายงาน.xlsx");
+            //setStatus("Export เสร็จสิ้น");
+        }
+
+        // -----------------------------
+        // Bind UI
+        // -----------------------------
+        document.getElementById("downloadTemplateBtn").addEventListener("click", async () => {
+            await downloadTemplateFile();
+        });
+        document.getElementById("exportBtn").addEventListener("click", async () => {
+            await exportReport();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Viewer with DevExtreme</title>
+    <!-- <title>MASTER DETAIL TEMPLATE</title> -->
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <meta http-equiv="Content-Language" content="th">
+    <meta http-equiv="content-Type" content="text/html; charset=window-874">
+    <meta http-equiv="content-Type" content="text/html; charset=tis-620">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <script src="vendor/jquery/3.5.1/jquery.min.js"></script>
+    <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+
+    <!-- Icon -->
+    <link href="./fontawesome-free-5.15.1-web/css/fontawesome.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/brands.css" rel="stylesheet">
+    <link href="./fontawesome-free-5.15.1-web/css/solid.css" rel="stylesheet">
+    <link href="./uicons/uicons-bold-rounded/css/uicons-bold-rounded.css" rel="stylesheet">
+    <link href="./uicons/uicons-solid-rounded/css/uicons-solid-rounded.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="DevExpressDevExtreme/Lib/css/dx.common.css">
+    <link rel="dx-theme" data-theme="generic.light" href="DevExpressDevExtreme/Lib/css/dx.light.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.dark" href="DevExpressDevExtreme/Lib/css/dx.dark.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.softblue" href="DevExpressDevExtreme/Lib/css/dx.softblue.css"
+        data-active="true">
+    <link rel="dx-theme" data-theme="generic.darkmoon" href="DevExpressDevExtreme/Lib/css/dx.darkmoon.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet" href="DevExpressDevExtreme/Lib/css/dx.darkviolet.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine" href="DevExpressDevExtreme/Lib/css/dx.carmine.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.carmine.compact" href="DevExpressDevExtreme/Lib/css/dx.carmine.compact.css"
+        data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkmoon.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkmoon.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="generic.darkviolet.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.darkviolet.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.blue.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.blue.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.dark.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.dark.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.orange.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.orange.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.purple.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.purple.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.teal.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.teal.light.compact.css" data-active="false">
+    <link rel="dx-theme" data-theme="material.lime.light.compact"
+        href="DevExpressDevExtreme/Lib/css/dx.material.lime.light.compact.css" data-active="false">
+
+    <!-- Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <!-- Export Excel -->
+    <!-- Export to PDF -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.9/jspdf.plugin.autotable.min.js"></script>
+    <!-- Export to PDF -->
+    <!--<script src="https://cdn3.devexpress.com/jslib/20.2.4/js/dx.all.js"></script>-->
+    <script type="text/javascript" src="DevExpressDevExtreme/Lib/js/dx.all.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/jszip.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.8.0/xlsx.js"></script>
+
+
+</head>
+
+<body class="dx-viewport">
+    <form enctype="multipart/form-data">
+        <input id="upload" type=file name="files[]">
+    </form>
+    <div id="gridContainer"></div>
+
+    <textarea class="form-control" rows=35 cols=120 id="xlx_json"></textarea>
+
+    <script>
+        document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+
+        var ExcelToJSON = function () {
+            var jsonData = [];
+            this.parseExcel = function (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var data = e.target.result;
+                    var workbook = XLSX.read(data, {
+                        type: 'binary'
+                    });
+                    workbook.SheetNames.forEach(function (sheetName) {
+                        // Here is your object
+                        var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                        var json_object = JSON.stringify(XL_row_object);
+                        jsonData = JSON.parse(json_object)
+                        //console.log(jsonData); //JSON.parse(json_object)
+                        jQuery('#xlx_json').val(json_object);
+                        console.log("jsonData ", jsonData);
+                        console.log("json object ", json_object);
+                        aPopUpAddForm(jsonData);
+                        // Initialize dxDataGrid
+                        /*       $("#gridContainer").dxDataGrid({
+                                  dataSource: jsonData,
+                                  keyExpr: "PayToCode", // Unique key for row identification
+                                  columnAutoWidth: true,
+                                  showBorders: true,
+                                  paging: { pageSize: 10 },
+                                  searchPanel: { visible: true, width: 250 },
+                                  filterRow: { visible: true },
+                                  headerFilter: { visible: true },
+                                  columns: [
+                                      { dataField: "ExpensesType", caption: "Expense Type" },
+                                      { dataField: "PayToCode", caption: "Pay To Code" },
+                                      { dataField: "StaffName", caption: "Staff Name" },
+                                      { dataField: "Dept", caption: "Dept Code" },
+                                      { dataField: "DeptName", caption: "Department Name" },
+                                      { dataField: "Amount", caption: "Amount", dataType: "number", format: "#,##0.00" },
+                                      { dataField: "Month", caption: "Month" }
+                                  ]
+                              }); */
+                    })
+                };
+
+                reader.onerror = function (ex) {
+                    console.log(ex);
+                };
+
+                reader.readAsBinaryString(file);
+            };
+
+        };
+
+        function handleFileSelect(evt) {
+
+            var files = evt.target.files; // FileList object
+            var xl2json = new ExcelToJSON();
+            xl2json.parseExcel(files[0]);
+        }
+
+        const aPopUpAddForm = (iData) => {
+            console.log("iData = ", iData)
+
+            $(() => {
+                var aaLastLineNo = 1;
+                var gbxRateV = 1;
+                const popup = $("#popupContainerAdd").dxPopup({
+                    title: "Import Excel" + aaaTitle,
+                    width: '1300px',
+                    position: { offset: "0 -140" },
+                    fullScreen: true,
+                    showCloseButton: false,
+                    showTitle: true,
+                    dragEnabled: true,
+                    closeOnOutsideClick: false,
+                    resizeEnabled: true,
+                    onInitialized: function (e) { e.component.registerKeyHandler("escape", function (arg) { }) }, // ignore when press 'ESC'  
+
+                    contentTemplate: function () {
+                        return $("<div />").append(
+                            $("<p><div id='dxDataGrid'></div></p>"),
+                            // $("<span style='padding: 0px 8px;'></span>").text(" "),
+                            // $("<span id='Add-Upload'></span>"),
+                            // $("<span style='padding: 0px 5px;'></span>").text(" "),
+                            // $("<span id='Add-ViewFile'></span>"),
+                            // $("<p><div id='Add-dxDataGrid'></div></p>"),
+                            // $("<span id='Add-popupexit'></span>"),
+                            // $("<span style='padding: 5px 15px;'></span>").text(" "),
+                        );
+                    },
+
+                }).dxPopup("instance");
+
+
+                // Initialize dxDataGrid
+                $("#dxDataGrid").dxDataGrid({
+                    dataSource: iData,
+                    keyExpr: "PayToCode", // Unique key for row identification
+                    columnAutoWidth: true,
+                    showBorders: true,
+                    paging: { pageSize: 10 },
+                    searchPanel: { visible: true, width: 250 },
+                    filterRow: { visible: true },
+                    headerFilter: { visible: true },
+                    columns: [
+                        { dataField: "ExpensesType", caption: "Expense Type" },
+                        { dataField: "PayToCode", caption: "Pay To Code" },
+                        { dataField: "StaffName", caption: "Staff Name" },
+                        { dataField: "Dept", caption: "Dept Code" },
+                        { dataField: "DeptName", caption: "Department Name" },
+                        { dataField: "Amount", caption: "Amount", dataType: "number", format: "#,##0.00" },
+                        { dataField: "Month", caption: "Month" }
+                    ]
+                });
+
+            });
+
+        }
+
+
+    </script>
+</body>
+
+</html>

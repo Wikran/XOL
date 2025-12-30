@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DevExtreme Theme Switcher with Custom Header Colors</title>
+
+  <!-- DevExtreme CSS Themes -->
+  <link id="dx-light" rel="stylesheet"
+        href="https://cdn3.devexpress.com/jslib/23.2.6/css/dx.material.blue.light.compact.css">
+  <link id="dx-dark" rel="stylesheet"
+        href="https://cdn3.devexpress.com/jslib/23.2.6/css/dx.material.blue.dark.compact.css" disabled>
+
+  <!-- jQuery must load before DevExtreme -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- DevExtreme JS -->
+  <script src="https://cdn3.devexpress.com/jslib/23.2.6/js/dx.all.js"></script>
+
+  <style>
+    body {
+      margin: 20px;
+      font-family: "Segoe UI", sans-serif;
+      transition: background-color 0.3s ease;
+    }
+    #themeSwitch {
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .theme-icon {
+      font-size: 22px;
+      transition: opacity 0.3s ease;
+    }
+    .hidden {
+      opacity: 0.2;
+    }
+
+    /* ✅ Light mode header: Marine Blue */
+    body.light-mode .dx-datagrid-headers {
+      background-color: #3f51b5; /* Marine blue */
+      color: #fff;
+    }
+
+    /* ✅ Dark mode header: Dark Blue */
+    body.dark-mode .dx-datagrid-headers {
+      background-color: #0d47a1; /* Dark blue */
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="dx-theme-background-color dx-theme-text-color">
+  <!-- Theme switch control with icons -->
+  <div id="themeSwitch">
+    <span id="sunIcon" class="theme-icon">☀️</span>
+    <div id="switchControl"></div>
+    <span id="moonIcon" class="theme-icon">🌙</span>
+  </div>
+
+  <!-- DataGrid container -->
+  <div id="gridContainer"></div>
+
+  <script>
+    $(function() {
+      const users = [
+        { ID: 1, Name: "John Smith", Age: 29, Email: "john@example.com" },
+        { ID: 2, Name: "Jane Doe", Age: 34, Email: "jane@example.com" },
+        { ID: 3, Name: "Michael Johnson", Age: 41, Email: "mike@example.com" }
+      ];
+
+      function switchTheme(isDark) {
+        document.getElementById("dx-light").disabled = isDark;
+        document.getElementById("dx-dark").disabled  = !isDark;
+
+        document.body.classList.toggle("dark-mode", isDark);
+        document.body.classList.toggle("light-mode", !isDark);
+
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        document.getElementById("sunIcon").classList.toggle("hidden", isDark);
+        document.getElementById("moonIcon").classList.toggle("hidden", !isDark);
+      }
+
+      let isDark = localStorage.getItem("theme") === "dark";
+      switchTheme(isDark);
+
+      $("#switchControl").dxSwitch({
+        value: isDark,
+        switchedOnText: "",
+        switchedOffText: "",
+        onValueChanged: function(e) {
+          switchTheme(e.value);
+        }
+      });
+
+      $("#gridContainer").dxDataGrid({
+        dataSource: users,
+        keyExpr: "ID",
+        showBorders: true,
+        editing: {
+          mode: "form",
+          allowUpdating: true,
+          allowAdding: true,
+          allowDeleting: true
+        },
+        columns: [
+          { dataField: "Name", validationRules: [{ type: "required" }] },
+          { dataField: "Age", dataType: "number", validationRules: [{ type: "range", min: 18, max: 100 }] },
+          { dataField: "Email", validationRules: [{ type: "email" }] }
+        ]
+      });
+    });
+  </script>
+</body>
+</html>

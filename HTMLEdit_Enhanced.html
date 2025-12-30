@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <title>DevExtreme Advanced HTML Editor with Video</title>
+  <!-- <title>DevExtreme Demo HTML editor</title> -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>window.jQuery || document.write(decodeURIComponent('%3Cscript src="js/jquery.min.js"%3E%3C/script%3E'))</script>
+  <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.common.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdn3.devexpress.com/jslib/22.1.6/css/dx.light.css" />
+  <script src="https://unpkg.com/devextreme-quill@1.5.18/dist/dx-quill.min.js"></script>
+  <script src="https://cdn3.devexpress.com/jslib/22.1.6/js/dx.all.js"></script>
+
+  <script src="aThaiHelp.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #fafafa;
+      margin: 20px;
+    }
+
+    .dx-htmleditor-content img,
+    .dx-htmleditor-content video {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+
+    .options {
+      padding: 20px;
+      background-color: rgba(191, 191, 191, 0.1);
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .caption {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body class="dx-viewport">
+  <div class="demo-container">
+    <div class="html-editor"></div>
+    <div id="popup"></div>
+
+    <div class="options">
+      <div class="caption">Options</div>
+      <div class="option" style="margin-bottom:10px;">
+        <div id="multiline"></div>
+      </div>
+      <div class="option">
+        <div class="label">Image upload tabs:</div>
+        <div id="image-uploader-tabs"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = [
+      { name: 'From This Device', value: ['file'] },
+      { name: 'From the Web', value: ['url'] },
+      { name: 'Both', value: ['file', 'url'] }
+    ];
+
+    const markup = `<p><strong style="color: rgb(5, 88, 232);">Create Here</strong> ,<span style="color: rgb(1, 22, 77);"> Edit HTML</span> press <span style="background-color: rgb(165, 226, 250);">[Edit Markup]</span></p>
+    <p><br></p><p style="text-align: left;"><img src="https://images.pexels.com/photos/18105/pexels-photo.jpg" alt="computer" width="300"></p>`;
+
+    function initializeHtmlEditor(markup) {
+      const editor = $('.html-editor').dxHtmlEditor({
+        height: 725,
+        width: '100%',
+        value: markup,
+        imageUpload: {
+          tabs: ['file', 'url'],
+          fileUploadMode: 'base64',
+        },
+        toolbar: {
+          multiline: true,
+          items: [
+            'undo', 'redo', 'separator',
+            { name: 'size', acceptedValues: ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt'] },
+            { name: 'font', acceptedValues: ['Arial', 'Courier New', 'Georgia', 'Tahoma', 'Times New Roman', 'Verdana'] },
+            'separator', 'bold', 'italic', 'strike', 'underline', 'separator',
+            'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'separator',
+            'orderedList', 'bulletList', 'separator',
+            { name: 'header', acceptedValues: [false, 1, 2, 3, 4, 5] },
+            'separator', 'color', 'background', 'separator',
+            'link', 'image', 'separator',
+            {
+              widget: 'dxButton',
+              options: {
+                icon: 'video',
+                hint: 'Insert Video',
+                stylingMode: 'text',
+                onClick: () => openVideoPopup(editor)
+              }
+            },
+            'clear', 'codeBlock', 'blockquote', 'separator',
+            'insertTable', 'deleteTable',
+            'insertRowAbove', 'insertRowBelow', 'deleteRow',
+            'insertColumnLeft', 'insertColumnRight', 'deleteColumn',
+            {
+              widget: 'dxButton',
+              options: {
+                text: 'Edit Markup',
+                stylingMode: 'outlined',
+                onClick() {
+                  popupInstance.show();
+                  $('.markup-editor').val(editor.option('value'));
+                }
+              }
+            },
+          ]
+        },
+        mediaResizing: { enabled: true }
+      }).dxHtmlEditor('instance');
+
+      // Checkbox for multiline toolbar
+      $('#multiline').dxCheckBox({
+        text: 'Multiline toolbar',
+        value: true,
+        onValueChanged(e) {
+          editor.option('toolbar.multiline', e.value);
+        }
+      });
+
+      // SelectBox for image upload tabs
+      $('#image-uploader-tabs').dxSelectBox({
+        items: tabs,
+        value: tabs[2].value,
+        valueExpr: 'value',
+        displayExpr: 'name',
+        onValueChanged: (e) => {
+          editor.option('imageUpload.tabs', e.value);
+        }
+      });
+
+      // Popup for editing markup (HTML source view)
+      const popupInstance = $('#popup').dxPopup({
+        showTitle: true,
+        title: 'Edit Markup',
+        width: 800,
+        height: 600,
+        dragEnabled: true,
+        resizeEnabled: true,
+        contentTemplate: () => {
+          const $container = $('<div>').css({ display: 'flex', flexDirection: 'column', height: '100%' });
+          const $textarea = $('<textarea class="markup-editor">').css({ flexGrow: 1, width: '100%', fontFamily: 'monospace' });
+          const $button = $('<div id="save-markup">').dxButton({
+            text: 'Save',
+            type: 'success',
+            onClick() {
+              editor.option('value', $textarea.val());
+              popupInstance.hide();
+            }
+          });
+          $container.append($textarea, $('<div style="text-align:right; margin-top:10px;">').append($button));
+          return $container;
+        }
+      }).dxPopup('instance');
+    }
+
+    // Function to open the Insert Video popup
+    function openVideoPopup(editor) {
+      const popup = $('<div>').dxPopup({
+        title: 'Insert Video',
+        visible: true,
+        width: 400,
+        height: 320,
+        showCloseButton: true,
+        dragEnabled: true,
+        resizeEnabled: false,
+        shading: true,
+        closeOnOutsideClick: true,
+        contentTemplate: (content) => {
+          content.append(`
+            <div style="padding: 10px;">
+              <div class="dx-field">
+                <div class="dx-field-label">Video URL</div>
+                <div class="dx-field-value"><input id="video-url" type="text" style="width:100%;" placeholder="https://example.com/video.mp4" /></div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label">Width</div>
+                <div class="dx-field-value"><input id="video-width" type="number" style="width:100%;" value="640"/></div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-label">Height</div>
+                <div class="dx-field-value"><input id="video-height" type="number" style="width:100%;" value="360"/></div>
+              </div>
+              <div class="dx-field">
+                <div class="dx-field-value"><input type="checkbox" id="video-autoplay"> Autoplay</div>
+              </div>
+              <div style="text-align:right; margin-top:15px;">
+                <div id="insert-video-btn"></div>
+              </div>
+            </div>
+          `);
+
+          $('#insert-video-btn').dxButton({
+            text: 'Insert Video',
+            type: 'success',
+            onClick() {
+              const url = $('#video-url').val();
+              const width = $('#video-width').val() || '640';
+              const height = $('#video-height').val() || '360';
+              const autoplay = $('#video-autoplay').is(':checked') ? 'autoplay' : '';
+              if (url) {
+                const videoTag = `<video controls ${autoplay} width="${width}" height="${height}" style="max-width:100%; border-radius:6px;">
+                    <source src="${url}" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>`;
+                const currentValue = editor.option('value');
+                editor.option('value', currentValue + videoTag);
+                popup.hide();
+              } else {
+                DevExpress.ui.notify("Please enter a valid video URL.", "warning", 2000);
+              }
+            }
+          });
+        },
+        onHidden: () => { popup.remove(); }
+      }).dxPopup('instance');
+    }
+
+    // Initialize editor on page load
+    $(() => initializeHtmlEditor(markup));
+  </script>
+</body>
+
+</html>

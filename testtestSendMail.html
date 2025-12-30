@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mail Sender</title>
+
+  <!-- ✅ jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- ✅ DevExtreme -->
+  <link rel="stylesheet" href="https://cdn3.devexpress.com/jslib/22.2.5/css/dx.light.css">
+  <script src="https://cdn3.devexpress.com/jslib/22.2.5/js/dx.all.js"></script>
+</head>
+<body>
+  <!-- 🔧 Form + Button -->
+  <div id="emailForm" style="max-width: 600px; margin: 20px auto;"></div>
+  <div id="sendBtn" style="max-width: 600px; margin: 10px auto;"></div>
+
+  <script>
+    const acMailAPI = "https://cbsdev3.locktonwattana.com/send-email/false/smtp2";
+
+    const formData = {
+      from: "wikran@hotmail.com",
+      toName: "",
+      toEmail: "",
+      ccEmail: "",
+      bccEmail: "",
+      subject: "",
+      message: ""
+    };
+
+    $("#emailForm").dxForm({
+      formData: formData,
+      labelLocation: "top",
+      items: [
+        { dataField: "from", label: { text: "From Email" }, editorOptions: { readOnly: true } },
+        { dataField: "toName", label: { text: "To Name (แยกด้วย ,)" } },
+        { dataField: "toEmail", label: { text: "To Email (แยกด้วย ,)" } },
+        { dataField: "ccEmail", label: { text: "CC Email (แยกด้วย ;)" } },
+        { dataField: "bccEmail", label: { text: "BCC Email (แยกด้วย ;)" } },
+        { dataField: "subject", label: { text: "Subject" } },
+        {
+          dataField: "message",
+          editorType: "dxTextArea",
+          label: { text: "Message Body" },
+          editorOptions: { height: 120 }
+        }
+      ]
+    });
+
+    $("#sendBtn").dxButton({
+      text: "Send Mail",
+      type: "success",
+      onClick: function () {
+        const form = $("#emailForm").dxForm("instance").option("formData");
+
+        // 🔧 แปลงข้อความเป็น HTML ปลอดภัย
+        function formatToHTML(text) {
+          const escaped = text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+          const withSpaces = escaped.replace(/  /g, "&nbsp;&nbsp;");
+          return withSpaces.replace(/\n/g, "<br>");
+        }
+
+        const formattedMessage = `<div style="font-family:Segoe UI, sans-serif; font-size:14px;">${formatToHTML(form.message)}</div>`;
+
+        // ✂️ แยกชื่อและอีเมล
+        let names = form.toName.split(',').map(n => n.trim()).filter(n => n);
+        let emails = form.toEmail.split(',').map(e => e.trim()).filter(e => e);
+
+        // 🧹 ลบอีเมลซ้ำ
+        emails = [...new Set(emails)];
+
+        // 🔎 ตรวจสอบว่าจำนวนตรงกัน
+        if (names.length !== emails.length) {
+          alert(`❌ จำนวนชื่อ (${names.length}) ไม่ตรงกับอีเมล (${emails.length})`);
+          return;
+        }
+
+        let sentCount = 0;
+        let failedList = [];
+
+        emails.forEach((email, i) => {
+          aSendMailDMZ(
+            names[i],
+            email,
+            form.from,
+            form.ccEmail || "",
+            form.bccEmail || "",
+            form.subject,
+            formattedMessage,
+            function(success) {
+              sentCount++;
+              if (!success) failedList.push(email);
+
+              if (sentCount === emails.length) {
+                if (failedList.length === 0) {
+                  alert("✅ ส่งอีเมลทั้งหมดเรียบร้อยแล้ว");
+                } else {
+                  alert(`⚠️ ส่งไม่สำเร็จบางรายการ: ${failedList.join(', ')}`);
+                }
+              }
+            }
+          );
+        });
+      }
+    });
+
+    // 📬 ฟังก์ชันส่งอีเมล
+    function aSendMailDMZ(name, email, from, cc, bcc, subject, message, callback) {
+      const payload = {
+        toname: name,
+        toemail: email,
+        fromemail: from,
+        ccemail: cc,
+        bccemail: bcc,
+        subject: subject,
+        message: message
+      };
+
+      fetch(acMailAPI, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log(`✅ Sent to: ${email}`);
+          callback(true);
+        } else {
+          console.warn(`❌ Failed: ${email}`);
+          callback(false);
+        }
+      })
+      .catch(error => {
+        console.error(`⚠️ Error: ${email}`, error);
+        callback(false);
+      });
+    }
+  </script>
+</body>
+</html>
