@@ -1,0 +1,27 @@
+# Development folders
+.vscode/
+.vs/
+node_modules/
+BACKUP/
+html4upload/
+canvas2image-master/
+
+# Build artifacts not needed on server
+dist/
+fsrc/
+
+# Test or temporary HTML files
+ABG-test.html
+ABG-test2.html
+
+# IDE / system files
+*.log
+*.tmp
+*.bak
+
+# Compressed files
+*.zip
+*.rar
+
+# Documentation
+*.md
