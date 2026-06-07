@@ -40,14 +40,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   const MAIN_PROJECT = 'main.html';
   const THRESHOLD_ATTEMPTS = 2;
 
-  // Generate random OTP
   const generateOTP = (length: number = 6): string => {
     return Math.floor(Math.random() * Math.pow(10, length))
       .toString()
       .padStart(length, '0');
   };
 
-  // Generate longer OTP for password reset
   const generateLOTP = (length: number = 8): string => {
     return Math.floor(Math.random() * Math.pow(10, length))
       .toString()
@@ -55,27 +53,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
   };
 
   useEffect(() => {
-    // Set initial OTP
     setGeneratedOTP(generateOTP());
     localStorage.clear();
   }, []);
 
-  // Handle username change
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value.toLowerCase());
   };
 
-  // Handle password change
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
-  // Handle OTP change
   const handleOtpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOtp(e.target.value);
   };
 
-  // Handle forgot password click
   const handleForgotPassword = async () => {
     setErrorMessage('');
     setIsForgotPassword(true);
@@ -93,7 +86,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  // Main login process
   const handleLogin = async () => {
     setErrorMessage('');
     
@@ -110,7 +102,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  // Perform login request
   const performLogin = async (isForgot: boolean) => {
     let loginText = '';
     let tableId = '01f518c9-c818-4e9f-85cb-6245ee1a2637';
@@ -141,7 +132,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
       };
 
       const groupId = 'c80bab4d-1578-4b72-82d9-3e4ebe940384';
-      const projectId = 'main'; // Replace with your project ID
+      const projectId = 'main';
       const url = `${API_BASE_URL}/DMQ/${projectId}/${groupId}/${tableId}/all`;
 
       const response = await fetch(url, requestOptions);
@@ -164,7 +155,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     }
   };
 
-  // Handle login response
   const handleLoginResponse = async (userData: any, isForgot: boolean) => {
     const userMatched = (username === userData.IDUsr && isForgot) || 
                         (password === userData.Pword && !isForgot);
@@ -177,7 +167,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     const needsOTP = userData.otp === 'YES' || userData.otp === '' || !userData.Active || isForgot;
 
     if (needsOTP) {
-      // Show OTP field
       setShowOTP(true);
       if (!isForgot) {
         setPassword('');
@@ -185,11 +174,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         setUsername('');
       }
 
-      // Generate and send OTP
       const newOtp = isForgot ? generateLOTP(8) : generateOTP();
       setGeneratedOTP(newOtp);
 
-      // Send OTP via email (implement your email sending logic)
       try {
         await sendOtpEmail(userData, newOtp, isForgot);
         setErrorMessage('');
@@ -198,33 +185,27 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
         console.error('Error sending OTP:', error);
       }
     } else {
-      // Direct login without OTP
       completeLogin(userData);
     }
   };
 
-  // Send OTP email
   const sendOtpEmail = async (userData: any, otpCode: string, isForgot: boolean) => {
     const subject = isForgot ? 'FORGOTTEN PASSWORD - OTP = ' + otpCode : 'OTP = ' + otpCode;
     const body = isForgot 
       ? `Dear ${userData.LGName}, Your OTP for password reset is: ${otpCode}`
       : `Dear ${userData.LGName}, Your OTP is: ${otpCode}`;
 
-    // TODO: Implement email sending through your backend
     console.log('Sending email to:', userData.email);
     console.log('Subject:', subject);
     console.log('Body:', body);
   };
 
-  // Complete login process
   const completeLogin = (userData: any) => {
-    // Verify OTP
     if (otp && otp !== generatedOTP) {
       setErrorMessage('Invalid OTP');
       return;
     }
 
-    // Store user data
     localStorage.setItem('aaXXuX', username);
     localStorage.setItem('aaXrXg', btoa(userData.Gright || ''));
     localStorage.setItem('aaXXoX', btoa(userData.Tkey || ''));
@@ -237,7 +218,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     localStorage.setItem('asEMAIL', userData.email || '');
     localStorage.setItem('asAct', userData.Active || false);
 
-    // Store encrypted user property
     const usrProperty: UserData[] = [{
       aaXXuX: username,
       aaXrXg: btoa(userData.Gright || ''),
@@ -258,7 +238,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLoginSuccess }) => {
     ).toString();
     localStorage.setItem('usrProperty', encryptedData);
 
-    // Redirect or call success callback
     onLoginSuccess(usrProperty[0]);
     window.location.href = MAIN_PROJECT;
   };
